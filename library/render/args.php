@@ -2,13 +2,13 @@
 
 namespace q\willow\render;
 
-// use q\core;
-use q\willow\core;
-use q\core\helper as h;
-use q\view;
+// Q ##
 use q\get;
+use q\core\helper as h;
+
 use q\willow;
-use q\willow\render;
+use q\willow\core;
+// use q\willow\render;
 
 class args extends willow\render {
 
@@ -200,14 +200,14 @@ class args extends willow\render {
 
         // apply global filter to $args - specific calls should be controlled by parameters included directly ##
         $args = \q\core\filter::apply([
-			'filter'        => 'q/render/args',
+			'filter'        => 'q/willow/render/args',
 			'parameters'    => $args,
 			'return'        => $args
 		]);
 		
 		// apply template level filter to $args - specific calls should be controlled by parameters included directly ##
         $args = \q\core\filter::apply([
-			'filter'        => 'q/render/args/'.view\is::get(),
+			'filter'        => 'q/willow/render/args/'.\q\view\is::get(),
 			'parameters'    => $args,
 			'return'        => $args
         ]);
@@ -222,14 +222,14 @@ class args extends willow\render {
 			// h::log( $context_config );
 
 			// merge in global__CONTEXT settings ##
-			$args = \q\core\method::parse_args( $context_config, $args );
+			$args = core\method::parse_args( $context_config, $args );
 
 			// h::log( $args );
 
 		}
 
 		// grab all passed args and merge with defaults -- this ensures we have config->run, config->debug etc.. ##
-		$args = \q\core\method::parse_args( $args, self::$args_default );
+		$args = core\method::parse_args( $args, self::$args_default );
 
 		// h::log( $args );
 
@@ -259,7 +259,7 @@ class args extends willow\render {
 		// h::log( self::$args['markup'] );
 
 		// post-format markup to extract markup keys collected by config ##
-		render\markup::merge();
+		willow\render\markup::merge();
 
 	}
 
@@ -288,7 +288,7 @@ class args extends willow\render {
 		}
 
 		// get calling method for filters ##
-		$task = core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$task = \q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
 
 		// define context for all in class -- i.e "group" ##
 		if ( ! isset( $args['context'] ) ) {

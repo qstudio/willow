@@ -2,7 +2,7 @@
 
 namespace q\willow;
 
-use q\core;
+// use q\core;
 use q\willow\core\helper as h;
 use q\willow;
 
@@ -27,7 +27,7 @@ class parse extends \q_willow {
 	
 	public static function run(){
 
-		core\load::libraries( self::load() );
+		\q\core\load::libraries( self::load() );
 
 	}
 
@@ -43,7 +43,7 @@ class parse extends \q_willow {
 		return $array = [
 
 			// markup methods ##
-			'markup' => h::get( 'parse/markup.php', 'return', 'path' ),
+			'parse_markup' => h::get( 'parse/markup.php', 'return', 'path' ),
 
 			// flags ##
 			'flags' => h::get( 'parse/flags.php', 'return', 'path' ),

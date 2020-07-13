@@ -148,6 +148,32 @@ class method extends \q_willow {
 
 
 	
+    /**
+     * Recursive pass args 
+     * 
+     * @link    https://mekshq.com/recursive-wp-parse-args-wordpress-function/
+     */
+    public static function parse_args( &$args, $defaults ) {
+
+        $args = (array) $args;
+        $defaults = (array) $defaults;
+        $result = $defaults;
+        
+        foreach ( $args as $k => &$v ) {
+            if ( is_array( $v ) && isset( $result[ $k ] ) ) {
+                $result[ $k ] = self::parse_args( $v, $result[ $k ] );
+            } else {
+                $result[ $k ] = $v;
+            }
+        }
+
+        return $result;
+
+	}
+	
+
+
+	
 	/**
 	 * 
 	 * @link https://www.php.net/manual/en/function.parse-str.php

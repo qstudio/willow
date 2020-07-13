@@ -149,9 +149,9 @@ class sections extends willow\parse {
 				// $hash = $args['context'].'__'.$args['task'].'__'.rand();
 
 				// test what we have ##
-				h::log( 'd:>field: "'.$field.'"' );
-				h::log( "d:>markup: $markup" );
-				h::log( "d:>hash: $hash" );
+				// h::log( 'd:>field: "'.$field.'"' );
+				// h::log( "d:>markup: $markup" );
+				// h::log( "d:>hash: $hash" );
 
 				// so, we can add a new field value to $args array based on the field name - with the markup as value
 				// self::$args[$field] = $markup;

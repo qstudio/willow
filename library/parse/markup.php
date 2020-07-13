@@ -102,6 +102,7 @@ class markup extends willow\parse {
      * @since    2.0.0
      * @return   Mixed
      */
+	/*
     public static function string( $markup = null, $data = null, $args = null )
     {
 
@@ -209,6 +210,7 @@ class markup extends willow\parse {
         return $return;
 
 	}
+	*/
 
 
 

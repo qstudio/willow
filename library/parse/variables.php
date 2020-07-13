@@ -48,8 +48,6 @@ class variables extends willow\parse {
 	*/
 	public static function prepare( $args = null ){
 
-		h::log( 't:>Problem with willow<>render cross-over.. remember.. Q can run without Willow, so willow needs to run without Q..' );
-
 		// sanity -- this requires ##
 		if ( 
 			! isset( self::$markup )

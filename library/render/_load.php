@@ -53,7 +53,7 @@ class render extends \q_willow  {
 			'type' => h::get( 'render/type/_load.php', 'return', 'path' ),
 
 			// prepare defined markup, search for and replace variables 
-			'markup' => h::get( 'render/markup.php', 'return', 'path' ),
+			'render_markup' => h::get( 'render/markup.php', 'return', 'path' ),
 
 			// output string ##
 			'output' => h::get( 'render/output.php', 'return', 'path' ),
