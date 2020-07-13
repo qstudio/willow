@@ -467,7 +467,8 @@ class markup extends willow\render {
 		
 		h::log( 't:>Move pre-render formats to some sort of system / class, add filters and allow for extensions' );
 
-		// h::log( 'd:>'.$string );
+		// // h::log( 'd:>'.$string );
+		// $string = trim( $string, '"' );
 
 		// escape ##
 		$string = self::escape( $string );

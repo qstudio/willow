@@ -114,6 +114,9 @@ class arguments extends willow\parse {
 		// extract data from string ##
 		self::$array = core\method::parse_str( self::$string );
 
+		// trim "value" leading and ending quotes from each value in array ##
+		array_walk_recursive( self::$array, function( &$v ) { $v = trim( $v, '"' ); });
+
 		// h::log( self::$array );
 
 		// sanity ##

@@ -77,7 +77,7 @@ class willows extends willow\parse {
 		// look for flags ##
 		self::$willow = flags::get( self::$willow );
 		// h::log( self::$flags );
-		h::log( 'd:>Willow: '.self::$willow );
+		// h::log( 'd:>Willow: '.self::$willow );
 
 		// clean up ##
 		self::$willow = trim( self::$willow );
@@ -127,7 +127,7 @@ class willows extends willow\parse {
 			// clean up string -- remove all white space ##
 			// $string = trim( $string );
 			// $config_string = str_replace( ' ', '', $config_string );
-			h::log( 'd:> '.self::$config_string );
+			// h::log( 'd:> '.self::$config_string );
 
 			// pass to argument handler ##
 			self::$arguments = 
@@ -154,6 +154,7 @@ class willows extends willow\parse {
 
 			// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
 			// this should create required markup at $position of self::$willow in markup->template
+			/*
 			if( isset( self::$flags_args['l'] ) ) {
 
 				$loop_arguments = willow\loops::set([
@@ -169,6 +170,7 @@ class willows extends willow\parse {
 				}
 
 			}
+			*/
 
 			// if arguments are not in an array, take the whole string passed as the arguments ##
 			if ( 
@@ -202,7 +204,7 @@ class willows extends willow\parse {
 		// function correction ##
 		// if( 'q' == self::$class ) self::$class = '\\q\\context';
 
-		// format to q::function ##
+		// format to q::context ##
 		self::$willow = '\\q\\willow\\context::'.self::$willow;
 
 		// update hash? ##
@@ -352,7 +354,7 @@ class willows extends willow\parse {
 	*/
     public static function prepare( $args = null ){
 
-		h::log( 't:>TODO -- willows are always internal, class::method format and registered.. so, remove all code that works against this.' );
+		// h::log( 't:>TODO -- willows are always internal, class::method format and registered.. so, remove all code that works against this.' );
 
 		// h::log( $args['key'] );
 

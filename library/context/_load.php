@@ -272,11 +272,11 @@ class context extends \q_willow {
 			render\markup::prepare();
 
 			// h::log( 'running-> '.$extend['class'].'::'.$extend['method'] );
-			if( 'hello' == $args['task'] ) {
+			// if( 'hello' == $args['task'] ) {
 				// h::log( $args['context'].'__'.$args['task'] );
 				// h::log( render::$fields );
 				// h::log( render::$markup );
-			}
+			// }
 
 			// clean up left over tags ## --- REMOVED ##
 			// willow\parse::cleanup();

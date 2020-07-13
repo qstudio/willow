@@ -174,8 +174,8 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'close' 	=> ' ]', // close ##
 				],
 				
-				// section ##
-				'section'		=> [
+				// loops ##
+				'loop'		=> [
 					'open' 		=> '{{# ', // open ##
 					'close' 	=> ' }}', // close ##
 					'end'		=> '{{/#}}' // end statement ##

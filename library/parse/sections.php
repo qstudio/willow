@@ -58,6 +58,13 @@ class sections extends willow\parse {
 		// $end = '{{\/#}}';
 
 		// h::log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
+		/*
+		{{{ ui::hello
+			{{# data }}
+				<div class="col-12">You are {{ who }} and the time is {{ time }}</div>
+			{{/#}}
+		}}}
+		*/
 
 		$regex_find = \apply_filters( 
 			'q/render/markup/section/regex/find', 
@@ -70,18 +77,6 @@ class sections extends willow\parse {
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
 
-			// if ( is_null( self::$buffer ) ) self::cleanup();
-
-			// // strip all section blocks, we don't need them now ##
-			// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
-			// $regex_remove = \apply_filters( 
-			// 	'q/render/parse/section/regex/remove', 
-			// 	"/$open.*?$end_preg/ms" 
-			// 	// "/{{#.*?\/#}}/ms"
-			// );
-			// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 
-		
-			// preg_match_all( '/%[^%]*%/', $string, $matches, PREG_SET_ORDER );
 			// h::debug( $matches[1] );
 
 			// sanity ##
@@ -118,12 +113,6 @@ class sections extends willow\parse {
 				$position = $matches[0][$match][1]; // take from first array ##
 				// h::log( 'd:>position: '.$position );
 				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
-
-				// foreach( $matches[1][0][0] as $k => $v ){
-				// $delimiter = \apply_filters( 'q/render/markup/comments/delimiter', "::" );
-				// list( $field, $markup ) = explode( $delimiter, $value[0] );
-				// $field = method::string_between( $matches[0][$match][0], '{{#', '}}' );
-				// $markup = method::string_between( $matches[0][$match][0], '{{# '.$field.' }}', '{{/#}}' );
 
 				$field = core\method::string_between( $matches[0][$match][0], $open, $close );
 				$markup = core\method::string_between( $matches[0][$match][0], $close, $end );

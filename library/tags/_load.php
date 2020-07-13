@@ -57,9 +57,9 @@ class tags extends \q_willow {
 		$tag_map = [
 			'var_o' => self::$filtered_tags['variable']['open'],
 			'var_c' => self::$filtered_tags['variable']['close'],
-			'sec_o' => self::$filtered_tags['section']['open'],
-			'sec_c' => self::$filtered_tags['section']['close'],
-			'sec_e' => self::$filtered_tags['section']['end'],
+			'loo_o' => self::$filtered_tags['loop']['open'],
+			'loo_c' => self::$filtered_tags['loop']['close'],
+			'loo_e' => self::$filtered_tags['loop']['end'],
 			'fun_o' => self::$filtered_tags['function']['open'],
 			'fun_c' => self::$filtered_tags['function']['close'],
 			'wil_o' => self::$filtered_tags['willow']['open'],

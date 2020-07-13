@@ -72,13 +72,13 @@ class functions extends willow\parse {
 
 		// look for flags ##
 		self::$function = flags::get( self::$function );
-		h::log( self::$flags );
+		// h::log( self::$flags );
 		// h::log( self::$function );
 
 		// clean up ##
 		self::$function = trim( self::$function );
 
-		h::log( 'Function: '.self::$function );
+		// h::log( 'Function: '.self::$function );
 
 		// sanity ##
 		if ( 
@@ -113,7 +113,7 @@ class functions extends willow\parse {
 			// clean up string -- remove all white space ##
 			// $string = trim( $string );
 			// $config_string = str_replace( ' ', '', $config_string );
-			h::log( 'd:> '.self::$config_string );
+			// h::log( 'd:> '.self::$config_string );
 
 			// pass to argument handler ##
 			self::$arguments = 
@@ -272,8 +272,8 @@ class functions extends willow\parse {
 			// pass args, if set ##
 			if( self::$arguments ){
 
-				h::log( 'passing args array to: '.self::$function );
-				h::log( self::$arguments );
+				// h::log( 'passing args array to: '.self::$function );
+				// h::log( self::$arguments );
 
 				self::$return = call_user_func( self::$function, self::$arguments );
 
@@ -306,7 +306,7 @@ class functions extends willow\parse {
 
 			}
 
-			h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
+			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
 			$string = self::$return;
 
 			willow\markup::swap( self::$function_match, $string, 'function', 'string' ); // '{{ '.$field.' }}'
@@ -336,7 +336,7 @@ class functions extends willow\parse {
 	*/
     public static function prepare( $args = null ){
 
-		h::log( 't:>TODO -- functions are always global, either function() or class::method format and must return data directly' );
+		// h::log( 't:>TODO -- functions are always global, either function() or class::method format and must return data directly' );
 
 		// h::log( $args['key'] );
 

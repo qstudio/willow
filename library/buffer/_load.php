@@ -60,17 +60,16 @@ class buffer extends \q_willow {
 				$string .= ob_get_clean();
 			}
 
-			// @TODO... this needs to be more graceful, and render needs to have "blocks", which can be passed / set
 			// echo theme\view\ui\header::render();
-			context::ui__header();
+			// context::ui__header();
 		
 			// Apply any filters to the final output
 			// echo \apply_filters( 'ob_output', $string );
 			echo self::prepare( $string );
 
-			// @TODO... this needs to be more graceful, and render needs to have "blocks", which can be passed / set
+			h::log( 't:>@TODO... footer + header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
 			// echo theme\view\ui\footer::render();
-			context::ui__footer();
+			// context::ui__footer();
 
 		}, 0);
 
@@ -118,7 +117,6 @@ class buffer extends \q_willow {
 		// force methods to return for collection by output buffer ##
 		self::$args_default['config']['return'] = 'return';
 		
-		
 		// reset args ##
 		willow\render\args::reset();
 
@@ -143,15 +141,17 @@ class buffer extends \q_willow {
 		// functions
 		parse::prepare( $args );
 
-		// h::log( render::$markup );
-		// h::log( render::$buffer );
+		// h::log( self::$markup );
+		// h::log( self::$buffer );
 
 		// prepare field data ##
 		// render\fields::prepare();
 		// h::log( render::$buffer );
-		render\fields::define( render::$buffer );
 
-		// h::log( render::$fields );
+		// buffer contains all the {{ variables }} + data from the template
+		if ( self::$buffer ) render\fields::define( self::$buffer );
+
+		// h::log( self::$buffer );
 
 		// Prepare template markup ##
 		render\markup::prepare();
@@ -169,7 +169,8 @@ class buffer extends \q_willow {
 		willow\parse::cleanup();
 
 		// check what we have ##
-		// h::log( render::$markup['template'] );
+		// h::log( self::$buffer );
+		// h::log( self::$markup['template'] );
 		
 		// clear object cache ##
 		self::$buffer = [];

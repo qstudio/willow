@@ -108,6 +108,27 @@ class fields extends willow\render {
 	 * Define $fields args for render methods
 	 * 
 	 * @since 4.0.0
+	 * 
+	*/
+	/*
+	context->task hits a function, it might return:
+	- false
+	- null
+	- empty array
+	- string
+	- int
+	- good array
+	- etc...
+
+	HOW DO WE KNOW WHAT IS GOOD DATA ??
+		- this method requires an array of data - at least key->value and also MD arrays ##
+
+	This method is hit twice:
+		- once to gather validate data from context->ui method and push into self::$fields ( ginstigated by parse/willows )
+		- a second time from the buffer[$hash] as it iterates over keys from {{ variables }} in the markup 
+
+	WHY DO BAD REQUESTS RETURN THE BUFFER ID??
+		- they don't, that is the second buffer hit looking for data -- which one do we need to return "error" to?
 	*/
 	public static function define( $args = null ){
 
@@ -119,17 +140,68 @@ class fields extends willow\render {
 			// || ! is_array( $array )
 		){
 
-			h::log( 'e:>Error in passed $args' );
+			h::log( 'e:>Error in passed $args by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]).'"' );
+			// h::log( $args );
 
 			return false;
 
 		}
 
+		if( 
+			is_array( $args )
+			&& ! array_filter( $args ) 
+			&& isset( self::$args['config']['default'] )
+			&& is_array( self::$args['config']['default'] )
+		){
+
+			// h::log( $args );
+			// h::log( self::$args );
+
+			// reset( $args );
+			// $first_key = key( $args );
+
+			h::log( 'args is an empty array and config->default is defined' );
+			// $args = [];
+			// $args[$first_key] = self::$args['config']['empty'];
+			// h::log( $args );
+			// $args = [
+			// 	'data' => self::$args['config']['empty']
+			// ];
+
+			// h::log( self::$markup );
+			
+			// self::$markup = []; // blank out ##
+			
+			// self::$markup['template'] = "{{ data }}";
+
+			// $args['key'] = self::$args['config']['default'];
+			$args = self::$args['config']['default'];
+			// self::$fields[$first_key] = self::$args['config']['empty'];
+
+			// h::log( self::$markup );
+
+			// $args = false;
+
+			// return true;
+
+		} else {	
+
+			// h::log( 'd:>Good Args' );
+			// h::log( $args );
+
+		}
+
+		// h::log( self::$markup );
+
+		// self::$markup['template'] = 'EMPTY';
+
 		// assign string to key 'value' ##
 		if ( is_string( $args ) ){
 
 			h::log( 'e:>Calling fields/define with a string value is __deprectated..' );
-			return self::$fields['value'] = $args;
+
+			return false;
+			// return self::$fields['value'] = $args;
 
 		}
 

@@ -107,6 +107,9 @@ class method extends \q_willow {
 		}
 
 		$length = strlen( $needle );
+
+		// remove white spaces and line breaks ##
+	    // $haystack = preg_replace( '/\s*/m', '', $haystack );
 		
 		return ( substr( $haystack, 0, $length ) === $needle );
 	 
@@ -140,6 +143,9 @@ class method extends \q_willow {
         	return true;
 		
 		}
+
+		// remove white spaces and line breaks ##
+		// $haystack = preg_replace( '/\s*/m', '', $haystack );
 
 		return ( substr( $haystack, -$length ) === $needle );
 
@@ -180,6 +186,8 @@ class method extends \q_willow {
 	*/
 	public static function parse_str( $string = null ) {
 
+		// h::log($string);
+
 		# result array
 		$array = array();
 	  
@@ -200,7 +208,7 @@ class method extends \q_willow {
 				$value_array = [];	
 
 				// split value into an array at "," ##
-				$value_pairs = explode( ',', str_replace( ' ', '', $value ) );
+				$value_pairs = explode( ',', $value );
 
 				// h::log( $value_pairs );
 
@@ -277,6 +285,8 @@ class method extends \q_willow {
 			  
 			}
 		}
+
+		// h::log( $array );
 	  
 		# return result array
 		return $array;
