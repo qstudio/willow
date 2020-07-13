@@ -131,7 +131,7 @@ class flags extends willow\parse {
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' comment tags removed...' );
+					h::log( $count .' flags removed...' );
 
 				}
 

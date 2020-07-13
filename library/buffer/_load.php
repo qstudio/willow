@@ -13,22 +13,6 @@ use q\willow\render;
 
 class buffer extends \q_willow {
 
-	// public static
-
-        // // passed args ##
-        // $args 	= [
-		// 	'fields'	=> []
-		// ],
-
-		// $output 	= null, // return string ##
-        // $fields 	= null, // array of field names and values ##
-		// $markup 	= null, // array to store passed markup and extra keys added by formatting ##
-		// $log 		= null, // tracking array for feedback ##
-		// $buffer 	= null // for buffering... ##
-		// $buffering 	= false // for buffer switch... ##
-
-	// ;
-
 	/**
 	 * Check for view template and start OB, if correct
 	*/
@@ -43,10 +27,6 @@ class buffer extends \q_willow {
 			if ( 'willow' == \q\view\is::format() ){
 
 				// h::log( 'd:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
-
-				// set buffer ##
-				// self::$buffering = true;
-				// render::$buffering = true;
 
 				return ob_start();
 
@@ -137,7 +117,8 @@ class buffer extends \q_willow {
 
 		// force methods to return for collection by output buffer ##
 		self::$args_default['config']['return'] = 'return';
-
+		
+		
 		// reset args ##
 		willow\render\args::reset();
 
@@ -158,8 +139,8 @@ class buffer extends \q_willow {
 
 		}
 
-		// prepare markup, fields and handlers based on passed configuration ##
-		// so.. let's parser prepare an array in $buffer of hash + value.. then pass this to fields::define ??
+		// prepare .willow template markup ##
+		// functions
 		parse::prepare( $args );
 
 		// h::log( render::$markup );
@@ -193,7 +174,7 @@ class buffer extends \q_willow {
 		// clear object cache ##
 		self::$buffer = [];
 
-		// return to OB ##
+		// return to OB to render in template ##
 		return self::$markup['template'];
 
     }

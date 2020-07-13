@@ -7,19 +7,18 @@ use q\willow\render;
 use q\willow\core;
 use q\core\helper as h;
 
-class functions extends willow\parse {
+class willows extends willow\parse {
 
 	private static 
 
-		$return,
 		$hash, 
 		// $flags,
-		$function,
-		$function_match, // full string matched ##
+		$willow,
+		$willow_match, // full string matched ##
 		$arguments,
 		$class,
 		$method,
-		$function_array,
+		$willow_array,
 		$config_string
 		// $position
 		// $is_global
@@ -29,15 +28,14 @@ class functions extends willow\parse {
 
 	private static function reset(){
 
-		self::$return = false; 
 		self::$hash = false; 
 		self::$flags = false;
 		self::$flags_args = false;
-		self::$function = false;
+		self::$willow = false;
 		self::$arguments = false;
 		self::$class = false;
 		self::$method = false;
-		self::$function_array = false;
+		self::$willow_array = false;
 		self::$config_string = false;
 		// self::$position = false;
 		// self::$is_global = false;
@@ -45,6 +43,12 @@ class functions extends willow\parse {
 	}
 
 
+
+	/**
+	 * Format single willow
+	 * 
+	 * @since 4.1.0
+	*/
 	public static function format( $match = null ){
 
 		// sanity ##
@@ -58,16 +62,16 @@ class functions extends willow\parse {
 
 		}
 
-		$open = trim( willow\tags::g( 'fun_o' ) );
-		$close = trim( willow\tags::g( 'fun_c' ) );
+		$open = trim( willow\tags::g( 'wil_o' ) );
+		$close = trim( willow\tags::g( 'wil_c' ) );
 
 		// clear slate ##
 		self::reset();
 
 		// return entire function string, including tags for tag swap ##
-		self::$function_match = core\method::string_between( $match, $open, $close, true );
+		self::$willow_match = core\method::string_between( $match, $open, $close, true );
 
-		self::$function = core\method::string_between( $match, $open, $close );
+		self::$willow = core\method::string_between( $match, $open, $close );
 
 		// self::$position = $matches[0][$match][1]; // take from first array ##
 		// h::log( 'd:>position: '.$position );
@@ -75,22 +79,22 @@ class functions extends willow\parse {
 
 		// h::log( $matches[0][$match][0] );
 
-		// h::log( '$function_match: '.$function_match );
+		// h::log( '$willow_match: '.self::$willow_match );
 
 		// look for flags ##
-		self::$function = flags::get( self::$function );
-		h::log( self::$flags );
-		// h::log( self::$function );
+		self::$willow = flags::get( self::$willow );
+		// h::log( self::$flags );
+		h::log( 'd:>Willow: '.self::$willow );
 
 		// clean up ##
-		self::$function = trim( self::$function );
+		self::$willow = trim( self::$willow );
 
-		h::log( 'Function: '.self::$function );
+		// h::log( 'function: '.self::$willow );
 
 		// sanity ##
 		if ( 
-			! self::$function
-			|| ! isset( self::$function ) 
+			! self::$willow
+			|| ! isset( self::$willow ) 
 		){
 
 			h::log( 'e:>Error in returned match function' );
@@ -99,20 +103,30 @@ class functions extends willow\parse {
 
 		}
 
+		if(
+			false === strpos( self::$willow, '::' )
+		){
+
+			h::log( 'e:>Error all willows must be in context::task format' );
+
+			return false; 
+
+		}
+
 		// default args ##
-		self::$hash = self::$function; // set hash to entire function, in case this has no config and is not class_method format ##
+		self::$hash = self::$willow; // set hash to entire function, in case this has no config and is not class_method format ##
 		// h::log( 'hash set to: '.$hash );
 
 		// $arguments = '';
 
 		// $class = false;
 		// $method = false;
-		// $function_array = false;
+		// $willow_array = false;
 		// $config_string = false;
 
 		// $config_string = core\method::string_between( $value, '[[', ']]' )
 		self::$config_string = core\method::string_between( 
-			self::$function, 
+			self::$willow, 
 			trim( willow\tags::g( 'arg_o' )), 
 			trim( willow\tags::g( 'arg_c' )) 
 		);
@@ -134,7 +148,7 @@ class functions extends willow\parse {
 				willow\arguments::decode([ 
 					'string' 	=> self::$config_string, 
 					// 'field' 	=> $field_name, 
-					// 'value' 	=> self::$function,
+					// 'value' 	=> self::$willow,
 					// 'tag'		=> 'function'	
 				]);
 
@@ -144,26 +158,25 @@ class functions extends willow\parse {
 			// h::log( $matches[0] );
 
 			// $field = trim( core\method::string_between( $value, '{{ ', '[[' ) );
-			// $function = str_replace( trim( tags::g( 'arg_o' )).$config_string.trim( tags::g( 'arg_c' )), '', $function );
-			// h::log( 'function: '.$function );
-			// $function = core\method::string_between( $function, trim( tags::g( 'fun_o' )), trim( tags::g( 'arg_o' )) );
-			$function_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$function );
-			// h::log( $function_explode );
-			self::$function = trim( $function_explode[0] );
+			// $willow = str_replace( trim( tags::g( 'arg_o' )).$config_string.trim( tags::g( 'arg_c' )), '', $willow );
+			// h::log( 'function: '.$willow );
+			// $willow = core\method::string_between( $willow, trim( tags::g( 'wil_o' )), trim( tags::g( 'arg_o' )) );
+			$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
+			// h::log( $willow_explode );
+			self::$willow = trim( $willow_explode[0] );
 			// $class = false;
 			// $method = false;
 
-			self::$hash = self::$function; // update hash to take simpler function name.. ##
+			self::$hash = self::$willow; // update hash to take simpler function name.. ##
 			// h::log( 'hash updated to: '.$hash );
-			// h::log( 'function: "'.self::$function.'"' );
+			// h::log( 'function: "'.self::$willow.'"' );
 
-			/*
 			// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
-			// this should create required markup at $position of self::$function in markup->template
+			// this should create required markup at $position of self::$willow in markup->template
 			if( isset( self::$flags_args['l'] ) ) {
 
 				$loop_arguments = willow\loops::set([
-					// 'swap' 		=> self::$function_match,
+					// 'swap' 		=> self::$willow_match,
 					'func_args'	=> self::$arguments, 
 					// 'position'	=> self::$position
 				]);
@@ -184,7 +197,6 @@ class functions extends willow\parse {
 				}
 
 			}
-			*/
 
 			// if arguments are not in an array, take the whole string passed as the arguments ##
 			if ( 
@@ -205,59 +217,57 @@ class functions extends willow\parse {
 		}
 
 		// function name might still contain opening and closing args brakets, which were empty - so remove them ##
-		self::$function = str_replace( [
+		self::$willow = str_replace( [
 				trim( willow\tags::g( 'arg_o' )), 
 				trim( willow\tags::g( 'arg_c' )) 
 			], '',
-			self::$function 
+			self::$willow 
 		);
 
 		// check if we are being passed a simple string function, or a class::method
-		if(
-			strpos( self::$function, '::' )
-		){
+		// if(
+			// strpos( self::$willow, '::' )
+		// ){
 
 			// global ##
-			/*
-			if( 
-				// core\method::starts_with( self::$function, '+' ) 
-				! isset( self::$flags['g'] )
-			) {
+			// if( 
+				// core\method::starts_with( self::$willow, '+' ) 
+				// ! isset( self::$flags['g'] )
+			// ) {
 
-				// h::log( 'CLASS::Function starts with "+": '.self::$function );
+				// h::log( 'CLASS::Function starts with "+": '.self::$willow );
 				// global functions are escaped with "+" ##
-				// self::$function = str_replace( '+', '', self::$function );
+				// self::$willow = str_replace( '+', '', self::$willow );
 
 				// update hash ##
-				// self::$hash = self::$function;
+				// self::$hash = self::$willow;
 
 				// scope tracker ##
 				// self::$is_global = true;
 
-				// h::log( 'Function now: '.self::$function );
+				// h::log( 'Function now: '.self::$willow );
 				// h::log( 'Hash now: '.self::$hash );
 
 			// Q/context ##
 			// } else {
 
-				self::$function = str_replace( '::', '__', self::$function );
+				self::$willow = str_replace( '::', '__', self::$willow );
 				
 				// function correction ##
 				// if( 'q' == self::$class ) self::$class = '\\q\\context';
 
 				// format to q::function ##
-				self::$function = '\\q\\willow\\context::'.self::$function;
+				self::$willow = '\\q\\willow\\context::'.self::$willow;
 
 				// update hash? ##
-				self::$hash = self::$function;
-				h::log( 'Function now: '.self::$function );
+				self::$hash = self::$willow;
+				// h::log( 'Function now: '.self::$willow );
 
-			}
-			*/
+			// }
 
 			// h::log( 'function is class::method' );
 			// break function into class::method parts ##
-			list( self::$class, self::$method ) = explode( '::', self::$function );
+			list( self::$class, self::$method ) = explode( '::', self::$willow );
 
 			// update hash ##
 			self::$hash = self::$method; 
@@ -295,59 +305,58 @@ class functions extends willow\parse {
 			}	
 
 			// make class__method an array ##
-			self::$function_array = [ self::$class, self::$method ];
+			self::$willow_array = [ self::$class, self::$method ];
 
+		/*
 		// simple function string ##
 		} else {
 
 			// clean up function name ##
-			self::$function = \q\core\method::sanitize( self::$function, 'php_function' );
+			self::$willow = \q\core\method::sanitize( self::$willow, 'php_function' );
 
-			/*
 			if( 
-				// core\method::starts_with( self::$function, '+' ) 
+				// core\method::starts_with( self::$willow, '+' ) 
 				isset( self::$flags['g'] )
 			) {
 
 				// try to locate function directly in global scope ##
-				if ( ! function_exists( self::$function ) ) {
+				if ( ! function_exists( self::$willow ) ) {
 
-					h::log( 'd:>Cannot find global function: '.self::$function );
+					h::log( 'd:>Cannot find global function: '.self::$willow );
 
 					return false;
 
 				}
 
 			} else {
-				*/
 
 				// try to locate function directly in global scope ##
-				if ( ! function_exists( self::$function ) ) {
+				if ( ! function_exists( self::$willow ) ) {
 					
-					h::log( 'd:>Cannot find function: '.self::$function );
+					h::log( 'd:>Cannot find Q scope function: '.self::$willow );
 
 					return false;
 
 				}
 
-			// }
+			}
 
 
 		}
+		*/
 
 		// test what we have ##
-		// h::log( 'd:>function: "'.$function.'"' );
+		// h::log( 'd:>function: "'.$willow.'"' );
 		self::$hash = self::$hash.'.'.rand();
 		// h::log( 'hash at end is...: '.self::$hash );
 
 		// h::log( self::$arguments );
 
 		// class and method set -- so call ## 
-		if ( self::$class && self::$method ) {
+		// if ( self::$class && self::$method ) {
 
-			/*
 			// define args for internal functions ##
-			if( ! isset( self::$flags['g'] ) ) { 
+			// if( ! isset( self::$flags['g'] ) ) { 
 
 				// pass hash to buffer ##
 				self::$arguments = \q\core\method::parse_args( 
@@ -385,11 +394,10 @@ class functions extends willow\parse {
 					);
 				}
 
-			}
+			// }
 
 			// collect current process state ##
 			render\args::collect();
-			*/
 
 			// h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
 
@@ -401,21 +409,19 @@ class functions extends willow\parse {
 
 				// global scope - bypass renderer ##
 				// if( isset( self::$flags['g'] ) ) {
-					self::$return = self::$class::{ self::$method }( self::$arguments );
-					self::$buffer[ self::$hash ] = self::$return;
 
-				/*
-				} else {
+					// self::$buffer[ self::$hash ] = self::$class::{ self::$method }( self::$arguments );
+
+				// } else {
 
 					render\fields::define([
 						self::$hash => 
 							// self::$class::{ self::$method }( [ 0 => self::$arguments ] )
 							call_user_func_array( 
-								self::$function_array, [ 0 => self::$arguments ] ) // 0 index is for static class args gatherer ##
+								self::$willow_array, [ 0 => self::$arguments ] ) // 0 index is for static class args gatherer ##
 					]);
 
-				}
-				*/
+				// }
 
 			} else { 
 
@@ -438,69 +444,51 @@ class functions extends willow\parse {
 
 				// global function returns can be pushed directly into buffer ##
 				// NOT sure, basically, this skips all internal processing for external functions, which sounds right ??
-				self::$return = self::$class::{ self::$method }();
-				self::$buffer[ self::$hash ] = self::$return;
+				self::$buffer[ self::$hash ] = self::$class::{ self::$method }();
 
 			}
 
 			// restore previous process state ##
-			// render\args::set();
+			render\args::set();
 
+		/*
 		} else {
 
-			// h::log( 'd:>Calling function: '.self::$function );
+			// h::log( 'd:>Calling function: '.self::$willow );
 
 			// pass args, if set ##
 			if( self::$arguments ){
 
-				h::log( 'passing args array to: '.self::$function );
-				h::log( self::$arguments );
-
-				self::$return = call_user_func( self::$function, self::$arguments );
+				// h::log( 'passing args array to: '.self::$willow );
+				// h::log( self::$arguments );
 
 				render\fields::define([
-					self::$hash => self::$return
+					self::$hash => 
+						// self::$willow( self::$arguments )
+						call_user_func( self::$willow, self::$arguments )
 				]);
 
 			} else {
 
-				// h::log( 'NOT passing args array to: '.self::$function );
+				// h::log( 'NOT passing args array to: '.self::$willow );
 
-				/*
-				render\fields::define([
-					self::$hash => call_user_func( self::$function )
-				]);
-				*/
+				// render\fields::define([
+					// self::$hash => call_user_func( self::$willow )
+				// ]);
 
 				// global functions skip internal processing and return their results directly to the buffer ##
-				self::$return = self::$function;
-				self::$buffer[ self::$hash ] = self::$return;
+				self::$buffer[ self::$hash ] = self::$willow;
 
 			}
 
 		}
+		*/
 
-		// replace tag with raw return value from function
-		if( 
-			isset( self::$flags['r'] ) 
-			&& isset( self::$return )
-		){
+		// finally -- add a variable "{{ $field }}" where the function tag block was in markup->template ##
+		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
+		// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
+		willow\markup::swap( self::$willow_match, $variable, 'willow', 'variable' ); // '{{ '.$field.' }}'
 
-			h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
-			$variable = self::$return;
-
-			willow\markup::swap( self::$function_match, $variable, 'function', 'string' ); // '{{ '.$field.' }}'
-
-		} else {
-
-			// finally -- add a variable "{{ $field }}" where the function tag block was in markup->template ##
-			$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
-			// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
-
-			willow\markup::swap( self::$function_match, $variable, 'function', 'variable' ); // '{{ '.$field.' }}'
-
-		}
-		
 		// clear slate ##
 		self::reset();
 
@@ -516,7 +504,7 @@ class functions extends willow\parse {
 	*/
     public static function prepare( $args = null ){
 
-		h::log( 't:>TODO -- functions are always global, either function() or class::method format and must return data directly' );
+		h::log( 't:>TODO -- willows are always internal, class::method format and registered.. so, remove all code that works against this.' );
 
 		// h::log( $args['key'] );
 
@@ -552,13 +540,13 @@ class functions extends willow\parse {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( willow\tags::g( 'fun_o' ) );
-		$close = trim( willow\tags::g( 'fun_c' ) );
+		$open = trim( willow\tags::g( 'wil_o' ) );
+		$close = trim( willow\tags::g( 'wil_c' ) );
 
 		// h::log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
 
 		$regex_find = \apply_filters( 
-			'q/willow/parse/functions/regex/find', 
+			'q/willow/parse/willows/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);
@@ -613,13 +601,13 @@ class functions extends willow\parse {
 
 	public static function cleanup( $args = null ){
 
-		$open = trim( willow\tags::g( 'fun_o' ) );
-		$close = trim( willow\tags::g( 'fun_c' ) );
+		$open = trim( willow\tags::g( 'wil_o' ) );
+		$close = trim( willow\tags::g( 'wil_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
-		 	'q/render/parse/function/cleanup/regex', 
+		 	'q/willow/parse/willows/cleanup/regex', 
 		 	"/$open.*?$close/ms" 
 		// 	// "/{{#.*?\/#}}/ms"
 		);
@@ -644,7 +632,7 @@ class functions extends willow\parse {
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' function tags removed...' );
+					h::log( $count .' willow tags removed...' );
 
 				}
 

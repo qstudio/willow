@@ -611,7 +611,7 @@ class config extends \q_willow {
 
 				// h::log( '$context: '.$context.' task: '.$task );
 				// h::log( $contents );
-				h::log( 't:>Todo, allow for logic in willow files, to assign other markup keys...' );
+				// h::log( 't:>Todo, allow for logic in willow files, to assign other markup keys...' );
 
 				// willow files are always treated as markup - assigned to "CONTEXT->TASK->markup" key ##
 				$array[ $context ][ $task ]['markup'] = $contents;

@@ -365,7 +365,7 @@ class markup extends willow\parse {
      * Set {{ variable }} in self:markup['template'] at defined position
      * 
      */
-    public static function swap( string $from = null, string $to = null, $from_type = 'function', $to_type = 'variable' ) { // , $markup = null
+    public static function swap( string $from = null, string $to = null, $from_type = 'willow', $to_type = 'variable' ) { // , $markup = null
 
         // sanity ##
         if (
@@ -384,6 +384,15 @@ class markup extends willow\parse {
 		
 		// validate to type ##
 		switch ( $to_type ) {
+
+			// allow for string replacements ##
+			case "string" :
+
+				// check if variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = ''; #'{{ ';
+				$needle_end = ''; #' }}';
+
+			break;
 
 			default :
 			case "variable" :
@@ -407,6 +416,14 @@ class markup extends willow\parse {
 				// check if variable is correctly formatted --> {{> STRING }} ##
 				$needle_start = tags::g( 'sec_o' ); #'{{ ';
 				$needle_end = tags::g( 'sec_c' ); #' }}';
+
+			break ;
+
+			case "willow" :
+
+				// check if variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = tags::g( 'wil_o' ); #'{{ ';
+				$needle_end = tags::g( 'wil_c' ); #' }}';
 
 			break ;
 
@@ -436,12 +453,24 @@ class markup extends willow\parse {
 			// log ##
 			h::log( self::$args['task'].'~>e:>tag: "'.$to.'" is not correctly formatted - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
+			// log ##
+			h::log( 'e:>tag: "'.$from.'" is not correctly formatted - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+
             return false;
 
 		}
 
 		// validate from type ##
 		switch ( $from_type ) {
+
+			// allow for string replacements ##
+			case "string" :
+
+				// check if variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = ''; #'{{ ';
+				$needle_end = ''; #' }}';
+
+			break;
 
 			default :
 			case "variable" :
@@ -476,6 +505,14 @@ class markup extends willow\parse {
 
 			break ;
 
+			case "willow" :
+
+				// check if variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = tags::g( 'wil_o' ); #'{{ ';
+				$needle_end = tags::g( 'wil_c' ); #' }}';
+
+			break ;
+					
 			case "function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
@@ -493,6 +530,9 @@ class markup extends willow\parse {
 
 			// log ##
 			h::log( self::$args['task'].'~>e:>tag: "'.$from.'" is not correctly formatted - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+
+			// log ##
+			h::log( 'e:>tag: "'.$from.'" is not correctly formatted - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
             return false;
 

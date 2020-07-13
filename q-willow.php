@@ -181,10 +181,16 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'end'		=> '{{/#}}' // end statement ##
 				],
 
-				// function -- also, an unescaped variable -- @todo --- ##
-				'function'		=> [
+				// placeholder -- i.e. willow tag 
+				'willow'		=> [
 					'open' 		=> '{{{ ', // open ## 
 					'close' 	=> ' }}}', // close ##
+				],
+
+				// function
+				'function'		=> [
+					'open' 		=> '<< ', // open ## 
+					'close' 	=> ' >>', // close ##
 				],
 
 				// partial ##

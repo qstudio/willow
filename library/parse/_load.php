@@ -57,6 +57,9 @@ class parse extends \q_willow {
 			// partials ##
 			'partials' => h::get( 'parse/partials.php', 'return', 'path' ),
 
+			// willows ##
+			'willows' => h::get( 'parse/willows.php', 'return', 'path' ),
+
 			// functions ##
 			'functions' => h::get( 'parse/functions.php', 'return', 'path' ),
 
@@ -84,8 +87,11 @@ class parse extends \q_willow {
 
 		// h::log( self::$args['markup'] );
 
-		// pre-format markup to extract functions ##
+		// pre-format markup to run any >> functions << ##
 		functions::prepare( $args );
+
+		// pre-format markup to extract daa from willows ##
+		willows::prepare( $args );
 
 		// pre-format markup to extract sections ##
 		sections::prepare( $args );
@@ -119,6 +125,9 @@ class parse extends \q_willow {
 
 		// clean up stray function tags ##
 		functions::cleanup();
+
+		// clean up stray willow tags ##
+		willows::cleanup();
 
 		// clean up stray section tags ##
 		sections::cleanup();
