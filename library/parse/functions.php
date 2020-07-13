@@ -66,14 +66,7 @@ class functions extends willow\parse {
 
 		// return entire function string, including tags for tag swap ##
 		self::$function_match = core\method::string_between( $match, $open, $close, true );
-
 		self::$function = core\method::string_between( $match, $open, $close );
-
-		// self::$position = $matches[0][$match][1]; // take from first array ##
-		// h::log( 'd:>position: '.$position );
-		// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
-
-		// h::log( $matches[0][$match][0] );
 
 		// h::log( '$function_match: '.$function_match );
 
@@ -102,13 +95,6 @@ class functions extends willow\parse {
 		// default args ##
 		self::$hash = self::$function; // set hash to entire function, in case this has no config and is not class_method format ##
 		// h::log( 'hash set to: '.$hash );
-
-		// $arguments = '';
-
-		// $class = false;
-		// $method = false;
-		// $function_array = false;
-		// $config_string = false;
 
 		// $config_string = core\method::string_between( $value, '[[', ']]' )
 		self::$config_string = core\method::string_between( 
@@ -157,35 +143,6 @@ class functions extends willow\parse {
 			// h::log( 'hash updated to: '.$hash );
 			// h::log( 'function: "'.self::$function.'"' );
 
-			/*
-			// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
-			// this should create required markup at $position of self::$function in markup->template
-			if( isset( self::$flags_args['l'] ) ) {
-
-				$loop_arguments = willow\loops::set([
-					// 'swap' 		=> self::$function_match,
-					'func_args'	=> self::$arguments, 
-					// 'position'	=> self::$position
-				]);
-
-				// if loops returned true, we can continue to next function, as this is done ##
-				if( $loop_arguments ){
-
-					// h::log( 'd:>loops returned true, we can continue to next function, as this is done' );
-					self::$arguments = $loop_arguments; // empty ##
-
-					// h::log( $loop_arguments );
-
-					// self::$arguments = \q\core\method::parse_args( 
-					// 	self::$arguments, 
-					// 	$loop_arguments
-					// );
-
-				}
-
-			}
-			*/
-
 			// if arguments are not in an array, take the whole string passed as the arguments ##
 			if ( 
 				! self::$arguments
@@ -216,44 +173,6 @@ class functions extends willow\parse {
 		if(
 			strpos( self::$function, '::' )
 		){
-
-			// global ##
-			/*
-			if( 
-				// core\method::starts_with( self::$function, '+' ) 
-				! isset( self::$flags['g'] )
-			) {
-
-				// h::log( 'CLASS::Function starts with "+": '.self::$function );
-				// global functions are escaped with "+" ##
-				// self::$function = str_replace( '+', '', self::$function );
-
-				// update hash ##
-				// self::$hash = self::$function;
-
-				// scope tracker ##
-				// self::$is_global = true;
-
-				// h::log( 'Function now: '.self::$function );
-				// h::log( 'Hash now: '.self::$hash );
-
-			// Q/context ##
-			// } else {
-
-				self::$function = str_replace( '::', '__', self::$function );
-				
-				// function correction ##
-				// if( 'q' == self::$class ) self::$class = '\\q\\context';
-
-				// format to q::function ##
-				self::$function = '\\q\\willow\\context::'.self::$function;
-
-				// update hash? ##
-				self::$hash = self::$function;
-				h::log( 'Function now: '.self::$function );
-
-			}
-			*/
 
 			// h::log( 'function is class::method' );
 			// break function into class::method parts ##
@@ -303,35 +222,14 @@ class functions extends willow\parse {
 			// clean up function name ##
 			self::$function = \q\core\method::sanitize( self::$function, 'php_function' );
 
-			/*
-			if( 
-				// core\method::starts_with( self::$function, '+' ) 
-				isset( self::$flags['g'] )
-			) {
-
-				// try to locate function directly in global scope ##
-				if ( ! function_exists( self::$function ) ) {
-
-					h::log( 'd:>Cannot find global function: '.self::$function );
-
-					return false;
-
-				}
-
-			} else {
-				*/
-
-				// try to locate function directly in global scope ##
-				if ( ! function_exists( self::$function ) ) {
+			// try to locate function directly in global scope ##
+			if ( ! function_exists( self::$function ) ) {
 					
-					h::log( 'd:>Cannot find function: '.self::$function );
+				h::log( 'd:>Cannot find function: '.self::$function );
 
-					return false;
+				return false;
 
-				}
-
-			// }
-
+			}
 
 		}
 
@@ -345,52 +243,6 @@ class functions extends willow\parse {
 		// class and method set -- so call ## 
 		if ( self::$class && self::$method ) {
 
-			/*
-			// define args for internal functions ##
-			if( ! isset( self::$flags['g'] ) ) { 
-
-				// pass hash to buffer ##
-				self::$arguments = \q\core\method::parse_args( 
-					self::$arguments, 
-					[ 
-						'config' => [ 
-							'hash' => self::$hash 
-						] 
-					]
-				);
-
-				// e = escape --- escape html ##
-				if( isset( self::$flags['e'] ) ) { // unless in the global scope ##
-
-					self::$arguments = \q\core\method::parse_args( 
-						self::$arguments, 
-						[ 
-							'config' => [ 
-								'escape' => true 
-							] 
-						]
-					);
-				}
-
-				// s = strip --- strip html / php tags ##
-				if( isset( self::$flags['s'] ) ) {
-
-					self::$arguments = \q\core\method::parse_args( 
-						self::$arguments, 
-						[ 
-							'config' => [ 
-								'strip' => true 
-							] 
-						]
-					);
-				}
-
-			}
-
-			// collect current process state ##
-			render\args::collect();
-			*/
-
 			// h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
 
 			// pass args, if set ##
@@ -399,52 +251,19 @@ class functions extends willow\parse {
 				// h::log( 'passing args array to: '.self::$class.'::'.self::$method );
 				// h::log( self::$arguments );
 
-				// global scope - bypass renderer ##
-				// if( isset( self::$flags['g'] ) ) {
-					self::$return = self::$class::{ self::$method }( self::$arguments );
-					self::$buffer[ self::$hash ] = self::$return;
-
-				/*
-				} else {
-
-					render\fields::define([
-						self::$hash => 
-							// self::$class::{ self::$method }( [ 0 => self::$arguments ] )
-							call_user_func_array( 
-								self::$function_array, [ 0 => self::$arguments ] ) // 0 index is for static class args gatherer ##
-					]);
-
-				}
-				*/
+				// global function returns are pushed directly into buffer ##
+				self::$return = self::$class::{ self::$method }( self::$arguments );
+				self::$buffer[ self::$hash ] = self::$return;
 
 			} else { 
 
 				// h::log( 'NOT passing args array to: '.self::$class.'::'.self::$method );
-				// $return = self::$class::{ self::$method }();
-				// if( is_array( $get ) ){
 
-					// h::log( 'is_array...' );
-					// h::log( $get );
-
-				// } else {
-
-					// h::log( 'NOT array: '.$get );
-
-				// } 
-
-				// render\fields::define([
-				// 	self::$hash => $return
-				// ]);
-
-				// global function returns can be pushed directly into buffer ##
-				// NOT sure, basically, this skips all internal processing for external functions, which sounds right ??
+				// global function returns are pushed directly into buffer ##
 				self::$return = self::$class::{ self::$method }();
 				self::$buffer[ self::$hash ] = self::$return;
 
 			}
-
-			// restore previous process state ##
-			// render\args::set();
 
 		} else {
 
@@ -466,12 +285,6 @@ class functions extends willow\parse {
 
 				// h::log( 'NOT passing args array to: '.self::$function );
 
-				/*
-				render\fields::define([
-					self::$hash => call_user_func( self::$function )
-				]);
-				*/
-
 				// global functions skip internal processing and return their results directly to the buffer ##
 				self::$return = self::$function;
 				self::$buffer[ self::$hash ] = self::$return;
@@ -483,13 +296,20 @@ class functions extends willow\parse {
 		// replace tag with raw return value from function
 		if( 
 			isset( self::$flags['r'] ) 
-			&& isset( self::$return )
 		){
 
-			h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
-			$variable = self::$return;
+			if ( ! isset( self::$return ) ) {
 
-			willow\markup::swap( self::$function_match, $variable, 'function', 'string' ); // '{{ '.$field.' }}'
+				h::log( 'e:>Function "'.self::$function_match.'" did not return a value' );
+
+				// return false;
+
+			}
+
+			h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
+			$string = self::$return;
+
+			willow\markup::swap( self::$function_match, $string, 'function', 'string' ); // '{{ '.$field.' }}'
 
 		} else {
 

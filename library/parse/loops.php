@@ -63,9 +63,7 @@ class loops extends willow\parse {
 		if(
 			is_null( $args )
 			|| ! is_array( $args )
-			// || ! isset( $args['swap'] )
 			|| ! isset( $args['func_args'] )
-			// || ! isset( $args['position'] )
 		){
 
 			h::log( 'e:>Error in passed arguments' );

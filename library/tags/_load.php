@@ -60,7 +60,6 @@ class tags extends \q_willow {
 			'sec_o' => self::$filtered_tags['section']['open'],
 			'sec_c' => self::$filtered_tags['section']['close'],
 			'sec_e' => self::$filtered_tags['section']['end'],
-			
 			'fun_o' => self::$filtered_tags['function']['open'],
 			'fun_c' => self::$filtered_tags['function']['close'],
 			'wil_o' => self::$filtered_tags['willow']['open'],
