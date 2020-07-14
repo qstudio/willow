@@ -407,6 +407,8 @@ class markup extends willow\parse {
 		// push back into main stored markup ##
 		self::$markup['template'] = $new_template;
 		
+		// h::log( self::$markup['template'] );
+
 		// h::log( 'd:>'.$markup );
 
 		// log ##

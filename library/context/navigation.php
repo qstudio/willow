@@ -19,8 +19,17 @@ class navigation extends willow\context {
     */
     public static function menu( $args = null ){
 
+		// $menu = get\navigation::menu( $args );
+
+		// h::log( $menu );
+
         // ##
-		return get\navigation::menu( $args );
+		// return get\navigation::menu( $args );
+
+		//  ##
+		render\fields::define([
+			'menu' => get\navigation::menu( $args )
+		]);
 
 	}
 	

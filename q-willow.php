@@ -184,13 +184,13 @@ if ( ! class_exists( 'q_willow' ) ) {
 				'loop'		=> [
 					'open' 		=> '{{@ ', // open ##
 					'close' 	=> ' }}', // close ##
-					'end'		=> '{{/@}}' // end statement ##
+					'end'		=> '{{/@}}' // end statement ## -- would be nice to remove this #### it's irregular ####
 				],
 
 				// function
 				'function'		=> [
-					'open' 		=> '<< ', // open ## 
-					'close' 	=> ' >>', // close ##
+					'open' 		=> '<% ', // open ## 
+					'close' 	=> ' %>', // close ##
 				],
 
 				// partial ##

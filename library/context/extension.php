@@ -4,7 +4,8 @@ namespace q\willow\context;
 
 use q\core\helper as h;
 use q\willow;
-use q\willow\context;
+use q\willow\render;
+// use q\willow\context;
 use q\extension as extensions;
 
 class extension extends willow\context {
@@ -18,7 +19,12 @@ class extension extends willow\context {
     public static function search( $args = null ){
 
         // ##
-		return extensions\search\render::module( $args );
+		// return extensions\search\render::ui( $args );
+
+		//  ##
+		render\fields::define([
+			'search' => extensions\search\render::ui( $args )
+		]);
 
 	}
 

@@ -69,7 +69,7 @@ class buffer extends \q_willow {
 			echo self::prepare( $string );
 
 			// Footer, basically just wp_footer() + closing body / html tags  ##
-			// context::ui__footer();
+			context::ui__footer();
 
 		}, 0);
 

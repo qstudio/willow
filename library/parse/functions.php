@@ -253,7 +253,7 @@ class functions extends willow\parse {
 
 				// global function returns are pushed directly into buffer ##
 				self::$return = self::$class::{ self::$method }( self::$arguments );
-				self::$buffer[ self::$hash ] = self::$return;
+				// self::$buffer[ self::$hash ] = self::$return;
 
 			} else { 
 
@@ -261,7 +261,7 @@ class functions extends willow\parse {
 
 				// global function returns are pushed directly into buffer ##
 				self::$return = self::$class::{ self::$method }();
-				self::$buffer[ self::$hash ] = self::$return;
+				// self::$buffer[ self::$hash ] = self::$return;
 
 			}
 
@@ -272,39 +272,88 @@ class functions extends willow\parse {
 			// pass args, if set ##
 			if( self::$arguments ){
 
-				h::log( 'passing args array to: '.self::$function );
-				h::log( self::$arguments );
+				// h::log( 'passing args array to: '.self::$function );
+				// h::log( self::$arguments );
 
 				self::$return = call_user_func( self::$function, self::$arguments );
 
-				render\fields::define([
-					self::$hash => self::$return
-				]);
+				// render\fields::define([
+				// 	self::$hash => self::$return
+				// ]);
+
+				// also, adding to buffer ## @TODO -- check this is ok ##
+				// self::$buffer[ self::$hash ] = self::$return;
 
 			} else {
 
-				h::log( 'NOT passing args array to: '.self::$function );
+				// h::log( 'NOT passing args array to: '.self::$function );
 
 				// global functions skip internal processing and return their results directly to the buffer ##
-				self::$return = self::$function;
-				self::$buffer[ self::$hash ] = self::$return;
+				self::$return = call_user_func( self::$function ); // NOTE that calling this function directly was failing silently ##
+				// self::$buffer[ self::$hash ] = self::$return;
 
 			}
 
 		}
+
+		if ( ! isset( self::$return ) ) {
+
+			h::log( 'd:>Function "'.self::$function_match.'" did not return a value, perhaps it is a hook or an action.' );
+
+			willow\markup::swap( self::$function_match, '', 'function', 'string' );
+
+			return false;
+
+		}
+
+		// we need to ensure $return is a string ##
+		// h::log( 't:>Validate that $string is a string or integer.. if not, reject ??' );
+		if(
+			is_array( self::$return )
+		){
+
+			h::log( 'Return is in an array format, trying to convert array values to string' );
+
+			self::$return = implode ( " ", array_values( self::$return ) );
+			self::$return = trim( self::$return );
+
+		}
+
+		if(
+			! is_string( self::$return )
+			&& ! is_integer( self::$return )
+		){
+
+			h::log( 'Return is not a string or integer, so rejecting' );
+
+			willow\markup::swap( self::$function_match, '', 'function', 'string' );
+
+			return false;
+
+		}
+
+		// h::log( 'd:>'.self::$function.' -> '.self::$return );
+
+		// add to buffer ##
+		self::$buffer[ self::$hash ] = self::$return;
+
+		// add fields - perhaps we do not always need this -- perhaps based on [r] flag ##
+		render\fields::define([
+			self::$hash => self::$return
+		]);
 
 		// replace tag with raw return value from function
 		if( 
 			isset( self::$flags['r'] ) 
 		){
 
-			if ( ! isset( self::$return ) ) {
+			// if ( ! isset( self::$return ) ) {
 
-				h::log( 'e:>Function "'.self::$function_match.'" did not return a value' );
+			// 	h::log( 'e:>Function "'.self::$function_match.'" did not return a value' );
 
-				// return false;
+			// 	return false;
 
-			}
+			// }
 
 			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
 			$string = self::$return;
@@ -443,6 +492,8 @@ class functions extends willow\parse {
 		 	"/$open.*?$close/ms" 
 		// 	// "/{{#.*?\/#}}/ms"
 		);
+
+		// h::log( 'e:>Running Function Cleanup' );
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
 
@@ -464,7 +515,7 @@ class functions extends willow\parse {
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' function tags removed...' );
+					h::log( 'e:>'.$count .' function tags removed...' );
 
 				}
 

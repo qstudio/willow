@@ -19,7 +19,8 @@ class willows extends willow\parse {
 		$class,
 		$method,
 		$willow_array,
-		$config_string
+		$config_string,
+		$return
 		// $position
 		// $is_global
 	
@@ -37,6 +38,7 @@ class willows extends willow\parse {
 		self::$method = false;
 		self::$willow_array = false;
 		self::$config_string = false;
+		self::$return = false;
 		// self::$position = false;
 		// self::$is_global = false;
 
@@ -301,7 +303,10 @@ class willows extends willow\parse {
 		// collect current process state ##
 		render\args::collect();
 
-		// h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
+		h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
+		
+		h::log( self::$args );
+		// if( isset( self::$buffer ) ) { h::log( 'd:>BUFFER IS SET for  '.self::$class.'::'.self::$method ); }
 
 		// pass args, if set ##
 		if( self::$arguments ){
@@ -309,35 +314,77 @@ class willows extends willow\parse {
 			// h::log( 'passing args array to: '.self::$class.'::'.self::$method );
 			// h::log( self::$arguments );
 
+			// h::log( self::$class::{ self::$method }( [ 0 => self::$arguments ] ) );
+
+			self::$return = call_user_func_array( 
+				self::$willow_array, [ 0 => self::$arguments ] ); // 0 index is for static class args gatherer ##
+
 			render\fields::define([
 				self::$hash => 
 					// self::$class::{ self::$method }( [ 0 => self::$arguments ] )
-					call_user_func_array( 
-						self::$willow_array, [ 0 => self::$arguments ] ) // 0 index is for static class args gatherer ##
+					self::$return
 			]);
 
 		} else { 
 
 			// h::log( 'NOT passing args array to: '.self::$class.'::'.self::$method );
-			$return = self::$class::{ self::$method }();
+			self::$return = call_user_func_array( self::$willow_array ); 
+			// self::$class::{ self::$method }();
 
+			// add results to fields under $hash key
 			render\fields::define([
-			 	self::$hash => $return
+			 	self::$hash => self::$return
 			]);
 
 			// global function returns can be pushed directly into buffer ##
 			// NOT sure, basically, this skips all internal processing for external functions, which sounds right ??
-			self::$buffer[ self::$hash ] = $return; #self::$class::{ self::$method }();
+			// self::$buffer[ self::$hash ] = self::$return; #self::$class::{ self::$method }();
 
 		}
 
 		// restore previous process state ##
 		render\args::set();
 
-		// finally -- add a variable "{{ $field }}" where the function tag block was in markup->template ##
-		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
-		// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
-		willow\markup::swap( self::$willow_match, $variable, 'willow', 'variable' ); // '{{ '.$field.' }}'
+		if ( 
+			! isset( self::$return ) 
+			|| ! self::$return
+		) {
+
+			h::log( 'd:>Willow "'.self::$willow_match.'" did not return a value.' );
+
+			// strip it from markup ##
+			willow\markup::swap( self::$willow_match, '', 'willow', 'string' );
+
+			// done ##
+			return false;
+
+		}
+
+		// replace tag with raw return value from function
+		if( 
+			isset( self::$flags['r'] ) 
+		){
+
+			// h::log( 'e:>Replacing willow: "'.self::$willow_match.'" with context function return value: '.self::$return );
+
+			// get string ##
+			$string = self::$return;
+
+			// h::log( $string );
+			// h::log( 'hash: '.self::$hash );
+			// h::log( self::$fields );
+
+			// replace in markup ##
+			willow\markup::swap( self::$willow_match, $string, 'willow', 'string' ); // '{{ '.$field.' }}'
+
+		} else {
+
+			// finally -- add a variable "{{ $field }}" where the function tag block was in markup->template ##
+			$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
+			// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
+			willow\markup::swap( self::$willow_match, $variable, 'willow', 'variable' ); // '{{ '.$field.' }}'
+
+		}
 
 		// clear slate ##
 		self::reset();

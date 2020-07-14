@@ -63,10 +63,44 @@ class ui extends willow\context {
 		}
 		\do_action( 'get_header', $name );
 
-		return theme\view\ui\header::render( $args );
+		// return theme\view\ui\header::render( $args );
 		// return render\fields::define([
 		// 	'header' => '' // hack.. nothing to pass here ##
 		// ]);
+
+		// include <html>, wp_head() until.. <body> ##
+		theme\view\ui\header::head( $args );
+			
+		// look for config ##
+		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		// $config = false;
+
+		// look for property "args->task" in config ##
+		if ( 
+			$config
+		){
+
+			h::log( 'Running from config' );
+
+			// check ##
+			// h::log( $config );
+			
+			// define "fields", passing returned data ##
+			render\fields::define(
+				$config
+			);
+
+		} else {
+
+			h::log( 'Running from method' );
+
+			// we can call the footer::render() method
+			theme\view\ui\header::render( $args );
+
+		}
+
+		// done ##
+		return true;
 
 	}
 
@@ -88,7 +122,7 @@ class ui extends willow\context {
 		\do_action( 'get_footer', $name );
 
 		// required hook ##
-		\wp_footer();
+		// \wp_footer();
 
 		// look for property "args->task" in config ##
 		if ( 
@@ -99,16 +133,19 @@ class ui extends willow\context {
 			// h::log( $config );
 			
 			// define "fields", passing returned data ##
-			return render\fields::define(
+			render\fields::define(
 				$config
 			);
 
 		} else {
 
 			// we can call the footer::render() method
-			return theme\view\ui\footer::render( $args );
+			theme\view\ui\footer::render( $args );
 
 		}
+
+		// done ##
+		return true;
 
 	}
 

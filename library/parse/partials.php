@@ -19,6 +19,8 @@ class partials extends willow\parse {
 	*/
 	public static function prepare( $args = null ){
 
+		h::log( 't:>Parse partials for variables - nothing else..' );
+
 		// h::log( $args['key'] );
 
 		// global ##
@@ -181,7 +183,7 @@ class partials extends willow\parse {
 				){
 
 					h::log( self::$args['task'].'~>e:>Error in partial_data: "'.$partial.'"' );
-					h::log( 'e:>Error in partial_data: "'.$partial.'"' );
+					h::log( 'e:>Error loading config for partial: "'.$partial.'"' );
 
 					continue;
 
