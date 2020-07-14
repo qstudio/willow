@@ -61,16 +61,15 @@ class buffer extends \q_willow {
 			}
 
 			// Header ##
+			h::log( 't:>@TODO... header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
 			context::ui__header();
 		
 			// Apply any filters to the final output
 			// echo \apply_filters( 'ob_output', $string );
 			echo self::prepare( $string );
 
-			h::log( 't:>@TODO... footer + header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
-
-			// Footer ##
-			context::ui__footer();
+			// Footer, basically just wp_footer() + closing body / html tags  ##
+			// context::ui__footer();
 
 		}, 0);
 

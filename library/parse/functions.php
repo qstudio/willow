@@ -234,7 +234,7 @@ class functions extends willow\parse {
 		}
 
 		// test what we have ##
-		// h::log( 'd:>function: "'.$function.'"' );
+		// h::log( 'd:>function: "'.self::$function.'"' );
 		self::$hash = self::$hash.'.'.rand();
 		// h::log( 'hash at end is...: '.self::$hash );
 
@@ -272,8 +272,8 @@ class functions extends willow\parse {
 			// pass args, if set ##
 			if( self::$arguments ){
 
-				// h::log( 'passing args array to: '.self::$function );
-				// h::log( self::$arguments );
+				h::log( 'passing args array to: '.self::$function );
+				h::log( self::$arguments );
 
 				self::$return = call_user_func( self::$function, self::$arguments );
 
@@ -283,7 +283,7 @@ class functions extends willow\parse {
 
 			} else {
 
-				// h::log( 'NOT passing args array to: '.self::$function );
+				h::log( 'NOT passing args array to: '.self::$function );
 
 				// global functions skip internal processing and return their results directly to the buffer ##
 				self::$return = self::$function;

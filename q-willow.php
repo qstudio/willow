@@ -156,6 +156,12 @@ if ( ! class_exists( 'q_willow' ) ) {
 			// based on Mustache, but not the same... https://github.com/bobthecow/mustache.php/wiki/Mustache-Tags
 			$tags = [
 
+				// willow tag 
+				'willow'		=> [
+					'open' 		=> '{{~ ', // open ## 
+					'close' 	=> ' ~}}', // close ##
+				],
+
 				// variables ##
 				'variable'		=> [
 					'open' 		=> '{{ ', // open ## 
@@ -176,15 +182,9 @@ if ( ! class_exists( 'q_willow' ) ) {
 				
 				// loops ##
 				'loop'		=> [
-					'open' 		=> '{{# ', // open ##
+					'open' 		=> '{{@ ', // open ##
 					'close' 	=> ' }}', // close ##
-					'end'		=> '{{/#}}' // end statement ##
-				],
-
-				// placeholder -- i.e. willow tag 
-				'willow'		=> [
-					'open' 		=> '{{{ ', // open ## 
-					'close' 	=> ' }}}', // close ##
+					'end'		=> '{{/@}}' // end statement ##
 				],
 
 				// function

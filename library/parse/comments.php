@@ -190,10 +190,9 @@ class comments extends willow\parse {
 				// self::$args[$hash] = \q\core\method::parse_args( $config, self::$args[$hash] );
 				// h::log( self::$args );
 
-				// default is an html comment - also indicated with flag 'h', if set ##
+				// html comments are rendered on the UI, so require to add a variable tag to the markup ##
 				if ( 
-					empty( self::$flags ) 
-					|| isset( self::$flags['h'] )
+					isset( self::$flags['h'] )
 				){
 
 					// so, we can add a new field value to $args array based on the field name - with the comment as value
@@ -205,14 +204,32 @@ class comments extends willow\parse {
 					$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
 					willow\markup::swap( self::$comment_match, $variable, 'comment', 'variable' ); // '{{ '.$field.' }}'
 
+					// update match string ##
+					// self::$comment_match = $variable;
+
 				}
 				
+				// PHP log ##
 				if ( 
 					isset( self::$flags['p'] )
 				){
 
 					// also, add a log entry ##
 					h::log( 'd:>'.self::$comment );
+
+				}
+
+				// default is a "silent" comment - also indicated with flag 's', if set ##
+				// this comment is not rendered in html or PHP and the willow tag is removed ##
+				// this goes last, as we might need the match reference for previous replacements ##
+				if ( 
+					empty( self::$flags ) 
+					|| isset( self::$flags['s'] )
+				){
+
+					// h::log( 'Silent comment, we need to remove the tag' );
+
+					self::$markup['template'] = willow\markup::remove( self::$comment_match, self::$markup['template'], 'comment' );
 
 				}
 

@@ -87,10 +87,28 @@ class ui extends willow\context {
 		}
 		\do_action( 'get_footer', $name );
 
-		return theme\view\ui\footer::render( $args );
-		// return render\fields::define([
-		// 	'footer' => '' // hack.. nothing to pass here ##
-		// ]);
+		// required hook ##
+		\wp_footer();
+
+		// look for property "args->task" in config ##
+		if ( 
+			$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ])
+		){
+
+			// check ##
+			// h::log( $config );
+			
+			// define "fields", passing returned data ##
+			return render\fields::define(
+				$config
+			);
+
+		} else {
+
+			// we can call the footer::render() method
+			return theme\view\ui\footer::render( $args );
+
+		}
 
 	}
 
