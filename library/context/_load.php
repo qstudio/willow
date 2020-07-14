@@ -207,14 +207,16 @@ class context extends \q_willow {
 			// call class::method to gather data ##
 			// $namespace::run( $args );
 
+			// h::log( 't:>REMOVE all render\fields::define calls - this should be handled here..' );
+
 			if (
 				$extend = context\extend::get( $args['context'], $args['task'] )
 			){
 
-				// 	h::log( 'load extended method: '.$extend['class'].'::'.$extend['method'] );
+				// h::log( 'run extended method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from extend ##
-				$extend['class']::{ $extend['method'] }( render::$args );
+				render\fields::define( $extend['class']::{ $extend['method'] }( render::$args ) );
 
 			} else if ( 
 				\method_exists( $namespace, $args['task'] ) 
@@ -266,7 +268,7 @@ class context extends \q_willow {
 	
 		   	}    
 		
-			// h::log( render::$fields );
+			// h::log( self::$fields );
 
 			// Prepare template markup ##
 			render\markup::prepare();

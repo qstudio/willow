@@ -84,7 +84,7 @@ class markup extends willow\render {
 
 		}
 		
-		// optional wrapper, html passed in markup->wrap with {{ content }} variable ##
+		// optional wrapper, html passed in markup->wrap with {{ template }} variable ##
 		$string = self::wrap([ 'string' => $string ]);
 
         // helper::log( $string );
@@ -535,10 +535,10 @@ class markup extends willow\render {
 			// h::log( 'found: '.$markup );
 
 			// wrap key value in found markup ##
-			// example: markup->wrap = '<h2 class="mt-5">{{ content }}</h2>' ##
+			// example: markup->wrap = '<h2 class="mt-5">{{ template }}</h2>' ##
 			$string = str_replace( 
-				// '{{ content }}', 
-				willow\tags::wrap([ 'open' => 'var_o', 'value' => 'content', 'close' => 'var_c' ]), 
+				// '{{ template }}', 
+				willow\tags::wrap([ 'open' => 'var_o', 'value' => 'template', 'close' => 'var_c' ]), 
 				$string, 
 				$markup 
 			);

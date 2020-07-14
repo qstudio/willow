@@ -60,16 +60,17 @@ class buffer extends \q_willow {
 				$string .= ob_get_clean();
 			}
 
-			// echo theme\view\ui\header::render();
-			// context::ui__header();
+			// Header ##
+			context::ui__header();
 		
 			// Apply any filters to the final output
 			// echo \apply_filters( 'ob_output', $string );
 			echo self::prepare( $string );
 
 			h::log( 't:>@TODO... footer + header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
-			// echo theme\view\ui\footer::render();
-			// context::ui__footer();
+
+			// Footer ##
+			context::ui__footer();
 
 		}, 0);
 

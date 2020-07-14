@@ -386,7 +386,35 @@ class format extends willow\render {
             // iterate count ##
             $count ++ ;
 
-        }
+		}
+		
+		// ALSO -- if array only has one row - add key.property fields ##
+		if ( 1 == count( $value ) ){
+
+			h::log( 'e:>'.$field.' is a Single ROW array..' );
+
+			// loop over array of arrays, work inner keys and values ## 
+			foreach( $value as $r1 => $v1 ) {
+
+				foreach( $v1 as $r2 => $v2 ) {
+	
+					// h::log( 'Working "'.$r2.'" Key value: "'.$v2.'"' );
+	
+					// create a new, named and numbered field based on field__COUNT.row_key ##
+					// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
+					render\fields::set( $field.'.'.$r2, $v2 );
+	
+				}
+	
+				// format ran ok ##
+				// render\markup::set( $field, $count );
+	
+				// iterate count ##
+				// $count ++ ;
+	
+			}
+
+		}
 
         return true;
 

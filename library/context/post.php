@@ -61,7 +61,7 @@ class post extends willow\context {
 		render\fields::define([
 			'total' 		=> '0', // set to zero string value ##
 			'pagination' 	=> null, // empty field.. ##
-			'results' 		=> self::$markup['empty'] // replace results with empty markup ##
+			'results' 		=> self::$markup['default'] // replace results with empty markup ##
 		]);
 
         // pass to get_posts -- and validate that we get an array back ##

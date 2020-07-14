@@ -128,7 +128,7 @@ class fields extends willow\render {
 		- a second time from the buffer[$hash] as it iterates over keys from {{ variables }} in the markup 
 
 	WHY DO BAD REQUESTS RETURN THE BUFFER ID??
-		- they don't, that is the second buffer hit looking for data -- which one do we need to return "error" to?
+		- they don't, that is the second buffer hit looking for data ##
 	*/
 	public static function define( $args = null ){
 
@@ -136,17 +136,64 @@ class fields extends willow\render {
 
 		// sanity ##
 		if (
-			is_null( $args )
-			// || ! is_array( $array )
+			! is_null( $args )
+			&& is_array( $args )
+			&& array_filter( $args ) // not an empty array ##
+			&& isset( self::$args )
+			&& is_array( self::$args )
+			&& isset( self::$args['context'] )
 		){
 
-			h::log( 'e:>Error in passed $args by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]).'"' );
+			// we cannot set default fields on buffer runs ##
+			if( 'buffer' == self::$args['context'] ){
+
+				// h::log( 'NOT on buffer..' );
+
+			} else {
+
+				// collect entire array for object.X.property access ##
+				// h::log( $args );
+
+				reset( $args );
+				$first_key = key( $args );
+				self::$fields[$first_key] = $args[$first_key];
+				// h::log( $first_key );
+				// h::log( self::$fields );
+
+			}
+
+		} else {
+
+			// h::log( 'e:>Error in $args ( empty or not an array ) by "'.\q\core\method::backtrace([ 'level' => 5, 'return' => 'class_function' ]).'"' );
 			// h::log( $args );
 
-			return false;
+			// return false;
+			// $args = [];
+
+			if(
+				isset( self::$args['config']['default'] )
+				&& is_array( self::$args['config']['default'] )
+			){
+
+				// h::log( 'config->default is defined' );
+				// h::log( self::$args['config']['default'] );
+
+				// define args are config->default ##
+				$args = self::$args['config']['default'];
+
+			} else {
+
+				// h::log( 'config->default NOT defined, so ending here.' );
+
+				// nothing cooking ##
+				return false;
+
+			}
 
 		}
 
+		// @TODO -- if not array - reject ##
+		/*
 		if( 
 			is_array( $args )
 			&& ! array_filter( $args ) 
@@ -160,7 +207,7 @@ class fields extends willow\render {
 			// reset( $args );
 			// $first_key = key( $args );
 
-			h::log( 'args is an empty array and config->default is defined' );
+			h::log( 'args is an empty array and config->default is defined: '.self::$args['context'].'::'.self::$args['task']);
 			// $args = [];
 			// $args[$first_key] = self::$args['config']['empty'];
 			// h::log( $args );
@@ -196,6 +243,7 @@ class fields extends willow\render {
 		// self::$markup['template'] = 'EMPTY';
 
 		// assign string to key 'value' ##
+		/*
 		if ( is_string( $args ) ){
 
 			h::log( 'e:>Calling fields/define with a string value is __deprectated..' );
@@ -204,9 +252,10 @@ class fields extends willow\render {
 			// return self::$fields['value'] = $args;
 
 		}
+		*/
 
 		// h::log( $args );
-		// else, loop over array ##
+		// loop over array - saving key + value to self::$fields ##
 		foreach( $args as $key => $value ) {
 
 			// h::log( 'd:>add field key: '.$key );
@@ -243,11 +292,14 @@ class fields extends willow\render {
 
 		}
 		
+		/*
 		$args = [
-			'sf.sdfsd' => 'sfsdf' 
+			'sf.sdfsd' => 'sfsdf' # ??
 		];
+		*/
 
-        // h::log( 'Adding field: '.$field );
+		// h::log( 'Adding field: '.$field );
+		// h::log( $value );
 
         // add field to array ##
         self::$fields[$field] = $value;
