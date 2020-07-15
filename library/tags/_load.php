@@ -55,26 +55,29 @@ class tags extends \q_willow {
 
 		// build map ##
 		$tag_map = [
-			'var_o' => self::$filtered_tags['variable']['open'],
-			'var_c' => self::$filtered_tags['variable']['close'],
-			'loo_o' => self::$filtered_tags['loop']['open'],
-			'loo_c' => self::$filtered_tags['loop']['close'],
-			'loo_e' => self::$filtered_tags['loop']['end'],
-			'fun_o' => self::$filtered_tags['function']['open'],
-			'fun_c' => self::$filtered_tags['function']['close'],
 			'wil_o' => self::$filtered_tags['willow']['open'],
 			'wil_c' => self::$filtered_tags['willow']['close'],
+
+			'var_o' => self::$filtered_tags['variable']['open'],
+			'var_c' => self::$filtered_tags['variable']['close'],
+			
+			'loo_o' => self::$filtered_tags['loop']['open'],
+			'loo_c' => self::$filtered_tags['loop']['close'],
+			
+			'fun_o' => self::$filtered_tags['function']['open'],
+			'fun_c' => self::$filtered_tags['function']['close'],
+			
 			'arg_o' => self::$filtered_tags['argument']['open'],
 			'arg_c' => self::$filtered_tags['argument']['close'],
+			
 			'par_o' => self::$filtered_tags['partial']['open'],
 			'par_c' => self::$filtered_tags['partial']['close'],
+			
 			'com_o' => self::$filtered_tags['comment']['open'],
 			'com_c' => self::$filtered_tags['comment']['close'],
+			
 			'fla_o' => self::$filtered_tags['flag']['open'],
 			'fla_c' => self::$filtered_tags['flag']['close'],
-			// 'inv_o' => self::$filtered_tags['inversion']['open'],
-			// 'inv_c' => self::$filtered_tags['inversion']['close'],
-			// 'inv_e' => self::$filtered_tags['inversion']['end'],
 		];
 
 		// full back, in case not requested via shortcode ##

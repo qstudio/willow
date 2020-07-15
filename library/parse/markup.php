@@ -198,15 +198,6 @@ class markup extends willow\parse {
 		// validate to type ##
 		switch ( $to_type ) {
 
-			// allow for string replacements ##
-			case "string" :
-
-				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = ''; 
-				$needle_end = ''; 
-
-			break;
-
 			default :
 			case "variable" :
 
@@ -216,11 +207,20 @@ class markup extends willow\parse {
 
 			break ;
 
+			// allow for string replacements ##
+			case "string" :
+
+				// check if variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = ''; 
+				$needle_end = ''; 
+
+			break;
+
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
 				$needle_start = tags::g( 'par_o' ); #'{{> ';
-				$needle_end = tags::g( 'par_c' ); #' }}';
+				$needle_end = tags::g( 'par_c' ); #' <}}';
 
 			break ;
 
@@ -228,7 +228,7 @@ class markup extends willow\parse {
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
 				$needle_start = tags::g( 'loo_o' ); #'{{@ ';
-				$needle_end = tags::g( 'loo_c' ); #' }}';
+				$needle_end = tags::g( 'loo_c' ); #' /@}}';
 
 			break ;
 
@@ -236,15 +236,15 @@ class markup extends willow\parse {
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
 				$needle_start = tags::g( 'wil_o' ); #'{{~ ';
-				$needle_end = tags::g( 'wil_c' ); #' }}';
+				$needle_end = tags::g( 'wil_c' ); #' ~}}';
 
 			break ;
 
 			case "function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'fun_o' ); #'<< ';
-				$needle_end = tags::g( 'fun_c' ); #' >>';
+				$needle_start = tags::g( 'fun_o' ); #'<% ';
+				$needle_end = tags::g( 'fun_c' ); #' %>';
 
 			break ;
 
@@ -252,7 +252,7 @@ class markup extends willow\parse {
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
 				$needle_start = tags::g( 'com_o' ); #'{{! ';
-				$needle_end = tags::g( 'com_c' ); #' }}';
+				$needle_end = tags::g( 'com_c' ); #' !}}';
 
 			break ;
 
@@ -305,6 +305,15 @@ class markup extends willow\parse {
 		// validate from type ##
 		switch ( $from_type ) {
 
+			default :
+			case "willow" :
+
+				// check if variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = tags::g( 'wil_o' ); #'{{~ ';
+				$needle_end = tags::g( 'wil_c' ); #' ~}}';
+
+			break ;
+
 			// allow for string replacements ##
 			case "string" :
 
@@ -314,7 +323,6 @@ class markup extends willow\parse {
 
 			break;
 
-			default :
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
@@ -347,14 +355,6 @@ class markup extends willow\parse {
 
 			break ;
 
-			case "willow" :
-
-				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'wil_o' ); #'{{~ ';
-				$needle_end = tags::g( 'wil_c' ); #' ~}}';
-
-			break ;
-					
 			case "function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##

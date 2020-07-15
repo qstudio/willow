@@ -98,6 +98,8 @@ class variables extends willow\parse {
 		h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
 		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
 
+		h::log( 't:>VARIABLE flags, such as escape or raw...' );
+
 		// remove any leftover variables in string ##
 		foreach( $variables as $key => $value ) {
 

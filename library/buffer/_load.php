@@ -61,7 +61,7 @@ class buffer extends \q_willow {
 			}
 
 			// Header ##
-			h::log( 't:>@TODO... header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
+			// h::log( 't:>@TODO... header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
 			context::ui__header();
 		
 			// Apply any filters to the final output

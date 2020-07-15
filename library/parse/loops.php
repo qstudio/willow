@@ -10,6 +10,179 @@ use q\render; // TODO ##
 
 class loops extends willow\parse {
 
+
+	private static 
+
+		$hash, 
+		$loop,
+		$loop_match, // full string matched ##
+		$loop_field,
+		$loop_markup,
+		// $arguments,
+		$config_string,
+		$return,
+		$position
+	
+	;
+
+
+	private static function reset(){
+
+		self::$hash = false; 
+		// self::$flags = false;
+		// self::$flags_args = false;
+		self::$loop_field = false;
+		self::$loop_markup = false;
+		self::$loop = false;
+		// self::$arguments = false;
+		// self::$class = false;
+		// self::$method = false;
+		// self::$willow_array = false;
+		self::$config_string = false;
+		self::$return = false;
+		self::$position = false;
+		// self::$is_global = false;
+
+	}
+
+
+	/**
+	 * Format single loop
+	 * 
+	 * @since 4.1.0
+	*/
+	public static function format( $match = null, $position = null ){
+
+		// sanity ##
+		if(
+			is_null( $match )
+			|| is_null( $position )
+		){
+
+			h::log( 'e:>No function match or postion passed to format method' );
+
+			return false;
+
+		}
+
+		// get all sections, add markup to $markup->$field ##
+		// note, we trim() white space off tags, as this is handled by the regex ##
+		$loop_open = trim( willow\tags::g( 'loo_o' ) );
+		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
+
+		// arguments ##
+		$arg_open = trim( willow\tags::g( 'arg_o' ) );
+		$arg_close = trim( willow\tags::g( 'arg_c' ) );
+
+		// clear slate ##
+		self::reset();
+
+		// return entire loop string, including tags for tag swap ##
+		self::$loop_match = core\method::string_between( $match, $loop_open, $loop_close, true );
+		self::$loop = core\method::string_between( $match, $loop_open, $loop_close );
+		self::$position = $position;
+
+		// get field + markup .... HMM ##, this will not work with embedded args
+		self::$loop_field = core\method::string_between( $match, $arg_open, $arg_close );
+		self::$loop_markup = core\method::string_between( $match, $arg_close, $loop_close );
+
+		// sanity ##
+		if ( 
+			! isset( self::$loop_field ) 
+			|| ! isset( self::$loop_markup ) 
+		){
+
+			h::log( 'e:>Error in returned match key or value' );
+
+			return false; 
+
+		}
+
+		// clean up ##
+		self::$loop_field = trim(self::$loop_field);
+		self::$loop_markup = trim(self::$loop_markup);
+
+		// $hash = 'section__'.\mt_rand();
+		self::$hash = self::$loop_field;
+		// $hash = $args['context'].'__'.$args['task'].'__'.rand();
+
+		// test what we have ##
+		// h::log( 'd:>field: "'.self::$loop_field.'"' );
+		// h::log( 'd:>markup: "'.self::$loop_markup.'"' );
+		// h::log( 'd:>hash: "'.self::$hash.'"' );
+
+		// so, we can add a new field value to $args array based on the field name - with the markup as value
+		// self::$args[$field] = $markup;
+		self::$markup[self::$hash] = self::$loop_markup;
+
+		// BREAK -- we might need to check for isset ( markup->field ) ++ markup-> template if not create -- template +
+
+		// force hash ?? ##
+		// self::$args['config']['hash'] = $hash;
+
+		// h::log( 't:>INVERSION - No need for a whole new tag, just pass an "inversion/default" string in case of no results - perhaps defined with the class->method or picked up via a flag "*value"' );
+
+		// finally -- add a variable "{{ $loop_field }}" before this block at $position to markup->template ##
+		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
+		willow\markup::set( $variable, self::$position, 'variable' ); // '{{ '.$field.' }}'
+
+		// clear slate ##
+		self::reset();
+
+	}
+
+
+
+	/**
+	 * Check if passed string is a loop 
+	*/
+	public static function is( $string = null ){
+
+		// @todo - sanity ##
+		if(
+			is_null( $string )
+		){
+
+			h::log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		if(
+			strpos( $string, trim( willow\tags::g( 'loo_o' )) ) !== false
+			&& strrpos( $string, trim( willow\tags::g( 'loo_c' )) ) !== false
+		){
+
+			/*
+			$loo_o = strpos( $string, trim( willow\tags::g( 'loo_o' )) );
+			$loo_c = strrpos( $string, trim( willow\tags::g( 'loo_c' )) );
+
+			h::log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+
+			// get string between opening and closing args ##
+			$return_string = substr( 
+				$string, 
+				( $loo_o + strlen( trim( willow\tags::g( 'loo_o' ) ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( willow\tags::g( 'loo_c' ) ) ) ) ); 
+
+			h::log( 'e:>$string: "'.$return_string .'"' );
+
+			return $return_string;
+			*/
+
+			return true;
+
+		}
+
+		// no ##
+		return false;
+
+	}
+
+
+
 	/**
 	 * Scan for sections in markup and convert to variables and $fields
 	 * 
@@ -51,33 +224,24 @@ class loops extends willow\parse {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( willow\tags::g( 'loo_o' ) );
-		$close = trim( willow\tags::g( 'loo_c' ) );
-		$end = trim( willow\tags::g( 'loo_e' ) );
-		$end_preg = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_e' ) ) ) );
-		// $end = '{{\/#}}';
+		$loop_open = trim( willow\tags::g( 'loo_o' ) );
+		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
-		// h::log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
-		/*
-		{{{ ui::hello
-			{{# data }}
-				<div class="col-12">You are {{ who }} and the time is {{ time }}</div>
-			{{/#}}
-		}}}
-		*/
+		// arguments ##
+		$arg_open = trim( willow\tags::g( 'arg_o' ) );
+		$arg_close = trim( willow\tags::g( 'arg_c' ) );
 
 		$regex_find = \apply_filters( 
 			'q/render/markup/loop/regex/find', 
-			"/$open\s+(.*?)\s+$end_preg/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
+			"/$loop_open\s+(.*?)\s+$loop_close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);
 
-		// h::log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
 		if ( 
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
 
-			// h::debug( $matches[1] );
+			// h::log( $matches );
 
 			// sanity ##
 			if ( 
@@ -108,14 +272,27 @@ class loops extends willow\parse {
 
 				}
 
-				// h::log( 'd:>Searching for section field and markup...' );
+				// get position from first ( whole string ) match ##
+				$position = $matches[0][$match][1]; 
 
-				$position = $matches[0][$match][1]; // take from first array ##
+				// take match ##
+				$match = $matches[0][$match][0];
+
+				
 				// h::log( 'd:>position: '.$position );
 				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
-				$field = core\method::string_between( $matches[0][$match][0], $open, $close );
-				$markup = core\method::string_between( $matches[0][$match][0], $close, $end );
+				// pass match to function handler ##
+				self::format( $match, $position );
+
+				// h::log( 'd:>Searching for loop field and markup in: '.$matches[0][$match][0] );
+
+				// $position = $matches[0][$match][1]; // take from first array ##
+				// h::log( 'd:>position: '.$position );
+				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
+				/*
+				$field = core\method::string_between( $matches[0][$match][0], $arg_open, $arg_close );
+				$markup = core\method::string_between( $matches[0][$match][0], $arg_close, $loop_close );
 
 				// sanity ##
 				if ( 
@@ -154,6 +331,7 @@ class loops extends willow\parse {
 				// finally -- add a variable "{{ $field }}" before this block at $position to markup->template ##
 				$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);
 				willow\markup::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
+				*/
 
 			}
 
@@ -168,13 +346,13 @@ class loops extends willow\parse {
 		$open = trim( willow\tags::g( 'loo_o' ) );
 		// $close = trim( tags::g( 'sec_c' ) );
 		// $end = trim( tags::g( 'sec_e' ) );
-		$end_preg = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_e' ) ) ) );
+		$close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
 		// strip all section blocks, we don't need them now ##
 		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 			'q/willow/parse/loops/regex/remove', 
-			"/$open.*?$end_preg/ms" 
+			"/$open.*?$close/ms" 
 			// "/{{#.*?\/#}}/ms"
 		);
 		// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 

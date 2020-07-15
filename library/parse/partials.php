@@ -19,7 +19,7 @@ class partials extends willow\parse {
 	*/
 	public static function prepare( $args = null ){
 
-		h::log( 't:>Parse partials for variables - nothing else..' );
+		h::log( 't:>Parse partials for variables - nothing else.. WHY.. does it have access to all fields data?? CHECK..' );
 
 		// h::log( $args['key'] );
 
@@ -248,6 +248,9 @@ class partials extends willow\parse {
 					// break ;
 
 				// }
+
+				// h::log( 'e:>HELLO' );
+				// h::log( self::$buffer );
 
 				// store ##
 				self::$partials[$hash] = $partial_data['markup'];

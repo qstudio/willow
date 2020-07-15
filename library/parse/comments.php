@@ -202,7 +202,7 @@ class comments extends willow\parse {
 
 					// add a variable "{{ $field }}" before this comment block to markup->template ##
 					$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
-					willow\markup::swap( self::$comment_match, $variable, 'comment', 'variable' ); // '{{ '.$field.' }}'
+					willow\markup::swap( self::$comment_match, $variable, 'comment', 'variable' ); 
 
 					// update match string ##
 					// self::$comment_match = $variable;
@@ -216,6 +216,9 @@ class comments extends willow\parse {
 
 					// also, add a log entry ##
 					h::log( 'd:>'.self::$comment );
+
+					// remove from markup ##
+					willow\markup::swap( self::$comment_match, '', 'comment', 'string' ); 
 
 				}
 
@@ -293,7 +296,7 @@ class comments extends willow\parse {
 		// strip all section blocks, we don't need them now ##
 		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
-			'q/render/parse/comment/cleanup/regex', 
+			'q/willow/parse/comments/cleanup/regex', 
 			"/$open.*?$close/ms" 
 			// "/{{#.*?\/#}}/ms"
 		);

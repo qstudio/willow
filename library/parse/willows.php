@@ -84,7 +84,7 @@ class willows extends willow\parse {
 		// clean up ##
 		self::$willow = trim( self::$willow );
 
-		// h::log( 'function: '.self::$willow );
+		// h::log( 'willow: '.self::$willow ); 
 
 		// sanity ##
 		if ( 
@@ -113,11 +113,33 @@ class willows extends willow\parse {
 		// h::log( 'hash set to: '.$hash );
 
 		// $config_string = core\method::string_between( $value, '[[', ']]' )
+		/*
 		self::$config_string = core\method::string_between( 
 			self::$willow, 
 			trim( willow\tags::g( 'arg_o' )), 
 			trim( willow\tags::g( 'arg_c' )) 
 		);
+		*/
+
+		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		if(
+			strpos( self::$willow, trim( willow\tags::g( 'arg_o' )) ) !== false
+			&& strrpos( self::$willow, trim( willow\tags::g( 'arg_c' )) ) !== false
+		){
+
+			$arg_o = strpos( self::$willow, trim( willow\tags::g( 'arg_o' )) );
+			$arg_c = strrpos( self::$willow, trim( willow\tags::g( 'arg_c' )) );
+
+			// h::log( 'e:>Found opening arg_o @ "'.$arg_o.'" and closing arg_c @ "'.$arg_c.'"'  ); 
+
+			// get string between opening and closing args ##
+			self::$config_string = substr( 
+				self::$willow, 
+				( $arg_o + strlen( trim( willow\tags::g( 'arg_o' ) ) ) ), 
+				( $arg_c - $arg_o - strlen( trim( willow\tags::g( 'arg_c' ) ) ) ) ); 
+			// h::log( 'e:>$string: "'.self::$config_string .'"' );
+
+		}
 
 		// go with it ##
 		if ( 
@@ -126,53 +148,86 @@ class willows extends willow\parse {
 
 			// sub functions - functions passed in arguments string ##
 
-			// clean up string -- remove all white space ##
-			// $string = trim( $string );
-			// $config_string = str_replace( ' ', '', $config_string );
-			// h::log( 'd:> '.self::$config_string );
+			// check for loops ##
+			if( loops::is( self::$config_string ) ){
 
-			// pass to argument handler ##
-			self::$arguments = 
-				willow\arguments::decode([ 
-					'string' 	=> self::$config_string, 
-					// 'field' 	=> $field_name, 
-					// 'value' 	=> self::$willow,
-					// 'tag'		=> 'function'	
-				]);
+				/*
+				// get position ##
+				if ( 
+					strpos( self::$markup['template'], self::$config_string ) !== false 
+				){
 
-			// h::log( self::$arguments );
-			// h::log( self::$flags_args );
-			// h::log( 'function: '.$willow );
-			// $willow = core\method::string_between( $willow, trim( tags::g( 'wil_o' )), trim( tags::g( 'arg_o' )) );
-			$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
-			// h::log( $willow_explode );
-			self::$willow = trim( $willow_explode[0] );
-			// $class = false;
-			// $method = false;
+					$position = strpos( self::$markup['template'], self::$config_string );
 
-			self::$hash = self::$willow; // update hash to take simpler function name.. ##
-			// h::log( 'hash updated to: '.$hash );
-			// h::log( 'function: "'.self::$willow.'"' );
+					h::log( 'e:>IS a loop @ position: '.$position );
 
-			// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
-			// this should create required markup at $position of self::$willow in markup->template
-			/*
-			if( isset( self::$flags_args['l'] ) ) {
-
-				$loop_arguments = willow\loops::set([
-					'func_args'	=> self::$arguments, 
-				]);
-
-				// if loops returned true, we can continue to next function, as this is done ##
-				if( $loop_arguments ){
-
-					// h::log( 'd:>loops returned true, we can continue to next function, as this is done' );
-					self::$arguments = $loop_arguments; // empty ##
+					// call loops ##
+					loops::format( self::$config_string, $position );
 
 				}
+				*/
 
+				// @TODO -- check for template... ?? perhaps a bad idea as it might be in the actual markup ##
+
+				// pass markup ##
+				self::$arguments = [ 'markup' => self::$config_string ];
+
+				$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
+				// h::log( $willow_explode );
+				self::$willow = trim( $willow_explode[0] );
+
+				self::$hash = self::$willow; // update hash to take simpler function name.. ##
+
+			} else {
+
+				// clean up string -- remove all white space ##
+				// $string = trim( $string );
+				// $config_string = str_replace( ' ', '', $config_string );
+				// h::log( 'd:> config_string: "'.self::$config_string ); 
+
+				// pass to argument handler ##
+				self::$arguments = 
+					willow\arguments::decode([ 
+						'string' 	=> self::$config_string, 
+						// 'field' 	=> $field_name, 
+						// 'value' 	=> self::$willow,
+						// 'tag'		=> 'function'	
+					]);
+
+				// h::log( self::$arguments );
+				// h::log( self::$flags_args );
+				// h::log( 'function: '.$willow );
+				// $willow = core\method::string_between( $willow, trim( tags::g( 'wil_o' )), trim( tags::g( 'arg_o' )) );
+				$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
+				// h::log( $willow_explode );
+				self::$willow = trim( $willow_explode[0] );
+				// $class = false;
+				// $method = false;
+
+				self::$hash = self::$willow; // update hash to take simpler function name.. ##
+				// h::log( 'hash updated to: '.$hash );
+				// h::log( 'function: "'.self::$willow.'"' );
+
+				// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
+				// this should create required markup at $position of self::$willow in markup->template
+				/*
+				if( isset( self::$flags_args['l'] ) ) {
+
+					$loop_arguments = willow\loops::set([
+						'func_args'	=> self::$arguments, 
+					]);
+
+					// if loops returned true, we can continue to next function, as this is done ##
+					if( $loop_arguments ){
+
+						// h::log( 'd:>loops returned true, we can continue to next function, as this is done' );
+						self::$arguments = $loop_arguments; // empty ##
+
+					}
+
+				}
+				*/
 			}
-			*/
 
 			// if arguments are not in an array, take the whole string passed as the arguments ##
 			if ( 
@@ -303,9 +358,9 @@ class willows extends willow\parse {
 		// collect current process state ##
 		render\args::collect();
 
-		h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
+		// h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
 		
-		h::log( self::$args );
+		// h::log( self::$args );
 		// if( isset( self::$buffer ) ) { h::log( 'd:>BUFFER IS SET for  '.self::$class.'::'.self::$method ); }
 
 		// pass args, if set ##
@@ -359,6 +414,8 @@ class willows extends willow\parse {
 			return false;
 
 		}
+
+		h::log( 't:>BAD code smell about that [r] flag.. push on and see if it gets worse..' );
 
 		// replace tag with raw return value from function
 		if( 

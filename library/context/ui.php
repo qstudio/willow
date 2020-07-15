@@ -80,7 +80,7 @@ class ui extends willow\context {
 			$config
 		){
 
-			h::log( 'Running from config' );
+			// h::log( 'Running from config' );
 
 			// check ##
 			// h::log( $config );
@@ -92,7 +92,7 @@ class ui extends willow\context {
 
 		} else {
 
-			h::log( 'Running from method' );
+			// h::log( 'Running from method' );
 
 			// we can call the footer::render() method
 			theme\view\ui\header::render( $args );

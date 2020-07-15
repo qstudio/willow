@@ -158,8 +158,8 @@ if ( ! class_exists( 'q_willow' ) ) {
 
 				// willow tag 
 				'willow'		=> [
-					'open' 		=> '{{~ ', // open ## 
-					'close' 	=> ' ~}}', // close ##
+					'open' 		=> '{~ ', // open ## 
+					'close' 	=> ' ~}', // close ##
 				],
 
 				// variables ##
@@ -168,41 +168,40 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'close' 	=> ' }}', // close ##
 				],
 
-				// parameters / arguments ##
+				// context ---> parameters / arguments // config / data settings ##
 				'argument'		=> [
-					'open' 		=> '( ', // open ## 
-					'close' 	=> ' )', // close ##
+					'open' 		=> '{+ ', // open ## 
+					'close' 	=> ' +}', // close ##
 				],
 
 				// flags ##
-				'flag'		=> [
+				'flag'			=> [
 					'open' 		=> '[ ', // open ## 
 					'close' 	=> ' ]', // close ##
 				],
 				
 				// loops ##
-				'loop'		=> [
-					'open' 		=> '{{@ ', // open ##
-					'close' 	=> ' }}', // close ##
-					'end'		=> '{{/@}}' // end statement ## -- would be nice to remove this #### it's irregular ####
+				'loop'			=> [
+					'open' 		=> '{@ ', // open ##
+					'close'		=> ' @}' // close ##
 				],
 
 				// function
 				'function'		=> [
-					'open' 		=> '<% ', // open ## 
-					'close' 	=> ' %>', // close ##
+					'open' 		=> '{% ', // open ## 
+					'close' 	=> ' %}', // close ##
 				],
 
 				// partial ##
 				'partial'		=> [
-					'open' 		=> '{{> ', // open ## 
-					'close' 	=> ' }}', // close ##
+					'open' 		=> '{> ', // open ## 
+					'close' 	=> ' <}', // close ##
 				],
 
 				// comment ##
 				'comment'		=> [
-					'open' 		=> '{{! ', // open ## 
-					'close' 	=> ' }}', // close ##
+					'open' 		=> '{! ', // open ## 
+					'close' 	=> ' !}', // close ##
 				],
 
 			]

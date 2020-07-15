@@ -515,7 +515,7 @@ class functions extends willow\parse {
 
 				if ( $count > 0 ) {
 
-					h::log( 'e:>'.$count .' function tags removed...' );
+					h::log( 'd:>'.$count .' function tags removed...' );
 
 				}
 

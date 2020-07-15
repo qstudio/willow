@@ -137,7 +137,7 @@ class parse extends \q_willow {
 		partials::cleanup();
 
 		// clean up stray comment tags ##
-		comments::cleanup(); // @todo ##
+		comments::cleanup();
 
 		// remove all spare vars ##
 		variables::cleanup();
