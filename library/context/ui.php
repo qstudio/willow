@@ -197,7 +197,11 @@ class ui extends willow\context {
     public static function comment( $args = null )
     {
 
-		return theme\view\ui\comment::render( $args );
+		// return theme\view\ui\comment::render( $args );
+
+		return render\fields::define([
+			'comment' => theme\view\ui\comment::render( $args )
+		]);
 
 	}
 
