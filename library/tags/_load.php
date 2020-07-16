@@ -69,6 +69,9 @@ class tags extends \q_willow {
 			
 			'arg_o' => self::$filtered_tags['argument']['open'],
 			'arg_c' => self::$filtered_tags['argument']['close'],
+
+			'sco_o' => self::$filtered_tags['scope']['open'],
+			'sco_c' => self::$filtered_tags['scope']['close'],
 			
 			'par_o' => self::$filtered_tags['partial']['open'],
 			'par_c' => self::$filtered_tags['partial']['close'],

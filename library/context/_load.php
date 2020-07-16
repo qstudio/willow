@@ -148,6 +148,8 @@ class context extends \q_willow {
 			
 			}
 
+			// h::log( $args );
+
 			// extract markup from passed args ##
 			render\markup::pre_validate( $args );
 

@@ -221,8 +221,12 @@ class args extends willow\render {
 			$context_config = [ 'config' => $config ];
 			// h::log( $context_config );
 
+			// h::log( $args );
+
 			// merge in global__CONTEXT settings ##
-			$args = core\method::parse_args( $context_config, $args );
+			// h::log( 't:>NOTE, swapped order of merge here to try to give preference to task args over global args... keep an eye' );
+			$args = core\method::parse_args( $args, $context_config );
+			// $args = core\method::parse_args( $context_config, $args );
 
 			// h::log( $args );
 

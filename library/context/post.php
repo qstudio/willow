@@ -55,13 +55,15 @@ class post extends willow\context {
     {
 
 		// h::log( self::$markup );
-		// h::log( render::$args );
+		// h::log( self::$args );
+
+		// h::log( 't:>PROBLEM - if markup is passed as single arg from willow, then other settings, like markup->default are lost, merge more gracefully..' );
 
 		// build fields array with default values ##
 		render\fields::define([
 			'total' 		=> '0', // set to zero string value ##
 			'pagination' 	=> null, // empty field.. ##
-			'results' 		=> self::$markup['default'] // replace results with empty markup ##
+			'results' 		=> isset( self::$markup['default'] ) ? self::$markup['default'] : null // replace results with empty markup ##
 		]);
 
         // pass to get_posts -- and validate that we get an array back ##

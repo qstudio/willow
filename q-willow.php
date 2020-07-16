@@ -1,7 +1,7 @@
 <?php
 
 /*
- * logic-less, procedural semantic markup language 
+ * Willow is a Simple, logic-less, procedural semantic template engine
  *
  * @package         q-willow
  * @author          Q Studio <social@qstudio.us>
@@ -12,8 +12,8 @@
  * @wordpress-plugin
  * Plugin Name:     Q Willow
  * Plugin URI:      https://www.qstudio.us
- * Description:     Willow is a Simple, logic-less, procedural semantic markup language 
- * Version:         0.0.1
+ * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
+ * Version:         0.1.0
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -40,7 +40,7 @@ if ( ! class_exists( 'q_willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '0.0.1';
+        const version = '0.1.0';
         const text_domain = 'q-willow'; // for translation ##
 		// static $debug = false; // global debugging, normally false, as individual plugins can control local level debugging ##
 		
@@ -168,10 +168,16 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'close' 	=> ' }}', // close ##
 				],
 
-				// context ---> parameters / arguments // config / data settings ##
+				// arguments / parameters ##
 				'argument'		=> [
 					'open' 		=> '{+ ', // open ## 
 					'close' 	=> ' +}', // close ##
+				],
+
+				// scope for context->task ##
+				'scope'		=> [
+					'open' 		=> '{: ', // open ## 
+					'close' 	=> ' :}', // close ##
 				],
 
 				// flags ##

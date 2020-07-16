@@ -261,6 +261,19 @@ class fields extends willow\render {
 			// h::log( 'd:>add field key: '.$key );
 			// h::log( $value );
 
+			// @TODO ##
+			// if ( is_string( $value ) ){
+
+				// $value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
+				// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+				// $value = render\markup::escape( $value );
+
+				// h::log( 'd:>add field key: '.$key );
+				// h::log( 'd:> ESCAPED: '.$value );
+
+			// }
+
 			// add to prop ##
 			self::$fields[$key] = $value;
 

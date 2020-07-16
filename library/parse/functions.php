@@ -344,8 +344,14 @@ class functions extends willow\parse {
 
 		// replace tag with raw return value from function
 		if( 
+			(
+				isset( $args['config']['embed'] )
+				&& true === isset( $args['config']['embed'] )
+			) 
+			||
 			isset( self::$flags['r'] ) 
 		){
+
 
 			// if ( ! isset( self::$return ) ) {
 

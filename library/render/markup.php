@@ -140,6 +140,7 @@ class markup extends willow\render {
 
 		// return $value;
 
+		// @TODO -- this needs to be applied to some data, but not all, as ACF fields, for examples, are already escaped ##
 		if ( isset( self::$args['config']['escape'] ) ){
 
 			// h::log( 'd:>escaping value: '.self::$args['config']['hash'] );
@@ -286,7 +287,8 @@ class markup extends willow\render {
 
 		}
 		
-        // test ##
+		// test ##
+		// h::log( self::$markup );
 		// h::log( self::$args );
 
 		// make an array ##
@@ -465,12 +467,13 @@ class markup extends willow\render {
              'return'        => $string
 		]); 
 		
-		h::log( 't:>Move pre-render formats to some sort of system / class, add filters and allow for extensions' );
+		// h::log( 't:>Move pre-render formats to some sort of system / class, add filters and allow for extensions' );
 
-		// // h::log( 'd:>'.$string );
+		// h::log( 'd:>'.$string );
 		// $string = trim( $string, '"' );
 
 		// escape ##
+		h::log( 't:>@TODO -- HTML escaping needs to be applied to some data, but not all, as ACF fields, for examples, are already escaped ##' );
 		$string = self::escape( $string );
 
 		// strip ##

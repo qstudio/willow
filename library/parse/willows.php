@@ -20,7 +20,8 @@ class willows extends willow\parse {
 		$method,
 		$willow_array,
 		$config_string,
-		$return
+		$return,
+		$level = '1'
 		// $position
 		// $is_global
 	
@@ -33,16 +34,71 @@ class willows extends willow\parse {
 		self::$flags = false;
 		self::$flags_args = false;
 		self::$willow = false;
-		self::$arguments = false;
+		self::$arguments = []; // NOTE, this is now an empty array ##
 		self::$class = false;
 		self::$method = false;
 		self::$willow_array = false;
 		self::$config_string = false;
 		self::$return = false;
+		// self::$level = 0;
 		// self::$position = false;
 		// self::$is_global = false;
 
 	}
+
+
+
+	
+
+	/**
+	 * Check if passed string is a willow 
+	*/
+	public static function is( $string = null ){
+
+		// @todo - sanity ##
+		if(
+			is_null( $string )
+		){
+
+			h::log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		if(
+			strpos( $string, trim( willow\tags::g( 'wil_o' )) ) !== false
+			&& strrpos( $string, trim( willow\tags::g( 'wil_c' )) ) !== false
+			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
+		){
+
+			/*
+			$loo_o = strpos( $string, trim( willow\tags::g( 'loo_o' )) );
+			$loo_c = strrpos( $string, trim( willow\tags::g( 'loo_c' )) );
+
+			h::log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+
+			// get string between opening and closing args ##
+			$return_string = substr( 
+				$string, 
+				( $loo_o + strlen( trim( willow\tags::g( 'loo_o' ) ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( willow\tags::g( 'loo_c' ) ) ) ) ); 
+
+			h::log( 'e:>$string: "'.$return_string .'"' );
+
+			return $return_string;
+			*/
+
+			return true;
+
+		}
+
+		// no ##
+		return false;
+
+	}
+
 
 
 
@@ -51,7 +107,7 @@ class willows extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function format( $match = null ){
+	public static function format( $match = null, $args = null ){
 
 		// sanity ##
 		if(
@@ -63,6 +119,8 @@ class willows extends willow\parse {
 			return false;
 
 		}
+
+		// h::log( $args );
 
 		$open = trim( willow\tags::g( 'wil_o' ) );
 		$close = trim( willow\tags::g( 'wil_c' ) );
@@ -108,6 +166,26 @@ class willows extends willow\parse {
 
 		}
 
+		/*
+		// level ##
+		if(
+			// ! self::$level
+			// || 
+			'1' == self::$level
+		){
+
+			h::log( 'e:>Willow is TOP level' );
+
+		} else {
+
+			self::$level += self::$level;
+			h::log( 'e:>Willow is level: '.self::$level );
+
+		}
+		*/
+
+		// h::log( self::$args );
+
 		// default args ##
 		self::$hash = self::$willow; // set hash to entire function, in case this has no config and is not class_method format ##
 		// h::log( 'hash set to: '.$hash );
@@ -146,7 +224,9 @@ class willows extends willow\parse {
 			self::$config_string 
 		){
 
-			// sub functions - functions passed in arguments string ##
+			// sub tags - passed in arguments string ##
+
+			// h::log( 'e:>config_string: '.self::$config_string );
 
 			// check for loops ##
 			if( loops::is( self::$config_string ) ){
@@ -169,65 +249,83 @@ class willows extends willow\parse {
 
 				// @TODO -- check for template... ?? perhaps a bad idea as it might be in the actual markup ##
 
-				// pass markup ##
-				self::$arguments = [ 'markup' => self::$config_string ];
+				// pass markup, later when we merge args and config, we need to merge markup correctly ##
+				// self::$arguments = [ 'markup' => self::$config_string ];
+
+				self::$arguments = \q\core\method::parse_args( 
+					self::$arguments, 
+					[ 'markup' => self::$config_string ]
+				);
 
 				$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
 				// h::log( $willow_explode );
 				self::$willow = trim( $willow_explode[0] );
 
-				self::$hash = self::$willow; // update hash to take simpler function name.. ##
+				self::$hash = self::$willow; // update hash to take altered function name.. ##
 
-			} else {
+			} 
 
-				// clean up string -- remove all white space ##
-				// $string = trim( $string );
-				// $config_string = str_replace( ' ', '', $config_string );
-				// h::log( 'd:> config_string: "'.self::$config_string ); 
+			// clean up string -- remove all white space ##
+			// $string = trim( $string );
+			// $config_string = str_replace( ' ', '', $config_string );
+			// h::log( 'd:> config_string: "'.self::$config_string ); 
 
-				// pass to argument handler ##
-				self::$arguments = 
-					willow\arguments::decode([ 
-						'string' 	=> self::$config_string, 
-						// 'field' 	=> $field_name, 
-						// 'value' 	=> self::$willow,
-						// 'tag'		=> 'function'	
-					]);
+			// pass to argument handler ##
+			/*
+			self::$arguments = 
+				willow\arguments::decode([ 
+					'string' 	=> self::$config_string, 
+					// 'field' 	=> $field_name, 
+					// 'value' 	=> self::$willow,
+					// 'tag'		=> 'function'	
+				]);
+			*/
 
-				// h::log( self::$arguments );
-				// h::log( self::$flags_args );
-				// h::log( 'function: '.$willow );
-				// $willow = core\method::string_between( $willow, trim( tags::g( 'wil_o' )), trim( tags::g( 'arg_o' )) );
-				$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
-				// h::log( $willow_explode );
-				self::$willow = trim( $willow_explode[0] );
-				// $class = false;
-				// $method = false;
+			// pass arguments ##
+			self::$arguments = \q\core\method::parse_args( 
+				self::$arguments, 
+				willow\arguments::decode([ 
+					'string' 	=> self::$config_string, 
+					// 'field' 	=> $field_name, 
+					// 'value' 	=> self::$willow,
+					// 'tag'		=> 'function'	
+				])
+			);
 
-				self::$hash = self::$willow; // update hash to take simpler function name.. ##
-				// h::log( 'hash updated to: '.$hash );
-				// h::log( 'function: "'.self::$willow.'"' );
+			// h::log( self::$arguments );
+			// h::log( self::$flags_args );
+			// h::log( 'function: '.$willow );
+			// $willow = core\method::string_between( $willow, trim( tags::g( 'wil_o' )), trim( tags::g( 'arg_o' )) );
+			$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
+			// h::log( $willow_explode );
+			self::$willow = trim( $willow_explode[0] );
+			// $class = false;
+			// $method = false;
 
-				// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
-				// this should create required markup at $position of self::$willow in markup->template
-				/*
-				if( isset( self::$flags_args['l'] ) ) {
+			self::$hash = self::$willow; // update hash to take simpler function name.. ##
+			// h::log( 'hash updated to: '.$hash );
+			// h::log( 'function: "'.self::$willow.'"' );
 
-					$loop_arguments = willow\loops::set([
-						'func_args'	=> self::$arguments, 
-					]);
+			// if we found a loop [l] flag in the function args, we should ask parse/loops to extract the data from the string
+			// this should create required markup at $position of self::$willow in markup->template
+			/*
+			if( isset( self::$flags_args['l'] ) ) {
 
-					// if loops returned true, we can continue to next function, as this is done ##
-					if( $loop_arguments ){
+				$loop_arguments = willow\loops::set([
+					'func_args'	=> self::$arguments, 
+				]);
 
-						// h::log( 'd:>loops returned true, we can continue to next function, as this is done' );
-						self::$arguments = $loop_arguments; // empty ##
+				// if loops returned true, we can continue to next function, as this is done ##
+				if( $loop_arguments ){
 
-					}
+					// h::log( 'd:>loops returned true, we can continue to next function, as this is done' );
+					self::$arguments = $loop_arguments; // empty ##
 
 				}
-				*/
+
 			}
+				*/
+			// }
 
 			// if arguments are not in an array, take the whole string passed as the arguments ##
 			if ( 
@@ -324,7 +422,8 @@ class willows extends willow\parse {
 			self::$arguments, 
 			[ 
 				'config' => [ 
-					'hash' => self::$hash 
+					'hash' 	=> self::$hash,
+					// 'sub'	=> true
 				] 
 			]
 		);
@@ -360,7 +459,7 @@ class willows extends willow\parse {
 
 		// h::log( 'd:>Calling class_method: '.self::$class.'::'.self::$method );
 		
-		// h::log( self::$args );
+		// h::log( $args );
 		// if( isset( self::$buffer ) ) { h::log( 'd:>BUFFER IS SET for  '.self::$class.'::'.self::$method ); }
 
 		// pass args, if set ##
@@ -415,12 +514,22 @@ class willows extends willow\parse {
 
 		}
 
-		h::log( 't:>BAD code smell about that [r] flag.. push on and see if it gets worse..' );
+		// h::log( 't:>BAD code smell about that [r] flag.. perhaps we should add a o_buffer flag [b] also, try willow in template without R and perhaps apply default R to all secondary willows, found by parsing??' );
+		// h::log( $args );
 
 		// replace tag with raw return value from function
 		if( 
+			(
+				isset( $args['config']['embed'] )
+				&& true === isset( $args['config']['embed'] )
+			) 
+			||
 			isset( self::$flags['r'] ) 
 		){
+
+			// h::log( 'e:>config->embed or [r] flag set' );
+
+			// h::log( self::$args );
 
 			// h::log( 'e:>Replacing willow: "'.self::$willow_match.'" with context function return value: '.self::$return );
 
@@ -458,9 +567,7 @@ class willows extends willow\parse {
 	*/
     public static function prepare( $args = null ){
 
-		// h::log( 't:>TODO -- willows are always internal, class::method format and registered.. so, remove all code that works against this.' );
-
-		// h::log( $args['key'] );
+		// h::log( $args );
 
 		// sanity -- method requires requires ##
 		if ( 
@@ -492,7 +599,7 @@ class willows extends willow\parse {
 
 		// h::log('d:>'.$string);
 
-		// get all sections, add markup to $markup->$field ##
+		// get all willows, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( willow\tags::g( 'wil_o' ) );
 		$close = trim( willow\tags::g( 'wil_c' ) );
@@ -543,7 +650,7 @@ class willows extends willow\parse {
 				$match = $matches[0][$match][0];
 
 				// pass match to function handler ##
-				self::format( $match );
+				self::format( $match, $args );
 
 			}
 

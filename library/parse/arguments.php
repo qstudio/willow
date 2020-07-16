@@ -102,8 +102,10 @@ class arguments extends willow\parse {
 
 		}
 
-		// clean up string -- remove all white space ##
-		// self::$string = str_replace( ' ', '', self::$string );
+		// h::log( 'd:>string --> '.self::$string );
+
+		// replace " with ' .... hmm ##
+		// self::$string = str_replace( '"', "'", self::$string );
 
 		// strip white spaces from data that is not passed inside quotes ( "data" ) ##
 		self::$string = preg_replace( '~"[^"]*"(*SKIP)(*F)|\s+~', "", self::$string );
@@ -113,6 +115,8 @@ class arguments extends willow\parse {
 
 		// extract data from string ##
 		self::$array = core\method::parse_str( self::$string );
+
+		// h::log( self::$array );
 
 		// trim "value" leading and ending quotes from each value in array ##
 		array_walk_recursive( self::$array, function( &$v ) { $v = trim( $v, '"' ); });
@@ -138,7 +142,7 @@ class arguments extends willow\parse {
 		// clear slate ##
 		// self::reset();
 
-		// kick back to function handler - they should validate if an array was returned and then deal with it ##
+		// kick back to function handler - it should validate if an array was returned and then deal with it ##
 		return self::$array;
 
 	}

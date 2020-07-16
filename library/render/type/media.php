@@ -100,12 +100,14 @@ class media extends render\type {
 						isset( self::$args['config']['srcset'] )
 						&& true == self::$args['config']['srcset'] 
 					)
+					/*
 					||
 					// OR, set globally ##
 					(
 						isset( core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
 						&& true == core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset']
 					)
+					*/
 				) {
 
 					$src = \esc_attr($array['src']).'"'; 

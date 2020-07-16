@@ -324,8 +324,10 @@ class config extends \q_willow {
 
 		// h::log( 'd:>looking for source: '.$source );
 
-		// loop over options ##
+		// loop over allowed extensions ##
 		foreach( $extensions as $ext ) {
+
+			// loop over array values ##
 			foreach( $array as $k => $v ){
 
 				switch( $source ){

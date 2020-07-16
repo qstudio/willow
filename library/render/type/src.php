@@ -67,12 +67,14 @@ class src extends render\type {
 				isset( self::$args['config']['srcset'] )
             	&& true == self::$args['config']['srcset'] 
 			)
+			/*
 			||
 			// OR, set globally ##
 			(
 				isset( core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
 				&& true == core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset']
 			)
+			*/
         ) {
 
 			// h::log( 'Adding srcset to: '.$string );

@@ -70,9 +70,9 @@ class loops extends willow\parse {
 		$loop_open = trim( willow\tags::g( 'loo_o' ) );
 		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
-		// arguments ##
-		$arg_open = trim( willow\tags::g( 'arg_o' ) );
-		$arg_close = trim( willow\tags::g( 'arg_c' ) );
+		// scope ## - self::$fields data key ##
+		$scope_open = trim( willow\tags::g( 'sco_o' ) );
+		$scope_close = trim( willow\tags::g( 'sco_c' ) );
 
 		// clear slate ##
 		self::reset();
@@ -83,8 +83,8 @@ class loops extends willow\parse {
 		self::$position = $position;
 
 		// get field + markup .... HMM ##, this will not work with embedded args
-		self::$loop_field = core\method::string_between( $match, $arg_open, $arg_close );
-		self::$loop_markup = core\method::string_between( $match, $arg_close, $loop_close );
+		self::$loop_field = core\method::string_between( $match, $scope_open, $scope_close );
+		self::$loop_markup = core\method::string_between( $match, $scope_close, $loop_close );
 
 		// sanity ##
 		if ( 
@@ -153,6 +153,7 @@ class loops extends willow\parse {
 		if(
 			strpos( $string, trim( willow\tags::g( 'loo_o' )) ) !== false
 			&& strrpos( $string, trim( willow\tags::g( 'loo_c' )) ) !== false
+			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
 			/*
@@ -228,8 +229,8 @@ class loops extends willow\parse {
 		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
 		// arguments ##
-		$arg_open = trim( willow\tags::g( 'arg_o' ) );
-		$arg_close = trim( willow\tags::g( 'arg_c' ) );
+		// $arg_open = trim( willow\tags::g( 'arg_o' ) );
+		// $arg_close = trim( willow\tags::g( 'arg_c' ) );
 
 		$regex_find = \apply_filters( 
 			'q/render/markup/loop/regex/find', 

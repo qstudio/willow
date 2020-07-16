@@ -62,14 +62,14 @@ class buffer extends \q_willow {
 
 			// Header ##
 			// h::log( 't:>@TODO... header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
-			context::ui__header();
+			context::ui__header([ 'config' => [ 'embed' => true ]]);
 		
 			// Apply any filters to the final output
 			// echo \apply_filters( 'ob_output', $string );
 			echo self::prepare( $string );
 
 			// Footer, basically just wp_footer() + closing body / html tags  ##
-			context::ui__footer();
+			context::ui__footer([ 'config' => [ 'embed' => true ]]);
 
 		}, 0);
 
@@ -102,13 +102,14 @@ class buffer extends \q_willow {
 		// h::log( $string );
 
 		// build required args ##
-		$args = [
+		$buffer_args = [
 			'config'		=> [
 				'return' 	=> 'return',
-				'debug'		=> false
+				'debug'		=> false,
 			],
 			'markup'		=> [
-				'template'	=> $string
+				'template'	=> $string,
+				// 'BUFFER'	=> TRUE,
 			],
 			'context'		=> 'buffer',
 			'task'			=> 'prepare',
@@ -121,12 +122,12 @@ class buffer extends \q_willow {
 		willow\render\args::reset();
 
 		// extract markup from passed args ##
-		render\markup::pre_validate( $args );
+		render\markup::pre_validate( $buffer_args );
 
 		// validate passed args ##
-		if ( ! render\args::validate( $args ) ) {
+		if ( ! render\args::validate( $buffer_args ) ) {
 
-			render\log::set( $args );
+			render\log::set( $buffer_args );
 			
 			h::log( 'e:>Args validation failed' );
 
@@ -139,7 +140,7 @@ class buffer extends \q_willow {
 
 		// prepare .willow template markup ##
 		// functions
-		parse::prepare( $args );
+		parse::prepare( $buffer_args );
 
 		// h::log( self::$markup );
 		// h::log( self::$buffer );
@@ -160,7 +161,7 @@ class buffer extends \q_willow {
 		// render\parse::cleanup();
 
 		// optional logging to show removals and stats ##
-		render\log::set( $args );
+		render\log::set( $buffer_args );
 
 		// assign output to markup->template ##
 		self::$markup['template'] = render\output::prepare();

@@ -243,6 +243,10 @@ class comments extends willow\parse {
 
 		}
 
+		// clean up all tags ##
+		h::log( 't:>MOVED cleanup to after lookup, check if this does not trash other markups and apply to all parse lookups..' );
+		self::cleanup();
+
 	}
 
 
