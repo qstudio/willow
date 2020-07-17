@@ -310,7 +310,7 @@ class context extends \q_willow {
 				|| ! is_array( $return_array )
 			){
 
-				h::log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
+				// h::log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
 				// h::log( $return_array );
 
 				// ...
