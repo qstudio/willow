@@ -21,9 +21,9 @@ class post extends willow\context {
     public static function title( $args = null ) {
 
 		// get title - returns array with key 'title' ##
-		render\fields::define(
-			get\post::title( $args )
-		);
+		// render\fields::define(
+			return get\post::title( $args );
+		// );
 
     }
 
@@ -39,9 +39,9 @@ class post extends willow\context {
     public static function data( $args = null ) {
 
 		// get title - returns array with key 'title' ##
-		render\fields::define(
-			get\post::data( $args )
-		);
+		// render\fields::define(
+			return get\post::data( $args );
+		// );
 
     }
 
@@ -60,7 +60,8 @@ class post extends willow\context {
 		// h::log( 't:>PROBLEM - if markup is passed as single arg from willow, then other settings, like markup->default are lost, merge more gracefully..' );
 
 		// build fields array with default values ##
-		render\fields::define([
+		$return = ([
+		// render\fields::define([
 			'total' 		=> '0', // set to zero string value ##
 			'pagination' 	=> null, // empty field.. ##
 			'results' 		=> isset( self::$markup['default'] ) ? self::$markup['default'] : null // replace results with empty markup ##
@@ -106,7 +107,8 @@ class post extends willow\context {
 			// h::log( $array['query']->found_posts );
 
 			// define all required fields for markup ##
-			self::$fields = [
+			// self::$fields = [
+			$return = [
 				'total' 		=> $array['query']->found_posts, // total posts ##
 				'pagination'	=> get\navigation::pagination( $args ), // get pagination, returns string ##
 				'results'		=> $array['query']->posts // array of WP_Posts ##
@@ -115,7 +117,7 @@ class post extends willow\context {
 		}
 
 		// ok ##
-		return true;
+		return $return;
 
     }
 
@@ -128,9 +130,9 @@ class post extends willow\context {
 	public static function parent( $args = null ){
 
 		// get parent - returns false OR array with key 'title, slug, permalink' ##
-		render\fields::define( 
-			get\post::parent( $args ) 
-		);
+		// render\fields::define( 
+		return get\post::parent( $args );
+		// );
 
 	}
 
@@ -141,9 +143,9 @@ class post extends willow\context {
 	 */
 	public static function excerpt( $args = null ){
 
-		render\fields::define( 
-			get\post::excerpt( $args ) 
-		);
+		// render\fields::define( 
+		return get\post::excerpt( $args );
+		// );
 
 	}
 
@@ -156,9 +158,9 @@ class post extends willow\context {
 	public static function content( $args = null ){
 
 		// get content - returns array with key 'content' ##
-		render\fields::define( 
-			get\post::content( $args ) 
-		);
+		// render\fields::define( 
+		return get\post::content( $args );
+		// );
 
 	}
 
@@ -169,9 +171,9 @@ class post extends willow\context {
 	public static function date( $args = null ){
 
 		// get content - returns array with key 'content' ##
-		render\fields::define( 
-			get\post::date( $args ) 
-		);
+		// render\fields::define( 
+		return get\post::date( $args );
+		// );
 
 	}
 

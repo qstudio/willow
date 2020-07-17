@@ -28,7 +28,9 @@ class ui extends willow\context {
     public static function get( $args = null ) {
 
 		// h::log( $args );
+		return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
+		/*
 		// look for property "args->task" in config ##
 		if ( 
 			$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ])
@@ -44,6 +46,7 @@ class ui extends willow\context {
 			);
 
 		}
+		*/
 
 	}
 	
@@ -71,6 +74,8 @@ class ui extends willow\context {
 		// include <html>, wp_head() until.. <body> ##
 		theme\view\ui\header::head( $args );
 			
+		// return [ 'header' => theme\view\ui\header::render( $args ) ];
+
 		// look for config ##
 		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 		// $config = false;
@@ -86,16 +91,16 @@ class ui extends willow\context {
 			// h::log( $config );
 			
 			// define "fields", passing returned data ##
-			render\fields::define(
-				$config
-			);
+			// render\fields::define(
+				return $config;
+			// );
 
 		} else {
 
 			// h::log( 'Running from method' );
 
 			// we can call the footer::render() method
-			theme\view\ui\header::render( $args );
+			return theme\view\ui\header::render( $args );
 
 		}
 
@@ -121,26 +126,34 @@ class ui extends willow\context {
 		}
 		\do_action( 'get_footer', $name );
 
-		// required hook ##
+		// required hook included in ui_footer ##
 		// \wp_footer();
+
+		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		// h::log( $config );
+
+		// return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 		// look for property "args->task" in config ##
 		if ( 
-			$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ])
+			$config
 		){
 
 			// check ##
+			// h::log( 'e:>UI FOOTER' );
 			// h::log( $config );
 			
 			// define "fields", passing returned data ##
-			render\fields::define(
-				$config
-			);
+			// render\fields::define(
+			return $config;
+			// );
 
 		} else {
 
+			// h::log( 'e:>RENDER FOOTER' );
+
 			// we can call the footer::render() method
-			theme\view\ui\footer::render( $args );
+			return theme\view\ui\footer::return( $args );
 
 		}
 
@@ -160,9 +173,9 @@ class ui extends willow\context {
     public static function open( $args = null )
     {
 
-		return render\fields::define([
-			'classes' => get\theme::body_class( $args ) // grab classes ##
-		]);
+		// return render\fields::define([
+		return [ 'classes' => get\theme::body_class( $args ) ];
+		// ]);
 
 	}
 
@@ -179,9 +192,9 @@ class ui extends willow\context {
 
         // set-up new array -- nothing really to do ##
 		// grab classes ##
-		return render\fields::define([
-			'oh' => '' // hack.. nothing to pass here ##
-		]);
+		// return render\fields::define([
+		return [ 'oh' => '' ]; // hack.. nothing to pass here ##
+		// ]);
 
 	}
 
@@ -199,9 +212,9 @@ class ui extends willow\context {
 
 		// return theme\view\ui\comment::render( $args );
 
-		return render\fields::define([
-			'comment' => theme\view\ui\comment::render( $args )
-		]);
+		// return render\fields::define([
+		return [ 'comment' => theme\view\ui\comment::render( $args ) ];
+		// ]);
 
 	}
 

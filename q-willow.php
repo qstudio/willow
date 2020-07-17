@@ -62,7 +62,7 @@ if ( ! class_exists( 'q_willow' ) ) {
 			$markup 	= null, // array to store passed markup and extra keys added by formatting ##
 			$log 		= null, // tracking array for feedback ##
 			$buffer 	= null, // for buffering... ##
-			// $buffering 	= false, // for buffer switch... ##
+			$filter		= null, // post-processing of willows and variables ##
 
 			// default args to merge with passed array ##
 			$args_default = [

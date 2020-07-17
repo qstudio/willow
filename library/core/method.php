@@ -161,6 +161,17 @@ class method extends \q_willow {
      */
     public static function parse_args( &$args, $defaults ) {
 
+		// sanity ##
+		if(
+			! $defaults
+		){
+
+			// h::log( 'e:>No $defaults passed to method' );
+
+			return $args; // ?? TODO, is this good ? 
+
+		}
+
         $args = (array) $args;
         $defaults = (array) $defaults;
         $result = $defaults;

@@ -21,9 +21,9 @@ class media extends willow\context {
     public static function src( $args = null ) {
 
 		// returns array with key 'src', 'srcset', 'alt' etc.... ##
-		render\fields::define(
-			get\media::src( $args )
-		);
+		// render\fields::define(
+		return get\media::src( $args );
+		// );
 
 	}
 
@@ -40,9 +40,9 @@ class media extends willow\context {
 		// h::log( self::$args );
 
 		// returns array with key 'src', 'srcset', 'alt' etc.... ##
-		render\fields::define(
-			get\media::thumbnail( $args )
-		);
+		// render\fields::define(
+		return get\media::thumbnail( $args );
+		// );
 
 	}
 	
@@ -65,9 +65,9 @@ class media extends willow\context {
 		*/
 		
 		// returns array with key 'src', 'srcset', 'alt' etc.... ##
-		render\fields::define(
-			get\media::avatar( $args )
-		);
+		// render\fields::define(
+		return get\media::avatar( $args );
+		// );
 
     }
 

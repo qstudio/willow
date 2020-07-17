@@ -27,9 +27,9 @@ class navigation extends willow\context {
 		// return get\navigation::menu( $args );
 
 		//  ##
-		render\fields::define([
-			'menu' => get\navigation::menu( $args )
-		]);
+		// render\fields::define([
+		return [ 'menu' => get\navigation::menu( $args ) ];
+		// ]);
 
 	}
 	
@@ -42,9 +42,9 @@ class navigation extends willow\context {
     public static function pagination( $args = null ){
 
         //  ##
-		render\fields::define([
-			'pagination' => get\navigation::pagination( $args )
-		]);
+		// render\fields::define([
+		return [ 'pagination' => get\navigation::pagination( $args ) ];
+		// ]);
 
 	}
 	
@@ -57,9 +57,9 @@ class navigation extends willow\context {
     public static function siblings( $args = null ){
 
         //  ##
-		render\fields::define([
-			'siblings' => get\navigation::siblings( $args )
-		]);
+		// render\fields::define([
+		return [ 'siblings' => get\navigation::siblings( $args ) ];
+		// ]);
 
 	}
 	
@@ -72,9 +72,9 @@ class navigation extends willow\context {
     public static function relative( $args = null ){
 
         //  ##
-		render\fields::define([
-			'relative'	=> get\navigation::relative( $args )
-		]);
+		// render\fields::define([
+		return [ 'relative'	=> get\navigation::relative( $args ) ];
+		// ]);
 
     }
 

@@ -13,7 +13,7 @@ class functions extends willow\parse {
 
 		$return,
 		$hash, 
-		// $flags,
+		// $flags_function,
 		$function,
 		$function_match, // full string matched ##
 		$arguments,
@@ -21,8 +21,6 @@ class functions extends willow\parse {
 		$method,
 		$function_array,
 		$config_string
-		// $position
-		// $is_global
 	
 	;
 
@@ -31,16 +29,13 @@ class functions extends willow\parse {
 
 		self::$return = false; 
 		self::$hash = false; 
-		self::$flags = false;
-		self::$flags_args = false;
+		self::$flags_function = false;
 		self::$function = false;
 		self::$arguments = false;
 		self::$class = false;
 		self::$method = false;
 		self::$function_array = false;
 		self::$config_string = false;
-		// self::$position = false;
-		// self::$is_global = false;
 
 	}
 
@@ -71,8 +66,8 @@ class functions extends willow\parse {
 		// h::log( '$function_match: '.$function_match );
 
 		// look for flags ##
-		self::$function = flags::get( self::$function );
-		// h::log( self::$flags );
+		self::$function = flags::get( self::$function, 'function' );
+		// h::log( self::$flags_function );
 		// h::log( self::$function );
 
 		// clean up ##
@@ -116,13 +111,7 @@ class functions extends willow\parse {
 			// h::log( 'd:> '.self::$config_string );
 
 			// pass to argument handler ##
-			self::$arguments = 
-				willow\arguments::decode([ 
-					'string' 	=> self::$config_string, 
-					// 'field' 	=> $field_name, 
-					// 'value' 	=> self::$function,
-					// 'tag'		=> 'function'	
-				]);
+			self::$arguments = willow\arguments::decode( self::$config_string );
 
 			// h::log( self::$arguments );
 			// h::log( self::$flags_args );
@@ -349,7 +338,7 @@ class functions extends willow\parse {
 				&& true === isset( $args['config']['embed'] )
 			) 
 			||
-			isset( self::$flags['r'] ) 
+			isset( self::$flags_function['r'] ) 
 		){
 
 
@@ -364,7 +353,7 @@ class functions extends willow\parse {
 			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
 			$string = self::$return;
 
-			willow\markup::swap( self::$function_match, $string, 'function', 'string' ); // '{{ '.$field.' }}'
+			parse\markup::swap( self::$function_match, $string, 'function', 'string' ); // '{{ '.$field.' }}'
 
 		} else {
 
@@ -372,7 +361,7 @@ class functions extends willow\parse {
 			$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
 			// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
 
-			willow\markup::swap( self::$function_match, $variable, 'function', 'variable' ); // '{{ '.$field.' }}'
+			parse\markup::swap( self::$function_match, $variable, 'function', 'variable' ); // '{{ '.$field.' }}'
 
 		}
 		

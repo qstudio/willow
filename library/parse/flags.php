@@ -19,7 +19,7 @@ class flags extends willow\parse {
 	[seg] = split, escape, global
 	[a] = array
 	*/
-	public static function get( $string = null, $use = 'tag' ){
+	public static function get( $string = null, $use = 'willow' ){
 
 		// sanity ##
 		if(
@@ -55,11 +55,38 @@ class flags extends willow\parse {
 			switch( $use ) {
 
 				default :
-				case "tag" :
+				case "willow" :
 
 					// h::log( 'd:>Preparing flags for tag' );
-					self::$flags = str_split( $flags );
-					self::$flags = array_fill_keys( self::$flags, true );
+					self::$flags_willow = str_split( $flags );
+					self::$flags_willow = array_fill_keys( self::$flags_willow, true );
+					// h::log( self::$flags );
+
+				break ;
+
+				case "function" :
+
+					// h::log( 'd:>Preparing flags for tag' );
+					self::$flags_function = str_split( $flags );
+					self::$flags_function = array_fill_keys( self::$flags_function, true );
+					// h::log( self::$flags );
+
+				break ;
+
+				case "comment" :
+
+					// h::log( 'd:>Preparing flags for tag' );
+					self::$flags_comment = str_split( $flags );
+					self::$flags_comment = array_fill_keys( self::$flags_comment, true );
+					// h::log( self::$flags );
+
+				break ;
+
+				case "variable" :
+
+					// h::log( 'd:>Preparing flags for tag' );
+					self::$flags_variable = str_split( $flags );
+					self::$flags_variable = array_fill_keys( self::$flags_variable, true );
 					// h::log( self::$flags );
 
 				break ;
@@ -67,8 +94,8 @@ class flags extends willow\parse {
 				case "argument" :
 
 					// h::log( 'd:>Preparing flags_args for argument' );
-					self::$flags_args = str_split( $flags );
-					self::$flags_args = array_fill_keys( self::$flags_args, true );
+					self::$flags_argument = str_split( $flags );
+					self::$flags_argument = array_fill_keys( self::$flags_argument, true );
 					// h::log( self::$flags );
 
 				break ;

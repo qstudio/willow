@@ -7,6 +7,7 @@ use q\core\helper as h;
 use q\view;
 use q\get;
 use q\willow;
+use q\willow\parse;
 
 class markup extends willow\render {
 
@@ -41,7 +42,7 @@ class markup extends willow\render {
 		
         // test ##
         // helper::log( self::$fields );
-		// helper::log( self::$markup );
+		// h::log( self::$markup );
 		
 		// pre-format markup to extract comments ##
 		// self::comments();
@@ -92,7 +93,7 @@ class markup extends willow\render {
         // check for any left over variables - remove them ##
         if ( 
 			// $placeholders = placeholder::get( $string ) 
-			$variables = willow\markup::get( $string, 'variable' ) 
+			$variables = parse\markup::get( $string, 'variable' ) 
         ) {
 
 			// log ##
@@ -128,51 +129,6 @@ class markup extends willow\render {
 
         // return ##
         // return true;
-
-	}
-
-
-
-	// @todo - escape ## per call, or globally ## ??
-	public static function escape( $value ) {
-
-		// h::log( self::$args );
-
-		// return $value;
-
-		// @TODO -- this needs to be applied to some data, but not all, as ACF fields, for examples, are already escaped ##
-		if ( isset( self::$args['config']['escape'] ) ){
-
-			// h::log( 'd:>escaping value: '.self::$args['config']['hash'] );
-
-			$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
-			$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-		}
-
-		return $value;
-
-	}
-
-
-
-	// @todo - escape ## per call, or globally ## ??
-	public static function strip( $value ) {
-
-		// h::log( self::$args );
-
-		// return $value;
-
-		if ( isset( self::$args['config']['strip'] ) ){
-
-			// h::log( 'd:>stripping tags from value: '.$value );
-
-			$value = strip_tags( $value );
-			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-		}
-
-		return $value;
 
 	}
 
@@ -379,6 +335,127 @@ class markup extends willow\render {
 
 
 
+	
+
+	// @todo - escape ## per call, or globally ## ??
+	public static function escape_markup( $value, $key ) {
+
+		// h::log( self::$filter );
+		// h::log( self::$args );
+
+		/*
+		filters stored by context->task with ->global filters and ->variable filters, stored under original [f] flag reference
+		*/
+
+		// if( isset( self::$filter[self::$args['context']][self::$args['task']] ) ){
+
+			// h::log( 'key: '.$key );
+
+			// h::log( self::$filter[self::$args['context']][self::$args['task']] );
+			// h::log( self::$args );
+
+			// global first ##
+			if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['e'] ) ){
+
+				h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
+
+				$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
+				$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+			}
+
+		// }
+
+		return $value;
+
+	}
+
+
+
+	// @todo - escape ## per call, or globally ## ??
+	public static function escape_variable( $value, $key ) {
+
+		// h::log( self::$filter );
+		// h::log( self::$args );
+
+		/*
+		filters stored by context->task with ->global filters and ->variable filters, stored under original [f] flag reference
+		*/
+
+		// if( isset( self::$filter[self::$args['context']][self::$args['task']] ) ){
+
+			// h::log( 'key: '.$key );
+
+			// h::log( self::$filter[self::$args['context']][self::$args['task']] );
+			// h::log( self::$args );
+
+			// global first ##
+			if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['e'] ) ){
+
+				h::log( 'e:>Variable escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
+
+				// look for {{ variable }}
+				// h::log( '$value: '.$value );
+
+				$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
+				$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+			}
+
+		// }
+
+		return $value;
+
+	}
+
+
+
+
+	// @todo - escape ## per call, or globally ## ??
+	public static function strip_variable( $value, $key ) {
+
+		// global first ##
+		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['s'] ) ){
+
+			h::log( 'e:>Variable tag stripping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
+
+			// h::log( 'd:>stripping tags from value: '.$value );
+
+			$value = strip_tags( $value );
+			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+		}
+
+		return $value;
+
+	}
+
+
+
+	
+	// @todo - escape ## per call, or globally ## ??
+	public static function strip_markup( $value, $key ) {
+
+		// h::log( self::$args );
+
+		// global first ##
+		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['s'] ) ){
+
+			h::log( 'e:>Global tag stripping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
+
+			// h::log( 'd:>stripping tags from value: '.$value );
+
+			$value = strip_tags( $value );
+			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+		}
+
+		return $value;
+
+	}
+
+
+
 
 	public static function string( $args = null ){
 
@@ -405,49 +482,20 @@ class markup extends willow\render {
 
 		// h::log( 'key: "'.$key.'" - value: "'.$value.'"' );
 
-		// look for wrapper in markup ##
-		// if ( isset( self::$args[$key] ) ) {
-		// if ( isset( self::$markup[$key] ) ) { // ?? @todo -- how is this working ?? -- surely, this should look for 'wrap'
-		// wrap once ..
-		// if ( 
-		// 	isset( self::$markup['wrap'] ) 
-		// 	&& ! self::$wrapped
-		// ) { 
-
-		// 	// h::log( 't:>@todo.. string wrap logic...' );
-
-		// 	// $markup = self::$args[ $key ];
-		// 	$markup = self::$markup[ 'wrap' ];
-
-		// 	// filter ##
-		// 	$string = core\filter::apply([ 
-		// 		'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-		// 		'filter'        => 'q/render/markup/wrap/'.self::$args['task'].'/'.$key, // filter handle ##
-		// 		'return'        => $string
-		// 	]); 
-
-		// 	// h::log( 'found: '.$markup );
-
-		// 	// wrap key value in found markup ##
-		// 	// example: markup->wrap = '<h2 class="mt-5">{{ content }}</h2>' ##
-		// 	$value = str_replace( 
-		// 		// '{{ content }}', 
-		// 		willow\tags::wrap([ 'open' => 'var_o', 'value' => 'content', 'close' => 'var_c' ]), 
-		// 		$value, 
-		// 		$markup 
-		// 	);
-
-		// 	// track ##
-		// 	self::$wrapped = true;
-
-		// }
-
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
              'filter'        => 'q/render/markup/string/before/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
-        ]); 
+		]); 
+		
+		// h::log( 'd:>$key: '.$key );
+		// $string = trim( $string, '"' );
+
+		// escape ##
+		h::log( 't:>@TODO -- escape, strip etc run via filters, NOT here... once for value, once for markup' );
+		$value = self::escape_variable( $value, $key );
+		$value = self::strip_variable( $value, $key );
 
 		// variable replacement -- regex way ##
 		$open = trim( willow\tags::g( 'var_o' ) );
@@ -466,18 +514,14 @@ class markup extends willow\render {
              'filter'        => 'q/render/markup/string/after/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
+
+		// whole
+		$string = self::strip_markup( $string, $key );
+
+		// whole
+		$string = self::escape_markup( $string, $key );
 		
 		// h::log( 't:>Move pre-render formats to some sort of system / class, add filters and allow for extensions' );
-
-		// h::log( 'd:>'.$string );
-		// $string = trim( $string, '"' );
-
-		// escape ##
-		h::log( 't:>@TODO -- HTML escaping needs to be applied to some data, but not all, as ACF fields, for examples, are already escaped ##' );
-		$string = self::escape( $string );
-
-		// strip ##
-		$string = self::strip( $string );
 
 		// return ##
 		return $string;
@@ -639,7 +683,7 @@ class markup extends willow\render {
         // get all variables from markup->$field ##
         if ( 
 			// ! $placeholders = placeholder::get( self::$markup[$field] ) 
-			! $variables = willow\markup::get( self::$markup[$field], 'variable' ) 
+			! $variables = parse\markup::get( self::$markup[$field], 'variable' ) 
         ) {
 
 			// log ##

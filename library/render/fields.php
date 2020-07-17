@@ -7,6 +7,7 @@ use q\core\helper as h;
 use q\view;
 use q\get;
 use q\willow;
+use q\willow\parse;
 use q\willow\render;
 
 class fields extends willow\render {
@@ -151,7 +152,7 @@ class fields extends willow\render {
 
 			} else {
 
-				// collect entire array for object.X.property access ##
+				// collect entire array for array.X.property access ##
 				// h::log( $args );
 
 				reset( $args );
@@ -254,7 +255,7 @@ class fields extends willow\render {
 		}
 		*/
 
-		// h::log( $args );
+		// h::log( self::$args );
 		// loop over array - saving key + value to self::$fields ##
 		foreach( $args as $key => $value ) {
 
@@ -274,8 +275,14 @@ class fields extends willow\render {
 
 			// }
 
+			// escape ##
+			// $value = self::escape( $key, $value );
+
 			// add to prop ##
 			self::$fields[$key] = $value;
+
+			// strip ##
+			// self::strip();
 
 		}
 
@@ -283,6 +290,84 @@ class fields extends willow\render {
 
 	}	
 
+
+	/*
+	// escape variables, not entire values ##
+	public static function escape( $field = null, $value = null ) {
+
+		// sanity ##
+		if(
+			is_null( $field )
+			|| is_null( $value )
+		){
+
+			h::log( 'e:>Error in passed arguments' );
+
+			return false;
+
+		}
+
+		// h::log( self::$args );
+
+		// return $value;
+
+		// @TODO -- this needs to be applied to some data, but not all, as ACF fields, for examples, are already escaped ##
+		if ( isset( self::$args['process'][$field]['escape'] ) ){
+
+			h::log( 'd:>escaping field: '.$field );
+			h::log( $value );
+
+			// $field_variables = willow\parse\markup::get( $value, 'variable' );
+
+			if ( 
+				$field_variables = parse\markup::get( $value, 'variable' ) 
+			){
+
+				h::log( $field_variables );
+
+				// $return_value = '';
+
+				// foreach( $field_variables as $variable_key => $variable_value ){
+
+
+
+				// }
+
+			}
+
+			$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
+			$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+		}
+
+		return $value;
+
+	}
+
+
+
+	// @todo - escape ## per call, or globally ## ??
+	public static function strip( $field = null, $value = null ) {
+
+		// sanity ##
+
+		// h::log( self::$args );
+
+		// return $value;
+
+		if ( isset( self::$args['process'][$field]['strip'] ) ){
+
+			// h::log( 'd:>stripping tags from value: '.$value );
+
+			$value = strip_tags( $value );
+			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
+
+		}
+
+		return $value;
+
+	}
+	*/
 
 
     

@@ -258,7 +258,7 @@ class partials extends willow\parse {
 				// finally -- add a variable "{{ $field }}" before this partial block in markup->template ##
 				$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);
 				// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
-				willow\markup::swap( $partial_match, $variable, 'partial', 'variable' ); // '{{ '.$field.' }}'
+				parse\markup::swap( $partial_match, $variable, 'partial', 'variable' ); // '{{ '.$field.' }}'
 
 			}
 

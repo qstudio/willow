@@ -1,6 +1,6 @@
 <?php
 
-namespace q\willow;
+namespace q\willow\parse;
 
 use q\willow;
 use q\willow\core;
@@ -36,8 +36,8 @@ class markup extends willow\parse {
 			case "variable" :
 
 				// note, we trim() white space off tags, as this is handled by the regex ##
-				$open = trim( tags::g( 'var_o' ) );
-				$close = trim( tags::g( 'var_c' ) );
+				$open = trim( willow\tags::g( 'var_o' ) );
+				$close = trim( willow\tags::g( 'var_c' ) );
 
 				// h::log( 'open: '.$open );
 
@@ -56,7 +56,7 @@ class markup extends willow\parse {
         if ( ! preg_match_all( $regex_find, $string, $matches ) ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>No extra variables found in string to clean up - good!' );
+			h::log( self::$args['task'].'~>n:>No variables found in string.' );
 
             return false;
 
@@ -125,8 +125,8 @@ class markup extends willow\parse {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = tags::g( 'var_o' ); #'{{ ';
-				$needle_end = tags::g( 'var_c' ); #' }}';
+				$needle_start = willow\tags::g( 'var_o' ); #'{{ ';
+				$needle_end = willow\tags::g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -202,8 +202,8 @@ class markup extends willow\parse {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = tags::g( 'var_o' ); #'{{ ';
-				$needle_end = tags::g( 'var_c' ); #' }}';
+				$needle_start = willow\tags::g( 'var_o' ); #'{{ ';
+				$needle_end = willow\tags::g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -219,40 +219,40 @@ class markup extends willow\parse {
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'par_o' ); #'{{> ';
-				$needle_end = tags::g( 'par_c' ); #' <}}';
+				$needle_start = willow\tags::g( 'par_o' ); #'{{> ';
+				$needle_end = willow\tags::g( 'par_c' ); #' <}}';
 
 			break ;
 
 			case "loop" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'loo_o' ); #'{{@ ';
-				$needle_end = tags::g( 'loo_c' ); #' /@}}';
+				$needle_start = willow\tags::g( 'loo_o' ); #'{{@ ';
+				$needle_end = willow\tags::g( 'loo_c' ); #' /@}}';
 
 			break ;
 
 			case "willow" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'wil_o' ); #'{{~ ';
-				$needle_end = tags::g( 'wil_c' ); #' ~}}';
+				$needle_start = willow\tags::g( 'wil_o' ); #'{{~ ';
+				$needle_end = willow\tags::g( 'wil_c' ); #' ~}}';
 
 			break ;
 
 			case "function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'fun_o' ); #'<% ';
-				$needle_end = tags::g( 'fun_c' ); #' %>';
+				$needle_start = willow\tags::g( 'fun_o' ); #'<% ';
+				$needle_end = willow\tags::g( 'fun_c' ); #' %>';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'com_o' ); #'{{! ';
-				$needle_end = tags::g( 'com_c' ); #' !}}';
+				$needle_start = willow\tags::g( 'com_o' ); #'{{! ';
+				$needle_end = willow\tags::g( 'com_c' ); #' !}}';
 
 			break ;
 
@@ -309,8 +309,8 @@ class markup extends willow\parse {
 			case "willow" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'wil_o' ); #'{{~ ';
-				$needle_end = tags::g( 'wil_c' ); #' ~}}';
+				$needle_start = willow\tags::g( 'wil_o' ); #'{{~ ';
+				$needle_end = willow\tags::g( 'wil_c' ); #' ~}}';
 
 			break ;
 
@@ -326,40 +326,40 @@ class markup extends willow\parse {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = tags::g( 'var_o' ); #'{{ ';
-				$needle_end = tags::g( 'var_c' ); #' }}';
+				$needle_start = willow\tags::g( 'var_o' ); #'{{ ';
+				$needle_end = willow\tags::g( 'var_c' ); #' }}';
 
 			break ;
 
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'par_o' ); #'{{> ';
-				$needle_end = tags::g( 'par_c' ); #' }}';
+				$needle_start = willow\tags::g( 'par_o' ); #'{{> ';
+				$needle_end = willow\tags::g( 'par_c' ); #' }}';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'com_o' ); #'{{! ';
-				$needle_end = tags::g( 'com_c' ); #' }}';
+				$needle_start = willow\tags::g( 'com_o' ); #'{{! ';
+				$needle_end = willow\tags::g( 'com_c' ); #' }}';
 
 			break ;
 
 			case "loop" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'loo_o' ); // '{{@ ';
-				$needle_end = tags::g( 'loo_c' ); // ' }}';
+				$needle_start = willow\tags::g( 'loo_o' ); // '{{@ ';
+				$needle_end = willow\tags::g( 'loo_c' ); // ' }}';
 
 			break ;
 
 			case "function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = tags::g( 'fun_o' ); #'<< ';
-				$needle_end = tags::g( 'fun_c' ); #' >>';
+				$needle_start = willow\tags::g( 'fun_o' ); #'<< ';
+				$needle_end = willow\tags::g( 'fun_c' ); #' >>';
 
 			break ;
 
@@ -452,16 +452,16 @@ class markup extends willow\parse {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = tags::g( 'var_o' ); #'{{ ';
-				$needle_end = tags::g( 'var_c' ); #' }}';
+				$needle_start = willow\tags::g( 'var_o' ); #'{{ ';
+				$needle_end = willow\tags::g( 'var_c' ); #' }}';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = tags::g( 'com_o' ); #'{{ ';
-				$needle_end = tags::g( 'com_c' ); #' }}';
+				$needle_start = willow\tags::g( 'com_o' ); #'{{ ';
+				$needle_end = willow\tags::g( 'com_c' ); #' }}';
 
 			break ;
 

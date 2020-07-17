@@ -7,6 +7,7 @@ use q\core\helper as h;
 use q\view;
 use q\get;
 use q\willow;
+use q\willow\parse;
 use q\willow\render;
 
 class format extends willow\render {
@@ -329,7 +330,7 @@ class format extends willow\render {
         // remove variable from markup template
 		// self::$markup['template'] = render\markup::remove_placeholder( '{{ '.$field.' }}', self::$markup['template'] );
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
-		self::$markup['template'] = willow\markup::remove( $variable, self::$markup['template'], 'variable' );
+		self::$markup['template'] = parse\markup::remove( $variable, self::$markup['template'], 'variable' );
 
         // delete sending field ##
         render\fields::remove( $field, 'Removed by format_array after working' );

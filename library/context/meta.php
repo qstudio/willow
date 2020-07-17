@@ -25,9 +25,9 @@ class meta extends willow\context {
 		// $args['field'] = $args['task']; 
 
 		// returns string or array OR false.. ##
-		render\fields::define([
-			$args['task'] => get\meta::field( $args )
-		]);
+		// render\fields::define([
+		return [ $args['task'] => get\meta::field( $args ) ];
+		// ]);
 
 	}
 
@@ -45,9 +45,9 @@ class meta extends willow\context {
 
 		// get title - returns array with key 'title' ##
 		// $args['field'] = $args['task']; // get\meta::field required "args->field" ## -- ?? why again ??
-		render\fields::define(
-			get\meta::author( $args )
-		);
+		// render\fields::define(
+		return get\meta::author( $args );
+		// );
 
 	}
 	

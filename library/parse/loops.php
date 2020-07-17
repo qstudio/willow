@@ -124,7 +124,7 @@ class loops extends willow\parse {
 
 		// finally -- add a variable "{{ $loop_field }}" before this block at $position to markup->template ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
-		willow\markup::set( $variable, self::$position, 'variable' ); // '{{ '.$field.' }}'
+		parse\markup::set( $variable, self::$position, 'variable' ); // '{{ '.$field.' }}'
 
 		// clear slate ##
 		self::reset();

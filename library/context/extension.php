@@ -18,13 +18,17 @@ class extension extends willow\context {
     */
     public static function search( $args = null ){
 
+		// h::log( $args );
+
         // ##
 		// return extensions\search\render::ui( $args );
 
 		//  ##
-		render\fields::define([
+		// render\fields::define(
+		return [
 			'search' => extensions\search\render::ui( $args )
-		]);
+		];
+		// );
 
 	}
 

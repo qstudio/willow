@@ -11,10 +11,10 @@ use q\core\helper as h;
 
 class arguments extends willow\parse {
 
-	protected static 
+	private static 
 
 		$string, 
-		// $flags_args,
+		// $flags_argument,
 		// $argument_flags,
 		// $field,
 		// $value,
@@ -27,7 +27,7 @@ class arguments extends willow\parse {
 	protected static function reset(){
 
 		self::$string = false; 
-		// self::$flags_args = false;
+		self::$flags_argument = false;
 		// self::$argument_flags = false;
 		// self::$field = false;
 		// self::$value = false;
@@ -46,15 +46,13 @@ class arguments extends willow\parse {
 	( new = test & config = debug:true, run:true )
 	( config->debug = true & config->handle = sm:medium, lg:large )
 	*/
-	public static function decode( $args = null ){
+	public static function decode( $string = null ){
 
-		// h::log( $args );
+		// h::log( $string );
 
 		// sanity ##
 		if(
-			is_null( $args )
-			|| ! is_array( $args )
-			|| ! isset( $args['string'] )
+			is_null( $string )
 		){
 
 			h::log( 'e:>Error in passed arguments' );
@@ -67,7 +65,7 @@ class arguments extends willow\parse {
 		self::reset();
 		
 		// assign variables ##
-		self::$string = $args['string'];
+		self::$string = $string;
 
 		// trim string ##
 		self::$string = trim( self::$string );
@@ -75,13 +73,13 @@ class arguments extends willow\parse {
 		// check for "<" at start and ">" at end ##
 		// @todo - move to flags check for [a]
 		self::$string = flags::get( self::$string, 'argument' );
-		// h::log( self::$flags_args );
+		// h::log( self::$flags_argument );
 		if( 
 			// ! core\method::starts_with( self::$string, '@' )
-			// ! isset( self::$flags_args['a'] ) // not an array
-			! self::$flags_args
-			|| ! isset( self::$flags_args ) // not an array
-			|| ! is_array( self::$flags_args )
+			// ! isset( self::$flags_argument['a'] ) // not an array
+			! self::$flags_argument
+			|| ! isset( self::$flags_argument ) // not an array
+			|| ! is_array( self::$flags_argument )
 			// ||
 			// ! render\method::ends_with( $string, ']' ) 
 		){
@@ -111,14 +109,14 @@ class arguments extends willow\parse {
 		self::$string = preg_replace( '~"[^"]*"(*SKIP)(*F)|\s+~', "", self::$string );
 
 		// h::log( 'd:>string --> '.self::$string );
-		// h::log( self::$flags_args );
+		// h::log( self::$flags_argument );
 
 		// extract data from string ##
 		self::$array = core\method::parse_str( self::$string );
 
 		// h::log( self::$array );
 
-		// trim "value" leading and ending quotes from each value in array ##
+		// trim leading and ending double quotes ("..") from each value in array ##
 		array_walk_recursive( self::$array, function( &$v ) { $v = trim( $v, '"' ); });
 
 		// h::log( self::$array );

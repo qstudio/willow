@@ -97,6 +97,9 @@ class context extends \q_willow {
 		// h::log( '$function: '.$function );
 		// h::log( $args );
 
+		// reset class::method tracker ##
+		$lookup_error = false;
+
 		// check class__method is formatted correctly ##
 		if ( 
 			false === strpos( $function, '__' )
@@ -209,7 +212,14 @@ class context extends \q_willow {
 			// call class::method to gather data ##
 			// $namespace::run( $args );
 
-			// h::log( 't:>REMOVE all render\fields::define calls - this should be handled here..' );
+			// internal buffer ##
+			if(
+				isset( $args['config']['buffer'] )
+			){
+
+				ob_start();
+				
+			}
 
 			if (
 				$extend = context\extend::get( $args['context'], $args['task'] )
@@ -218,7 +228,9 @@ class context extends \q_willow {
 				// h::log( 'run extended method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from extend ##
-				render\fields::define( $extend['class']::{ $extend['method'] }( render::$args ) );
+				// render\fields::define( 
+					$return_array = $extend['class']::{ $extend['method'] }( render::$args ) ;
+				// );
 
 			} else if ( 
 				\method_exists( $namespace, $args['task'] ) 
@@ -227,7 +239,9 @@ class context extends \q_willow {
 				// 	h::log( 'load base method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from $method ##
-				$namespace::{ $args['task'] }( render::$args );
+				// render\fields::define(
+					$return_array = $namespace::{ $args['task'] }( render::$args ) ;
+				// );
 
 			} else if ( 
 				\method_exists( $namespace, 'get' ) 
@@ -236,15 +250,53 @@ class context extends \q_willow {
 				// 	h::log( 'load default get() method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from get() ##
-				$namespace::get( render::$args );
+				// render\fields::define(
+					$return_array = $namespace::get( render::$args ) ;
+				// );
 
 			} else {
 
 				// no matching class::method found, so stop ##
 
+				// render\log::set( $args );
+				
+				// h::log( 'e:>No matching class::method found' );
+
+				// // reset all args ##
+				// render\args::reset();
+	
+				// return false;
+
+				// nothing found ##
+				$lookup_error = true;
+
+			}
+
+			// internal buffer ##
+			if(
+				isset( $args['config']['buffer'] )
+			){
+
+				/// HMMM, but effective ##
+				$return_array = [ $args['task'] => ob_get_clean() ];
+
+				// ob_flush();
+				if( ob_get_level() > 0 ) ob_flush();
+
+				// h::log( $return_array );
+
+			}
+
+			// test ##
+			// h::log( $return_array );
+
+			if(
+				true === $lookup_error
+			){
+
 				render\log::set( $args );
 				
-				h::log( 'e:>No matching class::method found' );
+				h::log( 'e:>No matching method found for "'.$args['context'].'::'.$args['task'].'"' );
 
 				// reset all args ##
 				render\args::reset();
@@ -252,6 +304,21 @@ class context extends \q_willow {
 				return false;
 
 			}
+
+			if(
+				! $return_array
+				|| ! is_array( $return_array )
+			){
+
+				h::log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
+				h::log( $return_array );
+
+				// ...
+
+			}
+
+			// assign fields ##
+			render\fields::define( $return_array );
 
 			// prepare field data ##
 			render\fields::prepare();

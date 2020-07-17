@@ -14,6 +14,7 @@ class comments extends willow\parse {
 		$hash, 
 		$comment,
 		$comment_match
+		// $flags_comment
 		// $flags
 		// $position
 	
@@ -25,7 +26,7 @@ class comments extends willow\parse {
 		self::$hash = false; 
 		self::$comment = false;
 		self::$comment_match = false;
-		self::$flags = false;
+		self::$flags_comment = false;
 		// self::$position = false;
 
 	}
@@ -135,8 +136,8 @@ class comments extends willow\parse {
 
 				// look for flags ##
 				// self::flags();
-				self::$comment = flags::get( self::$comment );
-				// h::log( self::$flags );
+				self::$comment = flags::get( self::$comment, 'comment' );
+				// h::log( self::$flags_comment );
 				/*
 				if(
 					strstr( self::$comment, trim( willow\tags::g( 'fla_o' ) ) )
@@ -192,7 +193,7 @@ class comments extends willow\parse {
 
 				// html comments are rendered on the UI, so require to add a variable tag to the markup ##
 				if ( 
-					isset( self::$flags['h'] )
+					isset( self::$flags_comment['h'] )
 				){
 
 					// so, we can add a new field value to $args array based on the field name - with the comment as value
@@ -211,7 +212,7 @@ class comments extends willow\parse {
 				
 				// PHP log ##
 				if ( 
-					isset( self::$flags['p'] )
+					isset( self::$flags_comment['p'] )
 				){
 
 					// also, add a log entry ##
@@ -226,8 +227,8 @@ class comments extends willow\parse {
 				// this comment is not rendered in html or PHP and the willow tag is removed ##
 				// this goes last, as we might need the match reference for previous replacements ##
 				if ( 
-					empty( self::$flags ) 
-					|| isset( self::$flags['s'] )
+					empty( self::$flags_comment ) 
+					|| isset( self::$flags_comment['s'] )
 				){
 
 					// h::log( 'Silent comment, we need to remove the tag' );
@@ -244,7 +245,7 @@ class comments extends willow\parse {
 		}
 
 		// clean up all tags ##
-		h::log( 't:>MOVED cleanup to after lookup, check if this does not trash other markups and apply to all parse lookups..' );
+		// h::log( 't:>MOVED cleanup to after lookup, check if this does not trash other markups and apply to all parse lookups..' );
 		self::cleanup();
 
 	}

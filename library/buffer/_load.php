@@ -13,10 +13,15 @@ use q\willow\render;
 
 class buffer extends \q_willow {
 
+	// public static $filter;
+
 	/**
 	 * Check for view template and start OB, if correct
 	*/
 	public static function run(){
+
+		// start here ##
+		self::$filter = [];
 
 		// not on admin ##
 		if ( \is_admin() ) return false;
@@ -59,6 +64,9 @@ class buffer extends \q_willow {
 			for ($i = 0; $i < $levels; $i++) {
 				$string .= ob_get_clean();
 			}
+
+			// ob_flush();
+			if( ob_get_level() > 0 ) ob_flush();
 
 			// Header ##
 			// h::log( 't:>@TODO... header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
@@ -175,6 +183,7 @@ class buffer extends \q_willow {
 		
 		// clear object cache ##
 		self::$buffer = [];
+		self::$filter = [];
 
 		// return to OB to render in template ##
 		return self::$markup['template'];

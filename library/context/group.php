@@ -37,9 +37,9 @@ class group extends willow\context {
 			self::$args['fields'] = $array['fields']; 
 
 			// define "fields", passing returned data ##
-			render\fields::define(
-				$array['data']
-			);
+			// render\fields::define(
+				return $array['data'];
+			// );
 
 		}
 

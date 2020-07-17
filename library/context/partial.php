@@ -33,9 +33,9 @@ class partial extends willow\context {
 			// self::$args['fields'] = $array['fields']; 
 
 			// define "fields", passing returned data ##
-			render\fields::define(
-				core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ])
-			);
+			// render\fields::define(
+				return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+			// );
 
 		// }
 
