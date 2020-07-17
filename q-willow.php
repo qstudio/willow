@@ -408,6 +408,9 @@ if ( ! class_exists( 'q_willow' ) ) {
 			// context ##
 			require_once self::get_plugin_path( 'library/context/_load.php' );
 
+			// data filters ##
+			require_once self::get_plugin_path( 'library/filter/_load.php' );
+
 			// output buffer ##
 			require_once self::get_plugin_path( 'library/buffer/_load.php' );
 

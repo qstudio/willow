@@ -335,127 +335,6 @@ class markup extends willow\render {
 
 
 
-	
-
-	// @todo - escape ## per call, or globally ## ??
-	public static function escape_markup( $value, $key ) {
-
-		// h::log( self::$filter );
-		// h::log( self::$args );
-
-		/*
-		filters stored by context->task with ->global filters and ->variable filters, stored under original [f] flag reference
-		*/
-
-		// if( isset( self::$filter[self::$args['context']][self::$args['task']] ) ){
-
-			// h::log( 'key: '.$key );
-
-			// h::log( self::$filter[self::$args['context']][self::$args['task']] );
-			// h::log( self::$args );
-
-			// global first ##
-			if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['e'] ) ){
-
-				h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
-
-				$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
-				$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-			}
-
-		// }
-
-		return $value;
-
-	}
-
-
-
-	// @todo - escape ## per call, or globally ## ??
-	public static function escape_variable( $value, $key ) {
-
-		// h::log( self::$filter );
-		// h::log( self::$args );
-
-		/*
-		filters stored by context->task with ->global filters and ->variable filters, stored under original [f] flag reference
-		*/
-
-		// if( isset( self::$filter[self::$args['context']][self::$args['task']] ) ){
-
-			// h::log( 'key: '.$key );
-
-			// h::log( self::$filter[self::$args['context']][self::$args['task']] );
-			// h::log( self::$args );
-
-			// global first ##
-			if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['e'] ) ){
-
-				h::log( 'e:>Variable escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
-
-				// look for {{ variable }}
-				// h::log( '$value: '.$value );
-
-				$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
-				$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-			}
-
-		// }
-
-		return $value;
-
-	}
-
-
-
-
-	// @todo - escape ## per call, or globally ## ??
-	public static function strip_variable( $value, $key ) {
-
-		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['s'] ) ){
-
-			h::log( 'e:>Variable tag stripping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
-
-			// h::log( 'd:>stripping tags from value: '.$value );
-
-			$value = strip_tags( $value );
-			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-		}
-
-		return $value;
-
-	}
-
-
-
-	
-	// @todo - escape ## per call, or globally ## ??
-	public static function strip_markup( $value, $key ) {
-
-		// h::log( self::$args );
-
-		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['s'] ) ){
-
-			h::log( 'e:>Global tag stripping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
-
-			// h::log( 'd:>stripping tags from value: '.$value );
-
-			$value = strip_tags( $value );
-			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-		}
-
-		return $value;
-
-	}
-
-
-
 
 	public static function string( $args = null ){
 
@@ -492,10 +371,8 @@ class markup extends willow\render {
 		// h::log( 'd:>$key: '.$key );
 		// $string = trim( $string, '"' );
 
-		// escape ##
-		h::log( 't:>@TODO -- escape, strip etc run via filters, NOT here... once for value, once for markup' );
-		$value = self::escape_variable( $value, $key );
-		$value = self::strip_variable( $value, $key );
+		// filter variable ##
+		$value = apply_filters( 'q/willow/render/markup/variable', $value, $key );
 
 		// variable replacement -- regex way ##
 		$open = trim( willow\tags::g( 'var_o' ) );
@@ -515,13 +392,8 @@ class markup extends willow\render {
              'return'        => $string
 		]); 
 
-		// whole
-		$string = self::strip_markup( $string, $key );
-
-		// whole
-		$string = self::escape_markup( $string, $key );
-		
-		// h::log( 't:>Move pre-render formats to some sort of system / class, add filters and allow for extensions' );
+		// filter markup ##
+		$string = apply_filters( 'q/willow/render/markup/markup', $string, $key );
 
 		// return ##
 		return $string;

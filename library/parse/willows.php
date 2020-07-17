@@ -568,7 +568,7 @@ class willows extends willow\parse {
 			h::log( 'd:>Willow "'.self::$willow_match.'" did not return a value.' );
 
 			// strip it from markup ##
-			willow\markup::swap( self::$willow_match, '', 'willow', 'string' );
+			parse\markup::swap( self::$willow_match, '', 'willow', 'string' );
 
 			// done ##
 			return false;
