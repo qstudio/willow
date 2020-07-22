@@ -31,11 +31,7 @@ class flags extends willow\parse {
 		}
 
 		// sanity ##
-		// h::log( 't:>make flags::get() method, make $flags a property of parse.. ' );
-
 		if(
-			// strstr( $string, trim( willow\tags::g( 'fla_o' ) ) )
-			// && strstr( $string, trim( willow\tags::g( 'fla_c' ) ) )
 			core\method::starts_with( $string, trim( willow\tags::g( 'fla_o' ) ) )
 			&& $flags = core\method::string_between( $string, trim( willow\tags::g( 'fla_o' ) ), trim( willow\tags::g( 'fla_c' ) ) )
 		){
@@ -130,9 +126,6 @@ class flags extends willow\parse {
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
 		 	'q/willow/parse/flags/cleanup/regex', 
-			 // "/$open.*?$close/ms" 
-			//  "/$open\s+.*?\s+$close/s"
-			// "~\\$open\s+(.*?)\s+\\$close~"
 			"/\\$open.*?\\$close/"
 		);
 

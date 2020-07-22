@@ -19,8 +19,6 @@ class partials extends willow\parse {
 	*/
 	public static function prepare( $args = null, $process = 'internal' ){
 
-		// h::log( $args['key'] );
-
 		// global ##
 		$config = core\config::get([ 'context' => 'partial', 'task' => 'config' ]);
 		// h::log( $config );
@@ -31,9 +29,6 @@ class partials extends willow\parse {
 		){
 
 			h::log( 'Partial config->run defined as false, so stopping here...' );
-
-			// clean up tags, if not buffering ##
-			// if ( is_null( self::$buffer ) ) self::cleanup();
 
 			return false;
 
@@ -106,9 +101,8 @@ class partials extends willow\parse {
 		// h::log( 'open: '.$open. ' - close: '.$close );
 
 		$regex = \apply_filters( 
-			'q/render/parse/partial/regex/find', 
+			'q/render/parse/partials/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
-			// "/{{#(.*?)\/#}}/s" 
 		);
 
 		// h::log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
@@ -264,13 +258,10 @@ class partials extends willow\parse {
 		$close = trim( willow\tags::g( 'par_c' ) );
 
 		// strip all section blocks, we don't need them now ##
-		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 			'q/willow/parse/partials/cleanup/regex', 
 			"/$open.*?$close/ms" 
-			// "/{{#.*?\/#}}/ms"
 		);
-		// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 
 
 		// sanity -- method requires requires ##
 		if ( 
