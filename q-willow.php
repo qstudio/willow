@@ -76,11 +76,8 @@ if ( ! class_exists( 'q_willow' ) ) {
 
 			// BUFFER, perhaps can be protected ##
 			$buffer_args 	= null,
-			$buffer_fields 	= [],
 			$buffer_markup 	= null,
-			$buffer_map		= [], // buffer markup map ##
-			$buffer_count 	= 0
-			// $buffer_log		= []
+			$buffer_map		= [] // buffer markup map ##
 
 		;
 

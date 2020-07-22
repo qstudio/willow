@@ -246,32 +246,11 @@ class variables extends willow\parse {
 
 		// h::log( $args );
 
-		// $open = trim( willow\tags::g( 'var_o' ) );
-		// $close = trim( willow\tags::g( 'var_c' ) );
-
 		// clear slate ##
 		self::reset();
 
 		// return entire function string, including tags for tag swap ##
 		self::$variable = $match;
-		// self::$variable = core\method::string_between( $match, $open, $close );
-
-		// h::log( 'd:>$variable: '.self::$variable );
-
-		// look for flags ##
-		// self::$variable = flags::get( self::$variable, 'variable' );
-		// h::log( self::$flags );
-
-		/*
-		if(
-			self::$flags_variable
-		){
-
-			h::log( 'd:>$variable: '.self::$variable.' has flags..' );
-			h::log( self::$flags_variable );
-
-		}
-		*/
 
 		// clean up ##
 		self::$variable = trim( self::$variable );
@@ -371,42 +350,6 @@ class variables extends willow\parse {
 
 		}
 
-		/*
-		// e = escape --- escape html ##
-		if( isset( self::$flags_variable['e'] ) ) {
-
-			self::$arguments = core\method::parse_args( 
-				self::$arguments, 
-				[ 
-					'config' => [ 
-						'escape' => true 
-					] 
-				]
-			);
-		}
-
-		// s = strip --- strip html / php tags ##
-		if( isset( self::$flags_variable['s'] ) ) {
-
-			self::$arguments = core\method::parse_args( 
-				self::$arguments, 
-				[ 
-					'config' => [ 
-						'strip' => true 
-					] 
-				]
-			);
-		}
-
-		// merge in new args to args->field ##
-		if ( ! isset( self::$args[self::$field_name] ) ) self::$args[self::$field_name] = [];
-
-		self::$args[self::$field_name] = core\method::parse_args( 
-			self::$arguments, 
-			self::$args[self::$field_name] 
-		);
-		*/
-
 		// clean up ##
 		self::reset();
 
@@ -431,18 +374,16 @@ class variables extends willow\parse {
 			(
 				'internal' == $process
 				&& (
-				! isset( self::$markup )
-				|| ! is_array( self::$markup )
-				|| ! isset( self::$markup['template'] )
+					! isset( self::$markup )
+					|| ! is_array( self::$markup )
+					|| ! isset( self::$markup['template'] )
 				)
 			)
 			||
 			(
 				'buffer' == $process
 				&& (
-				! isset( self::$buffer_markup )
-				// || ! is_array( self::$buffer_markup )
-				// || ! isset( self::$buffer_markup['template'] )
+					! isset( self::$buffer_markup )
 				)
 			)
 		){
@@ -477,9 +418,6 @@ class variables extends willow\parse {
 		if (  
 			! $string
 			|| is_null( $string )
-			// || ! isset( $args['key'] )
-			// || ! isset( $args['value'] )
-			// || ! isset( $args['string'] )
 		){
 
 			h::log( self::$args['task'].'~>e:>Error in $markup' );
@@ -506,112 +444,13 @@ class variables extends willow\parse {
 		// log ##
 		// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
 		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
-		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
-
-		// h::log( 't:>VARIABLE flags, such as escape or strip...' );
 
 		// remove any leftover variables in string ##
 		foreach( $variables as $key => $value ) {
 
-			// take match ##
-			// $match = $matches[0][$match][0];
-
 			// pass match to function handler ##
 			self::format( $value, $args, $process );
 
-			// clear slate ##
-			// self::reset();
-
-			// h::log( self::$args['task'].'~>d:>'.$value );
-			// h::log( 'd:>variable: "'.$value.'"' );
-
-			// now, we need to look for the config pattern, defined as field(setting:value;) and try to handle any data found ##
-			// $regex_find = \apply_filters( 'q/render/markup/config/regex/find', '/[[(.*?)]]/s' );
-			
-			// if ( 
-			// 	preg_match( $regex_find, $value, $matches ) 
-			// ){
-
-			/*
-			if ( 
-				// $config_string = method::string_between( $value, '[[', ']]' )
-				$config_string = core\method::string_between( $value, trim( tags::g( 'arg_o' )), trim( tags::g( 'arg_c' )) )
-			){
-
-				// store variable ##
-				$variable = $value;
-
-				// h::log( $matches[0] );
-
-				// get field ##
-				// h::log( 'value: '.$value );
-				
-				// $field = trim( method::string_between( $value, '{{ ', '[[' ) );
-				$field = str_replace( $config_string, '', $value );
-
-				// clean up field data ## -- @TODO, move to \Q::sanitize();
-				$field = preg_replace( "/[^A-Za-z0-9._]/", '', $field );
-
-				// h::log( 'field: '.$field );
-
-				// check if field is sub field i.e: "post__title" ##
-				if ( false !== strpos( $field, '__' ) ) {
-
-					$field_array = explode( '__', $field );
-
-					$field_name = $field_array[0]; // take first part ##
-					$field_type = $field_array[1]; // take second part ##
-
-				} else {
-
-					$field_name = $field; // take first part ##
-					$field_type = $field; // take second part ##
-
-				}
-
-				// we need field_name, so validate ##
-				if (
-					! $field_name
-					|| ! $field_type
-				){
-
-					h::log( self::$args['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.$variable );
-
-					continue;
-
-				}
-
-				// create new variable for markup, based on $field value ##
-				$new_variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
-
-				// test what we have ##
-				// h::log( 'd:>variable: "'.$value.'"' );
-				// h::log( 'd:>new_variable: "'.$new_variable.'"' );
-				// h::log( 'd:>field_name: "'.$field_name.'"' );
-				// h::log( 'd:>field_type: "'.$field_type.'"' );
-
-				// pass to argument handler -- returned value ##
-				if ( 
-					self::$arguments = willow\arguments::decode([ 
-						'string' 	=> $config_string, // string containing arguments ##
-					])
-				){
-
-					// merge in new args to args->field ##
-					if ( ! isset( self::$args[$field_name] ) ) self::$args[$field_name] = [];
-
-					self::$args[$field_name] = core\method::parse_args( self::$arguments, self::$args[$field_name] );
-
-				}
-
-				// h::log( self::$args[$field_name] );
-
-				// now, edit the variable, to remove the config ##
-				willow\markup::swap( $variable, $new_variable, 'variable', 'variable' );
-
-			}
-			*/
-		
 		}
 		
 		// clear slate ##
@@ -629,14 +468,9 @@ class variables extends willow\parse {
 		$open = trim( willow\tags::g( 'var_o' ) );
 		$close = trim( willow\tags::g( 'var_c' ) );
 
-		// h::log( self::$markup['template'] );
-
 		// strip all function blocks, we don't need them now ##
-		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/willow/parse/variables/cleanup/regex', 
-			 // "/$open.*?$close/ms" 
-			//  "/$open\s+.*?\s+$close/s"
 			"~\\$open\s+(.*?)\s+\\$close~"
 		);
 
@@ -645,18 +479,16 @@ class variables extends willow\parse {
 			(
 				'internal' == $process
 				&& (
-				! isset( self::$markup )
-				|| ! is_array( self::$markup )
-				|| ! isset( self::$markup['template'] )
+					! isset( self::$markup )
+					|| ! is_array( self::$markup )
+					|| ! isset( self::$markup['template'] )
 				)
 			)
 			||
 			(
 				'buffer' == $process
 				&& (
-				! isset( self::$buffer_markup )
-				// || ! is_array( self::$buffer_markup )
-				// || ! isset( self::$buffer_markup['template'] )
+					! isset( self::$buffer_markup )
 				)
 			)
 		){
@@ -742,8 +574,6 @@ class variables extends willow\parse {
 			break ;
 
 		} 
-
-		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
 
 	}
 

@@ -67,17 +67,14 @@ class output extends willow\buffer {
 			// ob_flush();
 			if( ob_get_level() > 0 ) ob_flush();
 
-			// Header ##
-			// h::log( 't:>@TODO... header inclusion needs to be more graceful, and render needs to have "blocks", which can be passed / set');
-			willow\context::ui__head([ 'config' => [ 'embed' => true ]]);
-			// willow\context::ui__header([ 'config' => [ 'embed' => true ]]);
+			// HTML <head> ##
+			willow\context::ui__head();
 		
-			// Apply any filters to the final output
-			// echo \apply_filters( 'ob_output', $string );
+			// Output is directly echoed, once it has been parsed ##
 			echo self::prepare( $string );
 
-			// Footer, basically just wp_footer() + closing body / html tags  ##
-			willow\context::ui__footer([ 'config' => [ 'embed' => true ]]);
+			// Footer, basically just wp_footer() + closing </body> / </html> tags  ##
+			willow\context::ui__footer();
 
 			// reset all args ##
 			render\args::reset();
@@ -107,10 +104,6 @@ class output extends willow\buffer {
 
 		}
 
-		// self::$buffer_map = [];
-
-		// h::log( 'e:>Running Buffer::Prepare: '.rand() );
-
 		// we are passed an html string, captured from output buffering, which we need to parse for tags and process ##
 		// h::log( $string );
 
@@ -125,9 +118,8 @@ class output extends willow\buffer {
 		];
 
 		// take buffer output string as markup->template ##
-		self::$buffer_markup = $string; // @TODO... we can phase this out ##
-
-		self::$buffer_map[0] = $string;
+		self::$buffer_markup = $string; // used for parsers to reference buffer markup template ##
+		self::$buffer_map[0] = $string; // for easy debugging of map
 
 		// force methods to return for collection by output buffer ##
 		self::$args_default['config']['return'] = 'return';
@@ -136,36 +128,15 @@ class output extends willow\buffer {
 		willow\parse::prepare( self::$buffer_args, 'buffer' );
 
 		// h::log( self::$buffer_markup );
-		// h::log( self::$buffer_fields );
-		// h::log( 'Buffer Field Count: '.count( self::$buffer_fields) );
-
-		// get var tags ##
-		$open = trim( willow\tags::g( 'var_o' ) );
-		$close = trim( willow\tags::g( 'var_c' ) );
-
-		// loop over each field, replacing variables with values ##
-        foreach( self::$buffer_fields as $key => $value ) {
-
-			$regex = \apply_filters( 'q/render/markup/buffer', "~\\$open\s+$key\s+\\$close~" ); 
-
-			// variable replacement -- regex way ##
-			self::$buffer_markup = preg_replace( $regex, $value, self::$buffer_markup ); 
-
-		}
-
-		// h::log( self::$buffer_markup );
-
-		// h::log( self::$buffer_markup );
 		self::$buffer_markup = buffer\map::prepare();
+		// h::log( self::$buffer_markup );
 
 		// clean up left over tags ##
 		willow\parse::cleanup( self::$buffer_args, 'buffer' );
 		
-		// h::log( $string );
-
 		// clear buffer objects ##
-		self::$buffer_fields = [];
-		self::$buffer_args = [];
+		self::$buffer_map = [];
+		self::$buffer_args = null;
 		self::$filter = null;
 
 		// return to OB to render in template ##

@@ -113,7 +113,6 @@ class markup extends willow\parse {
         if (
 			is_null( $type ) 
 			|| is_null( $tag ) 
-			// || is_null( $markup )
 			|| is_null( $position )
 		) {
 
@@ -168,13 +167,13 @@ class markup extends willow\parse {
 				// h::log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
-				self::$markup['template'] = $new_template."\r\n";
+				self::$markup['template'] = $new_template; // ."\r\n"
 
 			break ;
 
 			case "buffer" :
 
-				// h::log( 'd:>Swapping markup in self::$buffer_markup' );
+				h::log( 'd:>Swapping markup in self::$buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = substr_replace( self::$buffer_markup, $tag, $position, 0 );
@@ -183,7 +182,7 @@ class markup extends willow\parse {
 				// h::log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
-				self::$buffer_markup = $new_template."\r\n";
+				self::$buffer_markup = $new_template; // ."\r\n"
 
 			break ;
 
@@ -209,7 +208,7 @@ class markup extends willow\parse {
      */
     public static function add( string $tag = null, $before = null, $type = 'variable', $process = 'internal' ) { // , $markup = null
 
-		// h::log( 't:>Position based replacement seems shaky, perhaps move to swap method...' );
+		h::log( 't:>PERHAPS THIS METHOD IS NOT NEEDED??' );
 
         // sanity ##
         if (
@@ -615,24 +614,8 @@ class markup extends willow\parse {
 
 		} 
 
-		// add new variable to $template as defined position - don't replace $from yet... ##
-		// $new_template = str_replace( $from, $to, self::$markup['template'] );
-
-		// test ##
-		// h::log( 'd:>'.$new_template );
-
-		// push back into main stored markup ##
-		// self::$markup['template'] = $new_template;
-		
-		// h::log( self::$markup['template'] );
-
-		// h::log( 'd:>'.$markup );
-
-		// log ##
-		// h::log( self::$args['task'].'~>variable_added:>"'.$to.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
-
         // positive ##
-        return true; #$markup['template'];
+        return true;
 
     }
 

@@ -18,7 +18,6 @@ class loops extends willow\parse {
 		$loop_match, // full string matched ##
 		$loop_field,
 		$loop_markup,
-		// $arguments,
 		$config_string,
 		$return,
 		$position
@@ -29,19 +28,12 @@ class loops extends willow\parse {
 	private static function reset(){
 
 		self::$loop_hash = false; 
-		// self::$flags = false;
-		// self::$flags_args = false;
 		self::$loop_field = false;
 		self::$loop_markup = false;
 		self::$loop = false;
-		// self::$arguments = false;
-		// self::$class = false;
-		// self::$method = false;
-		// self::$willow_array = false;
 		self::$config_string = false;
 		self::$return = false;
 		self::$position = false;
-		// self::$is_global = false;
 
 	}
 
@@ -102,9 +94,8 @@ class loops extends willow\parse {
 		self::$loop_field = trim(self::$loop_field);
 		self::$loop_markup = trim(self::$loop_markup);
 
-		// $loop_hash = 'section__'.\mt_rand();
+		// set hash ##
 		self::$loop_hash = self::$loop_field;
-		// $loop_hash = $args['context'].'__'.$args['task'].'__'.rand();
 
 		// test what we have ##
 		// h::log( 'd:>field: "'.self::$loop_field.'"' );
@@ -116,11 +107,6 @@ class loops extends willow\parse {
 		self::$markup[self::$loop_hash] = self::$loop_markup;
 
 		// BREAK -- we might need to check for isset ( markup->field ) ++ markup-> template if not create -- template +
-
-		// force hash ?? ##
-		// self::$args['config']['hash'] = $loop_hash;
-
-		// h::log( 't:>INVERSION - No need for a whole new tag, just pass an "inversion/default" string in case of no results - perhaps defined with the class->method or picked up via a flag "*value"' );
 
 		// finally -- add a variable "{{ $loop_field }}" before this block at $position to markup->template ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_hash, 'close' => 'var_c' ]);
@@ -198,18 +184,16 @@ class loops extends willow\parse {
 			(
 				'internal' == $process
 				&& (
-				! isset( self::$markup )
-				|| ! is_array( self::$markup )
-				|| ! isset( self::$markup['template'] )
+					! isset( self::$markup )
+					|| ! is_array( self::$markup )
+					|| ! isset( self::$markup['template'] )
 				)
 			)
 			||
 			(
 				'buffer' == $process
 				&& (
-				! isset( self::$buffer_markup )
-				// || ! is_array( self::$buffer_markup )
-				// || ! isset( self::$buffer_markup['template'] )
+					! isset( self::$buffer_markup )
 				)
 			)
 		){
@@ -259,10 +243,6 @@ class loops extends willow\parse {
 		$loop_open = trim( willow\tags::g( 'loo_o' ) );
 		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
-		// arguments ##
-		// $arg_open = trim( willow\tags::g( 'arg_o' ) );
-		// $arg_close = trim( willow\tags::g( 'arg_c' ) );
-
 		$regex_find = \apply_filters( 
 			'q/render/markup/loop/regex/find', 
 			"/$loop_open\s+(.*?)\s+$loop_close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
@@ -310,60 +290,11 @@ class loops extends willow\parse {
 				// take match ##
 				$match = $matches[0][$match][0];
 
-				
 				// h::log( 'd:>position: '.$position );
 				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
 				// pass match to function handler ##
 				self::format( $match, $position, $process );
-
-				// h::log( 'd:>Searching for loop field and markup in: '.$matches[0][$match][0] );
-
-				// $position = $matches[0][$match][1]; // take from first array ##
-				// h::log( 'd:>position: '.$position );
-				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
-				/*
-				$field = core\method::string_between( $matches[0][$match][0], $arg_open, $arg_close );
-				$markup = core\method::string_between( $matches[0][$match][0], $arg_close, $loop_close );
-
-				// sanity ##
-				if ( 
-					! isset( $field ) 
-					|| ! isset( $markup ) 
-				){
-
-					h::log( 'e:>Error in returned match key or value' );
-
-					continue; 
-
-				}
-
-				// clean up ##
-				$field = trim($field);
-				$markup = trim($markup);
-
-				// $loop_hash = 'section__'.\mt_rand();
-				$loop_hash = $field;
-				// $loop_hash = $args['context'].'__'.$args['task'].'__'.rand();
-
-				// test what we have ##
-				// h::log( 'd:>field: "'.$field.'"' );
-				// h::log( "d:>markup: $markup" );
-				// h::log( "d:>hash: $loop_hash" );
-
-				// so, we can add a new field value to $args array based on the field name - with the markup as value
-				// self::$args[$field] = $markup;
-				self::$markup[$loop_hash] = $markup;
-
-				// force hash ?? ##
-				// self::$args['config']['hash'] = $loop_hash;
-
-				// h::log( 't:>INVERSION - No need for a whole new tag, just pass an "inversion/default" string in case of no results - perhaps defined with the class->method or picked up via a flag "*value"' );
-
-				// finally -- add a variable "{{ $field }}" before this block at $position to markup->template ##
-				$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $loop_hash, 'close' => 'var_c' ]);
-				willow\markup::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
-				*/
 
 			}
 

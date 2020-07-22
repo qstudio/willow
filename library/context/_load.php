@@ -178,17 +178,14 @@ class context extends \q_willow {
 			$hash = $args['context'].'__'.$args['task'].'.'.rand();
 
 			// h::log( 'e:>Context Loaded: '.$hash );
-			// h::log( $args['config']['embed'] );
 
 			// log hash ##
 			\q_willow::$hash 	= [
 				'hash'			=> $hash,
 				'context'		=> $args['context'],
 				'task'			=> $args['task'],
-				'tag'			=> isset( $args['config']['embed'] ) ? false : $args['config']['tag'], // matching tag from template ##
-				'markup'		=> isset( $args['config']['embed'] ) ? false : $args['config']['markup'],
-				'parent'		=> isset( $args['config']['embed'] ) ? false : $args['config']['parent'],
-				// 'position'		=> $args['config']['position']
+				'tag'			=> isset( $args['config']['tag'] ) ? $args['config']['tag'] : false , // matching tag from template ##
+				'parent'		=> isset( $args['config']['parent'] ) ? $args['config']['parent'] : false,
 			];
 
 			if (

@@ -13,7 +13,6 @@ class functions extends willow\parse {
 
 		$return,
 		$function_hash, 
-		// $flags_function,
 		$function,
 		$function_match, // full string matched ##
 		$arguments,
@@ -103,34 +102,13 @@ class functions extends willow\parse {
 			self::$config_string 
 		){
 
-			// sub functions - functions passed in arguments string ##
-
-			// clean up string -- remove all white space ##
-			// $string = trim( $string );
-			// $config_string = str_replace( ' ', '', $config_string );
-			// h::log( 'd:> '.self::$config_string );
-
 			// pass to argument handler ##
 			self::$arguments = willow\arguments::decode( self::$config_string );
 
-			// h::log( self::$arguments );
-			// h::log( self::$flags_args );
-
-			// h::log( $matches[0] );
-
-			// $field = trim( core\method::string_between( $value, '{{ ', '[[' ) );
-			// $function = str_replace( trim( tags::g( 'arg_o' )).$config_string.trim( tags::g( 'arg_c' )), '', $function );
-			// h::log( 'function: '.$function );
-			// $function = core\method::string_between( $function, trim( tags::g( 'fun_o' )), trim( tags::g( 'arg_o' )) );
 			$function_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$function );
-			// h::log( $function_explode );
 			self::$function = trim( $function_explode[0] );
-			// $class = false;
-			// $method = false;
 
 			self::$function_hash = self::$function; // update hash to take simpler function name.. ##
-			// h::log( 'hash updated to: '.$function_hash );
-			// h::log( 'function: "'.self::$function.'"' );
 
 			// if arguments are not in an array, take the whole string passed as the arguments ##
 			if ( 
@@ -222,12 +200,8 @@ class functions extends willow\parse {
 
 		}
 
-		// test what we have ##
-		// h::log( 'd:>function: "'.self::$function.'"' );
+		// final hash update ##
 		self::$function_hash = self::$function_hash.'.'.rand();
-		// h::log( 'hash at end is...: '.self::$function_hash );
-
-		// h::log( self::$arguments );
 
 		// class and method set -- so call ## 
 		if ( self::$class && self::$method ) {
@@ -242,7 +216,6 @@ class functions extends willow\parse {
 
 				// global function returns are pushed directly into buffer ##
 				self::$return = self::$class::{ self::$method }( self::$arguments );
-				self::$buffer_fields[ self::$function_hash ] = self::$return;
 
 			} else { 
 
@@ -250,7 +223,6 @@ class functions extends willow\parse {
 
 				// global function returns are pushed directly into buffer ##
 				self::$return = self::$class::{ self::$method }();
-				self::$buffer_fields[ self::$function_hash ] = self::$return;
 
 			}
 
@@ -263,15 +235,7 @@ class functions extends willow\parse {
 
 				// h::log( 'passing args array to: '.self::$function );
 				// h::log( self::$arguments );
-
 				self::$return = call_user_func( self::$function, self::$arguments );
-
-				// render\fields::define([
-				// 	self::$function_hash => self::$return
-				// ]);
-
-				// also, adding to buffer ## @TODO -- check this is ok ##
-				self::$buffer_fields[ self::$function_hash ] = self::$return;
 
 			} else {
 
@@ -279,7 +243,6 @@ class functions extends willow\parse {
 
 				// global functions skip internal processing and return their results directly to the buffer ##
 				self::$return = call_user_func( self::$function ); // NOTE that calling this function directly was failing silently ##
-				self::$buffer_fields[ self::$function_hash ] = self::$return;
 
 			}
 
@@ -321,63 +284,28 @@ class functions extends willow\parse {
 
 		}
 
-		// h::log( 'd:>'.self::$function.' -> '.self::$return );
-
-		// add to buffer_fields ##
-		self::$buffer_fields[ self::$function_hash ] = self::$return;
-
 		// add fields - perhaps we do not always need this -- perhaps based on [r] flag ##
 		render\fields::define([
 			self::$function_hash => self::$return
 		]);
 
-		// replace tag with raw return value from function
+		// replace function tag with raw return value for willw parse ##
 		if( 
-			(
-				isset( $args['config']['embed'] )
-				&& true === isset( $args['config']['embed'] )
-			) 
-			||
 			isset( self::$flags_function['r'] ) 
 		){
-
-
-			// if ( ! isset( self::$return ) ) {
-
-			// h::log( 'e:>Function "'.self::$function_match.'" did not return a value' );
-
-			// 	return false;
-
-			// }
-
-			// h::log( self::$hash );
 
 			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
 
 			$string = self::$return;
 
-			// log change, for later reference ##
-			/*
-			self::$buffer_log[] = [
-				'was' 	=> self::$function_match,
-				'now'	=> $string
-			];
-			*/
-
-			// h::log( self::$buffer_map[0] );
-
-			// HHMMM, bit risky ##
+			// function returns which update the template also need to update the buffer_map, for later find/replace ##
+			// Seems like a potential pain-point ##
 			self::$buffer_map[0] = str_replace( self::$function_match, $string, self::$buffer_map[0] );
 
+			// update markup for willow parse ##
 			parse\markup::swap( self::$function_match, $string, 'function', 'string', $process ); // '{{ '.$field.' }}'
 
 		} else {
-
-			// finally -- add a variable "{{ $field }}" where the function tag block was in markup->template ##
-			$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$function_hash, 'close' => 'var_c' ]);
-			// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
-
-			parse\markup::swap( self::$function_match, $variable, 'function', 'variable', $process ); // '{{ '.$field.' }}'
 
 			// add data to buffer map ##
 			self::$buffer_map[] = [
@@ -403,10 +331,6 @@ class functions extends willow\parse {
 	*/
     public static function prepare( $args = null, $process = 'internal' ){
 
-		// h::log( 't:>TODO -- functions are always global, either function() or class::method format and must return data directly' );
-
-		// h::log( $args['key'] );
-
 		// sanity -- method requires requires ##
 		if ( 
 			(
@@ -422,8 +346,6 @@ class functions extends willow\parse {
 				'buffer' == $process
 				&& (
 				! isset( self::$buffer_markup )
-				// || ! is_array( self::$buffer_markup )
-				// || ! isset( self::$buffer_markup['template'] )
 				)
 			)
 		){
@@ -551,18 +473,16 @@ class functions extends willow\parse {
 			(
 				'internal' == $process
 				&& (
-				! isset( self::$markup )
-				|| ! is_array( self::$markup )
-				|| ! isset( self::$markup['template'] )
+					! isset( self::$markup )
+					|| ! is_array( self::$markup )
+					|| ! isset( self::$markup['template'] )
 				)
 			)
 			||
 			(
 				'buffer' == $process
 				&& (
-				! isset( self::$buffer_markup )
-				// || ! is_array( self::$buffer_markup )
-				// || ! isset( self::$buffer_markup['template'] )
+					! isset( self::$buffer_markup )
 				)
 			)
 		){
