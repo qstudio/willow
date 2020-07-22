@@ -83,6 +83,7 @@ class variables extends willow\parse {
 		if(
 			is_null( $args )
 			|| ! is_array( $args )
+			|| ! isset( $args['variable'] )
 		){
 
 			h::log( 'e:>Error in $args passed to flags method' );
@@ -94,20 +95,30 @@ class variables extends willow\parse {
 		// clean up field name - remove variable tags ##
 		$variable = str_replace( [ tags::g( 'var_o' ), tags::g( 'var_c' ) ], '', $args['variable'] );
 		$variable = trim( $variable );
+		$variable_original = $variable;
 		// h::log( '$variable: '.$variable );
 
 		self::$flags_variable = false;
 
 		// look for flags ##
-		$variable = flags::get( $variable, 'variable' );
-		$variable = trim( $variable );
+		// $variable = flags::get( $variable, 'variable' );
+		// $variable = trim( $variable );
+		// h::log( '$variable, after flags: '.$variable );
 		// h::log( self::$flags_variable );
+
+		$variable = flags::get( $variable, 'variable' );
 
 		if(
 			self::$flags_variable
 		){
 
-			h::log( 'd:>$variable: '.$variable.' has flags..' );
+			$variable = trim( $variable );
+			// h::log( '$variable, has flags: '.$variable );
+			// h::log( self::$flags_variable );
+			// h::log( self::$markup );
+			// h::log( '$variable_original: '.$variable_original );
+
+			// h::log( 'd:>$variable: '.$variable.' has flags..' );
 			// h::log( self::$flags_variable );
 			/*
 			// empty ##
@@ -166,7 +177,7 @@ class variables extends willow\parse {
 							'variables'		=> [
 								$variable	=> self::$flags_variable,
 							],
-							'hash'			=> $args['hash'],
+							// 'hash'			=> $args['hash'],
 						]						
 					);
 				// }
@@ -191,6 +202,18 @@ class variables extends willow\parse {
 
 				// return true;
 
+				/*
+				// replace in markup ##
+				parse\markup::swap( 
+					willow\tags::wrap([ 'open' => 'var_o', 'value' => $variable_original, 'close' => 'var_c' ]), 
+					willow\tags::wrap([ 'open' => 'var_o', 'value' => $variable, 'close' => 'var_c' ]), 
+					'variable', 
+					'variable' 
+				);
+
+				h::log( self::$markup );
+				*/
+
 			// }
 
 			return true;
@@ -208,7 +231,7 @@ class variables extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function format( $match = null, $args = null ){
+	public static function format( $match = null, $args = null, $process = 'internal' ){
 
 		// sanity ##
 		if(
@@ -344,7 +367,7 @@ class variables extends willow\parse {
 			// h::log( self::$args[$field_name] );
 
 			// now, edit the variable, to remove the config ##
-			parse\markup::swap( self::$variable, self::$new_variable, 'variable', 'variable' );
+			parse\markup::swap( self::$variable, self::$new_variable, 'variable', 'variable', $process );
 
 		}
 
@@ -401,13 +424,27 @@ class variables extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function prepare( $args = null ){
+	public static function prepare( $args = null, $process = 'internal' ){
 
-		// sanity -- this requires ##
+		// sanity -- method requires requires ##
 		if ( 
-			! isset( self::$markup )
-			|| ! is_array( self::$markup )
-			|| ! isset( self::$markup['template'] )
+			(
+				'internal' == $process
+				&& (
+				! isset( self::$markup )
+				|| ! is_array( self::$markup )
+				|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+				! isset( self::$buffer_markup )
+				// || ! is_array( self::$buffer_markup )
+				// || ! isset( self::$buffer_markup['template'] )
+				)
+			)
 		){
 
 			h::log( 'e:>Error in stored $markup' );
@@ -416,8 +453,25 @@ class variables extends willow\parse {
 
 		}
 
-		// get markup ##
-		$string = self::$markup['template'];
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
 
 		// sanity ##
 		if (  
@@ -450,7 +504,8 @@ class variables extends willow\parse {
 		}
 
 		// log ##
-		h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
+		// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
+		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
 		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
 
 		// h::log( 't:>VARIABLE flags, such as escape or strip...' );
@@ -462,7 +517,7 @@ class variables extends willow\parse {
 			// $match = $matches[0][$match][0];
 
 			// pass match to function handler ##
-			self::format( $value, $args );
+			self::format( $value, $args, $process );
 
 			// clear slate ##
 			// self::reset();
@@ -569,7 +624,7 @@ class variables extends willow\parse {
 
 
 
-	public static function cleanup( $args = null ){
+	public static function cleanup( $args = null, $process = 'internal' ){
 
 		$open = trim( willow\tags::g( 'var_o' ) );
 		$close = trim( willow\tags::g( 'var_c' ) );
@@ -585,8 +640,55 @@ class variables extends willow\parse {
 			"~\\$open\s+(.*?)\s+\\$close~"
 		);
 
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'internal' == $process
+				&& (
+				! isset( self::$markup )
+				|| ! is_array( self::$markup )
+				|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+				! isset( self::$buffer_markup )
+				// || ! is_array( self::$buffer_markup )
+				// || ! isset( self::$buffer_markup['template'] )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup' );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
+
 		// use callback to allow for feedback ##
-		self::$markup['template'] = preg_replace_callback(
+		$string = preg_replace_callback(
 			$regex, 
 			function($matches) {
 				
@@ -616,11 +718,31 @@ class variables extends willow\parse {
 				return "";
 
 			}, 
-			self::$markup['template'] 
+			$string
 		);
 
 		// h::log( self::$markup['template'] );
-		
+				
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// set markup ##
+				self::$markup['template'] = $string;
+
+			break ;
+
+			case "buffer" :
+
+				// set markup ##
+				self::$buffer_markup = $string;
+
+			break ;
+
+		} 
+
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
 
 	}

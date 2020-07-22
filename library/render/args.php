@@ -32,6 +32,7 @@ class args extends willow\render {
         self::$fields = null; // array of field names and values ##
 		self::$markup = null; // array to store passed markup and extra keys added by formatting ##
 		self::$log 	= null; // tracking array for feedback ##
+		self::$hash = null;
 
 	}
 
@@ -50,6 +51,7 @@ class args extends willow\render {
 		self::$collect['fields'] = self::$fields;
 		self::$collect['markup'] = self::$markup;
 		self::$collect['log'] = self::$log;
+		self::$collect['hash'] = self::$hash;
 
 	}
 
@@ -68,6 +70,7 @@ class args extends willow\render {
 		self::$fields = self::$collect['fields'] ;
 		self::$markup = self::$collect['markup'];
 		self::$log = self::$collect['log'];
+		self::$hash = self::$collect['hash'];
 
 	}
 
@@ -267,6 +270,34 @@ class args extends willow\render {
 
 	}
 
+
+
+
+	/**
+	 * Defin config->default value
+	 * 
+	 * @since 4.1.0
+	*/
+	public static function default( $array = null ){
+
+		// sanity ##
+		if(
+			is_null( $array )
+		){
+
+			h::log( 'Error in passed args' );
+
+			return false;
+
+		}
+
+		self::$args['config']['default'] = $array;
+
+		// h::log( self::$args );
+
+		return true;
+
+	}
 
 
 

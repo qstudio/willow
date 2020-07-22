@@ -63,6 +63,7 @@ if ( ! class_exists( 'q_willow' ) ) {
 			$log 		= null, // tracking array for feedback ##
 			$buffer 	= null, // for buffering... ##
 			$filter		= null, // post-processing of willows and variables ##
+			$hash 		= null, // willow hash log, with data about calling method ##
 
 			// default args to merge with passed array ##
 			$args_default = [
@@ -71,7 +72,15 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'debug'         => false, // don't debug this item ##
 					'return'        => 'echo', // default to echo return string ##
 				],
-			]
+			],
+
+			// BUFFER, perhaps can be protected ##
+			$buffer_args 	= null,
+			$buffer_fields 	= [],
+			$buffer_markup 	= null,
+			$buffer_map		= [], // buffer markup map ##
+			$buffer_count 	= 0
+			// $buffer_log		= []
 
 		;
 

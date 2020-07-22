@@ -26,6 +26,7 @@ class parse extends \q_willow {
 		$flags_variable = false,
 		$flags_comment = false,
 
+		// $parse_args = false,
 		$parse_context = false,
 		$parse_task = false
 		// $flags_function = false,
@@ -91,11 +92,12 @@ class parse extends \q_willow {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public static function prepare( $args = null ){
+    public static function prepare( $args = null, $process = 'internal' ){
 
 		// h::log( $args );
 		// store passed args - context/task ##
 
+		// used for assigning filters ##
 		if(
 			$args
 			&& isset( $args['context'] )
@@ -104,6 +106,7 @@ class parse extends \q_willow {
 
 			self::$parse_context = $args['context'];
 			self::$parse_task = $args['task'];
+			// self::$parse_args = $args;
 
 		}
 
@@ -111,23 +114,27 @@ class parse extends \q_willow {
 
 		// pre-format markup to run any >> functions << ##
 		// runs first and might be used to return data to arguments ##
-		functions::prepare( $args );
+		functions::prepare( $args, $process );
 
 		// pre-format markup to extract daa from willows ##
-		willows::prepare( $args );
+		willows::prepare( $args, $process );
 
 		// pre-format markup to extract loops ##
-		loops::prepare( $args );
+		loops::prepare( $args, $process );
 
 		// search for partials in passed markup ##
-		partials::prepare( $args );
+		partials::prepare( $args, $process );
 
 		// pre-format markup to extract comments and place in html ##
-		comments::prepare( $args ); // 
+		comments::prepare( $args, $process ); // 
 
 		// pre-format markup to extract variable arguments - 
 		// goes last, as other tags might have added new variables to prepare ##
-		variables::prepare( $args );
+		variables::prepare( $args, $process );
+
+		h::log( 't:>THIS breaks many things, but is needed for filters to run and replace correctly.. TODO' );
+		// remove all flags before markup is parsed ##
+		// flags::cleanup( $args, $process );
 
 	}
 
@@ -139,30 +146,33 @@ class parse extends \q_willow {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public static function cleanup( $args = null ){
+    public static function cleanup( $args = null, $process = 'internal' ){
 
 		// h::log( self::$args['markup'] );
 
 		// remove all flags ##
-		flags::cleanup();
+		flags::cleanup( $args, $process );
 
 		// clean up stray function tags ##
-		functions::cleanup();
+		functions::cleanup( $args, $process );
 
 		// clean up stray willow tags ##
-		willows::cleanup();
+		willows::cleanup( $args, $process );
 
 		// clean up stray section tags ##
-		loops::cleanup();
+		loops::cleanup( $args, $process );
 
 		// clean up stray partial tags ##
-		partials::cleanup();
+		partials::cleanup( $args, $process );
 
 		// clean up stray comment tags ##
-		comments::cleanup();
+		comments::cleanup( $args, $process );
 
 		// remove all spare vars ##
-		variables::cleanup();
+		variables::cleanup( $args, $process );
+
+		// remove all spare flags ##
+		// flags::cleanup();
 
 		// search for config settings passed in markup, such as "src" handle ##
 		// argument::cleanup(); // @todo ##

@@ -17,7 +17,7 @@ class partials extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function prepare( $args = null ){
+	public static function prepare( $args = null, $process = 'internal' ){
 
 		// h::log( 't:>Parse partials for variables - nothing else.. WHY.. does it have access to all fields data?? CHECK..' );
 
@@ -40,12 +40,26 @@ class partials extends willow\parse {
 			return false;
 
 		}
-
-		// sanity -- this requires ##
+		
+		// sanity -- method requires requires ##
 		if ( 
-			! isset( self::$markup )
-			|| ! is_array( self::$markup )
-			|| ! isset( self::$markup['template'] )
+			(
+				'internal' == $process
+				&& (
+				! isset( self::$markup )
+				|| ! is_array( self::$markup )
+				|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+				! isset( self::$buffer_markup )
+				// || ! is_array( self::$buffer_markup )
+				// || ! isset( self::$buffer_markup['template'] )
+				)
+			)
 		){
 
 			h::log( 'e:>Error in stored $markup' );
@@ -54,8 +68,25 @@ class partials extends willow\parse {
 
 		}
 
-		// get markup ##
-		$string = self::$markup['template'];
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
 
 		// sanity ##
 		if (  
@@ -148,7 +179,7 @@ class partials extends willow\parse {
 
 				// return entire partial string, including tags for tag swap ##
 				$partial_match = core\method::string_between( $matches[0][$match][0], $open, $close, true );
-				// h::log( '$function_match: '.$function_match );
+				// h::log( '$partial_match: '.$partial_match );
 
 				// sanity ##
 				if ( 
@@ -217,7 +248,7 @@ class partials extends willow\parse {
 					&& false == $partial_data['config']['run']
 				){
 
-					h::log( self::$args['task'].'~>n:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
+					// h::log( self::$args['task'].'~>n:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
 					h::log( 'd:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
 
 					continue;
@@ -225,7 +256,8 @@ class partials extends willow\parse {
 				}
 
 				// hash ##
-				$hash = 'partial__'.$task;
+				$hash = 'partial__'.$task.'__'.rand();
+				// $hash = 'partial__'.$task;
 				// h::log( 'd:>partial hash: '.$hash );
 
 				// // @todo -- currently only partials are handled... ##
@@ -253,19 +285,32 @@ class partials extends willow\parse {
 				// h::log( self::$buffer );
 
 				// store ##
-				self::$partials[$hash] = $partial_data['markup'];
+				// self::$partials[$hash] = $partial_data['markup'];
+
+				// self::$buffer_fields[ $hash ] = $partial_data['markup'];
+
+				// add data to buffer map ##
+				self::$buffer_map[] = [
+					'output'	=> $partial_data['markup'],
+					'tag'		=> $partial_match,
+					'master'	=> false,
+				];
 
 				// finally -- add a variable "{{ $field }}" before this partial block in markup->template ##
-				$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);
+				// $variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);
 				// variable::set( $variable, $position, 'variable' ); // '{{ '.$field.' }}'
-				parse\markup::swap( $partial_match, $variable, 'partial', 'variable' ); // '{{ '.$field.' }}'
+				// parse\markup::swap( $partial_match, $variable, 'partial', 'variable', $process ); // '{{ '.$field.' }}'
 
 			}
 
 			// h::log( self::$partials );
+			// h::log( 'd:>partial hash: '.$hash );
+			// h::log( 'd:>partial data: '.$partial_data['markup'] );
 
 			// so, we can add a new field value to $args array based on the field name - with the markup as value
-			render\fields::define( self::$partials );
+			// render\fields::define( self::$partials );
+
+			// self::$buffer_fields[ $hash ] = $partial_data['markup'];
 
 			// h::log( self::$fields );
 			// h::log( self::$markup['template'] );
@@ -276,7 +321,7 @@ class partials extends willow\parse {
 
 
 
-	public static function cleanup( $args = null ){
+	public static function cleanup( $args = null, $process = 'internal' ){
 
 		$open = trim( willow\tags::g( 'par_o' ) );
 		$close = trim( willow\tags::g( 'par_c' ) );
@@ -290,8 +335,55 @@ class partials extends willow\parse {
 		);
 		// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 
 
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'internal' == $process
+				&& (
+				! isset( self::$markup )
+				|| ! is_array( self::$markup )
+				|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+				! isset( self::$buffer_markup )
+				// || ! is_array( self::$buffer_markup )
+				// || ! isset( self::$buffer_markup['template'] )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup' );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
+
 		// use callback to allow for feedback ##
-		self::$markup['template'] = preg_replace_callback(
+		$string = preg_replace_callback(
 			$regex, 
 			function($matches) {
 				
@@ -319,8 +411,28 @@ class partials extends willow\parse {
 				return "";
 
 			}, 
-			self::$markup['template'] 
+			$string
 		);
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// set markup ##
+				self::$markup['template'] = $string;
+
+			break ;
+
+			case "buffer" :
+
+				// set markup ##
+				self::$buffer_markup = $string;
+
+			break ;
+
+		} 
 
 	}
 

@@ -112,7 +112,7 @@ class context extends \q_willow {
 		}	
 
 		// we expect all render methods to have standard format CLASS__METHOD ##	
-		list( $class, $method ) = explode( '__', $function );
+		list( $class, $method ) = explode( '__', $function, 2 );
 
 		// sanity ##
 		if ( 
@@ -171,7 +171,25 @@ class context extends \q_willow {
 			// set task tracker -- i.e "title" ##
 			$args['task'] = $method;
 
-			// h::log( $args );
+			// h::log( self::$args );
+
+			// create hash ##
+			$hash = false;
+			$hash = $args['context'].'__'.$args['task'].'.'.rand();
+
+			// h::log( 'e:>Context Loaded: '.$hash );
+			// h::log( $args['config']['embed'] );
+
+			// log hash ##
+			\q_willow::$hash 	= [
+				'hash'			=> $hash,
+				'context'		=> $args['context'],
+				'task'			=> $args['task'],
+				'tag'			=> isset( $args['config']['embed'] ) ? false : $args['config']['tag'], // matching tag from template ##
+				'markup'		=> isset( $args['config']['embed'] ) ? false : $args['config']['markup'],
+				'parent'		=> isset( $args['config']['embed'] ) ? false : $args['config']['parent'],
+				// 'position'		=> $args['config']['position']
+			];
 
 			if (
 				! \method_exists( $namespace, 'get' ) // base method is get() ##
@@ -206,13 +224,15 @@ class context extends \q_willow {
 	
 			}
 
+			// h::log( $args );
+
 			// prepare markup, fields and handlers based on passed configuration ##
 			willow\parse::prepare( $args );
 
 			// call class::method to gather data ##
 			// $namespace::run( $args );
 
-			// internal buffer ##
+			// internal->internal buffering ##
 			if(
 				isset( $args['config']['buffer'] )
 			){
@@ -310,7 +330,7 @@ class context extends \q_willow {
 				|| ! is_array( $return_array )
 			){
 
-				// h::log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
+				h::log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
 				// h::log( $return_array );
 
 				// ...
@@ -319,6 +339,8 @@ class context extends \q_willow {
 
 			// assign fields ##
 			render\fields::define( $return_array );
+
+			// h::log( $return_array );
 
 			// prepare field data ##
 			render\fields::prepare();

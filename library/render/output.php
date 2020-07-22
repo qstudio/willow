@@ -59,24 +59,46 @@ class output extends willow\render {
         } else {
 
 			// grab ##
-			$return = self::$output;
+			$return = [ 
+				'output' 	=> self::$output,
+				'hash'		=> self::$hash['hash'],
+				'tag'		=> self::$hash['tag'],
+				'markup'	=> self::$hash['markup'],
+				'parent'	=> self::$hash['parent'],
+				// 'position'	=> self::$hash['position']
+			];
 
 			// h::log( $return );
 
 			// h::log( 'buffering: '.self::$buffering );
 
 			// hash should be context__task ##
+			/*
 			$hash = 
 				isset( self::$args['config']['hash'] ) ? 
 				self::$args['config']['hash'] : 
 				self::$args['context'].'__'.self::$args['task'] ;
+			*/
 
 			// if ( isset( self::$args['config']['hash'] ) ) h::log( 'd:>hash via config->hash' );
-			// h::log( 'd:>hash set to: '.$hash );
+			// h::log( 'd:>hash set to: '.self::$hash['hash'] );
+			// h::log( $return );
 
-			// store in buffer also -- 
-			// @todo, make this conditional on buffering running.. perhaps just knowing we are returning data is enough to presume it's buffering?? ##
-			self::$buffer[ $hash ] = $return;
+			// h::log( self::$hash );
+			self::$buffer_map[] = [ // was self::$hash['tag']
+				'hash'		=> self::$hash['hash'],
+				// 'count'		=> self::$buffer_count,
+				// 'position'	=> self::$hash['position'],
+				'output'	=> $return['output'],
+				'tag'		=> self::$hash['tag'],
+				'parent'	=> self::$hash['parent'],
+			];
+
+			// iterate count ##
+			self::$buffer_count ++;
+
+			// store in buffer also ##
+			self::$buffer_fields[ self::$hash['hash'] ] = $return['output'];
 
 			// reset all args ##
 			render\args::reset();

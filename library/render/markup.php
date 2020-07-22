@@ -49,6 +49,32 @@ class markup extends willow\render {
 
         // new string to hold output ## 
 		$string = self::$markup['template'];
+
+		// h::log( $string );
+
+		// willow\flags::cleanup( null, 'internal' );
+
+		// h::log( $string );
+		/*
+		$open = trim( willow\tags::g( 'fla_o' ) );
+		$close = trim( willow\tags::g( 'fla_c' ) );
+
+		// strip all function blocks, we don't need them now ##
+		$regex = \apply_filters( 
+			'q/willow/parse/flags/cleanup/regex', 
+			// "\\$open(.*?)\\$close"
+			"/\\$open.*?\\$close/"
+			// "~\\$open\s+(.*?)\s+\\$close~"   
+			// \[(.*?)\]
+			// '/\[.*?\]/'
+	   	);
+
+		// use callback to allow for feedback ##
+		// $string = preg_replace( $regex, '', $string );
+		*/
+		  
+		// h::log( '$string: '.$string );
+		// h::log( self::$fields );
 		
         // loop over each field, replacing variables with values ##
         foreach( self::$fields as $key => $value ) {
@@ -70,7 +96,7 @@ class markup extends willow\render {
 				h::log( 'The value of: '.$key.' is not a string or integer - so we cannot render it' );
 
 				// log ##
-				h::log( self::$args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
+				// h::log( self::$args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
 
                 unset( self::$fields[$key] );
 
@@ -318,7 +344,7 @@ class markup extends willow\render {
 			$markup = \apply_filters( 'q/render/markup/default', $markup );
 
 			// note ##
-			// h::log('e:>NOTE: Using default markup'.$for );
+			h::log('d:>NOTE: Using default markup'.$for.' : '.$markup );
 
 			// assign ##
 			self::$markup['template'] = $markup;
@@ -364,12 +390,27 @@ class markup extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'q/render/markup/string/before/'.self::$args['task'].'/'.$key, // filter handle ##
+             'filter'        => 'q/willow/render/markup/string/before/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
 		
-		// h::log( 'd:>$key: '.$key );
+		// h::log( 'd:>$string: '.$string );
 		// $string = trim( $string, '"' );
+
+		// strip flags from key ##
+		$flag_open = trim( willow\tags::g( 'fla_o' ) );
+		$flag_close = trim( willow\tags::g( 'fla_c' ) );
+
+		// strip all function blocks, we don't need them now ##
+		$flag_regex = \apply_filters( 
+			'q/willow/parse/flags/cleanup/regex', 
+			"/\\$flag_open.*?\\$flag_close/"
+	   	);
+
+		// use callback to allow for feedback ##
+		$string = preg_replace( $flag_regex, '', $string );
+
+		// h::log( 'd:>$string: '.$string );
 
 		// filter variable ##
 		$value = apply_filters( 'q/willow/render/markup/variable', $value, $key );
@@ -388,12 +429,12 @@ class markup extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'q/render/markup/string/after/'.self::$args['task'].'/'.$key, // filter handle ##
+             'filter'        => 'q/willow/render/markup/string/after/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
 
 		// filter markup ##
-		$string = apply_filters( 'q/willow/render/markup/markup', $string, $key );
+		$string = apply_filters( 'q/willow/render/markup/tag', $string, $key );
 
 		// return ##
 		return $string;

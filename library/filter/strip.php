@@ -17,15 +17,15 @@ class strip extends willow\filter {
 		// filter variable ##
 		\add_filter( 'q/willow/render/markup/variable', [ get_class(), 'variable' ], 10, 2 );
 
-		// filter markup ##
-		\add_filter( 'q/willow/render/markup/markup', [ get_class(), 'markup' ], 10, 2 );
+		// filter tag ##
+		\add_filter( 'q/willow/render/markup/tag', [ get_class(), 'tag' ], 10, 2 );
 
 	}
 
 
 	
 
-	// @todo - escape ## per call, or globally ## ??
+	// single variable
 	public static function variable( $value, $key ) {
 
 		// global first ##
@@ -47,8 +47,8 @@ class strip extends willow\filter {
 
 
 	
-	// @todo - escape ## per call, or globally ## ??
-	public static function markup( $value, $key ) {
+	// whole tag
+	public static function tag( $value, $key ) {
 
 		// h::log( self::$args );
 

@@ -11,7 +11,7 @@ class comments extends willow\parse {
 
 	private static 
 
-		$hash, 
+		$comment_hash, 
 		$comment,
 		$comment_match
 		// $flags_comment
@@ -23,7 +23,7 @@ class comments extends willow\parse {
 
 	private static function reset(){
 
-		self::$hash = false; 
+		self::$comment_hash = false; 
 		self::$comment = false;
 		self::$comment_match = false;
 		self::$flags_comment = false;
@@ -38,13 +38,28 @@ class comments extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function prepare( $args = null ){
+	public static function prepare( $args = null, $process = 'internal' ){
 
 		// sanity -- this requires ##
+		// sanity -- method requires requires ##
 		if ( 
-			! isset( self::$markup )
-			|| ! is_array( self::$markup )
-			|| ! isset( self::$markup['template'] )
+			(
+				'internal' == $process
+				&& (
+				! isset( self::$markup )
+				|| ! is_array( self::$markup )
+				|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+				! isset( self::$buffer_markup )
+				// || ! is_array( self::$buffer_markup )
+				// || ! isset( self::$buffer_markup['template'] )
+				)
+			)
 		){
 
 			h::log( 'e:>Error in stored $markup' );
@@ -53,8 +68,25 @@ class comments extends willow\parse {
 
 		}
 
-		// get markup ##
-		$string = self::$markup['template'];
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
 
 		// sanity ##
 		if (  
@@ -182,13 +214,15 @@ class comments extends willow\parse {
 				// h::log( 'd:>comment: "'.self::$comment.'"' );
 
 				// hash ##
-				self::$hash = 'comment__'.\mt_rand();
+				self::$comment_hash = 'comment__'.\rand();
+
+				// h::log( 'd:>comment hash: "'.self::$comment_hash.'"' );
 
 				// no escaping.. yet
 				// $config = [ 'config' => [ 'escape' => false ] ];
 				// h::log( $config );
-				// if ( ! isset( self::$args[$hash] ) ) self::$args[$hash] = [];
-				// self::$args[$hash] = \q\core\method::parse_args( $config, self::$args[$hash] );
+				// if ( ! isset( self::$args[$comment_hash] ) ) self::$args[$comment_hash] = [];
+				// self::$args[$comment_hash] = \q\core\method::parse_args( $config, self::$args[$comment_hash] );
 				// h::log( self::$args );
 
 				// html comments are rendered on the UI, so require to add a variable tag to the markup ##
@@ -198,12 +232,21 @@ class comments extends willow\parse {
 
 					// so, we can add a new field value to $args array based on the field name - with the comment as value
 					render\fields::define([
-						self::$hash 		=> '<!-- '.self::$comment.' -->',
+						self::$comment_hash 		=> '<!-- '.self::$comment.' -->',
 					]);
 
+					// add data to buffer map ##
+					self::$buffer_map[] = [
+						'output'	=> '<!-- '.self::$comment.' -->',
+						'tag'		=> self::$comment_match,
+						'master'	=> false,
+					];
+
+					// self::$buffer_fields[ self::$comment_hash ] = '<!-- '.self::$comment.' -->';
+
 					// add a variable "{{ $field }}" before this comment block to markup->template ##
-					$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$hash, 'close' => 'var_c' ]);
-					willow\markup::swap( self::$comment_match, $variable, 'comment', 'variable' ); 
+					$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$comment_hash, 'close' => 'var_c' ]);
+					parse\markup::swap( self::$comment_match, $variable, 'comment', 'variable', $process ); 
 
 					// update match string ##
 					// self::$comment_match = $variable;
@@ -219,7 +262,7 @@ class comments extends willow\parse {
 					h::log( 'd:>'.self::$comment );
 
 					// remove from markup ##
-					willow\markup::swap( self::$comment_match, '', 'comment', 'string' ); 
+					parse\markup::swap( self::$comment_match, '', 'comment', 'string', $process ); 
 
 				}
 
@@ -233,9 +276,30 @@ class comments extends willow\parse {
 
 					// h::log( 'Silent comment, we need to remove the tag' );
 
-					self::$markup['template'] = willow\markup::remove( self::$comment_match, self::$markup['template'], 'comment' );
+					// find out which markup to affect ##
+					switch( $process ){
+
+						default : 
+						case "internal" :
+
+							// get markup ##
+							self::$markup['template'] = parse\markup::remove( self::$comment_match, self::$markup['template'], 'comment' );
+
+						break ;
+
+						case "buffer" :
+
+							// get markup ##
+							// $string = self::$buffer_markup;
+							self::$buffer_markup = parse\markup::remove( self::$comment_match, self::$buffer_markup, 'comment' );
+
+						break ;
+
+					} 
 
 				}
+
+				self::$buffer_fields[ self::$comment_hash ] = '<!-- '.self::$comment.' -->';
 
 				// clear slate ##
 				self::reset();
@@ -252,48 +316,7 @@ class comments extends willow\parse {
 
 
 
-	/*
-	public static function flags( $string = null ){
-
-		// sanity ##
-		h::log( 't:>make flags::prepare() method, make $flags a property of parse.. ' );
-
-		if(
-			// strstr( self::$comment, trim( willow\tags::g( 'fla_o' ) ) )
-			// && strstr( self::$comment, trim( willow\tags::g( 'fla_c' ) ) )
-			core\method::starts_with( self::$comment, trim( willow\tags::g( 'fla_o' ) ) )
-			&& $flags = core\method::string_between( self::$comment, trim( willow\tags::g( 'fla_o' ) ), trim( willow\tags::g( 'fla_c' ) ) )
-		){
-
-			h::log( 'd:>FOUND flags...' );
-
-			$flags = trim(
-				core\method::string_between( 
-					self::$comment, 
-					trim( willow\tags::g( 'fla_o' ) ), 
-					trim( willow\tags::g( 'fla_c' ) ) 
-				)
-			);
-
-			self::$flags = str_split( $flags );
-			self::$flags = array_fill_keys( self::$flags, true );
-			// h::log( self::$flags );
-
-			$flags_all = core\method::string_between( self::$comment, trim( willow\tags::g( 'fla_o' ) ), trim( willow\tags::g( 'fla_c' ) ), true );
-
-			// remove flags ##
-			self::$comment = str_replace( $flags_all, '', self::$comment );
-
-			// kick it back ##
-			// return $string
-
-		}
-
-	}
-	*/
-
-
-	public static function cleanup( $args = null ){
+	public static function cleanup( $args = null, $process = 'internal' ){
 
 		$open = trim( willow\tags::g( 'com_o' ) );
 		$close = trim( willow\tags::g( 'com_c' ) );
@@ -307,8 +330,55 @@ class comments extends willow\parse {
 		);
 		// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 
 
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'internal' == $process
+				&& (
+				! isset( self::$markup )
+				|| ! is_array( self::$markup )
+				|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+				! isset( self::$buffer_markup )
+				// || ! is_array( self::$buffer_markup )
+				// || ! isset( self::$buffer_markup['template'] )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup: '.$process );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
+
 		// use callback to allow for feedback ##
-		self::$markup['template'] = preg_replace_callback(
+		$string = preg_replace_callback(
 			$regex, 
 			function($matches) {
 				
@@ -338,8 +408,28 @@ class comments extends willow\parse {
 				return "";
 
 			}, 
-			self::$markup['template'] 
+			$string
 		);
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// set markup ##
+				self::$markup['template'] = $string;
+
+			break ;
+
+			case "buffer" :
+
+				// set markup ##
+				self::$buffer_markup = $string;
+
+			break ;
+
+		} 
 
 	}
 
