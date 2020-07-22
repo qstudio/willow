@@ -291,9 +291,9 @@ class partials extends willow\parse {
 
 				// add data to buffer map ##
 				self::$buffer_map[] = [
-					'output'	=> $partial_data['markup'],
 					'tag'		=> $partial_match,
-					'master'	=> false,
+					'output'	=> $partial_data['markup'],
+					'parent'	=> false,
 				];
 
 				// finally -- add a variable "{{ $field }}" before this partial block in markup->template ##

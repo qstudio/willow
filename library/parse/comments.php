@@ -237,9 +237,9 @@ class comments extends willow\parse {
 
 					// add data to buffer map ##
 					self::$buffer_map[] = [
-						'output'	=> '<!-- '.self::$comment.' -->',
 						'tag'		=> self::$comment_match,
-						'master'	=> false,
+						'output'	=> '<!-- '.self::$comment.' -->',
+						'parent'	=> false,
 					];
 
 					// self::$buffer_fields[ self::$comment_hash ] = '<!-- '.self::$comment.' -->';

@@ -381,9 +381,9 @@ class functions extends willow\parse {
 
 			// add data to buffer map ##
 			self::$buffer_map[] = [
-				'output'	=> self::$return,
 				'tag'		=> self::$function_match,
-				'master'	=> false,
+				'output'	=> self::$return,
+				'parent'	=> false,
 			];
 
 		}

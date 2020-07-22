@@ -98,7 +98,7 @@ class map extends willow\buffer {
 
 		}
 
-		h::log( self::$buffer_map );
+		// h::log( self::$buffer_map );
 		// h::log( self::$buffer_log );
 		// h::log( $string );
 		// $return = '';
@@ -109,7 +109,7 @@ class map extends willow\buffer {
 			// skip first row or rows which do not have a parent ##
 			if( 
 				'0' == $key 
-				|| $value['parent'] // skip rows without a parent value ##
+				|| $value['parent'] // skip rows with a parent value ##
 			){
 
 				continue;

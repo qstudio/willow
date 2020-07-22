@@ -36,7 +36,7 @@ class escape extends willow\filter {
 		// h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
 		// global first ##
-		if( ! isset( self::$filter[self::$args['context']][self::$args['task']]['global']['u'] ) ){
+		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['e'] ) ){
 
 			h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
@@ -64,7 +64,7 @@ class escape extends willow\filter {
 		*/
 
 		// global first ##
-		if( ! isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['u'] ) ){
+		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['e'] ) ){
 
 			h::log( 'd:>Variable escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 

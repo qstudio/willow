@@ -398,19 +398,22 @@ class markup extends willow\render {
 		// $string = trim( $string, '"' );
 
 		// strip flags from key ##
+		/*
 		$flag_open = trim( willow\tags::g( 'fla_o' ) );
 		$flag_close = trim( willow\tags::g( 'fla_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		$flag_regex = \apply_filters( 
-			'q/willow/parse/flags/cleanup/regex', 
+			'q/willow/markup/flags/cleanup/regex', 
 			"/\\$flag_open.*?\\$flag_close/"
-	   	);
+		);
+		*/
 
-		// use callback to allow for feedback ##
-		$string = preg_replace( $flag_regex, '', $string );
+		// replace.. but NOT all.. how?
+		// h::log( 't:>## -- BOOM -- this breaks other flags for buffer search replace ####' );
+		// $string = preg_replace( $flag_regex, '', $string );
 
-		// h::log( 'd:>$string: '.$string );
+		h::log( 'd:>$string: '.$string );
 
 		// filter variable ##
 		$value = apply_filters( 'q/willow/render/markup/variable', $value, $key );
@@ -423,7 +426,11 @@ class markup extends willow\render {
 		// "~\\$open\s+(.*?)\s+\\$close~" // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
-		$regex = \apply_filters( 'q/render/markup/string', "~\\$open\s+$key\s+\\$close~" ); // '~\{{\s(.*?)\s\}}~' 
+		$regex = \apply_filters( 'q/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
+		// $regex = "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~";
+		// 
+		h::log( $regex );
+		// h::log( $flag_regex );
 		$string = preg_replace( $regex, $value, $string ); 
 
 		// filter ##
