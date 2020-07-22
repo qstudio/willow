@@ -116,8 +116,6 @@ class map extends willow\buffer {
 
 			}
 
-			// PROBLEM - some tags change, for example when they have returned a value or had a flag removed, but they open and close the same... so we need to find by that.. but then we are in trouble again in case of not having unique return values for re-used tags???
-
 			// check if we have string, so we can warm if not ##
 			if( 
 				strpos( $string, $value['tag'] ) === false
@@ -138,6 +136,7 @@ class map extends willow\buffer {
 
 		// $string = str_replace( ' ', '&nbsp;', $string );
 		// $string = nl2br( htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
+		/*
 		$return = '';
 		$lines = explode( "\n", $string );
 		// h::log( $lines ); 
@@ -149,9 +148,10 @@ class map extends willow\buffer {
 		$return = nl2br( $return );
 
 		// h::log( $return );
+		*/
 
 		// kick back ##
-		return $return;
+		return $string;
 
 	}
 

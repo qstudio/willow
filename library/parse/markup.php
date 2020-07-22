@@ -58,7 +58,7 @@ class markup extends willow\parse {
 			// log ##
 			// h::log( 't:>TOOD - if no self::$args - set to buffer' );
 			// h::log( self::$args['task'].'~>n:>No variables found in string.' );
-			h::log( 'd:>No variables found in string.' );
+			// h::log( 'd:>No variables found in string.' );
 			// h::log( '$string: "'.$string.'"' );
 
             return false;

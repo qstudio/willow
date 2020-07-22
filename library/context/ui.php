@@ -105,7 +105,7 @@ class ui extends willow\context {
 			// h::log( 'Running from method' );
 
 			// we can call the footer::render() method
-			return theme\view\ui\header::render( $args );
+			return theme\view\ui\header::header( $args );
 
 		}
 

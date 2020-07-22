@@ -413,7 +413,7 @@ class markup extends willow\render {
 		// h::log( 't:>## -- BOOM -- this breaks other flags for buffer search replace ####' );
 		// $string = preg_replace( $flag_regex, '', $string );
 
-		h::log( 'd:>$string: '.$string );
+		// h::log( 'd:>$string: '.$string );
 
 		// filter variable ##
 		$value = apply_filters( 'q/willow/render/markup/variable', $value, $key );
@@ -429,7 +429,7 @@ class markup extends willow\render {
 		$regex = \apply_filters( 'q/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		// $regex = "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~";
 		// 
-		h::log( $regex );
+		// h::log( $regex );
 		// h::log( $flag_regex );
 		$string = preg_replace( $regex, $value, $string ); 
 

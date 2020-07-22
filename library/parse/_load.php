@@ -132,7 +132,7 @@ class parse extends \q_willow {
 		// goes last, as other tags might have added new variables to prepare ##
 		variables::prepare( $args, $process );
 
-		h::log( 't:>THIS breaks many things, but is needed for filters to run and replace correctly.. TODO' );
+		// h::log( 't:>THIS breaks many things, but is needed for filters to run and replace correctly.. TODO' );
 		// remove all flags before markup is parsed ##
 		// flags::cleanup( $args, $process );
 
