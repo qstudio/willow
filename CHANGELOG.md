@@ -1,3 +1,7 @@
+### 0.2.5 ###
+
+* Buffer Map added to track all templates tags
+
 ### 0.2.0 ###
 
 * Default templates working from willows
