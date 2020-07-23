@@ -64,8 +64,11 @@ class context extends \q_willow {
 			// elements, html snippets, which can be processed to expand via {{> markdown }} ##
 			'partial' => wh::get( 'context/partial.php', 'return', 'path' ),
 
-			// wordpress options ##
-			// 'wp' => wh::get( 'context/wp.php', 'return', 'path' ),
+			// user context ##
+			'user' => wh::get( 'context/user.php', 'return', 'path' ),
+
+			// wordpress context ##
+			'wordpress' => wh::get( 'context/wordpress.php', 'return', 'path' ),
 
 			// perhaps type css ##
 			// perhaps type js ##

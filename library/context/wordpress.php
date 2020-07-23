@@ -8,7 +8,7 @@ use q\willow;
 use q\willow\context;
 use q\willow\render; 
 
-class wp extends willow\context {
+class wordpress extends willow\context {
 
 
 	/**

@@ -3,7 +3,6 @@
 namespace q\willow\context;
 
 use q\core\helper as h;
-// use q\ui;
 use q\get;
 use q\willow;
 use q\willow\context;
@@ -76,7 +75,6 @@ class extend extends willow\context {
 		foreach( $args['methods'] as $method ){
 
 			// h::log( 'd:>checking method: '.$method );
-			
 			// skip quasi-private __METHODS ##
 			if ( false !== strpos( $method, '__' ) ){ continue; } 
 			
@@ -100,7 +98,8 @@ class extend extends willow\context {
 		return self::$extend[ $args['class'] ] = [
 			'context' 	=> $args['context'],
 			'class' 	=> $args['class'],
-			'methods' 	=> $methods
+			'methods' 	=> $methods,
+			'lookup' 	=> isset( $args['lookup'] ) ? $args['lookup'] : false
 		];
 
 	}

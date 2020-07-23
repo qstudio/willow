@@ -37,6 +37,13 @@ class config extends \q_willow {
 				return self::filter( $args, $source );
 			}
 		, 10, 1 );
+
+		\add_filter( 'q/config/load', 
+			function( $args ){
+				$source = 'extend'; // context source ##
+				return self::filter( $args, $source );
+			}
+		, 50, 1 );
 		
 		\add_filter( 'q/config/load', 
 			function( $args ){
@@ -47,7 +54,7 @@ class config extends \q_willow {
 
 		\add_filter( 'q/config/load', 
 			function( $args ){
-				$source = 'parent'; // context source ##
+				$source = 'child'; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 1000, 1 );
@@ -260,7 +267,9 @@ class config extends \q_willow {
 	 */
 	public static function filter( $args = null, $source = null ) {
 
-		// h::log( $args );
+		// h::log( 'e:>SOURCE: '.$source );
+
+		// h::log( self::$extend );
 
 		if ( 
 			self::$has_config 
@@ -307,22 +316,22 @@ class config extends \q_willow {
 		// array of config files to load -- key ( for cache ) + value ##
 		$array = [
 
-			// template.context.task ##
+			// template~context~task ##
 			view\is::get().'__'.$args['context'].'__'.$args['task'] => view\is::get().'~'.$args['context'].'~'.$args['task'],
 
-			// template/context.task in sub directory ##
-			view\is::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\is::get().'/'.$args['context'].'~'.$args['task'],
+			// template/context~task in sub directory ##
+			// view\is::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\is::get().'/'.$args['context'].'~'.$args['task'],
 
-			// context.task ##
+			// context~task ##
 			$args['context'].'__'.$args['task'] => $args['context'].'~'.$args['task'],
 
-			// context/context.task -- in sub directory ##
+			// context/context~task -- in sub directory ##
 			$args['context'].'__'.$args['task'].'_dir' => $args['context'].'/'.$args['context'].'~'.$args['task'],
 
-			// context specific run, debug, return etc  ##
+			// context specific -> run, debug, return etc  ##
 			$args['context'] => $args['context'],
 
-			// global controllers - run, debug, return etc.. ##
+			// global controllers -> run, debug, return etc.. ##
 			'global' => 'global'
 
 		];
@@ -331,6 +340,30 @@ class config extends \q_willow {
 		$array = \apply_filters( 'q/config/load/array', $array );
 
 		// h::log( 'd:>looking for source: '.$source );
+		if( 'extend' == $source ) {
+
+			// h::log( 'd:>looking for source: '.$source );
+
+			if(
+				! empty( self::$extend )
+			){
+
+				$extended_lookups = [];
+				foreach( self::$extend as $k => $v ){
+
+					// h::log( $v );
+					if( $v['lookup'] ){
+
+						$extended_lookups[] = self::$extend[$k];
+
+					}
+
+				}
+
+			}
+		}
+
+		// h::log( $extended_lookups );
 
 		// loop over allowed extensions ##
 		foreach( $extensions as $ext ) {
@@ -350,7 +383,7 @@ class config extends \q_willow {
 
 					break  ;
 
-					// parent lookup ## 
+					// parent context lookup ## 
 					case "parent" :
 
 						// check for theme method ##
@@ -359,6 +392,33 @@ class config extends \q_willow {
 						// h::log( 'd:>parent->looking up file: '.$file );
 
 					break  ;
+
+					// TODO -- how to inject plugin lookups ???? 
+					case "extend" :
+
+						if( ! empty( $extended_lookups ) ){
+
+							foreach( $extended_lookups as $kl => $vl ){
+
+								// h::log( $v );
+
+								if ( $vl['context'] == $args['context'] ){
+
+									if ( false !== $key = array_search( $args['task'], $vl['methods'] ) ) {
+
+										$file = $vl['lookup'].$args['context'].'/'.$args['context'].'~'.$args['task'].$ext;
+
+										// h::log( 'e:>Extend File: '.$file );
+
+									}
+
+								}
+
+							}
+
+						}
+
+					break ;
 
 					// global lookup, so context/XX.php
 					default :
@@ -371,7 +431,9 @@ class config extends \q_willow {
 				}
 
 				if ( 
-					$file
+					// $file
+					// &&
+					isset( $file )
 					&& file_exists( $file ) // OR is_file ??
 					&& is_file( $file )
 				){
