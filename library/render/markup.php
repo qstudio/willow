@@ -344,7 +344,7 @@ class markup extends willow\render {
 			$markup = \apply_filters( 'q/render/markup/default', $markup );
 
 			// note ##
-			h::log('d:>NOTE: Using default markup'.$for.' : '.$markup );
+			h::log(  self::$args['task'].'~>n:>Using default markup'.$for.' : '.$markup );
 
 			// assign ##
 			self::$markup['template'] = $markup;

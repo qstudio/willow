@@ -553,7 +553,7 @@ class format extends willow\render {
 
 			if ( is_null( $string ) ) {
 
-				h::log( 'Field: '.$field.' / '.$type_field.' returned an empty string' );
+				// h::log( 'Field: '.$field.' / '.$type_field.' returned an empty string' );
 
 				// log ##
 				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$type_field.'" returned an empty string');

@@ -19,7 +19,7 @@ class taxonomy extends render\type {
     public static function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null ): string {
 
 		// start with default passed value ##
-		$string = null;
+		$string = '';
 
 		// get category ##
 		$category = \get_the_category( $wp_post->ID );
