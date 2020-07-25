@@ -392,7 +392,7 @@ class format extends willow\render {
 		// ALSO -- if array only has one row - add key.property fields ##
 		if ( 1 == count( $value ) ){
 
-			h::log( 'e:>'.$field.' is a Single ROW array..' );
+			// h::log( 'e:>'.$field.' is a Single ROW array..' );
 
 			// loop over array of arrays, work inner keys and values ## 
 			foreach( $value as $r1 => $v1 ) {

@@ -94,7 +94,7 @@ class arguments extends willow\parse {
 		// check for "=" delimiter ##
 		if( false === strpos( self::$string, '=' ) ){
 
-			h::log( 'e:>Error in passed string format, missing delimiter "=" -- '.self::$string );
+			// h::log( 'e:>Error in passed string format, missing delimiter "=" -- '.self::$string );
 
 			return false;
 

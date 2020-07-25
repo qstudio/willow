@@ -1,3 +1,7 @@
+### 0.3.0 ###
+
+* Added basic PHP variable lookups - for now just $_GET values
+
 ### 0.2.5 ###
 
 * Buffer Map added to track all templates tags

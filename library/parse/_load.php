@@ -70,7 +70,7 @@ class parse extends \q_willow {
 			'willows' => helper::get( 'parse/willows.php', 'return', 'path' ),
 
 			// functions ##
-			'functions' => helper::get( 'parse/functions.php', 'return', 'path' ),
+			'php_functions' => helper::get( 'parse/php_functions.php', 'return', 'path' ),
 
 			// sections ##
 			// 'sections' => helper::get( 'parse/sections.php', 'return', 'path' ),
@@ -80,6 +80,9 @@ class parse extends \q_willow {
 
 			// variables.. ##
 			'variables' => helper::get( 'parse/variables.php', 'return', 'path' ),
+
+			// PHP variables.. ##
+			'php_variables' => helper::get( 'parse/php_variables.php', 'return', 'path' ),
 
 		];
 
@@ -112,9 +115,13 @@ class parse extends \q_willow {
 
 		// h::log( self::$args['markup'] );
 
+		// pre-format markup to run any >> php variables << ##
+		// runs early and might be used to return data to arguments ##
+		php_variables::prepare( $args, $process );
+
 		// pre-format markup to run any >> functions << ##
-		// runs first and might be used to return data to arguments ##
-		functions::prepare( $args, $process );
+		// runs early and might be used to return data to arguments ##
+		php_functions::prepare( $args, $process );
 
 		// pre-format markup to extract daa from willows ##
 		willows::prepare( $args, $process );
@@ -153,8 +160,11 @@ class parse extends \q_willow {
 		// remove all flags ##
 		flags::cleanup( $args, $process );
 
+		// remove left-over php variables
+		php_variables::cleanup( $args, $process );
+
 		// clean up stray function tags ##
-		functions::cleanup( $args, $process );
+		php_functions::cleanup( $args, $process );
 
 		// clean up stray willow tags ##
 		willows::cleanup( $args, $process );

@@ -60,7 +60,7 @@ class flags extends willow\parse {
 
 				break ;
 
-				case "function" :
+				case "php_function" :
 
 					// h::log( 'd:>Preparing flags for tag' );
 					self::$flags_function = str_split( $flags );

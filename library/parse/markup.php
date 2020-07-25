@@ -173,7 +173,7 @@ class markup extends willow\parse {
 
 			case "buffer" :
 
-				h::log( 'd:>Swapping markup in self::$buffer_markup' );
+				// h::log( 'd:>Swapping markup in self::$buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = substr_replace( self::$buffer_markup, $tag, $position, 0 );
@@ -420,11 +420,19 @@ class markup extends willow\parse {
 
 			break ;
 
-			case "function" :
+			case "php_function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = willow\tags::g( 'fun_o' ); #'<% ';
-				$needle_end = willow\tags::g( 'fun_c' ); #' %>';
+				$needle_start = willow\tags::g( 'php_fun_o' ); #'<% ';
+				$needle_end = willow\tags::g( 'php_fun_c' ); #' %>';
+
+			break ;
+
+			case "php_variable" :
+
+				// check if php variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = willow\tags::g( 'php_var_o' ); // {#
+				$needle_end = willow\tags::g( 'php_var_c' ); // #}
 
 			break ;
 
@@ -535,11 +543,19 @@ class markup extends willow\parse {
 
 			break ;
 
-			case "function" :
+			case "php_function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = willow\tags::g( 'fun_o' ); #'<< ';
-				$needle_end = willow\tags::g( 'fun_c' ); #' >>';
+				$needle_start = willow\tags::g( 'php_fun_o' ); #'<< ';
+				$needle_end = willow\tags::g( 'php_fun_c' ); #' >>';
+
+			break ;
+
+			case "php_variable" :
+
+				// check if php variable is correctly formatted --> {{> STRING }} ##
+				$needle_start = willow\tags::g( 'php_var_o' ); // {#
+				$needle_end = willow\tags::g( 'php_var_c' ); // #}
 
 			break ;
 

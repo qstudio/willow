@@ -7,7 +7,7 @@ use q\willow\render;
 use q\willow\core;
 use q\core\helper as h;
 
-class functions extends willow\parse {
+class php_functions extends willow\parse {
 
 	private static 
 
@@ -52,8 +52,8 @@ class functions extends willow\parse {
 
 		}
 
-		$open = trim( willow\tags::g( 'fun_o' ) );
-		$close = trim( willow\tags::g( 'fun_c' ) );
+		$open = trim( willow\tags::g( 'php_fun_o' ) );
+		$close = trim( willow\tags::g( 'php_fun_c' ) );
 
 		// clear slate ##
 		self::reset();
@@ -65,7 +65,7 @@ class functions extends willow\parse {
 		// h::log( '$function_match: '.$function_match );
 
 		// look for flags ##
-		self::$function = flags::get( self::$function, 'function' );
+		self::$function = flags::get( self::$function, 'php_function' );
 		// h::log( self::$flags_function );
 		// h::log( self::$function );
 
@@ -116,13 +116,36 @@ class functions extends willow\parse {
 				|| ! is_array( self::$arguments ) 
 			) {
 
-				// remove wrapping " quotation marks ## -- 
-				// @todo, needs to be move elegant or based on if this was passed as a string argument from the template ##
-				self::$config_string = trim( self::$config_string, '"' );
+				// perhaps args is a simple csv, check and break ##
+				if(
+					false !== strpos( self::$config_string, ',' )
+				){
 
-				// create required array structure + value
-				// self::$arguments['markup']['template'] = self::$config_string;
-				self::$arguments = self::$config_string;
+					h::log('d:>Args are in csv: '.self::$config_string );
+
+					$config_explode = explode( ',', self::$config_string );
+					// $config_explode = array_map( trim, $config_explode );
+					
+					$config_explode = array_map( function( $item ) {
+						return trim( $item, ' ' ); // trim whitespace, single and double quote ## ' \'"'
+					}, $config_explode );
+
+					// h::log( $config_explode );
+					self::$arguments = $config_explode;
+
+				} else {
+
+					// h::log('d:>Args are not an array or csv, to taking the whole string');
+
+					// remove wrapping " quotation marks ## -- 
+					// @todo, needs to be move elegant or based on if this was passed as a string argument from the template ##
+					self::$config_string = trim( self::$config_string, '"' );
+
+					// create required array
+					// self::$arguments = [ self::$config_string ];
+					self::$arguments = self::$config_string;
+
+				}
 
 			}
 			
@@ -235,7 +258,9 @@ class functions extends willow\parse {
 
 				// h::log( 'passing args array to: '.self::$function );
 				// h::log( self::$arguments );
-				self::$return = call_user_func( self::$function, self::$arguments );
+				// self::$return = call_user_func( self::$function, self::$arguments );
+				// if( ! is_array() )
+				self::$return = call_user_func_array( self::$function, ( array )self::$arguments );
 
 			} else {
 
@@ -248,37 +273,41 @@ class functions extends willow\parse {
 
 		}
 
+		// h::log( self::$return );
+
 		if ( ! isset( self::$return ) ) {
 
 			h::log( 'd:>Function "'.self::$function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
-			willow\markup::swap( self::$function_match, '', 'function', 'string', $process );
+			willow\markup::swap( self::$function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
 		}
 
 		// we need to ensure $return is a string ##
-		// h::log( 't:>Validate that $string is a string or integer.. if not, reject ??' );
 		if(
 			is_array( self::$return )
 		){
 
-			h::log( 'Return is in an array format, trying to convert array values to string' );
+			// h::log( self::$return );
+			h::log( 'Return from "'.self::$function.'" is in an array format, trying to convert array values to string' );
 
 			self::$return = implode ( " ", array_values( self::$return ) );
 			self::$return = trim( self::$return );
 
 		}
 
+		// return is still nt a string ##
 		if(
 			! is_string( self::$return )
 			&& ! is_integer( self::$return )
 		){
 
-			h::log( 'Return is not a string or integer, so rejecting' );
+			h::log( 'Return from "'.self::$function.'" is not a string or integer, so rejecting' );
+			// h::log( self::$return );
 
-			willow\markup::swap( self::$function_match, '', 'function', 'string', $process );
+			parse\markup::swap( self::$function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -303,7 +332,7 @@ class functions extends willow\parse {
 			self::$buffer_map[0] = str_replace( self::$function_match, $string, self::$buffer_map[0] );
 
 			// update markup for willow parse ##
-			parse\markup::swap( self::$function_match, $string, 'function', 'string', $process ); // '{{ '.$field.' }}'
+			parse\markup::swap( self::$function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
 
 		} else {
 
@@ -392,13 +421,13 @@ class functions extends willow\parse {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( willow\tags::g( 'fun_o' ) );
-		$close = trim( willow\tags::g( 'fun_c' ) );
+		$open = trim( willow\tags::g( 'php_fun_o' ) );
+		$close = trim( willow\tags::g( 'php_fun_c' ) );
 
 		// h::log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
 
 		$regex_find = \apply_filters( 
-			'q/willow/parse/functions/regex/find', 
+			'q/willow/parse/php_functions/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);
@@ -453,13 +482,13 @@ class functions extends willow\parse {
 
 	public static function cleanup( $args = null, $process = 'internal' ){
 
-		$open = trim( willow\tags::g( 'fun_o' ) );
-		$close = trim( willow\tags::g( 'fun_c' ) );
+		$open = trim( willow\tags::g( 'php_fun_o' ) );
+		$close = trim( willow\tags::g( 'php_fun_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
-		 	'q/render/parse/function/cleanup/regex', 
+		 	'q/render/parse/php_functions/cleanup/regex', 
 		 	"/$open.*?$close/ms" 
 		// 	// "/{{#.*?\/#}}/ms"
 		);
@@ -531,7 +560,7 @@ class functions extends willow\parse {
 
 				if ( $count > 0 ) {
 
-					h::log( 'd:>'.$count .' function tags removed...' );
+					h::log( 'd:>'.$count .' php function tags removed...' );
 
 				}
 

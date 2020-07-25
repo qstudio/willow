@@ -64,8 +64,11 @@ class tags extends \q_willow {
 			'loo_o' => self::$filtered_tags['loop']['open'],
 			'loo_c' => self::$filtered_tags['loop']['close'],
 			
-			'fun_o' => self::$filtered_tags['function']['open'],
-			'fun_c' => self::$filtered_tags['function']['close'],
+			'php_fun_o' => self::$filtered_tags['php_function']['open'],
+			'php_fun_c' => self::$filtered_tags['php_function']['close'],
+
+			'php_var_o' => self::$filtered_tags['php_variable']['open'],
+			'php_var_c' => self::$filtered_tags['php_variable']['close'],
 			
 			'arg_o' => self::$filtered_tags['argument']['open'],
 			'arg_c' => self::$filtered_tags['argument']['close'],
