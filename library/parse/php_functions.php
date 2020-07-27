@@ -283,7 +283,7 @@ class php_functions extends willow\parse {
 
 		}
 
-		// h::log( self::$return );
+		h::log( self::$return );
 
 		if ( ! isset( self::$return ) ) {
 

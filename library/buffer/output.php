@@ -127,7 +127,7 @@ class output extends willow\buffer {
 		// prepare .willow template markup ##
 		willow\parse::prepare( self::$buffer_args, 'buffer' );
 
-		// h::log( self::$buffer_markup );
+		// h::log( self::$buffer_map );
 		self::$buffer_markup = buffer\map::prepare();
 		// h::log( self::$buffer_markup );
 

@@ -100,7 +100,9 @@ class loops extends willow\parse {
 		// test what we have ##
 		// h::log( 'd:>field: "'.self::$loop_field.'"' );
 		// h::log( 'd:>markup: "'.self::$loop_markup.'"' );
+		// h::log( 'd:>match: "'.self::$loop_match.'"' );
 		// h::log( 'd:>hash: "'.self::$loop_hash.'"' );
+		// h::log( 'd:>position: "'.self::$position.'"' );
 
 		// so, we can add a new field value to $args array based on the field name - with the markup as value
 		// self::$args[$field] = $markup;
@@ -110,7 +112,10 @@ class loops extends willow\parse {
 
 		// finally -- add a variable "{{ $loop_field }}" before this block at $position to markup->template ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_hash, 'close' => 'var_c' ]);
-		parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
+		// parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
+
+		// MOVED to swap method ##
+		parse\markup::swap( self::$loop_match, $variable, 'loop', 'variable', $process ); 
 
 		// clear slate ##
 		self::reset();
