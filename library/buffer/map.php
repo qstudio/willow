@@ -91,7 +91,7 @@ class map extends willow\buffer {
 
 			}
 
-			// h::log( 'Row: '.$value['hash'].' is a slave to: '.self::$buffer_map[ $row ]['hash'] );
+			// h::log( 'Row: '.$value['hash'].' is a child to: '.self::$buffer_map[ $row ]['hash'] );
 
 			// so, we want to str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key ##
 			self::$buffer_map[ $row ]['output'] = str_replace( $value['tag'], $value['output'], self::$buffer_map[ $row ]['output'] );
@@ -110,6 +110,7 @@ class map extends willow\buffer {
 			if( 
 				'0' == $key 
 				|| $value['parent'] // skip rows with a parent value ##
+				// || ! isset( $value['hash'] ) // ??
 			){
 
 				continue;

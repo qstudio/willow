@@ -135,7 +135,7 @@ class php_variables extends willow\parse {
 
 			// h::log( 'hash set to: '.$php_var_hash );
 
-			h::log( 'e:>Replacing variable: "'.$php_var_match.'" with variable return value: '.$return );
+			h::log( 'e:>Replacing PHP variable: "'.$php_var_match.'" with value: '.$return );
 
 			// $string = $return;
 

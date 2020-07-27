@@ -273,13 +273,23 @@ class php_functions extends willow\parse {
 
 		}
 
+		// escape ##
+		if( 
+			isset( self::$flags_function['e'] ) 
+		){
+
+			// JS or HTML ?? @todo ##
+			self::$return = \esc_js( self::$return );
+
+		}
+
 		// h::log( self::$return );
 
 		if ( ! isset( self::$return ) ) {
 
 			h::log( 'd:>Function "'.self::$function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
-			willow\markup::swap( self::$function_match, '', 'php_function', 'string', $process );
+			parse\markup::swap( self::$function_match, '', 'php_function', 'string', $process );
 
 			return false;
 

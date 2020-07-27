@@ -93,7 +93,7 @@ class markup extends willow\render {
 				&& ! \is_int( $value ) 
 			) {
 
-				h::log( 'The value of: '.$key.' is not a string or integer - so we cannot render it' );
+				h::log( 'The value of: '.$key.' is not a string or integer - so cannot be rendered.' );
 
 				// log ##
 				// h::log( self::$args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');

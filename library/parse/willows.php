@@ -373,7 +373,7 @@ class willows extends willow\parse {
 			h::log( 'd:>Willow "'.self::$willow_match.'" did not return a value.' );
 
 			// done ##
-			return false;
+			// return false; // REMOVED.. not doing anything I guess ??
 
 		}
 

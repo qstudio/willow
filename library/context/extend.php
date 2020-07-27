@@ -140,7 +140,7 @@ class extend extends willow\context {
 
 		foreach( self::$extend as $k => $v ){
 
-			// h::log( 'checking class: '.$k );
+			// h::log( 'checking class: '.$k.' for task: '.$task );
 
 			// check if $context match ##
 			if ( $v['context'] == $context ){
@@ -148,7 +148,7 @@ class extend extends willow\context {
 				// now check if we have a matching method ##
 				if ( false !== $key = array_search( $task, $v['methods'] ) ) {
 
-					// h::log( 'found context: '.$v['class'] );
+					// h::log( 'found task: '.$task );
 
 					// check if extension is callable ##
 					if (
