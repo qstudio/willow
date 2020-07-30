@@ -14,18 +14,11 @@ class widget extends willow\context {
 
 	
 	/**
-    * Render nav menu
-    *
-    * @since       4.1.0
+    * Render sharelines
     */
     public static function sharelines( $args = null ){
 
-        // ##
-		// return widgets\sharelines::module( $args );
-
-		h::log( 't:>TODO Widgets..' );
-
-		return false;
+		return [ 'sharelines', \q\theme\widget\sharelines::render( $args ) ];
 
 	}
 

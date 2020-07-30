@@ -41,6 +41,9 @@ class filter extends \q_willow  {
 
 			// strip tags ##
 			'strip' => h::get( 'filter/strip.php', 'return', 'path' ),
+
+			// nl2br ##
+			'nl2br' => h::get( 'filter/nl2br.php', 'return', 'path' ),
 			
 		];
 

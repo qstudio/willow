@@ -396,8 +396,22 @@ class markup extends willow\render {
 		
 		// h::log( 'd:>$string: '.$string );
 
+		// key might be in object.iterator.property format - we only need the property for filters ##
+		$filter_key = $key;
+		if( false !== strpos( $key, '.' ) ){ 
+		
+			$filter_keys = explode( '.', $key ); 
+
+			// h::log( $filter_keys );
+			
+			$filter_key = end( $filter_keys ); 
+		
+		}
+
+		// h::log( 'e:>Filter Key: '.$filter_key );
+
 		// filter variable ##
-		$value = apply_filters( 'q/willow/render/markup/variable', $value, $key );
+		$value = apply_filters( 'q/willow/render/markup/variable', $value, $filter_key );
 
 		// variable replacement -- regex way ##
 		$open = trim( willow\tags::g( 'var_o' ) );
@@ -415,7 +429,7 @@ class markup extends willow\render {
 		]); 
 
 		// filter markup ##
-		$string = apply_filters( 'q/willow/render/markup/tag', $string, $key );
+		$string = apply_filters( 'q/willow/render/markup/tag', $string, $filter_key );
 
 		// return ##
 		return $string;
@@ -596,6 +610,21 @@ class markup extends willow\render {
 
 			// h::log( 'Working variable: '.$value );
 			// h::log( 'variable_open: '.willow\tags::g( 'var_o' ) );
+
+			$open = trim( willow\tags::g( 'fla_o' ) );
+			$close = trim( willow\tags::g( 'fla_c' ) );
+
+			// h::log( self::$markup['template'] );
+
+			// strip all flags, we don't need them now ##
+			$regex_flags = \apply_filters( 
+				'q/willow/parse/flags/markup/regex', 
+				"/\\$open.*?\\$close/ms"
+			);
+
+			$value = preg_replace( $regex_flags, "", $value ); 
+
+			// h::log( 'Flagless variable: '.$value );
 
 			// var open and close, with and without whitespace ##
 			$array_replace = [
