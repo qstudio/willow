@@ -110,7 +110,7 @@ class map extends willow\buffer {
 			if( 
 				'0' == $key 
 				|| $value['parent'] // skip rows with a parent value ##
-				// || ! isset( $value['hash'] ) // ??
+				|| ! isset( $value['hash'] ) // ?? added, but not tested much yet ###
 			){
 
 				continue;

@@ -26,7 +26,7 @@ class output extends willow\buffer {
 		if ( \is_admin() ) return false;
 
 		// \add_action( 'get_header',  [ get_class(), 'ob_start' ], 0 ); // try -- template_redirect.. was init
-		\add_action( 'init',  function(){ 
+		\add_action( 'wp',  function(){ 
 			
 			if ( 'willow' == \q\view\is::format() ){
 
@@ -40,7 +40,7 @@ class output extends willow\buffer {
 
 			return false; 
 		}
-		, 0 ); 
+		, 1 ); 
 
 		\add_action( 'shutdown', function() {
 
