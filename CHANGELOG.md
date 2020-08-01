@@ -1,3 +1,9 @@
+### 0.4.0 ###
+
+* Added action and filter contexts
+* Buffer Map hashes more stable
+* Moved UI header and Footers into main buffer map process
+
 ### 0.3.0 ###
 
 * Added basic PHP variable lookups - for now just $_GET values
