@@ -193,6 +193,7 @@ class comments extends willow\parse {
 
 					// add data to buffer map ##
 					self::$buffer_map[] = [
+						'hash'		=> self::$comment_hash,
 						'tag'		=> self::$comment_match,
 						'output'	=> '<!-- '.self::$comment.' -->',
 						'parent'	=> false
@@ -219,7 +220,7 @@ class comments extends willow\parse {
 
 		// clean up all tags ##
 		// h::log( 't:>MOVED cleanup to after lookup, check if this does not trash other markups and apply to all parse lookups..' );
-		self::cleanup();
+		// self::cleanup();
 
 	}
 

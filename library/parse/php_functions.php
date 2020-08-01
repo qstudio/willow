@@ -305,6 +305,7 @@ class php_functions extends willow\parse {
 
 			self::$return = implode ( " ", array_values( self::$return ) );
 			self::$return = trim( self::$return );
+			// h::log( 'return: '.self::$return );
 
 		}
 

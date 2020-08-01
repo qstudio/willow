@@ -40,7 +40,7 @@ class output extends willow\buffer {
 
 			return false; 
 		}
-		, 1 ); 
+		, 100000 ); 
 
 		\add_action( 'shutdown', function() {
 
@@ -68,18 +68,18 @@ class output extends willow\buffer {
 			if( ob_get_level() > 0 ) ob_flush();
 
 			// HTML <head> ##
-			willow\context::ui__head();
+			// willow\context::ui__head();
 		
 			// Output is directly echoed, once it has been parsed ##
 			echo self::prepare( $string );
 
 			// Footer, basically just wp_footer() + closing </body> / </html> tags  ##
-			willow\context::ui__footer();
+			// willow\context::ui__footer();
 
 			// reset all args ##
 			render\args::reset();
 
-		}, 0);
+		}, 0 );
 
 	}
 

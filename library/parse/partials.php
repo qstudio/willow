@@ -235,6 +235,7 @@ class partials extends willow\parse {
 
 				// add data to buffer map ##
 				self::$buffer_map[] = [
+					'hash'		=> $hash,
 					'tag'		=> $partial_match,
 					'output'	=> $partial_data['markup'],
 					'parent'	=> false,

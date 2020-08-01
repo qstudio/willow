@@ -337,8 +337,11 @@ class markup extends willow\render {
 			// || null == self::$markup['template']
 		){
 
+			// h::log( self::$args );
+
 			// default -- almost useless - but works for single values.. ##
-			$markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => 'value', 'close' => 'var_c' ]);
+			// $markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => 'value', 'close' => 'var_c' ]); // OLD WAY ##
+			$markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$args['task'], 'close' => 'var_c' ]); // takes "task" as default ##
 
 			// filter ##
 			$markup = \apply_filters( 'q/render/markup/default', $markup );

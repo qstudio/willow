@@ -67,12 +67,14 @@ class context extends \q_willow {
 			// user context ##
 			'user' => wh::get( 'context/user.php', 'return', 'path' ),
 
+			// action hook context ##
+			'action' => wh::get( 'context/action.php', 'return', 'path' ),
+
+			// filter hook context ##
+			// 'filter' => wh::get( 'context/filter.php', 'return', 'path' ),
+
 			// wordpress context ##
 			'wordpress' => wh::get( 'context/wordpress.php', 'return', 'path' ),
-
-			// perhaps type css ##
-			// perhaps type js ##
-			// perhaps type font ##
 
 		];
 

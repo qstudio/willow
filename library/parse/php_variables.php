@@ -108,7 +108,7 @@ class php_variables extends willow\parse {
 
 				// h::log( 'Clean argument: '.$argument );
 
-				if( $return = $_GET[$argument] ){
+				if( $return = isset( $_GET[$argument] ) ? $_GET[$argument] : false  ){
 
 					// sanitize ##
 					$return = \q\core\method::sanitize( $return );
@@ -135,7 +135,7 @@ class php_variables extends willow\parse {
 
 			// h::log( 'hash set to: '.$php_var_hash );
 
-			h::log( 'e:>Replacing PHP variable: "'.$php_var_match.'" with value: '.$return );
+			// h::log( 'e:>Replacing PHP variable: "'.$php_var_match.'" with value: '.$return );
 
 			// $string = $return;
 

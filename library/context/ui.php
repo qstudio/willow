@@ -178,9 +178,7 @@ class ui extends willow\context {
     public static function open( $args = null )
     {
 
-		// return render\fields::define([
 		return [ 'classes' => get\theme::body_class( $args ) ];
-		// ]);
 
 	}
 
@@ -195,11 +193,7 @@ class ui extends willow\context {
     public static function close( $args = null )
     {
 
-        // set-up new array -- nothing really to do ##
-		// grab classes ##
-		// return render\fields::define([
 		return [ 'oh' => '' ]; // hack.. nothing to pass here ##
-		// ]);
 
 	}
 
@@ -215,11 +209,7 @@ class ui extends willow\context {
     public static function comment( $args = null )
     {
 
-		// return theme\view\ui\comment::render( $args );
-
-		// return render\fields::define([
 		return [ 'comment' => theme\view\ui\comment::render( $args ) ];
-		// ]);
 
 	}
 
