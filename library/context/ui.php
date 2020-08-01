@@ -193,7 +193,7 @@ class ui extends willow\context {
     public static function close( $args = null )
     {
 
-		return [ 'oh' => '' ]; // hack.. nothing to pass here ##
+		return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 
