@@ -12,7 +12,7 @@ use q\willow\buffer;
 
 class output extends willow\buffer {
 
-	// public static $filter;
+	protected static $is_willow;
 
 	/**
 	 * Check for view template and start OB, if correct
@@ -26,27 +26,31 @@ class output extends willow\buffer {
 		if ( \is_admin() ) return false;
 
 		// \add_action( 'get_header',  [ get_class(), 'ob_start' ], 0 ); // try -- template_redirect.. was init
-		\add_action( 'wp',  function(){ 
+		\add_action( 'wp',  function(){  // was 'wp'
 			
-			if ( 'willow' == \q\view\is::format() ){
+			// if ( 'willow' == \q\view\is::format() ){
 
-				// h::log( 'd:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
-
+				// h::log( 'e:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
+				h::log( 't:>TODO -- find out why large content breaks this...??' );
 				return ob_start();
 
-			}
+			// }
 
-			// h::log( 'd:>not a willow template, so no ob: "'.\q\view\is::format().'"' );
+			// h::log( 'e:>not a willow template, so no ob: "'.\q\view\is::format().'"' );
 
-			return false; 
+			// return false; 
+
 		}
-		, 100000 ); 
+		, 1 ); 
 
 		\add_action( 'shutdown', function() {
 
 			if ( 'willow' != \q\view\is::format() ){
 
-				// h::log( 'e:>No buffer.. so no go' );
+				h::log( 'e:>No buffer.. so no go' );
+
+				// ob_flush();
+				if( ob_get_level() > 0 ) ob_flush();
 				
 				return false; 
 			
@@ -59,10 +63,13 @@ class output extends willow\buffer {
 			// We'll need to get the number of ob levels we're in, so that we can iterate over each, collecting
 			// that buffer's output into the final output.
 			$levels = ob_get_level();
+			// h::log( $levels );
 		
 			for ($i = 0; $i < $levels; $i++) {
 				$string .= ob_get_clean();
 			}
+
+			// h::log( 'e:>String: '.$string );
 
 			// ob_flush();
 			if( ob_get_level() > 0 ) ob_flush();
