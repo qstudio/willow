@@ -193,11 +193,11 @@ class php_functions extends willow\parse {
 
 			if ( 
 				! class_exists( self::$class )
-				// || ! method_exists( self::$class, self::$method ) // internal methods are found via callstatic lookup ##
+				|| ! method_exists( self::$class, self::$method ) // internal methods are found via callstatic lookup ##
 				|| ! is_callable( self::$class, self::$method )
 			){
 
-				h::log( 'd:>Cannot find - class: '.self::$class.' - method: '.self::$method );
+				h::log( 'e:>Cannot find PHP Function --> '.self::$class.'::'.self::$method );
 
 				return false;
 
