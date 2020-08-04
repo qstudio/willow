@@ -221,7 +221,7 @@ class method extends \q_willow {
 				// split value into an array at "," ##
 				$value_pairs = explode( ',', $value );
 
-				// h::log( $value_pairs );
+				h::log( $value_pairs );
 
 				# loop through each pair
 				foreach ( $value_pairs as $v_pair ) {

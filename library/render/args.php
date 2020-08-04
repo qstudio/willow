@@ -274,7 +274,7 @@ class args extends willow\render {
 
 
 	/**
-	 * Defin config->default value
+	 * Define config->default value
 	 * 
 	 * @since 4.1.0
 	*/
@@ -283,9 +283,10 @@ class args extends willow\render {
 		// sanity ##
 		if(
 			is_null( $array )
+			|| ! is_array( $array )
 		){
 
-			h::log( 'Error in passed args' );
+			h::log( 'Error in passed default parameter' );
 
 			return false;
 
@@ -293,7 +294,7 @@ class args extends willow\render {
 
 		self::$args['config']['default'] = $array;
 
-		// h::log( self::$args );
+		h::log( 'd:>Default value set to: '.var_export( $array, true ) );
 
 		return true;
 

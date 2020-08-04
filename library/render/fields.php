@@ -179,8 +179,10 @@ class fields extends willow\render {
 				// h::log( 'config->default is defined' );
 				// h::log( self::$args['config']['default'] );
 
-				// define args are config->default ##
+				// define args as config->default ##
 				$args = self::$args['config']['default'];
+
+				h::log( $args );
 
 			} else {
 

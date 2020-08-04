@@ -93,14 +93,62 @@ class markup extends willow\render {
 				&& ! \is_int( $value ) 
 			) {
 
-				h::log( 'The value of: '.$key.' is not a string or integer - so cannot be rendered.' );
+				h::log( 'e:>The value of "'.$key.'" is not a string or integer - so cannot be rendered, we will check for a default value...' );
 
-				// log ##
-				// h::log( self::$args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
+				if( 
+					isset( self::$args['config']['default'] ) 
+					&& is_array( self::$args['config']['default'] )
+					&& (
+						isset( self::$args['config']['default'][$key] )
+						||
+						isset( self::$args['config']['default']['all'] )
+					)
+				){
 
-                unset( self::$fields[$key] );
+					// start empty ##	
+					$default_value = false;
 
-                continue;
+					// take specific key default value ##
+					if ( isset( self::$args['config']['default'][$key] ) ) {
+						
+						$default_value = self::$args['config']['default'][$key];
+					
+					// take catch-all default value #
+					} elseif ( isset( self::$args['config']['default']['all'] ) ) {
+						
+						$default_value = self::$args['config']['default']['all'] ;
+
+					}
+
+					// check we actually have a value ##
+					if( 
+						! $default_value 
+						|| ! is_string( $default_value ) // and that it is a string ##
+					) {
+
+						h::log( 'd:>NO Default value set or NOT a string' );
+
+						unset( self::$fields[$key] );
+
+						continue;
+
+					}
+
+					h::log( 'd:>Default value set: '.$default_value );
+
+					// set value and continue ##
+					$value = $default_value;
+
+				} else {
+
+					// log ##
+					// h::log( self::$args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
+
+					unset( self::$fields[$key] );
+
+					continue;
+
+				}
 
             }
 

@@ -105,7 +105,7 @@ class arguments extends willow\parse {
 		// replace " with ' .... hmm ##
 		// self::$string = str_replace( '"', "'", self::$string );
 
-		// strip white spaces from data that is not passed inside quotes ( "data" ) ##
+		// strip white spaces from data that is not passed inside double quotes ( "data" ) ##
 		self::$string = preg_replace( '~"[^"]*"(*SKIP)(*F)|\s+~', "", self::$string );
 
 		// h::log( 'd:>string --> '.self::$string );
