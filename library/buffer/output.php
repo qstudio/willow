@@ -47,7 +47,7 @@ class output extends willow\buffer {
 
 			if ( 'willow' != \q\view\is::format() ){
 
-				h::log( 'e:>No buffer.. so no go' );
+				// h::log( 'e:>No buffer.. so no go' );
 
 				// ob_flush();
 				if( ob_get_level() > 0 ) ob_flush();

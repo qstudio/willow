@@ -92,6 +92,7 @@ class arguments extends willow\parse {
 		}
 
 		// check for "=" delimiter ##
+		/*
 		if( false === strpos( self::$string, '=' ) ){
 
 			// h::log( 'e:>Error in passed string format, missing delimiter "=" -- '.self::$string );
@@ -99,6 +100,7 @@ class arguments extends willow\parse {
 			return false;
 
 		}
+		*/
 
 		// h::log( 'd:>string --> '.self::$string );
 
@@ -130,7 +132,7 @@ class arguments extends willow\parse {
 			// || ! $matches[0]
 		){
 
-			h::log( self::$args['task'].'~>e:>No arguments found in string: '.self::$string ); // @todo -- add "loose" lookups, for white space '@s
+			h::log( self::$args['task'].'~>n:>No arguments found in string: '.self::$string ); // @todo -- add "loose" lookups, for white space '@s
 			// h::log( 'd:>No arguments found in string: '.self::$string ); // @todo -- add "loose" lookups, for white space '@s''
 
 			return false;
@@ -170,8 +172,53 @@ class arguments extends willow\parse {
 			"~\\$open\s+(.*?)\s+\\$close~"
 		);
 
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'internal' == $process
+				&& (
+					! isset( self::$markup )
+					|| ! is_array( self::$markup )
+					|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+					! isset( self::$buffer_markup )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup: '.$process );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
+
 		// use callback to allow for feedback ##
-		self::$markup['template'] = preg_replace_callback(
+		$string = preg_replace_callback(
 			$regex, 
 			function($matches) {
 				
@@ -201,10 +248,28 @@ class arguments extends willow\parse {
 				return "";
 
 			}, 
-			self::$markup['template'] 
+			$string
 		);
-		
-		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// set markup ##
+				self::$markup['template'] = $string;
+
+			break ;
+
+			case "buffer" :
+
+				// set markup ##
+				self::$buffer_markup = $string;
+
+			break ;
+
+		} 
 
 	}
 

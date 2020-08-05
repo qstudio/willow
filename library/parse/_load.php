@@ -158,7 +158,10 @@ class parse extends \q_willow {
 		// h::log( self::$args['markup'] );
 
 		// remove all flags ##
-		flags::cleanup( $args, $process );
+		// flags::cleanup( $args, $process ); // @todo -- if required ##
+
+		// remove all spare args... ##
+		// arguments::cleanup( $args, $process ); // @todo -- if required ##
 
 		// remove left-over php variables
 		php_variables::cleanup( $args, $process );
@@ -180,12 +183,6 @@ class parse extends \q_willow {
 
 		// remove all spare vars ##
 		variables::cleanup( $args, $process );
-
-		// remove all spare flags ##
-		// flags::cleanup();
-
-		// search for config settings passed in markup, such as "src" handle ##
-		// argument::cleanup(); // @todo ##
 
 	}
 

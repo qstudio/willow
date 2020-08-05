@@ -127,7 +127,7 @@ class loops extends willow\parse {
 	/**
 	 * Check if passed string is a loop 
 	*/
-	public static function is( $string = null ){
+	public static function has( $string = null ){
 
 		// @todo - sanity ##
 		if(
@@ -147,11 +147,10 @@ class loops extends willow\parse {
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			/*
 			$loo_o = strpos( $string, trim( willow\tags::g( 'loo_o' )) );
 			$loo_c = strrpos( $string, trim( willow\tags::g( 'loo_c' )) );
 
-			h::log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			h::log( self::$args['task'].'~>d:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
@@ -159,12 +158,13 @@ class loops extends willow\parse {
 				( $loo_o + strlen( trim( willow\tags::g( 'loo_o' ) ) ) ), 
 				( $loo_c - $loo_o - strlen( trim( willow\tags::g( 'loo_c' ) ) ) ) ); 
 
-			h::log( 'e:>$string: "'.$return_string .'"' );
+			$return_string = willow\tags::g( 'loo_o' ).$return_string.willow\tags::g( 'loo_c' );
+
+			// h::log( 'e:>$string: "'.$return_string.'"' );
 
 			return $return_string;
-			*/
 
-			return true;
+			// return true;
 
 		}
 

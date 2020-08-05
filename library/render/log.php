@@ -16,11 +16,14 @@ class log extends willow\render {
      */
     public static function set( Array $args = null ){
 
-        // h::log( 'e:>'.$args['task'] );
+		// h::log( 'e:>'.$args['task'] );
+		// h::log( self::$args['config'] );
 
         if (
             ! isset( self::$args['config']['debug'] )
-            || false === self::$args['config']['debug']
+			|| false === self::$args['config']['debug']
+			|| 'false' == self::$args['config']['debug']
+			|| ! self::$args['config']['debug']
         ) {
 
             // h::log( 'd:>Debugging is turned OFF for : "'.$args['task'].'"' );

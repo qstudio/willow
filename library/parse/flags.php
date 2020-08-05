@@ -10,6 +10,62 @@ use q\core\helper as h;
 use q\render; // @TODO ##
 
 class flags extends willow\parse {
+
+
+	/**
+	 * Check if passed string contains flags
+	*/
+	public static function has( $string = null ){
+
+		// @todo - sanity ##
+		if(
+			is_null( $string )
+		){
+
+			h::log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		if(
+			strpos( $string, trim( willow\tags::g( 'fla_o' )) ) !== false
+			&& strpos( $string, trim( willow\tags::g( 'fla_c' )) ) !== false
+			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
+		){
+
+			
+			$fla_o = strpos( $string, trim( willow\tags::g( 'fla_o' )) );
+			$fla_c = strrpos( $string, trim( willow\tags::g( 'fla_c' )) );
+			/*
+			h::log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+
+			// get string between opening and closing args ##
+			$return_string = substr( 
+				$string, 
+				( $loo_o + strlen( trim( willow\tags::g( 'loo_o' ) ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( willow\tags::g( 'loo_c' ) ) ) ) ); 
+
+			$return_string = willow\tags::g( 'loo_o' ).$return_string.willow\tags::g( 'loo_c' );
+
+			// h::log( 'e:>$string: "'.$return_string.'"' );
+
+			return $return_string;
+			*/
+
+			h::log( self::$args['task'].'~>n:>Found opening fla_o @ "'.$fla_o.'" and closing fla_c @ "'.$fla_c.'"'  ); 
+
+			return true;
+
+		}
+
+		// no ##
+		return false;
+
+	}
+
+
 	
 	/*
 	Decode flags passed in string
@@ -129,8 +185,53 @@ class flags extends willow\parse {
 			"/\\$open.*?\\$close/"
 		);
 
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'internal' == $process
+				&& (
+					! isset( self::$markup )
+					|| ! is_array( self::$markup )
+					|| ! isset( self::$markup['template'] )
+				)
+			)
+			||
+			(
+				'buffer' == $process
+				&& (
+					! isset( self::$buffer_markup )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup: '.$process );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// get markup ##
+				$string = self::$markup['template'];
+
+			break ;
+
+			case "buffer" :
+
+				// get markup ##
+				$string = self::$buffer_markup;
+
+			break ;
+
+		} 
+
 		// use callback to allow for feedback ##
-		self::$markup['template'] = preg_replace_callback(
+		$string = preg_replace_callback(
 			$regex, 
 			function($matches) {
 				
@@ -160,8 +261,28 @@ class flags extends willow\parse {
 				return "";
 
 			}, 
-			self::$markup['template'] 
+			$string
 		);
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "internal" :
+
+				// set markup ##
+				self::$markup['template'] = $string;
+
+			break ;
+
+			case "buffer" :
+
+				// set markup ##
+				self::$buffer_markup = $string;
+
+			break ;
+
+		} 
 		
 	}
 

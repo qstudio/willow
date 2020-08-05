@@ -188,12 +188,29 @@ class willows extends willow\parse {
 		){
 
 			// check for loops ##
-			if( loops::is( self::$config_string ) ){
+			if( $loop_markup = loops::has( self::$config_string ) ){
 
-				self::$arguments = core\method::parse_args( 
-					self::$arguments, 
-					[ 'markup' => self::$config_string ]
-				);
+				h::log( self::$args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
+				
+				if( flags::has( self::$config_string ) ) {
+
+					h::log( self::$args['task'].'~>n:>FLAG set so take just loop_markup: '.$loop_markup );
+
+					self::$arguments = core\method::parse_args( 
+						self::$arguments, 
+						[ 'markup' => $loop_markup ] // self::$config_string
+					);
+
+				} else {
+
+					h::log( self::$args['task'].'~>n:>NO flags, so take whole string: '.self::$config_string );
+
+					self::$arguments = core\method::parse_args( 
+						self::$arguments, 
+						[ 'markup' => self::$config_string ]
+					);
+
+				}
 
 				$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
 				self::$willow = trim( $willow_explode[0] );
@@ -215,8 +232,8 @@ class willows extends willow\parse {
 				|| ! is_array( self::$arguments ) 
 			) {
 
-				// h::log( 'd:>No array arguments found in willow args, but perhaps we still have flags in the vars??' );
-				// h::log( 'd:>'.self::$config_string );
+				h::log( self::$args['task'].'~>d:>No array arguments found in willow args, but perhaps we still have flags in the vars' );
+				h::log( self::$args['task'].'~>d:>'.self::$config_string );
 
 				self::$config_string = flags::get( self::$config_string, 'variable' );
 
@@ -274,7 +291,7 @@ class willows extends willow\parse {
 			|| ! is_callable( self::$class, self::$method )
 		){
 
-			h::log( 'd:>Cannot find - class: '.self::$class.' - method: '.self::$method );
+			h::log( 'e:>Cannot find - class: '.self::$class.' - method: '.self::$method );
 
 			return false;
 
@@ -371,7 +388,7 @@ class willows extends willow\parse {
 			|| ! is_array( self::$return )
 		) {
 
-			h::log( 'd:>Willow "'.self::$willow_match.'" did not return a value.' );
+			h::log( self::$args['task'].'~>n:>Willow "'.self::$willow_match.'" did not return a value, perhaps it is a hook.' );
 
 			// done ##
 			// return false; // REMOVED.. not doing anything I guess ??

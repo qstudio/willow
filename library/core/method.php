@@ -197,39 +197,74 @@ class method extends \q_willow {
 	*/
 	public static function parse_str( $string = null ) {
 
+		// sanity ##
+		if(
+			is_null( $string )
+			|| ! is_string( $string )
+		){
+			
+			h::log( 'e:>Passed string empty or bad format' );
+
+			return false;
+
+		}
+
 		// h::log($string);
 
+		// delimiters ##
+		$operator_assign = '=';
+		$operator_array = '->';
+		$delimiter_key = ':';
+		$delimiter_and_property = ',';
+		$delimiter_and_key = '&';
+
+		// check for "=" delimiter ##
+		if( false === strpos( $string, $operator_assign ) ){
+
+			h::log( 'e:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
+
+			return false;
+
+		}
+
 		# result array
-		$array = array();
+		$array = [];
 	  
 		# split on outer delimiter
-		$pairs = explode( '&', $string );
+		$pairs = explode( $delimiter_and_key, $string );
+
+		// h::log( $pairs );
 	  
 		# loop through each pair
 		foreach ( $pairs as $i ) {
 
 			# split into name and value
-			list( $key, $value ) = explode( '=', $i, 2 );
+			list( $key, $value ) = explode( $operator_assign, $i, 2 );
 
 			// what about array values ##
 			// example -- sm:medium, lg:large
-			if( false !== strpos( $value, ':' ) ){
+			if( false !== strpos( $value, $delimiter_key ) ){
 
 				// temp array ##
 				$value_array = [];	
 
-				// split value into an array at "," ##
-				$value_pairs = explode( ',', $value );
+				// preg_match_all( "~\'[^\"]++\"|[^,]++~", $value, $result );
+				// h::log( $result );
+				$value_pairs = self::quoted_explode( $value, $delimiter_and_property, '"' );
+				// h::log( $value_pairs );
 
-				h::log( $value_pairs );
+				// split value into an array at "," ##
+				// $value_pairs = explode( $delimiter_and_property, $value );
+
+				// h::log( $value_pairs );
 
 				# loop through each pair
 				foreach ( $value_pairs as $v_pair ) {
 
-					// h::log( $v_pair ); // 'sm:medium'
+					// h::log( 'e:>'.$v_pair ); // 'sm:medium'
 
 					# split into name and value
-					list( $value_key, $value_value ) = explode( ':', $v_pair, 2 );
+					list( $value_key, $value_value ) = explode( $delimiter_key, $v_pair, 2 );
 
 					$value_array[ $value_key ] = $value_value;
 
@@ -245,10 +280,10 @@ class method extends \q_willow {
 			}
 		 
 			// $key might be in part__part format, so check ##
-			if( false !== strpos( $key, '->' ) ){
+			if( false !== strpos( $key, $operator_array ) ){
 
 				// explode, max 2 parts ##
-				$md_key = explode( '->', $key, 2 );
+				$md_key = explode( $operator_array, $key, 2 );
 
 				# if name already exists
 				if( isset( $array[ $md_key[0] ][ $md_key[1] ] ) ) {
@@ -302,8 +337,41 @@ class method extends \q_willow {
 		# return result array
 		return $array;
 
-	  }
+	}
 	  
+
+	/**
+	 * Regex Escape values 
+	*/
+	public static function regex_escape( $subject ) {
+
+		return str_replace( array( '\\', '^', '-', ']' ), array( '\\\\', '\\^', '\\-', '\\]' ), $subject );
+	
+	}
+	
+	/**
+	 * Explode string, while respecting delimiters
+	 * 
+	 * @link https://stackoverflow.com/questions/3264775/an-explode-function-that-ignores-characters-inside-quotes/13755505#13755505
+	*/
+	public static function quoted_explode( $subject, $delimiter = ',', $quotes = '\"' )
+	{
+		$clauses[] = '[^'.self::regex_escape( $delimiter.$quotes ).']';
+
+		foreach( str_split( $quotes) as $quote ) {
+
+			$quote = self::regex_escape( $quote );
+			$clauses[] = "[$quote][^$quote]*[$quote]";
+
+		}
+
+		$regex = '(?:'.implode('|', $clauses).')+';
+		
+		preg_match_all( '/'.str_replace('/', '\\/', $regex).'/', $subject, $matches );
+
+		return $matches[0];
+
+	}
 
 
 }

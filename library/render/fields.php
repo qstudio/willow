@@ -182,7 +182,7 @@ class fields extends willow\render {
 				// define args as config->default ##
 				$args = self::$args['config']['default'];
 
-				h::log( $args );
+				// h::log( $args );
 
 			} else {
 
