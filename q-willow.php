@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Willow is a Simple, logic-less, procedural semantic template engine
+ * Willow is a logic-less, procedural, semantic template engine
  *
  * @package         q-willow
  * @author          Q Studio <social@qstudio.us>
