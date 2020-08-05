@@ -61,7 +61,7 @@ if ( ! class_exists( 'q_willow' ) ) {
 			$fields 	= null, // array of field names and values ##
 			$markup 	= null, // array to store passed markup and extra keys added by formatting ##
 			$log 		= null, // tracking array for feedback ##
-			$buffer 	= null, // for buffering... ##
+			// $buffer 	= null, // for buffering... ##
 			$filter		= null, // post-processing of willows and variables ##
 			$hash 		= null, // willow hash log, with data about calling method ##
 
