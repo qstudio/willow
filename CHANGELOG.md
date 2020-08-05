@@ -1,3 +1,9 @@
+### 0.5.0 ###
+
+* Updated parse_str to respect content in double quotes
+* Improved debugging, less clutter in error log
+* Fixed loops issue when passing arguements in array from template
+
 ### 0.4.0 ###
 
 * Added action and filter contexts
