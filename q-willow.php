@@ -198,13 +198,13 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'close'		=> ' @}' // close ##
 				],
 
-				// php function
+				// php function ##
 				'php_function'		=> [
 					'open' 		=> '{% ', // open ## 
 					'close' 	=> ' %}', // close ##
 				],
 
-				// php variable -- @TODO.. we need to rename willow variables... or function to php_function ??
+				// php variable ##
 				'php_variable'	=> [
 					'open' 		=> '{# ', // open ## 
 					'close' 	=> ' #}', // close ##
@@ -374,7 +374,7 @@ if ( ! class_exists( 'q_willow' ) ) {
                 ! class_exists( 'Q' )
             ) {
 
-                helper::log( 'e:>Q Willow requires Q to run correctly..' );
+                error_log( 'e:>Q Willow requires Q to run correctly..' );
 
                 return false;
 
