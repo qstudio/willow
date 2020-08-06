@@ -64,13 +64,13 @@ class template extends willow\render {
 		// h::log( $config );
 
 		// args->template - if not set, define to task ##
-		$template = isset( $args['template'] ) ? $args['template'] : $args['task'] ;
+		$markup = isset( $args['markup'] ) ? $args['markup'] : $args['task'] ;
 
 		// filter ##
-		$template = \q\core\filter::apply([ 
-			'parameters'    => [ 'template' => $template ], // pass ( $template ) as single array ##
+		$markup = \q\core\filter::apply([ 
+			'parameters'    => [ 'markup' => $markup ], // pass ( $template ) as single array ##
 			'filter'        => 'q/willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
-			'return'        => $template
+			'return'        => $markup
 	   	]); 
 
 		// check we have what we need ## -- TODO, move to Q Willow render::view() method
@@ -79,7 +79,7 @@ class template extends willow\render {
 			|| ! is_array( $config )
 			|| ! isset( $config['markup'] )
 			|| ! is_array( $config['markup'] )
-			|| ! isset( $config['markup'][ $template ] ) // @todo - this should be dynamic, passed to the method
+			|| ! isset( $config['markup'][ $markup ] )
 		){
 
 			h::log( 'e:>Missing or corrupt config settings' );
@@ -91,7 +91,7 @@ class template extends willow\render {
 		// h::log( $config['markup'][ $template ] );
 
 		// markup string ##
-		$string = \q\strings\method::markup( $config['markup'][ $template ], [ 0 => $args['data'] ] );
+		$string = \q\strings\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
 
 		// filter ##
 		$string = \q\core\filter::apply([ 
