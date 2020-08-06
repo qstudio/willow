@@ -1,3 +1,7 @@
+### 0.5.5 ###
+
+* Added render/template for partial rendering with filters and config lookup
+
 ### 0.5.0 ###
 
 * Updated parse_str to respect content in double quotes

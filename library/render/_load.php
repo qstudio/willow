@@ -58,6 +58,9 @@ class render extends \q_willow  {
 			// output string ##
 			'output' => h::get( 'render/output.php', 'return', 'path' ),
 
+			// template renderer ##
+			'template' => h::get( 'render/template.php', 'return', 'path' ),
+
 			// log activity ##
 			'log' => h::get( 'render/log.php', 'return', 'path' ),
 
