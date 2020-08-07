@@ -45,6 +45,8 @@ class fields extends willow\render {
             'return'        => self::$fields
         ]); 
 
+		// h::log( self::$fields );
+
         // start loop ##
         foreach ( self::$fields as $field => $value ) {
 
