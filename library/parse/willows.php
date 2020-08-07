@@ -191,19 +191,22 @@ class willows extends willow\parse {
 			if( $loop_markup = loops::has( self::$config_string ) ){
 
 				h::log( self::$args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
+				// h::log( 'e:>HAS a loop so taking part of config string as markup' );
 				
 				if( flags::has( self::$config_string ) ) {
 
 					h::log( self::$args['task'].'~>n:>FLAG set so take just loop_markup: '.$loop_markup );
+					// h::log( 'e:>FLAG set so take just loop_markup: '.$loop_markup );
 
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
-						[ 'markup' => $loop_markup ] // self::$config_string
+						[ 'markup' => $loop_markup ]
 					);
 
 				} else {
 
 					h::log( self::$args['task'].'~>n:>NO flags, so take whole string: '.self::$config_string );
+					// h::log( 'e:>NO flags, so take whole string: '.self::$config_string );
 
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
