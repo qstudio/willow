@@ -309,7 +309,7 @@ class args extends willow\render {
 	 */
 	public static function prepare( $args = null ) {
 
-		h::log( 't:>merge with args::validate, just need to get config right..' );
+		// h::log( 't:>merge with args::validate, just need to get config right..' );
 
 		// sanity ##
 		if (

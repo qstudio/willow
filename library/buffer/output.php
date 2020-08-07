@@ -31,7 +31,7 @@ class output extends willow\buffer {
 			// if ( 'willow' == \q\view\is::format() ){
 
 				// h::log( 'e:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
-				h::log( 't:>TODO -- find out why large content breaks this...??' );
+				// h::log( 't:>TODO -- find out why large content breaks this...??' );
 				return ob_start();
 
 			// }
