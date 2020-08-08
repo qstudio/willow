@@ -250,9 +250,7 @@ class context extends \q_willow {
 				// h::log( 'run extended method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from extend ##
-				// render\fields::define( 
-					$return_array = $extend['class']::{ $extend['method'] }( render::$args ) ;
-				// );
+				$return_array = $extend['class']::{ $extend['method'] }( render::$args ) ;
 
 			} else if ( 
 				\method_exists( $namespace, $args['task'] ) 
@@ -261,9 +259,7 @@ class context extends \q_willow {
 				// 	h::log( 'load base method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from $method ##
-				// render\fields::define(
-					$return_array = $namespace::{ $args['task'] }( render::$args ) ;
-				// );
+				$return_array = $namespace::{ $args['task'] }( render::$args ) ;
 
 			} else if ( 
 				\method_exists( $namespace, 'get' ) 
@@ -272,22 +268,11 @@ class context extends \q_willow {
 				// 	h::log( 'load default get() method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from get() ##
-				// render\fields::define(
-					$return_array = $namespace::get( render::$args ) ;
-				// );
+				$return_array = $namespace::get( render::$args ) ;
 
 			} else {
 
-				// no matching class::method found, so stop ##
-
-				// render\log::set( $args );
-				
 				// h::log( 'e:>No matching class::method found' );
-
-				// // reset all args ##
-				// render\args::reset();
-	
-				// return false;
 
 				// nothing found ##
 				$lookup_error = true;

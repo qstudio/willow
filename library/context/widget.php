@@ -12,15 +12,6 @@ use q\widget as widgets;
 
 class widget extends willow\context {
 
+	// BASE CONTEXT ##
 	
-	/**
-    * Render sharelines
-    */
-    public static function sharelines( $args = null ){
-
-		return [ 'sharelines', \q\theme\widget\sharelines::render( $args ) ];
-
-	}
-
-
 }
