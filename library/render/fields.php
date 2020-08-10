@@ -29,7 +29,9 @@ class fields extends willow\render {
 
             return false;
 
-        }
+		}
+		
+		// h::log( self::$fields );
 
         // filter $args now that we have fields data from ACF ##
         self::$args = \q\core\filter::apply([ 
@@ -394,13 +396,7 @@ class fields extends willow\render {
 
 		}
 		
-		/*
-		$args = [
-			'sf.sdfsd' => 'sfsdf' # ??
-		];
-		*/
-
-		// h::log( 'Adding field: '.$field );
+		// h::log( 'Adding field: '.$field.' by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 		// h::log( $value );
 
         // add field to array ##

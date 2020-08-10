@@ -55,6 +55,9 @@ class context extends \q_willow {
 			// extension ##
 			'extension' => wh::get( 'context/extension.php', 'return', 'path' ),
 
+			// modules ##
+			'module' => wh::get( 'context/module.php', 'return', 'path' ),
+
 			// widgets ##
 			'widget' => wh::get( 'context/widget.php', 'return', 'path' ),
 

@@ -267,7 +267,7 @@ class format extends willow\render {
      * Format Array values
      * These need to be looped over and each value passed back into the format() process
      * 
-     * Array data "MIGHT" come from a repeater -- or from another UI method which has gather data ##
+     * Array data "MIGHT" come from a repeater -- or from another UI method which has gathered data ##
      * which has one single {{ placeholder }} and markup in a property with a name matching key to the field name
      * we need to update the template based on number of array items and defined markup with numbered values ##
      * 
@@ -435,11 +435,17 @@ class format extends willow\render {
         // allow filtering early ##
         $value = \apply_filters( 'q/render/format/object/'.self::$args['task'].'/'.$field, $value );
 
-        // WP Object format ##
+        // WP_Post Object ##
         if ( $value instanceof \WP_Post ) {
 
             // pass to WP formatter ##
             $value = self::format_object_wp_post( $value, $field );
+
+		// WP_Term Object ##
+		} elseif ( $value instanceof \WP_Term ) {
+
+            // pass to WP formatter ##
+            $value = self::format_object_wp_term( $value, $field );
 
         // @todo - add more formats here ... ##
 
@@ -490,38 +496,38 @@ class format extends willow\render {
 		// h::log( 'Formatting WP Post Object: '.$wp_post->post_title );
 		// h::log( 'Field: '.$field ); // whole object ##
 
-        // now, we need to create some new $fields based on each value in self::$type_fields ##
-        foreach( self::$type_fields as $type_field ) {
+        // now, we need to create some new $fields based on each value in self::$wp_post_fields ##
+        foreach( self::$wp_post_fields as $wp_post_field ) {
 			
-			// h::log( 'Working: '.$type_field.' context: '.$context );
+			// h::log( 'Working: '.$wp_post_field.' context: '.$context );
 			// h::log( 't:>move to object.property - post.title - variable calls..' );
 
 			// start empty ##
 			$string = null;
 
-			switch( $type_field ) {
+			switch( $wp_post_field ) {
 
 				// post handlers ##	
 				// case "ID" : // post special ##
-				case substr( $type_field, 0, strlen( 'post_' ) ) === 'post_' :
+				case substr( $wp_post_field, 0, strlen( 'post_' ) ) === 'post_' :
 
-					$string = render\type::post( $wp_post, $type_field, $field, $context );
+					$string = render\type::post( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
 				// author handlers ##	
-				case substr( $type_field, 0, strlen( 'author_' ) ) === 'author_' :
+				case substr( $wp_post_field, 0, strlen( 'author_' ) ) === 'author_' :
 
-					$string = render\type::author( $wp_post, $type_field, $field, $context );
+					$string = render\type::author( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
 				// taxonomy handlers ##	
-				case substr( $type_field, 0, strlen( 'category_' ) ) === 'category_' :
-				// case substr( $type_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
-				// case substr( $type_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
+				case substr( $wp_post_field, 0, strlen( 'category_' ) ) === 'category_' :
+				// case substr( $wp_post_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
+				// case substr( $wp_post_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
 
-					$string = render\type::taxonomy( $wp_post, $type_field, $field, $context );
+					$string = render\type::taxonomy( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
@@ -534,7 +540,7 @@ class format extends willow\render {
 					// $attachment_id = \get_post_thumbnail_id( $wp_post );
 					// $attachment = \get_post( $attachment_id );
 
-					$string = render\type::media( $wp_post, $type_field, $field, $context );
+					$string = render\type::media( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
@@ -545,7 +551,7 @@ class format extends willow\render {
 					// $attachment = \get_post( $attachment_id );
 					// h::log( self::$args );
 
-					$string = render\type::media( $wp_post, $type_field, $field, $context );
+					$string = render\type::media( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
@@ -553,10 +559,10 @@ class format extends willow\render {
 
 			if ( is_null( $string ) ) {
 
-				// h::log( 'Field: '.$field.' / '.$type_field.' returned an empty string' );
+				// h::log( 'Field: '.$field.' / '.$wp_post_field.' returned an empty string' );
 
 				// log ##
-				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$type_field.'" returned an empty string');
+				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
 
 				// @@ todo.. do we need to remove field or markup ?? ##
 
@@ -565,8 +571,8 @@ class format extends willow\render {
 			}
 
 			// assign field and value ##
-			render\fields::set( $field.'.'.$type_field, $string );
-			// render\fields::set( $field.'__'.$type_field, $string );
+			render\fields::set( $field.'.'.$wp_post_field, $string );
+			// render\fields::set( $field.'__'.$wp_post_field, $string );
 
 		}
 
@@ -575,6 +581,154 @@ class format extends willow\render {
 
     }
 
+
+
+	
+
+    /**
+     * Format WP_Term Objects
+     */
+    public static function format_object_wp_term( \WP_Term $wp_term = null, $field = null ) :bool {
+
+        // sanity ##
+        if (
+            is_null( $wp_term )
+            || is_null( $field )
+        ) {
+
+			// log ##
+			h::log( self::$args['task'].'~>e:>No value or field passed to format_wp_term_object');
+
+            return false;
+
+		}
+
+		// define context ##
+		$context = 'WP_Term';
+		
+		// h::log( 'Formatting WP Term Object: '.$wp_term->name );
+		// h::log( $field ); // whole object ##
+
+        // now, we need to create some new $fields based on each value in self::$wp_term_fields ##
+        foreach( self::$wp_term_fields as $wp_term_field ) {
+			
+			// h::log( 'Working: '.$wp_term_field.' context: '.$context );
+			// h::log( 't:>move to object.property - post.title - variable calls..' );
+
+			// start empty ##
+			$string = null;
+
+			/*
+			'term_ID',
+			'term_title',
+			'term_slug',
+			'term_parent',
+			'term_permalink',
+			'term_taxonomy',
+			'term_description',
+			'term_parent',
+			'term_count'
+			*/
+
+			switch( $wp_term_field ) {
+
+				// term_id ##	
+				case 'term_ID' :
+
+					$string = $wp_term->term_id;
+
+				break ;
+
+				// term_permalink ##	
+				case 'term_permalink' :
+
+					$string = \get_category_link( $wp_term );
+
+				break ;
+
+				// term_title ##	
+				case 'term_title' :
+
+					$string = $wp_term->name;
+
+				break ;
+
+				// term_slug ##	
+				case 'term_slug' :
+
+					$string = $wp_term->slug;
+
+				break ;
+
+				// term_parent ##	
+				case 'term_parent' :
+
+					$string = $wp_term->parent;
+
+				break ;
+
+				// term_count ##	
+				case 'term_count' :
+
+					$string = $wp_term->count;
+
+				break ;
+
+				// term_taxonomy ##	
+				case 'term_taxonomy' :
+
+					$string = $wp_term->taxonomy;
+
+				break ;
+
+				// term_description ##	
+				case 'term_description' :
+
+					$string = $wp_term->description;
+
+				break ;
+
+				/* TODO
+				// term_id ##	
+				case 'term_ID' :
+
+					$string = $wp_term->term_id;
+
+				break ;
+
+				// term_id ##	
+				case 'term_ID' :
+
+					$string = $wp_term->term_id;
+
+				break ;
+				*/
+
+			}
+
+			if ( is_null( $string ) ) {
+
+				h::log( 'Field: '.$field.' / '.$wp_term_field.' returned an empty string' );
+
+				// log ##
+				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$wp_term_field.'" returned an empty string');
+
+				// @@ todo.. do we need to remove field or markup ?? ##
+
+				continue;
+
+			}
+
+			// assign field and value ##
+			render\fields::set( $field.'.'.$wp_term_field, $string );
+			// render\fields::set( $field.'__'.$type_field, $string );
+
+		}
+
+        // kick back ##
+        return true;
+
+    }
 
 
 

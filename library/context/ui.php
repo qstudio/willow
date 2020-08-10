@@ -198,22 +198,6 @@ class ui extends willow\context {
 	}
 
 
-	
-	/**
-     * comment_template
-     *
-	 * @todo 		allow for passing markup
-     * @since       1.0.2
-     * @return      string   HTML
-     */
-    public static function comment( $args = null )
-    {
-
-		return [ 'comment' => theme\view\ui\comment::render( $args ) ];
-
-	}
-
-
 
 	/**
 	 * @todo --- if really required ??

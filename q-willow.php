@@ -124,8 +124,8 @@ if ( ! class_exists( 'q_willow' ) ) {
 				'author'       		=> [],
 			],
 
-			// standard fields to add to wp_post objects
-			$type_fields = [
+			// standard fields to add to wp_post arrays
+			$wp_post_fields = [
 
 				// standard WP fields ##
 				'post_ID',
@@ -150,6 +150,22 @@ if ( ! class_exists( 'q_willow' ) ) {
 				// image src ##
 				'src', // @todo.. needs to merge into media ##
 				// 'media', 
+
+			],
+
+			// standard fields to add to wp_term arrays
+			$wp_term_fields = [
+
+				// standard WP fields ##
+				'term_ID',
+				'term_title',
+				'term_slug',
+				'term_parent',
+				'term_permalink',
+				'term_taxonomy',
+				'term_description',
+				'term_parent',
+				'term_count'
 
 			]
 			
