@@ -1,3 +1,8 @@
+### 0.8.0 ###
+
+* More stable and logical context set-up
+* Moved all major getting / setting functionality back to Q
+
 ### 0.5.5 ###
 
 * Added render/template for partial rendering with filters and config lookup
