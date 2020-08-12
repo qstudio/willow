@@ -11,63 +11,54 @@ use q\willow\render;
 
 class taxonomy extends willow\context {
 
-	/**
-     * Post Category
-     *
-     * @param       Array       $args
-     * @since       1.3.0
-     * @return      String
-     */
-    public static function terms( $args = null ) {
 
-		// h::log( $args );
-		// h::log( self::$markup );
+	public static function get( $args = null ){
 
-		// get term - returns array with keys 'title', 'permalink', 'slug', 'active' ##
-		// render\fields::define(
-			// return an array of term items, in the array "terms" ##
-			return get\taxonomy::terms( $args );
-		// );
+		// sanity ##
+		if(
+			is_null( $args )
+			|| ! is_array( $args )
+			|| ! isset( $args['context'] )
+			|| ! isset( $args['task'] )
+		){
 
-	}
+			h::log( 'e:>Error in passed parameters' );
 
-	
-	public static function category( Array $args = null ) {
+			return false;
 
-		// get first post category ##
-		// render\fields::define( 
-		return get\taxonomy::category( $args );
-		// );
+		}
 
-	}
+		// take task as method ##
+		$method = $args['task'];
 
+		if(
+			! method_exists( '\q\get\taxonomy', $method )
+			|| ! is_callable([ '\q\get\taxonomy', $method ])
+		){
 
-	public static function categories( Array $args = null ) {
+			h::log( 'e:>Class method is not callable: q\get\taxonomy\\'.$method );
 
-		// get all post categories ##
-		// render\fields::define( 
-		return get\taxonomy::categories( $args );
-		// );
+			return false;
 
-	}
+		}
 
+		// return \q\get\post::$method;
 
-	public static function tag( Array $args = null ) {
+		// h::log( 'e:>Class method IS callable: q\get\taxonomy\\'.$method );
 
-		// get first post tag ##
-		// render\fields::define( 
-		return get\taxonomy::tag( $args );
-		// );
+		// call method ##
+		$return = call_user_func_array (
+				array( '\\q\\get\\taxonomy', $method )
+			,   array( $args )
+		);
 
-	}
+		// // test ##
+		// h::log( $return );
 
-	public static function tags( Array $args = null ) {
-
-		// get all post tags ##
-		// render\fields::define( 
-		return get\taxonomy::tags( $args );
-		// );
+		// kick back ##
+		return $return;
 
 	}
-	
+
+
 }

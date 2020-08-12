@@ -11,6 +11,57 @@ use q\willow\render;
 
 class meta extends willow\context {
 
+
+	public static function get( $args = null ){
+
+		// sanity ##
+		if(
+			is_null( $args )
+			|| ! is_array( $args )
+			|| ! isset( $args['context'] )
+			|| ! isset( $args['task'] )
+		){
+
+			h::log( 'e:>Error in passed parameters' );
+
+			return false;
+
+		}
+
+		// take task as method ##
+		$method = $args['task'];
+
+		if(
+			! method_exists( '\q\get\meta', $method )
+			|| ! is_callable([ '\q\get\meta', $method ])
+		){
+
+			h::log( 'e:>Class method is not callable: q\get\meta\\'.$method );
+
+			return false;
+
+		}
+
+		// return \q\get\post::$method;
+
+		// h::log( 'e:>Class method IS callable: q\get\meta\\'.$method );
+
+		// call method ##
+		$return = call_user_func_array (
+				array( '\\q\\get\\meta', $method )
+			,   array( $args )
+		);
+
+		// // test ##
+		// h::log( $return );
+
+		// kick back ##
+		return $return;
+
+	}
+
+
+
 	/**
      * Get Meta field data via meta handler
      *
@@ -19,36 +70,12 @@ class meta extends willow\context {
 	 * @uses		define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public static function field( $args = null ) {
 
-		// get\meta::field required "args->field" ## 
-		// $args['field'] = $args['task']; 
-
-		// returns string or array OR false.. ##
-		// render\fields::define([
+		// return an array with the field "task" as the placeholder key and value
 		return [ $args['task'] => get\meta::field( $args ) ];
-		// ]);
 
 	}
 
 
-
-	/**
-     * Get author data
-     *
-     * @param       Array       $args
-     * @since       1.3.0
-	 * @uses		define
-     * @return      Array
-     */
-    public static function author( $args = null ) {
-
-		// get title - returns array with key 'title' ##
-		// $args['field'] = $args['task']; // get\meta::field required "args->field" ## -- ?? why again ??
-		// render\fields::define(
-		return get\meta::author( $args );
-		// );
-
-	}
-	
 }

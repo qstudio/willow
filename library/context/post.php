@@ -20,10 +20,7 @@ class post extends willow\context {
      */
     public static function title( $args = null ) {
 
-		// get title - returns array with key 'title' ##
-		// render\fields::define(
-			return get\post::title( $args );
-		// );
+		return get\post::title( $args );
 
     }
 
@@ -36,14 +33,43 @@ class post extends willow\context {
      * @since       1.4.1
      * @return      String
      */
-    public static function data( $args = null ) {
+	/*
+    public static function meta_data( $args = null ) {
 
-		// get title - returns array with key 'title' ##
-		// render\fields::define(
-			return get\post::data( $args );
-		// );
+		return get\post::meta_data( $args );
 
-    }
+	}
+	*/
+
+
+
+	/**
+     * Post Meta comments 
+     *
+     * @param       Array       $args
+     * @since       1.4.1
+     * @return      String
+     */
+	/*
+    public static function meta_comment( $args = null ) {
+
+		return get\post::meta_comment( $args );
+
+	}
+	*/
+
+
+
+	/**
+	 * Helper Method to get_the_date
+	 */
+	/*
+	public static function meta_date( $args = null ){
+
+		return get\post::date( $args );
+
+	}
+	*/
 
 	
     /**
@@ -124,28 +150,12 @@ class post extends willow\context {
 	
 
 
-    /**
-	 * Helper Method to get parent
-	 */
-	public static function parent( $args = null ){
-
-		// get parent - returns false OR array with key 'title, slug, permalink' ##
-		// render\fields::define( 
-		return get\post::parent( $args );
-		// );
-
-	}
-
-
-
 	/**
 	 * Helper Method to get the_excerpt
 	 */
 	public static function excerpt( $args = null ){
 
-		// render\fields::define( 
 		return get\post::excerpt( $args );
-		// );
 
 	}
 
@@ -158,22 +168,7 @@ class post extends willow\context {
 	public static function content( $args = null ){
 
 		// get content - returns array with key 'content' ##
-		// render\fields::define( 
 		return get\post::content( $args );
-		// );
-
-	}
-
-
-	/**
-	 * Helper Method to get_the_date
-	 */
-	public static function date( $args = null ){
-
-		// get content - returns array with key 'content' ##
-		// render\fields::define( 
-		return get\post::date( $args );
-		// );
 
 	}
 
