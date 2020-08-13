@@ -1,3 +1,7 @@
+### 1.0.0 ###
+
+* First stable Beta
+
 ### 0.8.0 ###
 
 * More stable and logical context set-up
