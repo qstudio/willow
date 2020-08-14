@@ -1,3 +1,7 @@
+### 1.0.1 ###
+
+* Fix: removed duplicate default value assignment for loops
+
 ### 1.0.0 ###
 
 * First stable Beta
