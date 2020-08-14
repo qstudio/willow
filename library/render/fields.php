@@ -167,12 +167,11 @@ class fields extends willow\render {
 
 			}
 
-		/*
-		// REMOVED - as clashes with default value assignment in markup::prepare();
 		} else {
 
-			h::log( 'e:>Error in $args ( empty or not an array ) by "'.\q\core\method::backtrace([ 'level' => 5, 'return' => 'class_function' ]).'"' );
 			// h::log( $args );
+
+			h::log( 'e:>Error in $args ( empty or not an array ) by "'.\q\core\method::backtrace([ 'level' => 5, 'return' => 'class_function' ]).'"' );
 
 			// return false;
 			// $args = [];
@@ -186,7 +185,9 @@ class fields extends willow\render {
 				// h::log( self::$args['config']['default'] );
 
 				// define args as config->default ##
-				$args = self::$args['config']['default'];
+				
+				// REMOVED, default value is assigned in markup::prepare();
+				// $args = self::$args['config']['default'];
 
 				// h::log( $args );
 
@@ -198,7 +199,6 @@ class fields extends willow\render {
 				return false;
 
 			}
-		*/
 
 		}
 
@@ -264,7 +264,7 @@ class fields extends willow\render {
 		}
 		*/
 
-		// h::log( self::$args );
+		// h::log( $args );
 		// loop over array - saving key + value to self::$fields ##
 		foreach( $args as $key => $value ) {
 
