@@ -1,3 +1,7 @@
+### 1.0.2 ###
+
+* Fix: for duplicate default value assignement
+
 ### 1.0.1 ###
 
 * Fix: removed duplicate default value assignment for loops
