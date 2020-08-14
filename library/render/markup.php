@@ -41,7 +41,7 @@ class markup extends willow\render {
 		}
 		
         // test ##
-        // helper::log( self::$fields );
+        // h::log( self::$fields );
 		// h::log( self::$markup );
 		
 		// pre-format markup to extract comments ##
@@ -79,6 +79,8 @@ class markup extends willow\render {
         // loop over each field, replacing variables with values ##
         foreach( self::$fields as $key => $value ) {
 
+			// h::log( '$value: '.$value );
+
 			// cast booleans to integer ##
 			if ( \is_bool( $value ) ) {
 
@@ -93,7 +95,7 @@ class markup extends willow\render {
 				&& ! \is_int( $value ) 
 			) {
 
-				h::log( 'e:>The value of "'.$key.'" is not a string or integer - so cannot be rendered, we will check for a default value...' );
+				h::log( 'd:>The value of "'.self::$args['context'].'->'.self::$args['task'].'->'.$key.'" is not a string or integer... checking for a default value' );
 
 				if( 
 					isset( self::$args['config']['default'] ) 
@@ -134,7 +136,7 @@ class markup extends willow\render {
 
 					}
 
-					h::log( 'd:>Default value set: '.$default_value );
+					h::log( 'd:>Default value for "'.self::$args['context'].'->'.self::$args['task'].'->'.$key.'" set to "'.$default_value.'"' );
 
 					// set value and continue ##
 					$value = $default_value;

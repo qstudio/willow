@@ -167,9 +167,11 @@ class fields extends willow\render {
 
 			}
 
+		/*
+		// REMOVED - as clashes with default value assignment in markup::prepare();
 		} else {
 
-			// h::log( 'e:>Error in $args ( empty or not an array ) by "'.\q\core\method::backtrace([ 'level' => 5, 'return' => 'class_function' ]).'"' );
+			h::log( 'e:>Error in $args ( empty or not an array ) by "'.\q\core\method::backtrace([ 'level' => 5, 'return' => 'class_function' ]).'"' );
 			// h::log( $args );
 
 			// return false;
@@ -196,6 +198,7 @@ class fields extends willow\render {
 				return false;
 
 			}
+		*/
 
 		}
 
