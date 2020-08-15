@@ -3,18 +3,20 @@
 namespace q\willow;
 
 // use q\core\core as core;
-// use q\core\helper as h;
+use q\core\helper as h;
 
 // load it up ##
-\q\willow\core::run();
+\q\willow\core::__run();
 
 class core extends \q_willow {
 
-    public static function run()
+    public static function __run()
     {
 
         // load templates ##
-        self::load_libraries();
+		self::load_libraries();
+		
+		h::log( 't:>@TODO - remove dependency on Q.. move required methods into Willow' );
 
     }
 
