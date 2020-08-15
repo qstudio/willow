@@ -2,24 +2,21 @@
 
 namespace q\willow;
 
-// use q\core;
-// use q\core\helper as h;
 use q\willow\core\helper as h;
-// use q\render;
 use q\willow;
 
 // load it up ##
-\q\willow\filter::run();
+\q\willow\filter::__run();
 
 class filter extends \q_willow  { 
 
 	/**
 	 * Fire things up
 	*/
-	public static function run(){
+	public static function __run(){
 
 		// load libraries ##
-		\q\core\load::libraries( self::load() );
+		self::load();
 
 	}
 	
@@ -34,19 +31,15 @@ class filter extends \q_willow  {
 
 		// h::log( 't:>TODO - filter extension method, like context registration...' );
 
-		return $array = [
+		// escape ##
+		require_once self::get_plugin_path( 'library/filter/escape.php' );
 
-			// escape ##
-			'escape' => h::get( 'filter/escape.php', 'return', 'path' ),
+		// strip tags ##
+		require_once self::get_plugin_path( 'library/filter/strip.php' );
 
-			// strip tags ##
-			'strip' => h::get( 'filter/strip.php', 'return', 'path' ),
-
-			// nl2br ##
-			'nl2br' => h::get( 'filter/nl2br.php', 'return', 'path' ),
+		// nl2br ##
+		require_once self::get_plugin_path( 'library/filter/nl2br.php' );
 			
-		];
-
 	}
 	
 

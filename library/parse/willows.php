@@ -5,14 +5,12 @@ namespace q\willow;
 use q\willow;
 use q\willow\render;
 use q\willow\core;
-use q\core\helper as h;
+use q\willow\core\helper as h;
 
 class willows extends willow\parse {
 
 	private static 
 
-		// $willow_hash, 
-		// $flags_willow,
 		$willow_matches, // array of matches ##
 		$willow,
 		$willow_match, // full string matched ##
@@ -22,34 +20,23 @@ class willows extends willow\parse {
 		$willow_array,
 		$config_string,
 		$return
-		// $level = '1'
-		// $position
-		// $is_global
 	
 	;
 
 
 	private static function reset(){
 
-		// self::$willow_hash = false; 
 		self::$flags_willow = false;
-		// self::$flags_argument = false;
 		self::$willow = false;
 		self::$arguments = []; // NOTE, this is now an empty array ##
 		self::$class = false;
 		self::$method = false;
 		self::$willow_array = false;
-		// self::$willow_match = false;
 		self::$willow_matches = false;
 		self::$config_string = false;
 		self::$return = false;
-		// self::$level = 0;
-		// self::$position = false;
-		// self::$is_global = false;
 
 	}
-
-
 
 	
 
@@ -281,10 +268,10 @@ class willows extends willow\parse {
 		}
 
 		// clean up class name ##
-		self::$class = \q\core\method::sanitize( self::$class, 'php_class' );
+		self::$class = core\method::sanitize( self::$class, 'php_class' );
 
 		// clean up method name ##
-		self::$method = \q\core\method::sanitize( self::$method, 'php_function' );
+		self::$method = core\method::sanitize( self::$method, 'php_function' );
 
 		// h::log( 'class::method -- '.self::$class.'::'.self::$method );
 
@@ -494,7 +481,6 @@ class willows extends willow\parse {
 		$regex_find = \apply_filters( 
 			'q/willow/parse/willows/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
-			// "/{{#(.*?)\/#}}/s" 
 		);
 
 		// h::log( $args );
@@ -569,7 +555,6 @@ class willows extends willow\parse {
 		$regex = \apply_filters( 
 		 	'q/willow/parse/willows/cleanup/regex', 
 		 	"/$open.*?$close/ms" 
-		// 	// "/{{#.*?\/#}}/ms"
 		);
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 

@@ -4,10 +4,7 @@ namespace q\willow\parse;
 
 use q\willow;
 use q\willow\core;
-use q\core\helper as h;
-
-// use q\ui;
-use q\render; // @TODO
+use q\willow\core\helper as h;
 
 class markup extends willow\parse {
 
@@ -43,7 +40,6 @@ class markup extends willow\parse {
 
 				$regex_find = \apply_filters( 
 					'q/render/parse/variable/get', 
-					// '~\{{\s(.*?)\s\}}~' 
 					"~\\$open\s+(.*?)\s+\\$close~" // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 				);
 
@@ -56,7 +52,7 @@ class markup extends willow\parse {
         if ( ! preg_match_all( $regex_find, $string, $matches ) ) {
 
 			// log ##
-			// h::log( 't:>TOOD - if no self::$args - set to buffer' );
+			// h::log( 't:>TODO - if no self::$args - set to buffer' );
 			// h::log( self::$args['task'].'~>n:>No variables found in string.' );
 			// h::log( 'd:>No variables found in string.' );
 			// h::log( '$string: "'.$string.'"' );

@@ -5,7 +5,7 @@ namespace q\willow;
 use q\willow;
 use q\willow\render;
 use q\willow\core;
-use q\core\helper as h;
+use q\willow\core\helper as h;
 
 class php_variables extends willow\parse {
 
@@ -104,14 +104,14 @@ class php_variables extends willow\parse {
 				// h::log( 'Get argument: '.$argument );
 
 				// sanitize ##
-				$argument = \q\core\method::sanitize( $argument );
+				$argument = core\method::sanitize( $argument );
 
 				// h::log( 'Clean argument: '.$argument );
 
 				if( $return = isset( $_GET[$argument] ) ? $_GET[$argument] : false  ){
 
 					// sanitize ##
-					$return = \q\core\method::sanitize( $return );
+					$return = core\method::sanitize( $return );
 
 					// h::log( 'RETURN: '.$return );
 

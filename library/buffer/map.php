@@ -2,41 +2,13 @@
 
 namespace q\willow\buffer;
 
-use q\core;
-use q\core\helper as h;
+use q\willow\core;
+use q\willow\core\helper as h;
 use q\willow;
 use q\willow\render;
 use q\willow\buffer;
 
-// \q\willow\buffer::run();
-
 class map extends willow\buffer {
-
-	/*
-	[1] => Array (
-            [hash] => ui__default.1492507505
-            [output] => <div class='col-12'>Default is -> default</div>
-            [tag] => {~ ui~default {+ [a] markup = template: "<div class='col-12'>Default is -> {{ key }}</div>"  +} ~}
-            [parent] => {~ ui~hello ~}
-		)
-		
-    [2] => Array (
-            [hash] => ui__hello.25796956
-            [output] => <div class="col-12">YOU are Ray and the time is 1705284870</div><div class="col-12">YOU are Dorita and the time is 1585730280</div>{@ {: data :}<div class="col-12">YOU are {{ who }} and the time is {{ time }}</div>@}{~ ui~default {+ [a] markup = template: "<div class='col-12'>Default is -> {{ key }}</div>"  +} ~}
-            [tag] => {~ ui~hello ~}
-            [parent] => 
-		)
-		
-    [3] => Array (
-            [hash] => ui__good.1666817951
-            [output] => <div class='col-12'>Key is -> good</div>
-            [tag] => {~ ui~good {+
-			[a] markup = 
-				template: "<div class='col-12'>Key is -> {{ key }}</div>"
-		+} ~}
-            [parent] => 
-        )
-	*/
 
 	/**
 	 * Prepare output for Buffer
@@ -142,7 +114,7 @@ class map extends willow\buffer {
 		$lines = explode( "\n", $string );
 		// h::log( $lines ); 
 		foreach ($lines as $line) {
-			$return .= self::tab2space($line);
+			$return .= core\method::tab2space($line);
 		}
 
 		// $return = nl2br( htmlentities( $return, ENT_QUOTES, 'UTF-8' ) );
@@ -206,16 +178,6 @@ class map extends willow\buffer {
 
 		return $result;
 
-	}
-
-
-
-	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ) {
-		while (($t = mb_strpos($line,"\t")) !== FALSE) {
-			$preTab = $t?mb_substr($line, 0, $t):'';
-			$line = $preTab . str_repeat($nbsp?chr(7):' ', $tab-(mb_strlen($preTab)%$tab)) . mb_substr($line, $t+1);
-		}
-		return  $nbsp?str_replace($nbsp?chr(7):' ', '&nbsp;', $line):$line;
 	}
 
 }

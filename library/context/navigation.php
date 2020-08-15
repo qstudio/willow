@@ -11,53 +11,52 @@ use q\willow\render;
 
 class navigation extends willow\context {
 
+	public static function get( $args = null ){
 
-	/**
-    * Render nav menu
-    *
-    * @since       4.1.0
-    */
-    public static function menu( $args = null ){
+		// sanity ##
+		if(
+			is_null( $args )
+			|| ! is_array( $args )
+			|| ! isset( $args['context'] )
+			|| ! isset( $args['task'] )
+		){
 
-		return [ 'menu' => get\navigation::menu( $args ) ];
+			h::log( 'e:>Error in passed parameters' );
+
+			return false;
+
+		}
+
+		// take task as method ##
+		$method = $args['task'];
+
+		if(
+			! method_exists( '\q\get\navigation', $method )
+			|| ! is_callable([ '\q\get\navigation', $method ])
+		){
+
+			h::log( 'e:>Class method is not callable: q\get\navigation\\'.$method );
+
+			return false;
+
+		}
+
+		// return \q\get\post::$method;
+
+		// h::log( 'e:>Class method IS callable: q\get\post\\'.$method );
+
+		// call method ##
+		$return = call_user_func_array (
+				array( '\\q\\get\\navigation', $method )
+			,   array( $args )
+		);
+
+		// // test ##
+		// h::log( $return );
+
+		// kick back ##
+		return $return;
 
 	}
-	
-
-	/**
-    * Render pagination
-    *
-    * @since       4.1.0
-    */
-    public static function pagination( $args = null ){
-
-		return [ 'pagination' => get\navigation::pagination( $args ) ];
-
-	}
-	
-
-	/**
-    * Render siblings
-    *
-    * @since       4.1.0
-    */
-    public static function siblings( $args = null ){
-
-		return [ 'siblings' => get\navigation::siblings( $args ) ];
-
-	}
-	
-
-	/**
-    * Render back_home_next
-    *
-    * @since       4.1.0
-    */
-    public static function relative( $args = null ){
-
-		return [ 'relative'	=> get\navigation::relative( $args ) ];
-
-    }
-
 
 }

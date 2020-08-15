@@ -4,8 +4,7 @@ namespace q\willow;
 
 use q\willow;
 use q\willow\core;
-use q\core\helper as h;
-use q\willow\render;
+use q\willow\core\helper as h;
 
 class partials extends willow\parse {
 
@@ -101,7 +100,7 @@ class partials extends willow\parse {
 		// h::log( 'open: '.$open. ' - close: '.$close );
 
 		$regex = \apply_filters( 
-			'q/render/parse/partials/regex/find', 
+			'q/willow/render/parse/partials/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 		);
 
@@ -210,7 +209,7 @@ class partials extends willow\parse {
 				}
 
 				// merge local partial data, with partial->config ##
-				$partial_data = \q\core\method::parse_args( $partial_data, $config );
+				$partial_data = core\method::parse_args( $partial_data, $config );
 
 				// h::log( 'd:>context: "'.$context.'"' );
 				// h::log( 'd:>task: "'.$task.'"' );

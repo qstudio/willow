@@ -4,7 +4,7 @@ namespace q\willow;
 
 use q\willow;
 use q\willow\core;
-use q\core\helper as h;
+use q\willow\core\helper as h;
 use q\willow\render;
 
 class comments extends willow\parse {
@@ -106,7 +106,6 @@ class comments extends willow\parse {
 		$regex_find = \apply_filters( 
 			'q/willow/parse/comments/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
-			// "/{{#(.*?)\/#}}/s" 
 		);
 
 		// h::log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );

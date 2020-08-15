@@ -2,24 +2,21 @@
 
 namespace q\willow;
 
-// use q\core;
-// use q\core\helper as h;
 use q\willow\core\helper as h;
-// use q\render;
 use q\willow;
 
 // load it up ##
-\q\willow\render::run();
+\q\willow\render::__run();
 
 class render extends \q_willow  { 
 
 	/**
 	 * Fire things up
 	*/
-	public static function run(){
+	public static function __run(){
 
 		// load libraries ##
-		\q\core\load::libraries( self::load() );
+		self::load();
 
 	}
 	
@@ -32,39 +29,35 @@ class render extends \q_willow  {
     public static function load()
     {
 
-		return $array = [
+		// methods ##
+		require_once self::get_plugin_path( 'library/render/method.php' );
 
-			// methods ##
-			'method' => h::get( 'render/method.php', 'return', 'path' ),
+		// validate and assign args ##
+		require_once self::get_plugin_path( 'library/render/args.php' );
 
-			// validate and assign args ##
-			'args' => h::get( 'render/args.php', 'return', 'path' ),
+		// check callbacks on defined fields ## 
+		require_once self::get_plugin_path( 'library/render/callback.php' );
 
-			// check callbacks on defined fields ## 
-			'callback' => h::get( 'render/callback.php', 'return', 'path' ),
+		// prepare and manipulate field data ##
+		require_once self::get_plugin_path( 'library/render/fields.php' ); 
 
-			// prepare and manipulate field data ##
-			'fields' => h::get( 'render/fields.php', 'return', 'path' ), 
+		// check format of each fields data and modify as required to markup ##
+		require_once self::get_plugin_path( 'library/render/format.php' );
 
-			// check format of each fields data and modify as required to markup ##
-			'format' => h::get( 'render/format.php', 'return', 'path' ),
+		// defined field types to generate field data ##
+		require_once self::get_plugin_path( 'library/render/type/_load.php' );
 
-			// defined field types to generate field data ##
-			'type' => h::get( 'render/type/_load.php', 'return', 'path' ),
+		// prepare defined markup, search for and replace variables 
+		require_once self::get_plugin_path( 'library/render/markup.php' );
 
-			// prepare defined markup, search for and replace variables 
-			'render_markup' => h::get( 'render/markup.php', 'return', 'path' ),
+		// output string ##
+		require_once self::get_plugin_path( 'library/render/output.php' );
 
-			// output string ##
-			'output' => h::get( 'render/output.php', 'return', 'path' ),
+		// template renderer ##
+		require_once self::get_plugin_path( 'library/render/template.php' );
 
-			// template renderer ##
-			'template' => h::get( 'render/template.php', 'return', 'path' ),
-
-			// log activity ##
-			'log' => h::get( 'render/log.php', 'return', 'path' ),
-
-		];
+		// log activity ##
+		require_once self::get_plugin_path( 'library/render/log.php' );
 
 	}
 	

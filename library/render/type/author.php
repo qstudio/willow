@@ -2,10 +2,7 @@
 
 namespace q\willow\render\type;
 
-// use q\core;
-use q\core\helper as h;
-// use q\ui;
-// use q\get;
+use q\willow\core\helper as h;
 use q\willow\render;
 
 class author extends render\type {

@@ -3,19 +3,15 @@
 namespace q\willow;
 
 use q\willow\core;
-use q\core\helper as h;
+use q\willow\core\helper as h;
 use q\willow;
-
-use q\render; // TODO
 
 class variables extends willow\parse {
 
 	private static 
 
 		$arguments,
-		// $flags_variable,
 		$variable,
-		// $variable_match, // full string matched ##
 		$new_variable,
 		$field,
 		$field_array,
@@ -32,7 +28,6 @@ class variables extends willow\parse {
 		self::$flags_variable = false;
 		self::$variable = false;
 		self::$new_variable = false;
-		// self::$variable_match = false;
 		self::$variable_config = false;
 		self::$field = false;
 		self::$field_array = false;
@@ -113,108 +108,19 @@ class variables extends willow\parse {
 		){
 
 			$variable = trim( $variable );
-			// h::log( '$variable, has flags: '.$variable );
-			// h::log( self::$flags_variable );
-			// h::log( self::$markup );
-			// h::log( '$variable_original: '.$variable_original );
 
-			// h::log( 'd:>$variable: '.$variable.' has flags..' );
-			// h::log( self::$flags_variable );
-			/*
-			// empty ##
-			$filters = [];
+			// merge in new args to args->field ##
+			if( ! isset( self::$filter[$args['context']][$args['task']] ) ) self::$filter[$args['context']][$args['task']] = [];
 
-			// e = escape --- escape html ##
-			if( isset( self::$flags_variable['e'] ) ) {
-
-				$filters = core\method::parse_args( 
-					$filters, 
-					[ 
-						// 'config' => [ 
-							'escape' => true 
-						// ] 
-					]
-				);
-			}
-
-			// s = strip --- strip html / php tags ##
-			if( isset( self::$flags_variable['s'] ) ) {
-
-				$filters = core\method::parse_args( 
-					$filters, 
-					[ 
-						// 'config' => [ 
-							'strip' => true 
-						// ] 
-					]
-				);
-			}
-			*/
-
-			// get "field_name" from variable ##
-			// $field_name = trim( str_replace( [ tags::g( 'arg_o' ), tags::g( 'arg_c' ) ], '', $variable ) );
-			// $field_name = !is_null( $hash ) ? $hash : trim( $variable ) ;
-			// h::log( '$field_name: '. $field_name );
-			// h::log( '$willow: '.$willow );
-			// h::log( 'context: '.self::$parse_context );
-			// h::log( 'task: '.self::$parse_task );
-
-			// if(
-			// 	$filters
-			// 	&& is_array( $filters )
-			// 	&& ! empty( $filters )
-			// ) {
-
-				// merge in new args to args->field ##
-				// if ( 
-					// ! isset( self::$filter[$field_name] ) 
-				// ) {
-					if( ! isset( self::$filter[$args['context']][$args['task']] ) ) self::$filter[$args['context']][$args['task']] = [];
-
-					self::$filter[$args['context']][$args['task']] = core\method::parse_args( 
-						self::$filter[$args['context']][$args['task']],
-						[
-							'variables'		=> [
-								$variable	=> self::$flags_variable,
-							],
-							// 'hash'			=> $args['hash'],
-						]						
-					);
-				// }
-
-				// self::$filter[$field_name] = core\method::parse_args( 
-				// 	$arguments, 
-				// 	self::$filter[$field_name]['options'] 
-				// );
-
-				/*
-				// merge in new args to args->field ##
-				if ( ! isset( self::$args['process'][$field_name] ) ) self::$args['process'][$field_name] = [];
-
-				self::$args['process'][$field_name] = core\method::parse_args( 
-					$arguments, 
-					self::$args['process'][$field_name] 
-				);
-				*/
-
-				// h::log( self::$args );
-				// h::log( self::$args['process'][$field_name] );
-
-				// return true;
-
-				/*
-				// replace in markup ##
-				parse\markup::swap( 
-					willow\tags::wrap([ 'open' => 'var_o', 'value' => $variable_original, 'close' => 'var_c' ]), 
-					willow\tags::wrap([ 'open' => 'var_o', 'value' => $variable, 'close' => 'var_c' ]), 
-					'variable', 
-					'variable' 
-				);
-
-				h::log( self::$markup );
-				*/
-
-			// }
+			self::$filter[$args['context']][$args['task']] = core\method::parse_args( 
+				self::$filter[$args['context']][$args['task']],
+				[
+					'variables'		=> [
+						$variable	=> self::$flags_variable,
+					],
+					// 'hash'			=> $args['hash'],
+				]						
+			);
 
 			return true;
 
@@ -287,7 +193,7 @@ class variables extends willow\parse {
 			
 			self::$field = str_replace( self::$variable_config, '', self::$variable );
 
-			// clean up field data ## -- @TODO, move to \Q::sanitize();
+			// clean up field data ## -- @TODO, move to core\method::sanitize();
 			self::$field = preg_replace( "/[^A-Za-z0-9._]/", '', self::$field );
 
 			// h::log( 'd:>field: '.self::$field );

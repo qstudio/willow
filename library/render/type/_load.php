@@ -7,13 +7,13 @@ use q\willow\core\helper as h;
 use q\willow;
 
 // load it up ##
-\q\willow\render\type::run();
+\q\willow\render\type::__run();
 
 class type extends willow\render {
 	
-	public static function run(){
+	public static function __run(){
 
-		\q\core\load::libraries( self::load() );
+		self::load();
 
 	}
 
@@ -26,23 +26,21 @@ class type extends willow\render {
     public static function load()
     {
 
-		return $array = [
+		// media object ##
+		require_once self::get_plugin_path( 'library/render/type/media.php' );
 
-			// media object ##
-			'media' => h::get( 'render/type/media.php', 'return', 'path' ),
+		// post fields ##
+		require_once self::get_plugin_path( 'library/render/type/post.php' );
 
-			// post fields ##
-			'post' => h::get( 'render/type/post.php', 'return', 'path' ),
+		// author fields ##
+		require_once self::get_plugin_path( 'library/render/type/author.php' );
 
-			// author fields ##
-			'author' => h::get( 'render/type/author.php', 'return', 'path' ),
-
-			// taxonomy ## ##
-			'taxonomy' => h::get( 'render/type/taxonomy.php', 'return', 'path' ),
-
-		];
+		// taxonomy ## ##
+		require_once self::get_plugin_path( 'library/render/type/taxonomy.php' );
 
 	}
+	
+
 	
 	/** 
 	 * bounce to function getter ##

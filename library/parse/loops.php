@@ -4,9 +4,7 @@ namespace q\willow;
 
 use q\willow;
 use q\willow\core;
-use q\core\helper as h;
-
-use q\render; // TODO ##
+use q\willow\core\helper as h;
 
 class loops extends willow\parse {
 
@@ -125,7 +123,7 @@ class loops extends willow\parse {
 
 
 	/**
-	 * Check if passed string is a loop 
+	 * Check if passed string includes a loop 
 	*/
 	public static function has( $string = null ){
 
@@ -249,7 +247,7 @@ class loops extends willow\parse {
 		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
 		$regex_find = \apply_filters( 
-			'q/render/markup/loop/regex/find', 
+			'q/willow/render/markup/loop/regex/find', 
 			"/$loop_open\s+(.*?)\s+$loop_close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);
@@ -317,11 +315,9 @@ class loops extends willow\parse {
 		$close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
 		// strip all section blocks, we don't need them now ##
-		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 			'q/willow/parse/loops/regex/remove', 
 			"/$open.*?$close/ms" 
-			// "/{{#.*?\/#}}/ms"
 		);
 		// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 
 

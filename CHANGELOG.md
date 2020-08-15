@@ -1,3 +1,7 @@
+### 1.1.0 ###
+
+* Update: Removed dependency on Q plugin - WP still required
+
 ### 1.0.2 ###
 
 * Fix: for duplicate default value assignement

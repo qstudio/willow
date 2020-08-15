@@ -2,8 +2,8 @@
 
 namespace q\willow\buffer;
 
-use q\core;
-use q\core\helper as h;
+use q\willow\core;
+use q\willow\core\helper as h;
 use q\willow;
 use q\willow\render;
 use q\willow\buffer;
@@ -45,7 +45,7 @@ class output extends willow\buffer {
 
 		\add_action( 'shutdown', function() {
 
-			if ( 'willow' != \q\view\is::format() ){
+			if ( 'willow' != core\method::template_format() ){
 
 				// h::log( 'e:>No buffer.. so no go' );
 

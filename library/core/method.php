@@ -2,15 +2,292 @@
 
 namespace q\willow\core;
 
-use q\core;
-use q\core\helper as h;
+use q\willow\core;
+use q\willow\core\helper as h;
 // use q\ui;
-use q\plugin;
-use q\get;
-use q\view;
-use q\asset;
+// use q\plugin;
+// use q\get;
+// use q\view;
+// use q\asset;
 
 class method extends \q_willow {
+
+    
+    /**
+     * Sanitize user input data using WordPress functions
+     * 
+     * @since       0.1
+     * @param       string      $value      Value to sanitize
+     * @param       string      $type       Type of value ( email, user, int, key, text[default] )
+     * @link        http://codex.wordpress.org/Validating_Sanitizing_and_Escaping_User_Data
+     * @link        http://wp.tutsplus.com/tutorials/creative-coding/data-sanitization-and-validation-with-wordpress/
+     * @return      string      HTML output
+     */
+    public static function sanitize( $value = null, $type = 'text' )
+    {
+        
+        // check submitted data ##
+        if ( is_null( $value ) ) {
+            
+            return false;
+            
+        }
+        
+        switch ( $type ) {
+            
+            case( 'email' ):
+            
+                return \sanitize_email( $value );
+                break;
+            
+            case( 'user' ):
+            
+                return \sanitize_user( $value );
+                break;
+            
+            case( 'integer' ):
+            
+                return intval( $value );
+                break;
+            
+            case( 'filename' ):
+            
+                return \sanitize_file_name( $value );
+                break;
+            
+            case( 'key' ):
+            
+                return self::sanitize_key( $value ); // altered version of wp sanitize_key
+                break;
+			
+			case( 'php_class' ):
+
+				return self::php_class( $value );
+				break;
+
+			case( 'php_namespace' ):
+
+				return self::php_namespace( $value );
+				break;
+
+			case( 'php_function' ):
+
+				return self::php_function( $value );
+				break;
+
+            case( 'sql' ):
+                
+                return \esc_sql( $value );
+                break;
+            
+            case( 'stripslashes' ):
+                
+                return preg_replace("~\\\\+([\"\'\\x00\\\\])~", "$1", $value);
+                #stripslashes( $value );
+                break;
+            
+            case( 'none' ):
+                
+                return $value;
+                break;
+            
+            case( 'text' ):
+            default;
+                    
+                // text validation
+                return \sanitize_text_field( $value );
+                break;
+                
+        }
+        
+	}
+
+
+	/**
+    * Sanitizes a php namespace
+    *
+    * @since 1.3.0
+    * @param string $key String key
+    * @return string Sanitized key
+    */
+    public static function php_namespace( $key = null ) 
+    {
+        
+        // sanity check ##
+        if ( ! $key ) { return false; }
+        
+        // scan the key for allowed characters ##
+        $key = preg_replace( '^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*(\\\\[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)*$', '', $key );
+        
+        // return the key ##
+        return $key;
+        
+	}
+
+
+	
+	/**
+    * Sanitizes a php function name
+    *
+    * @since 1.3.0
+    * @param string $key String key
+    * @return string Sanitized key
+    */
+    public static function php_function( $key = null ) 
+    {
+        
+        // sanity check ##
+        if ( ! $key ) { return false; }
+        
+        // scan the key for allowed characters ##
+        $key = preg_replace( '/[^A-Za-z0-9-_]+/', '', $key );
+        
+        // return the key ##
+        return $key;
+        
+	}
+
+
+
+    /**
+    * Sanitizes a php class name
+    *
+    * @since 1.3.0
+    * @param string $key String key
+    * @return string Sanitized key
+    */
+    public static function php_class( $key = null ) 
+    {
+        
+        // sanity check ##
+        if ( ! $key ) { return false; }
+        
+        // scan the key for allowed characters ##
+        $key = preg_replace( '/[^A-Za-z0-9-\\\\_]+/', '', $key );
+        
+        // return the key ##
+        return $key;
+        
+	}
+
+    
+    
+    /**
+    * Sanitizes a string key.
+    *
+    * @since 1.3.0
+    * @param string $key String key
+    * @return string Sanitized key
+    */
+    public static function sanitize_key( $key = null ) 
+    {
+        
+        // sanity check ##
+        if ( ! $key ) { return false; }
+        
+        // scan the key for allowed characters ##
+        $key = preg_replace( '/[^a-zA-Z0-9_\-~!$^+]/', '', $key );
+        
+        // return the key ##
+        return $key;
+		
+	}
+
+	
+
+	/**
+     * Get Q template name, if set - else return WP global
+     * 
+     * 
+     */
+    public static function template() 
+    {
+
+        if( ! isset( $GLOBALS['q_template'] ) ) {
+
+            // h::log( 'e:>Page template empty' );
+            
+			// return false;
+			
+			// changes to return WP template -- check for introduced issues ##
+			return str_replace( [ '.php', '.willow' ], '', \get_page_template_slug() );
+
+        } else {
+
+            // h::log( 'Page template: '.$GLOBALS['q_template'] );
+
+            return str_replace( [ '.php', '.willow' ], '', $GLOBALS['q_template'] );        
+
+        }
+
+	}
+
+
+	/**
+     * Get Q template format - normally .php or .willow
+     * 
+	 * @since 4.1.0
+     */
+    public static function template_format() 
+    {
+
+        if( ! isset( $GLOBALS['q_template'] ) ) {
+
+			// changed to return WP template -- check for introduced issues ##
+			$template = \get_page_template_slug();
+
+        } else {
+
+            // h::log( 'Page template: '.$GLOBALS['q_template'] );
+
+            $template = $GLOBALS['q_template'];        
+
+		}
+		
+		// h::log( 'e:>Template: "'.$template.'"' );
+
+		$extension = self::file_extension( $template );
+
+		// h::log( 'e:>Extension: "'.$extension.'"' );
+
+		// kick back ##
+		return $extension;
+
+	}
+
+
+	
+	public static function file_extension( $string = null ) {
+
+		// sanity ##
+		if( is_null( $string ) ){
+
+			h::log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		$n = strrpos( $string, "." );
+
+		return ( $n === false ) ? "" : substr( $string, $n+1 );
+		
+	}
+
+
+
+	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ) {
+
+		while (($t = mb_strpos($line,"\t")) !== FALSE) {
+			
+			$preTab = $t?mb_substr($line, 0, $t):'';
+			$line = $preTab . str_repeat($nbsp?chr(7):' ', $tab-(mb_strlen($preTab)%$tab)) . mb_substr($line, $t+1);
+		}
+		
+		return  $nbsp?str_replace($nbsp?chr(7):' ', '&nbsp;', $line):$line;
+
+	}
+
 
 
 	/**
@@ -370,6 +647,139 @@ class method extends \q_willow {
 		preg_match_all( '/'.str_replace('/', '\\/', $regex).'/', $subject, $matches );
 
 		return $matches[0];
+
+	}
+
+
+
+	
+	/**
+	 * Debug Calling class + method / function 
+	 * 
+	 * @since 	4.0.0
+	 */
+	public static function backtrace( $args = null ) {
+
+		// default args ##
+		$level = isset( $args['level'] ) ? $args['level'] : 1 ; // direct caller ##
+
+		// check we have a result ##
+		$backtrace = debug_backtrace();
+
+		if (
+			! isset( $backtrace[$level] )
+			// || ! isset( $backtrace[$level]['class'] )
+			// || ! isset( $backtrace[$level]['function'] )
+		) {
+
+			return false;
+
+		}
+
+		// get defined level of data ##
+		$caller = $backtrace[$level];
+
+		// class::function() ##
+		if ( 
+			isset( $args['return'] ) 
+			&& 'class_function' == $args['return'] 
+			// && isset( $caller['class'] )
+			// && isset( $caller['function'] )
+		) {
+
+			return sprintf(
+				__( '%s%s()', 'Q' )
+				,  	isset($caller['class']) ? $caller['class'].'::' : null
+				,   $caller['function']
+			);
+
+		}
+
+		// config class_function() ##
+		if ( 
+			isset( $args['return'] ) 
+			&& 'config' == $args['return'] 
+			// && isset( $caller['class'] )
+			// && isset( $caller['function'] )
+		) {
+
+			return sprintf(
+				__( '%s%s()', 'Q' )
+				,  	isset($caller['class']) ? $caller['class'].'_' : null
+				,   $caller['function']
+			);
+
+		}
+
+		// file::line() ##
+		if ( 
+			isset( $args['return'] ) 
+			&& 'file_line' == $args['return'] 
+			&& isset( $caller['file'] )
+			&& isset( $caller['line'] )
+		) {
+
+			return sprintf(
+				__( '%s:%d', 'Q' )
+				,   $caller['file']
+				,   $caller['line']
+			);
+
+		}
+
+		// specific value ##
+		if ( 
+			isset( $args['return'] ) 
+			&& isset( $caller[$args['return']] )
+		) {
+
+			return sprintf(
+				__( '%s', 'Q' )
+				,  $caller[$args['return']] 
+			);
+
+		}
+
+		// default - everything ##
+		return sprintf(
+			__( '%s%s() %s:%d', 'Q' )
+			,   isset($caller['class']) ? $caller['class'].'::' : ''
+			,   $caller['function']
+			,   isset( $caller['file'] ) ? $caller['file'] : 'n'
+			,   isset( $caller['line'] ) ? $caller['line'] : 'x'
+		);
+
+	}
+
+
+
+	public static function array_search( $field = null, $value = null, $array = null ) {
+
+		// sanity ##
+		if (
+			is_null( $field )
+			|| is_null( $value )
+			|| is_null( $array )
+			|| ! is_array( $array )
+		){
+
+			h::log( 'e:>Error in passed params' );
+
+			return false;
+
+		}
+
+        foreach ( $array as $key => $val ) {
+        
+            if ( $val[$field] === $value ) {
+        
+                return $key;
+        
+            }
+        
+        }
+        
+        return null;
 
 	}
 

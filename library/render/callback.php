@@ -2,10 +2,10 @@
 
 namespace q\willow\render;
 
-use q\core;
-use q\core\helper as h;
-use q\view;
-use q\get;
+use q\willow\core;
+use q\willow\core\helper as h;
+// use q\view;
+// use q\get;
 use q\willow;
 use q\willow\render;
 
@@ -96,9 +96,11 @@ class callback extends willow\render {
             isset( $field_callback['args'] ) 
         ) {
 
+			h::log( 't:>TODO - check if this callback %value% reference is out of date' );
+
             // Clean up args, with actual passed value ##
             $field_callback['args'] = str_replace( 
-                '%value%', 
+                '%value%',  // @TODO - this looks like an out-of-date markup tag ??
                 $field_value, 
                 $field_callback['args'] 
             );
@@ -146,7 +148,7 @@ class callback extends willow\render {
         // h::log( 'Filter: '.$filter );
 
         // filter field callback value ( $args ) before callback ##
-        $args = \q\core\filter::apply([ 
+        $args = core\filter::apply([ 
             'parameters'    => [ 'args' => $args, 'field' => $field, 'value' => $value, 'fields' => self::$fields ], // params ##
             'filter'        => 'q/willow/render/callback/field/before/'.$method.'/'.$field, // filter handle ##
             'return'        => $args

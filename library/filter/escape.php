@@ -2,8 +2,8 @@
 
 namespace q\willow\filter;
 
-use q\core;
-use q\core\helper as h;
+use q\willow\core;
+use q\willow\core\helper as h;
 use q\willow;
 use q\willow\filter;
 

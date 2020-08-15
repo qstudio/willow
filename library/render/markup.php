@@ -2,10 +2,10 @@
 
 namespace q\willow\render;
 
-use q\core;
-use q\core\helper as h;
-use q\view;
-use q\get;
+use q\willow\core;
+use q\willow\core\helper as h;
+// use q\view;
+use q\willow\get;
 use q\willow;
 use q\willow\parse;
 
@@ -394,7 +394,7 @@ class markup extends willow\render {
 			$markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$args['task'], 'close' => 'var_c' ]); // takes "task" as default ##
 
 			// filter ##
-			$markup = \apply_filters( 'q/render/markup/default', $markup );
+			$markup = \apply_filters( 'q/willow/render/markup/default', $markup );
 
 			// note ##
 			h::log(  self::$args['task'].'~>n:>Using default markup'.$for.' : '.$markup );
@@ -470,7 +470,7 @@ class markup extends willow\render {
 		$open = trim( willow\tags::g( 'var_o' ) );
 		$close = trim( willow\tags::g( 'var_c' ) );
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
-		$regex = \apply_filters( 'q/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
+		$regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		
 		$string = preg_replace( $regex, $value, $string ); 
 
@@ -559,7 +559,7 @@ class markup extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'q/render/markup/string/wrap/'.self::$args['context'].'/'.self::$args['task'], // filter handle ##
+             'filter'        => 'q/willow/render/markup/string/wrap/'.self::$args['context'].'/'.self::$args['task'], // filter handle ##
              'return'        => $string
         ]); 
 

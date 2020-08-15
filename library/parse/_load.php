@@ -2,13 +2,11 @@
 
 namespace q\willow;
 
-// use q\core;
-use q\core\helper as h;
-use q\willow\core\helper as helper;
+use q\willow\core\helper as h;
 use q\willow;
 
 // load it up ##
-\q\willow\parse::run();
+\q\willow\parse::__run();
 
 class parse extends \q_willow {
 
@@ -34,9 +32,9 @@ class parse extends \q_willow {
 	;
 
 	
-	public static function run(){
+	public static function __run(){
 
-		\q\core\load::libraries( self::load() );
+		self::load();
 
 	}
 
@@ -49,46 +47,41 @@ class parse extends \q_willow {
     public static function load()
     {
 
-		return $array = [
+		// markup methods ##
+		require_once self::get_plugin_path( 'library/parse/markup.php' );
 
-			// markup methods ##
-			'parse_markup' => helper::get( 'parse/markup.php', 'return', 'path' ),
+		// flags ##
+		require_once self::get_plugin_path( 'library/parse/flags.php' );
 
-			// flags ##
-			'flags' => helper::get( 'parse/flags.php', 'return', 'path' ),
+		// find + decode methods for variable + function arguments ##
+		require_once self::get_plugin_path( 'library/parse/arguments.php' );
 
-			// find + decode methods for variable + function arguments ##
-			'arguments' => helper::get( 'parse/arguments.php', 'return', 'path' ),
+		// comments ##
+		require_once self::get_plugin_path( 'library/parse/comments.php' );
 
-			// comments ##
-			'comments' => helper::get( 'parse/comments.php', 'return', 'path' ),
+		// partials ##
+		require_once self::get_plugin_path( 'library/parse/partials.php' );
 
-			// partials ##
-			'partials' => helper::get( 'parse/partials.php', 'return', 'path' ),
+		// willows ##
+		require_once self::get_plugin_path( 'library/parse/willows.php' );
 
-			// willows ##
-			'willows' => helper::get( 'parse/willows.php', 'return', 'path' ),
+		// functions ##
+		require_once self::get_plugin_path( 'library/parse/php_functions.php' );
 
-			// functions ##
-			'php_functions' => helper::get( 'parse/php_functions.php', 'return', 'path' ),
+		// loops // sections ##
+		require_once self::get_plugin_path( 'library/parse/loops.php' );
 
-			// sections ##
-			// 'sections' => helper::get( 'parse/sections.php', 'return', 'path' ),
+		// variables.. ##
+		require_once self::get_plugin_path( 'library/parse/variables.php' );
 
-			// loops // sections ##
-			'loops' => helper::get( 'parse/loops.php', 'return', 'path' ),
-
-			// variables.. ##
-			'variables' => helper::get( 'parse/variables.php', 'return', 'path' ),
-
-			// PHP variables.. ##
-			'php_variables' => helper::get( 'parse/php_variables.php', 'return', 'path' ),
-
-		];
+		// PHP variables.. ##
+		require_once self::get_plugin_path( 'library/parse/php_variables.php' );
 
 	}
 
 
+
+	
     /**
      * Apply Markup changes to passed template
      * find all placeholders in self::$markup and replace with matching values in self::$fields

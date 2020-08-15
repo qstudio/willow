@@ -2,9 +2,9 @@
 
 namespace q\willow\context;
 
-use q\core\helper as h;
+use q\willow\core\helper as h;
 // use q\ui;
-use q\get;
+// use q\get;
 use q\willow;
 use q\willow\core;
 use q\willow\context;
@@ -34,38 +34,4 @@ class module extends willow\context {
 
 
 	
-	/**
-     * comment_template
-     *
-	 * @todo 		allow for passing markup
-     * @since       1.0.2
-     * @return      string   HTML
-     */
-    public static function comment( $args = null )
-    {
-
-		return \q\module\comment::get( $args );
-
-	}
-
-
-
-	/**
-	 * @todo --- if really required ??
-	 * 
-	*/
-	/*
-    public static function password_form()
-    {
-
-?>
-        <div class="password" style="text-align: center; margin: 20px;">
-            <?php echo \get_the_password_form(); ?>
-        </div>
-<?php
-
-	}
-	*/
-
-
 }

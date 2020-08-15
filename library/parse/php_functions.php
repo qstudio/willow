@@ -5,7 +5,7 @@ namespace q\willow;
 use q\willow;
 use q\willow\render;
 use q\willow\core;
-use q\core\helper as h;
+use q\willow\core\helper as h;
 
 class php_functions extends willow\parse {
 
@@ -184,10 +184,10 @@ class php_functions extends willow\parse {
 			}
 
 			// clean up class name @todo -- 
-			self::$class = \q\core\method::sanitize( self::$class, 'php_class' );
+			self::$class = core\method::sanitize( self::$class, 'php_class' );
 
 			// clean up method name --
-			self::$method = \q\core\method::sanitize( self::$method, 'php_function' );
+			self::$method = core\method::sanitize( self::$method, 'php_function' );
 
 			// h::log( 'class::method -- '.self::$class.'::'.self::$method );
 
@@ -210,7 +210,7 @@ class php_functions extends willow\parse {
 		} else {
 
 			// clean up function name ##
-			self::$function = \q\core\method::sanitize( self::$function, 'php_function' );
+			self::$function = core\method::sanitize( self::$function, 'php_function' );
 
 			// try to locate function directly in global scope ##
 			if ( ! function_exists( self::$function ) ) {

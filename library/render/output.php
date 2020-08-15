@@ -2,9 +2,8 @@
 
 namespace q\willow\render;
 
-// use q\core;
-use q\core\helper as h;
-use q\ui;
+use q\willow\core;
+use q\willow\core\helper as h;
 use q\willow;
 use q\willow\render;
 
@@ -28,13 +27,13 @@ class output extends willow\render {
 		}
 
         // filter output ##
-        self::$output = \q\core\filter::apply([ 
+        self::$output = core\filter::apply([ 
             'parameters'    => [ // pass ( $fields, $args, $output ) as single array ##
                 'fields'    => self::$fields, 
                 'args'      => self::$args, 
 				'output'    => self::$output 
 			], 
-            'filter'        => 'q/render/output/'.self::$args['task'], // filter handle ##
+            'filter'        => 'q/willow/render/output/'.self::$args['task'], // filter handle ##
             'return'        => self::$output
 		]); 
 		

@@ -2,11 +2,11 @@
 
 namespace q\willow\core;
 
-use q\core;
-use q\core\helper as h;
-use q\view;
+use q\willow\core;
+use q\willow\core\helper as h;
+// use q\view;
 
-\q\willow\core\config::run();
+\q\willow\core\config::__run();
 
 class config extends \q_willow {
 
@@ -20,39 +20,39 @@ class config extends \q_willow {
 		$config_args = [] // passed args ##
 	;
 
-	public static function run(){
+	public static function __run(){
 
 		// filter Q Config -- ALL FIELDS [ $array "data" ]##
 		// Priority -- Q = 1, Q Plugin = 10, Q Parent = 100, Q Child = 1000
-		\add_filter( 'q/config/load', 
+		\add_filter( 'q/willow/config/load', 
 			function( $args ){
 				$source = null; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 1, 1 );
 
-		\add_filter( 'q/config/load', 
+		\add_filter( 'q/willow/config/load', 
 			function( $args ){
 				$source = 'plugin'; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 10, 1 );
 
-		\add_filter( 'q/config/load', 
+		\add_filter( 'q/willow/config/load', 
 			function( $args ){
 				$source = 'extend'; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 50, 1 );
 		
-		\add_filter( 'q/config/load', 
+		\add_filter( 'q/willow/config/load', 
 			function( $args ){
 				$source = 'parent'; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 100, 1 );
 
-		\add_filter( 'q/config/load', 
+		\add_filter( 'q/willow/config/load', 
 			function( $args ){
 				$source = 'child'; // context source ##
 				return self::filter( $args, $source );
@@ -261,7 +261,7 @@ class config extends \q_willow {
 	/**
 	 * Get configuration files
 	 *
-	 * @used by filter q/config/get/all
+	 * @used by filter q/willow/config/get/all
 	 *
 	 * @return		Array $array -- must return, but can be empty ##
 	 */
@@ -305,19 +305,19 @@ class config extends \q_willow {
 		}
 
 		// config file extension ##
-		$extensions = \apply_filters( 'q/config/load/ext', [ 
+		$extensions = \apply_filters( 'q/willow/config/load/ext', [ 
 			'.willow',
 			'.php', 
 		] );
 
 		// config file path ( h::get will do fallback checks form child theme, parent theme, plugin + Q.. )
-		$path = \apply_filters( 'q/config/load/path', 'view/context/' );
+		$path = \apply_filters( 'q/willow/config/load/path', 'view/context/' );
 
 		// array of config files to load -- key ( for cache ) + value ##
 		$array = [
 
 			// template~context~task ##
-			view\is::get().'__'.$args['context'].'__'.$args['task'] => view\is::get().'~'.$args['context'].'~'.$args['task'],
+			core\method::template().'__'.$args['context'].'__'.$args['task'] => core\method::template().'~'.$args['context'].'~'.$args['task'],
 
 			// template/context~task in sub directory ##
 			// view\is::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\is::get().'/'.$args['context'].'~'.$args['task'],
@@ -337,7 +337,7 @@ class config extends \q_willow {
 		];
 
 		// filter options ##
-		$array = \apply_filters( 'q/config/load/array', $array );
+		$array = \apply_filters( 'q/willow/config/load/array', $array );
 
 		// h::log( 'd:>looking for source: '.$source );
 		if( 'extend' == $source ) {
@@ -481,7 +481,7 @@ class config extends \q_willow {
 	public static function get( $args = null ) {
 
 		// without $context or $task, we can't get anything specific, so just run main filter ##
-		// \apply_filters( 'q/config/get/all', self::$config, isset( $args['field'] ) ?: $args['field'] );
+		// \apply_filters( 'q/willow/config/get/all', self::$config, isset( $args['field'] ) ?: $args['field'] );
 
 		// shortcut.. allow for string passing, risky.. ##
 		if(
@@ -515,7 +515,7 @@ class config extends \q_willow {
 		){
 
 			// get caller ##
-			$backtrace = \q\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// config is loaded by context or process, so we need one of those to continue ##
 			h::log( 'e:>Q -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
@@ -563,7 +563,7 @@ class config extends \q_willow {
 			}
 
 			// filter single property values -- too slow ??
-			// $return = \apply_filters( 'q/config/get/'.$args['context'].'/'.$args['task'], $return );
+			// $return = \apply_filters( 'q/willow/config/get/'.$args['context'].'/'.$args['task'], $return );
 
 			// single loading -- good idea? ##
 			// $found = true;
@@ -598,7 +598,7 @@ class config extends \q_willow {
 
 		// h::log( $args );
 
-		\apply_filters( 'q/config/load', self::$config_args );
+		\apply_filters( 'q/willow/config/load', self::$config_args );
 
 	}
 

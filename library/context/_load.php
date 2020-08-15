@@ -3,21 +3,20 @@
 namespace q\willow;
 
 // use q\core;
-use q\core\helper as h;
-use q\willow\core\helper as wh;
+use q\willow\core\helper as h;
 use q\willow\render;
 use q\willow\context;
 use q\willow;
 
 // load it up ##
-\q\willow\context::run();
+\q\willow\context::__run();
 
 class context extends \q_willow {
 
-	public static function run(){
+	public static function __run(){
 
 		// load libraries ##
-		\q\core\load::libraries( self::load() );
+		self::load();
 
 	}
 
@@ -29,76 +28,62 @@ class context extends \q_willow {
     public static function load()
     {
 
-		return $array = [
+		// context extensions ##
+		require_once self::get_plugin_path( 'library/context/extend.php' );
 
-			// class extensions ##
-			'extend' => wh::get( 'context/extend.php', 'return', 'path' ),
+		// acf field groups ##
+		require_once self::get_plugin_path( 'library/context/group.php' );
 
-			// acf field groups ##
-			'group' => wh::get( 'context/group.php', 'return', 'path' ),
+		// post objects content, title, excerpt etc ##
+		require_once self::get_plugin_path( 'library/context/post.php' );
 
-			// post objects content, title, excerpt etc ##
-			'post' => wh::get( 'context/post.php', 'return', 'path' ),
+		// author, custom fields etc. ##
+		require_once self::get_plugin_path( 'library/context/meta.php' );
 
-			// author, custom fields etc. ##
-			'meta' => wh::get( 'context/meta.php', 'return', 'path' ),
+		// navigation items ##
+		require_once self::get_plugin_path( 'library/context/navigation.php' );
 
-			// navigation items ##
-			'navigation' => wh::get( 'context/navigation.php', 'return', 'path' ),
+		// media items ##
+		require_once self::get_plugin_path( 'library/context/media.php' );
 
-			// media items ##
-			'media' => wh::get( 'context/media.php', 'return', 'path' ),
+		// taxonomies ##
+		require_once self::get_plugin_path( 'library/context/taxonomy.php' );
 
-			// taxonomies ##
-			'taxonomy' => wh::get( 'context/taxonomy.php', 'return', 'path' ),
+		// extension ##
+		require_once self::get_plugin_path( 'library/context/extension.php' );
 
-			// extension ##
-			'extension' => wh::get( 'context/extension.php', 'return', 'path' ),
+		// modules ##
+		require_once self::get_plugin_path( 'library/context/module.php' );
 
-			// modules ##
-			'module' => wh::get( 'context/module.php', 'return', 'path' ),
+		// widgets ##
+		require_once self::get_plugin_path( 'library/context/widget.php' );
 
-			// widgets ##
-			'widget' => wh::get( 'context/widget.php', 'return', 'path' ),
+		// ui render methods - open, close.. etc ##
+		require_once self::get_plugin_path( 'library/context/ui.php' );
 
-			// ui render methods - open, close.. etc ##
-			'ui' => wh::get( 'context/ui.php', 'return', 'path' ),
+		// elements, html snippets, which can be processed to expand via {{> markdown }} ##
+		require_once self::get_plugin_path( 'library/context/partial.php' );
 
-			// elements, html snippets, which can be processed to expand via {{> markdown }} ##
-			'partial' => wh::get( 'context/partial.php', 'return', 'path' ),
+		// user context ##
+		require_once self::get_plugin_path( 'library/context/user.php' );
 
-			// user context ##
-			'user' => wh::get( 'context/user.php', 'return', 'path' ),
+		// action hook context ##
+		require_once self::get_plugin_path( 'library/context/action.php' );
 
-			// action hook context ##
-			'action' => wh::get( 'context/action.php', 'return', 'path' ),
+		// filter hook context ##
+		// require_once self::get_plugin_path( 'library/context/filter.php' );
 
-			// filter hook context ##
-			// 'filter' => wh::get( 'context/filter.php', 'return', 'path' ),
-
-			// wordpress context ##
-			'wordpress' => wh::get( 'context/wordpress.php', 'return', 'path' ),
-
-		];
+		// wordpress context ##
+		require_once self::get_plugin_path( 'library/context/wordpress.php' );
 
 	}
 
 
 
 	/** 
-	 * bounce to function getter ##
-	 * function name can be any of the following patterns:
+	 * extract and validate args from template to gather data and return via render methods
 	 * 
-	 * group__  acf field group
-	 * field__  single post meta field ( can be any type, such as repeater )
-	 * partial__  snippets, code, blocks, collections like post_meta
-	 * post__  content, title, excerpt etc..
-	 * media__
-	 * navigation__ 
-	 * taxonomy__
-	 * ui__
-	 * extension__
-	 * widget__
+	 * @since 0.0.1
 	 */
 	public static function __callStatic( $function, $args ){	
 

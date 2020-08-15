@@ -2,13 +2,10 @@
 
 namespace q\willow\render;
 
-// Q ##
-use q\get;
-use q\core\helper as h;
-
+use q\willow\core\helper as h;
 use q\willow;
 use q\willow\core;
-// use q\willow\render;
+use q\willow\get;
 
 class args extends willow\render {
 
@@ -84,7 +81,7 @@ class args extends willow\render {
 		// $args = render\markup::pre_config( $args );
 
 		// get stored config via lookup, fallback 
-		// pulls from Q, but available to filter via q/config/load ##
+		// pulls from Q, but available to filter via q/willow/config/load ##
 		$config = core\config::get( $args );
 
 		// test ##
@@ -92,7 +89,7 @@ class args extends willow\render {
 
 		// Parse incoming $args into an array and merge it with $config defaults ##
 		// allows specific calling methods to alter passed $args ##
-		if ( $config ) $args = \q\core\method::parse_args( $args, $config );
+		if ( $config ) $args = core\method::parse_args( $args, $config );
 
 		// h::log( $args );
 
@@ -202,14 +199,14 @@ class args extends willow\render {
     public static function assign( Array $args = null ) {
 
         // apply global filter to $args - specific calls should be controlled by parameters included directly ##
-        $args = \q\core\filter::apply([
+        $args = core\filter::apply([
 			'filter'        => 'q/willow/render/args',
 			'parameters'    => $args,
 			'return'        => $args
 		]);
 		
 		// apply template level filter to $args - specific calls should be controlled by parameters included directly ##
-        $args = \q\core\filter::apply([
+        $args = core\filter::apply([
 			'filter'        => 'q/willow/render/args/'.\q\view\is::get(),
 			'parameters'    => $args,
 			'return'        => $args
@@ -324,7 +321,7 @@ class args extends willow\render {
 		}
 
 		// get calling method for filters ##
-		$task = \q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$task = core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
 
 		// define context for all in class -- i.e "group" ##
 		if ( ! isset( $args['context'] ) ) {
@@ -339,7 +336,7 @@ class args extends willow\render {
 		// h::log( $args );
 
 		// get stored config via lookup, fallback 
-		// pulls from Q, but available to filter via q/config/load ##
+		// pulls from Q, but available to filter via q/willow/config/load ##
 		$config = core\config::get( $args );
 
 		// test ##

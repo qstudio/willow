@@ -7,13 +7,13 @@
  * @author          Q Studio <social@qstudio.us>
  * @license         GPL-2.0+
  * @link            http://qstudio.us/
- * @copyright       2010 Q Studio
+ * @copyright       2020 Q Studio
  *
  * @wordpress-plugin
  * Plugin Name:     Q Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
- * Version:         1.0.2
+ * Version:         1.1.0
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -40,9 +40,8 @@ if ( ! class_exists( 'q_willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.0.2';
+        const version = '1.1.0';
         const text_domain = 'q-willow'; // for translation ##
-		// static $debug = false; // global debugging, normally false, as individual plugins can control local level debugging ##
 		
 		protected static
 
@@ -412,17 +411,17 @@ if ( ! class_exists( 'q_willow' ) ) {
         {
 
 			// check for dependencies, required for UI components - admin will still run ##
-            if ( ! self::has_dependencies() ) {
+            // if ( ! self::has_dependencies() ) {
 
-                return false;
+                // return false;
 
-            }
+            // }
 
             // methods ##
 			require_once self::get_plugin_path( 'library/core/_load.php' );
 
 			// getters ##
-			// require_once self::get_plugin_path( 'library/get/_load.php' );
+			require_once self::get_plugin_path( 'library/get/_load.php' );
 
 			// parsers ##
 			require_once self::get_plugin_path( 'library/parse/_load.php' );

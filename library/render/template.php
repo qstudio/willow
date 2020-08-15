@@ -4,12 +4,11 @@ namespace q\willow\render;
 
 
 // Q ##
-use q\get;
-use q\core\helper as h;
-
+use q\willow\get;
+use q\willow\core\helper as h;
 use q\willow;
 use q\willow\core;
-// use q\willow\render;
+use q\willow\render;
 
 class template extends willow\render {
 
@@ -52,10 +51,10 @@ class template extends willow\render {
 		}
 
 		// get template ##
-		$config = \q\core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 		// filter ##
-		$config = \q\core\filter::apply([ 
+		$config = core\filter::apply([ 
 			'parameters'    => [ 'config' => $config ], // pass ( $template ) as single array ##
 			'filter'        => 'q/willow/render/template/config/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $config
@@ -67,7 +66,7 @@ class template extends willow\render {
 		$markup = isset( $args['markup'] ) ? $args['markup'] : $args['task'] ;
 
 		// filter ##
-		$markup = \q\core\filter::apply([ 
+		$markup = core\filter::apply([ 
 			'parameters'    => [ 'markup' => $markup ], // pass ( $template ) as single array ##
 			'filter'        => 'q/willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $markup
@@ -91,10 +90,10 @@ class template extends willow\render {
 		// h::log( $config['markup'][ $template ] );
 
 		// markup string ##
-		$string = \q\strings\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
+		$string = render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
 
 		// filter ##
-		$string = \q\core\filter::apply([ 
+		$string = core\filter::apply([ 
 			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
 			'filter'        => 'q/willow/render/template/string/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $string

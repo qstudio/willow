@@ -8,17 +8,17 @@ use q\willow\core\helper as wh;
 use q\willow;
 use q\willow\render;
 
-\q\willow\buffer::run();
+\q\willow\buffer::__run();
 
 class buffer extends \q_willow {
 
 	/**
 	 * Check for view template and start OB, if correct
 	*/
-	public static function run(){
+	public static function __run(){
 
 		// load libraries ##
-		\q\core\load::libraries( self::load() );
+		self::load();
 
 		// start here ##
 		self::$filter = [];
@@ -33,15 +33,11 @@ class buffer extends \q_willow {
     public static function load()
     {
 
-		return $array = [
+		// prepare map ##
+		require_once self::get_plugin_path( 'library/buffer/output.php' );
 
-			// prepare map ##
-			'output' => wh::get( 'buffer/output.php', 'return', 'path' ),
-
-			// prepare map ##
-			'map' => wh::get( 'buffer/map.php', 'return', 'path' ),
-
-		];
+		// prepare map ##
+		require_once self::get_plugin_path( 'library/buffer/map.php' );
 
 	}
 

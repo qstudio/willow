@@ -11,7 +11,6 @@ use q\willow\render;
 
 class partial extends willow\context {
 
-
 	/**
      * Generic Getter - looks for properties in config matching context->task
 	 * can be loaded as a string in context/ui file
@@ -23,21 +22,7 @@ class partial extends willow\context {
      */
     public static function get( $args = null ) {
 
-		// // look for property "args->task" in config ##
-		// if ( 
-		// 	$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ])
-		// ){
-			// h::log( $config );
-			
-			// "args->fields" are used for type and callback lookups ##
-			// self::$args['fields'] = $array['fields']; 
-
-			// define "fields", passing returned data ##
-			// render\fields::define(
-				return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
-			// );
-
-		// }
+		return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

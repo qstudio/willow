@@ -3,10 +3,9 @@
 namespace q\willow\render\type;
 
 use q\willow\core;
-use q\core\helper as h;
-// use q\ui;
+use q\willow\core\helper as h;
 use q\willow;
-use q\get;
+// use q\get;
 use q\willow\render;
 
 class src extends render\type {
@@ -85,7 +84,8 @@ class src extends render\type {
             $alt = 
                 \get_post_meta( $wp_post->ID, '_wp_attachment_image_alt', true ) ?
                 \get_post_meta( $wp_post->ID, '_wp_attachment_image_alt', true ) :
-                get\post::excerpt_from_id( $wp_post->ID, 100 );
+				// get\post::excerpt_from_id( $wp_post->ID, 100 );
+				\get_the_excerpt( $wp_post->ID ); // NOTE:: changed to generic WP function to avoid Q dependency ##
 
             // markup tag attributes ##
             $srcset = '" srcset="'.\esc_attr($srcset).'"'; 

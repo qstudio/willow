@@ -3,16 +3,14 @@
 namespace q\willow\get;
 
 // Q ##
-// use q\core\helper as h;
-// use q\ui;
-use q\willow;
-// use q\willow\core;
-// use q\willow\render;
+use q\willow\core;
+use q\willow\core\helper as h;
+use q\willow\get;
 
 // Q Theme ##
 // use q\theme;
 
-class post extends willow\get {
+class post extends \q\willow\get {
 
     /**
      * Method to clean up calling and checking for the global $post object

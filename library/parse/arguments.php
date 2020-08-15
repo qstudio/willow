@@ -5,7 +5,7 @@ namespace q\willow;
 // use q\core;
 use q\willow;
 use q\willow\core;
-use q\core\helper as h;
+use q\willow\core\helper as h;
 // use q\ui;
 // use q\render; // @TODO ##
 
@@ -14,11 +14,6 @@ class arguments extends willow\parse {
 	private static 
 
 		$string, 
-		// $flags_argument,
-		// $argument_flags,
-		// $field,
-		// $value,
-		// $tag, 
 		$array
 
 	;
@@ -28,10 +23,6 @@ class arguments extends willow\parse {
 
 		self::$string = false; 
 		self::$flags_argument = false;
-		// self::$argument_flags = false;
-		// self::$field = false;
-		// self::$value = false;
-		// self::$tag = false;
 		self::$array = false;
 
 	}
@@ -75,13 +66,9 @@ class arguments extends willow\parse {
 		self::$string = flags::get( self::$string, 'argument' );
 		// h::log( self::$flags_argument );
 		if( 
-			// ! core\method::starts_with( self::$string, '@' )
-			// ! isset( self::$flags_argument['a'] ) // not an array
 			! self::$flags_argument
 			|| ! isset( self::$flags_argument ) // not an array
 			|| ! is_array( self::$flags_argument )
-			// ||
-			// ! render\method::ends_with( $string, ']' ) 
 		){
 
 			// h::log( 'd:>Argument string "'.self::$string.'" does not contains any flag, so returning' );
@@ -90,17 +77,6 @@ class arguments extends willow\parse {
 			return false;
 
 		}
-
-		// check for "=" delimiter ##
-		/*
-		if( false === strpos( self::$string, '=' ) ){
-
-			// h::log( 'e:>Error in passed string format, missing delimiter "=" -- '.self::$string );
-
-			return false;
-
-		}
-		*/
 
 		// h::log( 'd:>string --> '.self::$string );
 
@@ -164,11 +140,8 @@ class arguments extends willow\parse {
 		// h::log( self::$markup['template'] );
 
 		// strip all function blocks, we don't need them now ##
-		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/willow/parse/argument/cleanup/regex', 
-			 // "/$open.*?$close/ms" 
-			//  "/$open\s+.*?\s+$close/s"
 			"~\\$open\s+(.*?)\s+\\$close~"
 		);
 

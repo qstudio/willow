@@ -2,15 +2,14 @@
 
 namespace q\willow\context;
 
-use q\core\helper as h;
+use q\willow\core\helper as h;
 // use q\ui;
-use q\get;
+// use q\get;
 use q\willow;
 use q\willow\context;
 use q\willow\render; 
 
 class meta extends willow\context {
-
 
 	public static function get( $args = null ){
 
@@ -72,8 +71,13 @@ class meta extends willow\context {
      */
     public static function field( $args = null ) {
 
+		// @todo -- add filter to return value and avoid Q check and get routine ##
+
+		// Q needed to run get method ##
+		if ( ! class_exists( 'Q' ) ){ return false; }
+
 		// return an array with the field "task" as the placeholder key and value
-		return [ $args['task'] => get\meta::field( $args ) ];
+		return [ $args['task'] => \q\get\meta::field( $args ) ];
 
 	}
 
