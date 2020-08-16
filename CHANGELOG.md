@@ -1,3 +1,7 @@
+### 1.2.0 ###
+
+* Update: Transitional debugging to Willow, removing last direct dependency on Q
+
 ### 1.1.0 ###
 
 * Update: Removed dependency on Q plugin - WP still required

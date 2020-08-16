@@ -13,7 +13,7 @@
  * Plugin Name:     Q Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
- * Version:         1.1.0
+ * Version:         1.2.0
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -40,7 +40,7 @@ if ( ! class_exists( 'q_willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.1.0';
+        const version = '1.2.0';
         const text_domain = 'q-willow'; // for translation ##
 		
 		protected static
@@ -51,6 +51,9 @@ if ( ! class_exists( 'q_willow' ) ) {
 
 		public static
 
+			// debugging control ##
+			$debug = false,
+
 			// passed args ##
 			$args 	= [
 				'fields'	=> []
@@ -59,8 +62,7 @@ if ( ! class_exists( 'q_willow' ) ) {
 			$output 	= null, // return string ##
 			$fields 	= null, // array of field names and values ##
 			$markup 	= null, // array to store passed markup and extra keys added by formatting ##
-			$log 		= null, // tracking array for feedback ##
-			// $buffer 	= null, // for buffering... ##
+			$log		= null, // tracking array for feedback ##
 			$filter		= null, // post-processing of willows and variables ##
 			$hash 		= null, // willow hash log, with data about calling method ##
 
@@ -73,7 +75,7 @@ if ( ! class_exists( 'q_willow' ) ) {
 				],
 			],
 
-			// BUFFER, perhaps can be protected ##
+			// BUFFER, -- @TODO, perhaps can be protected ##
 			$buffer_args 	= null,
 			$buffer_markup 	= null,
 			$buffer_map		= [] // buffer markup map ##
@@ -277,7 +279,10 @@ if ( ! class_exists( 'q_willow' ) ) {
             add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
 
             // load libraries ##
-            self::load_libraries();
+			self::load_libraries();
+			
+			// check debug settings ##
+			add_action( 'plugins_loaded', array( get_class(), 'debug' ), 11 );
 
         }
 
@@ -338,6 +343,33 @@ if ( ! class_exists( 'q_willow' ) ) {
             // try from plugin last ##
             load_plugin_textdomain( $domain, FALSE, plugin_dir_path( __FILE__ ).'library/languages/' );
 
+		}
+		
+
+		/**
+         * We want the debugging to be controlled in global and local steps
+         * If Q debug is true -- all debugging is true
+         * else follow settings in Q, or this plugin $debug variable
+         */
+        public static function debug()
+        {
+
+            // define debug ##
+            self::$debug = 
+                ( 
+                    class_exists( 'Q' )
+                    && true === \Q::$debug
+                ) ?
+                true :
+                self::$debug ;
+
+            // test ##
+            // helper::log( 'Q exists: '.json_encode( class_exists( 'Q' ) ) );
+            // helper::log( 'Q debug: '.json_encode( \Q::$debug ) );
+            // helper::log( json_encode( self::$debug ) );
+
+            return self::$debug;
+
         }
 
 
@@ -374,34 +406,6 @@ if ( ! class_exists( 'q_willow' ) ) {
 
 
 
-
-        /**
-         * Check for required breaking dependencies
-         *
-         * @return      Boolean
-         * @since       1.0.0
-         */
-        public static function has_dependencies()
-        {
-
-            // check for what's needed ##
-            if (
-                ! class_exists( 'Q' )
-            ) {
-
-                error_log( 'e:>Q Willow requires Q to run correctly..' );
-
-                return false;
-
-            }
-
-            // ok ##
-            return true;
-
-        }
-
-
-
         /**
         * Load Libraries
         *
@@ -409,13 +413,6 @@ if ( ! class_exists( 'q_willow' ) ) {
         */
 		private static function load_libraries()
         {
-
-			// check for dependencies, required for UI components - admin will still run ##
-            // if ( ! self::has_dependencies() ) {
-
-                // return false;
-
-            // }
 
             // methods ##
 			require_once self::get_plugin_path( 'library/core/_load.php' );
@@ -440,10 +437,6 @@ if ( ! class_exists( 'q_willow' ) ) {
 
 			// output buffer ##
 			require_once self::get_plugin_path( 'library/buffer/_load.php' );
-
-			// direct template renderer ##
-			// require_once self::get_plugin_path( 'library/template/_load.php' );
-
 
         }
 

@@ -6,40 +6,37 @@ namespace q\willow\core;
 // core ##
 use q\willow\core;
 
-
 /**
  * helper Class
  * @package   q_willow\core
  */
 class helper extends \q_willow {
 
-	// track who called what ##
-	public static 
-	
-		$file				= \WP_CONTENT_DIR."/willow.debug.log"
 
-	;
-
-/**
-    * check if a file exists with environmental fallback
-    * first check the active theme ( pulling info from "device-theme-switcher" ), then the plugin
-    *
-    * @param    $include        string      Include file with path ( from library/  ) to include. i.e. - templates/loop-nothing.php
-    * @param    $return         string      return method ( echo, return, require )
-    * @param    $type           string      type of return string ( url, path )
-    * @param    $path           string      path prefix
-    * 
-    * @since 0.1
-	*/
-	/*
-    public static function get( $include = null, $return = 'echo', $type = 'url', $path = "library/" )
+    /**
+     * Write to WP Error Log
+     *
+     * @since       1.5.0
+     * @return      void
+     */
+    public static function log( $args = null )
     {
-
-        // use Q helper, but pass class name for plugin URL and PATH tests ##
-        return core\helper::get( $include, $return, $type, $path, get_parent_class() );
+		
+		// shift callback level, as we added another level.. ##
+		\add_filter( 
+			'q/willow/core/log/backtrace/function', function () {
+			return 4;
+		});
+		\add_filter( 
+			'q/willow/core/log/backtrace/file', function () {
+			return 3;
+		});
+		
+		// pass to core\log::set();
+		return core\log::set( $args );
 
 	}
-	*/
+	
 
 
 	/**
@@ -48,15 +45,15 @@ class helper extends \q_willow {
      * @since       4.1.0
      * @return      void
      */
-    public static function log( $args = null )
+    public static function hard_log( $args = null )
     {
 		
-		// error_log( $args );
+		error_log( $args );
 
 		// sanity ##
 		if ( is_null( $args ) ) { 
 			
-			error_log( 'Nothing passed to log(), so bailing..' );
+			// error_log( 'Nothing passed to log(), so bailing..' );
 
 			return false; 
 		
@@ -75,7 +72,7 @@ class helper extends \q_willow {
 			&& isset( $args['log_string'] )	
 		) {
 
-			error_log( 'log_string => from $args..' );
+			// error_log( 'log_string => from $args..' );
 			$log = $args['string'];
 
 		} else {
@@ -91,9 +88,13 @@ class helper extends \q_willow {
 			$backtrace = core\method::backtrace();
 
             if ( is_array( $log ) || is_object( $log ) ) {
-                self::error_log( print_r( $log, true ).' -> '.$backtrace );
+
+				core\log::error_log( print_r( $log, true ).' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
+				
             } else {
-                self::error_log( $log.' -> '.$backtrace );
+
+				core\log::error_log( $log.' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
+				
             }
 
 		}
@@ -101,43 +102,8 @@ class helper extends \q_willow {
 		// done ##
 		return true;
 
-	}
-	
+    }
 
-
-	/**
-	 * Replacement error_log function, with custom return format 
-	 * 
-	 * @since 4.1.0
-	 */ 
-	public static function error_log( $log )
-	{
-		
-		// $displayErrors 	= ini_get( 'display_errors' );
-		$log_errors     = ini_get( 'log_errors' );
-		$error_log      = ini_get( 'error_log' );
-
-		// if( $displayErrors ) echo $errStr.PHP_EOL;
-
-		if( $log_errors )
-		{
-			$message = sprintf( 
-				// '[%s] %s (%s, %s)', 
-				'%s', 
-				// date('d-m H:i'), 
-				// date('H:i'), 
-				$log, 
-				// $errFile, 
-				// $errLine 
-			);
-			// file_put_contents( $error_log, $message.PHP_EOL, FILE_APPEND );
-			file_put_contents( self::$file, $message.PHP_EOL, FILE_APPEND );
-		}
-
-		// ok ##
-		return true;
-
-	}
 
 
 

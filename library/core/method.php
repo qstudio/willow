@@ -784,4 +784,53 @@ class method extends \q_willow {
 	}
 
 
+	
+	/**
+	 * search string by array
+	 * 
+	 * @link	https://stackoverflow.com/questions/6284553/using-an-array-as-needles-in-strpos
+	 */
+	public static function strposa($haystack, $needle, $offset=0) 
+	{
+		if( ! is_array( $needle ) ) {
+			
+			$needle = array($needle);
+
+		}
+
+		foreach( $needle as $query ) {
+
+			// stop on first true result ##
+			if( strpos( $haystack, $query, $offset ) !== false) return true;
+		
+		}
+
+		return false;
+
+	}
+
+
+	public static function get_acronym( $string = null, $length = 10 ) {
+
+		// sanity ##
+		if ( is_null( $string ) ) { return false; }
+
+		return 
+			render\method::chop( 
+				str_replace(
+					[ '-', '_' ], "", // replace ##
+					strtolower( 
+						array_reduce( 
+							str_word_count( $string, 1), function($res , $w){ 
+								return $res . $w[0]; 
+							} 
+						)
+					)
+				),
+				$length, '' // chop ##
+			);
+
+	}
+
+
 }

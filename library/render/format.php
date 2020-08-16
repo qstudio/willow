@@ -433,7 +433,7 @@ class format extends willow\render {
     {
 
         // allow filtering early ##
-        $value = \apply_filters( 'q/render/format/object/'.self::$args['task'].'/'.$field, $value );
+        $value = \apply_filters( 'q/willow/render/format/object/'.self::$args['task'].'/'.$field, $value );
 
         // WP_Post Object ##
         if ( $value instanceof \WP_Post ) {
@@ -739,7 +739,7 @@ class format extends willow\render {
     public static function get_allowed()
     {
 
-        return \apply_filters( 'q/render/format/get_allowed', self::$format );
+        return \apply_filters( 'q/willow/render/format/get_allowed', self::$format );
 
     }
 

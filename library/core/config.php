@@ -85,14 +85,14 @@ class config extends \q_willow {
 			|| \wp_doing_ajax()
 		){ 
 		
-			h::log( 'd:>Attempt to save config from admin or AJAX blocked' );
+			// h::log( 'd:>Attempt to save config from admin or AJAX blocked' );
 
 			return false; 
 		
 		}
 
 		// if theme debugging, then load from single config files ##
-		if ( \Q::$debug ) {
+		if ( self::$debug ) { /* class_exists( 'Q' ) && \Q::$debug */
 
 			// h::log('d:>Deubbing, so we do not need to resave __q.php.' );
 			// h::log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
@@ -150,7 +150,7 @@ class config extends \q_willow {
 		// if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
 		// if theme debugging, then load from indiviual config files ##
-		if ( \Q::$debug ) {
+		if ( self::$debug ) { /* \Q::$debug */
 
 			// h::log( 'd:>Theme is debugging, so load from individual context files...' );
 

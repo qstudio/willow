@@ -28,7 +28,7 @@ class args extends willow\render {
 		self::$output = null; // return string ##
         self::$fields = null; // array of field names and values ##
 		self::$markup = null; // array to store passed markup and extra keys added by formatting ##
-		self::$log 	= null; // tracking array for feedback ##
+		// self::$log 	= null; // tracking array for feedback ##
 		self::$hash = null;
 
 	}
@@ -47,7 +47,7 @@ class args extends willow\render {
 		self::$collect['output'] = self::$output;
 		self::$collect['fields'] = self::$fields;
 		self::$collect['markup'] = self::$markup;
-		self::$collect['log'] = self::$log;
+		// self::$collect['log'] = self::$log;
 		self::$collect['hash'] = self::$hash;
 
 	}
@@ -66,7 +66,7 @@ class args extends willow\render {
 		self::$output = self::$collect['output'];
 		self::$fields = self::$collect['fields'] ;
 		self::$markup = self::$collect['markup'];
-		self::$log = self::$collect['log'];
+		// self::$log = self::$collect['log'];
 		self::$hash = self::$collect['hash'];
 
 	}
