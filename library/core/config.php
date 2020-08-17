@@ -22,8 +22,8 @@ class config extends \q_willow {
 
 	public static function __run(){
 
-		// filter Q Config -- ALL FIELDS [ $array "data" ]##
-		// Priority -- Q = 1, Q Plugin = 10, Q Parent = 100, Q Child = 1000
+		// filter Willow Config ##
+		// Priority -- Q = 1, Q Plugin = 10, Extension = 10, Parent Theme = 100, Child Theme = 1000 ##
 		\add_filter( 'q/willow/config/load', 
 			function( $args ){
 				$source = null; // context source ##

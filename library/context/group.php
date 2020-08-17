@@ -9,8 +9,6 @@ use q\willow\render;
 class group extends willow\context {
 
 
-	
-
 	/**
      * Get group data via meta handler
      *
