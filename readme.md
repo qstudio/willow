@@ -6,9 +6,8 @@
 **Stable tag:** 1.2.0    
 **License:** GPL2  
 
-Simple, logic-less, procedural semantic markup language
+Willow ~ A logic-less template engine built for WordPress.
 
-Currently this project is developed with WordPress as a dependency, mostly as this was the easiest use-case and data provider, but the data source for template tags can come from any context, the examples below will attempt to demonstrate this.
+Willow has been designed to meet the needs of both front-end and back-end developers by providing a small, yet powerful set of tags and tools to speed up template development and prototype iteration, and is heavily influenced by Mustache.
 
-
-....
+Visit the Wiki for further details of usage - https://github.com/qstudio/q-willow/wiki 

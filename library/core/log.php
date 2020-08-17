@@ -120,8 +120,8 @@ class log extends \q_willow {
 			// || ! isset( $args['log'] )
 		){
 
-			h::hard_log( 'd:>Problem with passed args' );
-			h::hard_log( $args );
+			// h::hard_log( 'd:>Problem with passed args' );
+			// h::hard_log( $args );
 
 			return false;
 
@@ -133,8 +133,8 @@ class log extends \q_willow {
 			! $log = self::translate( $args )
 		){
 
-			h::hard_log( 'Error in passed log data..' );
-			h::hard_log( $args );
+			// h::hard_log( 'Error in passed log data..' );
+			// h::hard_log( $args );
 
 			return false;
 
@@ -749,7 +749,7 @@ class log extends \q_willow {
 			|| \wp_doing_ajax()
 		){ 
 		
-			h::hard_log( 'd:>Attempt to empty log from admin blocked' );
+			// h::hard_log( 'd:>Attempt to empty log from admin blocked' );
 
 			return false; 
 		
@@ -766,7 +766,7 @@ class log extends \q_willow {
 			fclose($f);
 
 			// log to log ##
-			h::hard_log( 'Log Emptied: '.date('l jS \of F Y h:i:s A') );
+			// h::hard_log( 'Log Emptied: '.date('l jS \of F Y h:i:s A') );
 
 			// track ##
 			self::$empty == true;
