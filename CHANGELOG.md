@@ -1,3 +1,7 @@
+### 1.2.2 ###
+
+* Fix: Missing config method to write file 
+
 ### 1.2.1 ###
 
 * New: Added base context/global.php file
