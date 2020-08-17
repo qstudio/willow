@@ -1,3 +1,7 @@
+### 1.2.1 ###
+
+* New: Added base context/global.php file
+
 ### 1.2.0 ###
 
 * Update: Transitional debugging to Willow, removing last direct dependency on Q
