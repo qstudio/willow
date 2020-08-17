@@ -55,7 +55,7 @@ class log extends \q_willow {
 			) {
 
 				// h::hard_log( 'DOING AJAX...' );
-				// self::empty();
+				self::empty();
 
 			}
 

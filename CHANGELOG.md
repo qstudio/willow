@@ -4,15 +4,16 @@
 
 ### 1.2.0 ###
 
-* Update: Transitional debugging to Willow, removing last direct dependency on Q
+* Update: Transitional debugging to Willow, 
+* Removed: Last direct dependency on Q
 
 ### 1.1.0 ###
 
-* Update: Removed dependency on Q plugin - WP still required
+* Update: Removed most dependencies on Q plugin - WP still required
 
 ### 1.0.2 ###
 
-* Fix: for duplicate default value assignement
+* Fix: for duplicate default value assignment
 
 ### 1.0.1 ###
 
@@ -35,7 +36,7 @@
 
 * Updated parse_str to respect content in double quotes
 * Improved debugging, less clutter in error log
-* Fixed loops issue when passing arguements in array from template
+* Fixed loops issue when passing arguments in array from template
 
 ### 0.4.0 ###
 

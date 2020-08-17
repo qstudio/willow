@@ -16,8 +16,8 @@ class post extends render\type {
      **/ 
     public static function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null ): string {
 
-		// start with null ##
-		$string = null;
+		// start with empty string ##
+		$string = '';
 
 		// special fields first ?? ##
 		switch( $type_field ) {

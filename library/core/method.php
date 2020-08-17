@@ -275,6 +275,60 @@ class method extends \q_willow {
 	}
 
 
+	
+	public static function file_put_array( $path, $array )
+	{
+
+		if ( is_array( $array ) ){
+
+			$contents = self::var_export_short( $array, true );
+			// $contents = var_export( $array, true );
+
+			// stripslashes ## .. hmmm ##
+			$contents = str_replace( '\\', '', $contents );
+
+			// h::log( 'd:>Array data good, saving to file' );
+
+			// save in php as an array, ready to return ##
+			file_put_contents( $path, "<?php\n return {$contents};\n") ;
+			
+			// done ##
+			return true;
+
+		}
+
+		h::log( 'e:>Error with data format, config file NOT saved' );
+		
+		// failed ##
+		return false;
+
+	}
+
+
+	public static function var_export_short( $data, $return = true ){
+
+		$dump = var_export($data, true);
+
+		$dump = preg_replace('#(?:\A|\n)([ ]*)array \(#i', '[', $dump); // Starts
+		$dump = preg_replace('#\n([ ]*)\),#', "\n$1],", $dump); // Ends
+		$dump = preg_replace('#=> \[\n\s+\],\n#', "=> [],\n", $dump); // Empties
+
+		if (gettype($data) == 'object') { // Deal with object states
+			$dump = str_replace('__set_state(array(', '__set_state([', $dump);
+			$dump = preg_replace('#\)\)$#', "])", $dump);
+		} else { 
+			$dump = preg_replace('#\)$#', "]", $dump);
+		}
+
+		if ($return===true) {
+			return $dump;
+		} else {
+			echo $dump;
+		}
+
+	}
+
+
 
 	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ) {
 
