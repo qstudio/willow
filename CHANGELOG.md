@@ -1,4 +1,8 @@
-### 1.2.2 ###
+### 1.2.3 ###
+
+* Fix: Logging Updates
+
+### 1.2.3 ###
 
 * Fix: Missing config method to write file 
 
