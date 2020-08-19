@@ -301,7 +301,7 @@ class php_functions extends willow\parse {
 		){
 
 			// h::log( self::$return );
-			h::log( 'Return from "'.$open.' '.self::$function.' '.$close.'" is in an array format, trying to convert array values to string' );
+			h::log( '"'.$open.' '.self::$function.' '.$close.'" returned an array, Willow will try to convert to a string' );
 
 			self::$return = implode ( " ", array_values( self::$return ) );
 			self::$return = trim( self::$return );
