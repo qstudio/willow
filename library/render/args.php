@@ -175,11 +175,11 @@ class args extends willow\render {
             && false === $args['config']['run']
         ){
 
-			h::log( $args );
+			// h::log( $args );
 
 			// log ##
 			h::log( $args['task'].'~>n:>config->run defined as false for: '.$args['task'].', so stopping here.. ' );
-			h::log( 'd:>config run defined as false... so stop' );
+			// h::log( 'd:>config run defined as false for: '.$args['task'].', so stopping here..' );
 
             return false;
 
