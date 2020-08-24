@@ -1,3 +1,7 @@
+### 1.2.4 ###
+
+* New: {{ [u] Uppercase }} and {{ [l] Lowercase }} filters for variables and strings
+
 ### 1.2.3 ###
 
 * Fix: Minor stability release
