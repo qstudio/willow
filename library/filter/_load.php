@@ -34,6 +34,12 @@ class filter extends \q_willow  {
 		// escape ##
 		require_once self::get_plugin_path( 'library/filter/escape.php' );
 
+		// lowercase ##
+		require_once self::get_plugin_path( 'library/filter/lowercase.php' );
+
+		// uppercase ##
+		require_once self::get_plugin_path( 'library/filter/uppercase.php' );
+
 		// strip tags ##
 		require_once self::get_plugin_path( 'library/filter/strip.php' );
 
