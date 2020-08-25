@@ -569,7 +569,31 @@ class method extends \q_willow {
 		# loop through each pair
 		foreach ( $pairs as $i ) {
 
-			# split into name and value
+			if ( 
+				! $i
+				|| ! trim( $i )
+				// || true !== strpos( $i, $operator_assign ) 
+			){
+			
+				h::log( '$i is empty ~~ "'.$i.'"' );
+
+				continue;
+			
+			}
+
+			if ( 
+				// ! $i
+				// || ! trim( $i )
+				false === strpos( $i, $operator_assign ) 
+			){
+			
+				h::log( '$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
+
+				continue;
+			
+			}
+
+			// split into key and value ##
 			list( $key, $value ) = explode( $operator_assign, $i, 2 );
 
 			// what about array values ##
