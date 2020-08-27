@@ -96,11 +96,11 @@ class callback extends willow\render {
             isset( $field_callback['args'] ) 
         ) {
 
-			h::log( 't:>TODO - check if this callback %value% reference is out of date' );
+			// h::log( 't:>TODO - check if this callback {{ value }} reference is out of date' );
 
             // Clean up args, with actual passed value ##
             $field_callback['args'] = str_replace( 
-                '%value%',  // @TODO - this looks like an out-of-date markup tag ??
+                '{{ value }}',  // @TODO - this looks like an out-of-date markup tag ??
                 $field_value, 
                 $field_callback['args'] 
             );
