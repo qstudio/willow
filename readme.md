@@ -35,10 +35,11 @@ class ui {
 }
 ```
 
-### Return:
+## Return:
 
 ```
-Willow says **Hello**
+Willow says <strong>Hello<strong>
 ```
+## Wiki
 
 Visit the Wiki for further details -> https://github.com/qstudio/q-willow/wiki 
