@@ -15,10 +15,10 @@ Willow has been designed to meet the needs of both front-end and back-end develo
 All Willow tags include a matching opening and closing pair, starting and ending with a curly bracket and one other internal character, as follows:
 
 ```
-{~ ui~hello {+ Willow says {{ hello }} +} ~}
+{~ ui~hello {+ Willow says <strong>{{ hello }}</strong> +} ~}
 ```
 
-This tag call tries to find the **ui** ( context ) **hello** ( task ) method ( ui::hello() ) and wrap the return data in simple html: 
+This tag calls the class **ui** method **hello** ( ui::hello() ) and wraps the returned data in any markup passed in the Willow arguments: 
 
 ```php
 class ui {
@@ -38,7 +38,7 @@ class ui {
 ### Return:
 
 ```
-<div>Willow says Hello</div>
+Willow says **Hello**
 ```
 
 Visit the Wiki for further details -> https://github.com/qstudio/q-willow/wiki 
