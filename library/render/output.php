@@ -37,7 +37,7 @@ class output extends willow\render {
             'return'        => self::$output
 		]); 
 		
-        // helper::log( self::$output );
+        // h::log( self::$output );
 
         // either return or echo ##
         if ( 
@@ -47,6 +47,7 @@ class output extends willow\render {
 
 			// h::log( self::$output );
 
+			// echo ##
 			echo self::$output;
 
 			// reset all args ##

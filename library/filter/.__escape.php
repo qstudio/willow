@@ -8,11 +8,11 @@ use q\willow;
 use q\willow\filter;
 
 // load it up ##
-\q\willow\filter\escape::run();
+\q\willow\filter\escape::__run();
 
 class escape extends willow\filter {
 
-	public static function run(){
+	public static function __run(){
 
 		// filter variable ##
 		\add_filter( 'q/willow/render/markup/variable', [ get_class(), 'variable' ], 10, 2 );
@@ -36,7 +36,11 @@ class escape extends willow\filter {
 		// h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['e'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['global']['e'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['esc'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['escape'] ) 
+		){
 
 			// h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
@@ -54,8 +58,6 @@ class escape extends willow\filter {
 	// @todo - escape single variable
 	public static function variable( $value, $key ) {
 
-		// h::log( 't:>ALL values should be escaped - this can be avoided with [u] tag -- plus, we need to remove flags again for search/replace to work...??' );
-
 		// h::log( self::$filter );
 		// h::log( self::$args );
 		// h::log( 'Key: '.$key );
@@ -65,7 +67,11 @@ class escape extends willow\filter {
 		*/
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['e'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['e'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['esc'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['escape'] ) 
+		){
 
 			// h::log( 'd:>Variable escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 

@@ -204,7 +204,7 @@ class markup extends willow\parse {
      */
     public static function add( string $tag = null, $before = null, $type = 'variable', $process = 'internal' ) { // , $markup = null
 
-		h::log( 't:>PERHAPS THIS METHOD IS NOT NEEDED??' );
+		h::log( 't:>TOOO, __deprecate in 1.5.0' );
 
         // sanity ##
         if (

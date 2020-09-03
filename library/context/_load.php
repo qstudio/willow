@@ -164,11 +164,11 @@ class context extends \q_willow {
 			// set task tracker -- i.e "title" ##
 			$args['task'] = $method;
 
-			// h::log( self::$args );
+			// h::log( $args );
 
 			// create hash ##
 			$hash = false;
-			$hash = $args['context'].'__'.$args['task'].'.'.rand();
+			$hash = $args['config']['hash'] ?: $args['context'].'__'.$args['task'].'.'.rand(); // HASH now passed from calling Willow ## 
 
 			// h::log( 'e:>Context Loaded: '.$hash );
 
@@ -272,7 +272,7 @@ class context extends \q_willow {
 				isset( $args['config']['buffer'] )
 			){
 
-				/// HMMM, but effective ##
+				// get buffer data ##
 				$return_array = [ $args['task'] => ob_get_clean() ];
 
 				// ob_flush();
@@ -315,10 +315,14 @@ class context extends \q_willow {
 			// assign fields ##
 			render\fields::define( $return_array );
 
+			// h::log( self::$markup['template'] );
+
 			// h::log( $return_array );
 
 			// prepare field data ##
 			render\fields::prepare();
+
+			// h::log( self::$markup['template'] );
 
 			// check if feature is enabled ##
 			if ( ! render\args::is_enabled() ) {

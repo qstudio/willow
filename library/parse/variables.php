@@ -83,7 +83,7 @@ class variables extends willow\parse {
 
 			h::log( 'e:>Error in $args passed to flags method' );
 
-			return false;
+			return false ;
 
 		}
 
@@ -102,31 +102,78 @@ class variables extends willow\parse {
 		// h::log( self::$flags_variable );
 
 		$variable = flags::get( $variable, 'variable' );
+		// h::log( '$variable: '.trim( $variable ) );
+		// h::log( 'whole variable: '.$args['variable'] );
 
 		if(
 			self::$flags_variable
 		){
 
+			// h::log( self::$flags_variable );
+
+			// clean up variable ##
 			$variable = trim( $variable );
 
+			// if we do find flags, we need to create a unique variable reference key, to avoid duplicate filters on re-used variables ##
+			// but, at this point, we have no data -- so, we need to set a future-flag for use when filters are applied late on ##
+			// h::log( self::$fields );
+			$variable_hash = $variable.'_'.core\method::hash();
+			// h::log( 'Original: '.$variable_original.' --> $args: '.$args['variable'].' --> variable_hash: '.$variable_hash );
+
+			// h::log( 'Willow Hash: '.$args['hash'] );
+
+			// store variable flags ##
+			// if( ! isset( self::$filter[ $args['context'] ][ $args['task']][ $variable_hash ] ) ) {
+			// self::$filter[ $args['hash'] ]['variable'][ $variable_hash ] = self::$flags_variable;
+			// }
+
+			// add flags to filter list ##
+			// self::$filter[ $args['context'] ][ $args['task'] ][ $variable_hash ] = self::$flags_variable; // [ $variable_hash ]
+
+			// self::$fields_map[$args['context']][$args['task']]['variables'][ $variable ] = $variable_hash;
+
 			// merge in new args to args->field ##
-			if( ! isset( self::$filter[$args['context']][$args['task']] ) ) self::$filter[$args['context']][$args['task']] = [];
+			// if ( ! isset( self::$fields_map[$args['context']][$args['task']]['variables'][ $variable ] ) ) {
+			// 	self::$fields_map[$args['context']][$args['task']]['variables'][ $variable ] = [];
+			// }
 
-			self::$filter[$args['context']][$args['task']] = core\method::parse_args( 
-				self::$filter[$args['context']][$args['task']],
-				[
-					'variables'		=> [
-						$variable	=> self::$flags_variable,
-					],
-					// 'hash'			=> $args['hash'],
-				]						
-			);
+			// add field tracker ##
+			// if ( ! isset( self::$fields_map[ $args['hash'] ][ $variable ] ) ){
+				// self::$fields_map[ $args['hash'] ][ $variable ] = []; // empty array ##
+			// }
+			// self::$fields_map[ $args['hash'] ][ $variable ][] = $variable_hash; // add new variable hash as array value ##
 
-			return true;
+			// h::log( self::$fields_map );
+
+			// update self::$willow_match ##
+			// $tag = $args['tag'];
+			// alter willow_match ##
+			// $variable_hash_replace = str_replace( $variable, $variable_hash, $args['variable'] ); 
+			// $args['tag'] = str_replace( $args['variable'], $variable_hash_replace, $args['tag'] );
+			// h::log( $args['tag'] );
+
+			// variable replacement string ##
+			// $variable_replace = str_replace( $variable, $variable_hash, $args['variable'] );
+			// h::log( '$variable_replace: '.$variable_replace );			
+
+			// alter buffer_map ##
+			// self::$buffer_map[0] = str_replace( $args['variable'], $variable_replace, self::$buffer_map[0] );
+
+			// h::log( 'MARKUP->> '.self::$markup['template'] );
+			// h::log( self::$buffer_map[0] );
+			// h::log( $args['tag'] );
+			// h::log(  );
+			// $args['tag'] = 'hello';
+
+			// force markup->template update ##
+			// self::$markup['template'] = $args['tag'];
+
+			// kick back ##
+			return true; // $args['tag'];
 
 		}
 
-		return false;
+		return false; //$args['tag'];
 
 	}
 

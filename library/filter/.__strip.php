@@ -28,7 +28,11 @@ class strip extends willow\filter {
 	public static function variable( $value, $key ) {
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['s'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['s'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['strip'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['strip_tags'] ) 
+		){
 
 			// h::log( 'e:>Variable tag stripping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
@@ -52,7 +56,11 @@ class strip extends willow\filter {
 		// h::log( self::$args );
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['s'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['global']['s'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['strip'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['strip_tags'] ) 
+		){
 
 			// h::log( 'e:>Global tag stripping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 

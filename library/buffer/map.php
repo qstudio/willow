@@ -65,7 +65,7 @@ class map extends willow\buffer {
 
 			// h::log( 'Row: '.$value['hash'].' is a child to: '.self::$buffer_map[ $row ]['hash'] );
 
-			// so, we want to str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key ##
+			// so, we need to str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key... ##
 			self::$buffer_map[ $row ]['output'] = str_replace( $value['tag'], $value['output'], self::$buffer_map[ $row ]['output'] );
 
 		}
@@ -82,7 +82,7 @@ class map extends willow\buffer {
 			if( 
 				'0' == $key 
 				|| $value['parent'] // skip rows with a parent value ##
-				|| ! isset( $value['hash'] ) // ?? added, but not tested much yet ###
+				|| ! isset( $value['hash'] ) // skip rows without a hash ###
 			){
 
 				continue;
@@ -106,22 +106,6 @@ class map extends willow\buffer {
 		}
 
 		// h::log( $string );
-
-		// $string = str_replace( ' ', '&nbsp;', $string );
-		// $string = nl2br( htmlentities( $string, ENT_QUOTES, 'UTF-8' ) );
-		/*
-		$return = '';
-		$lines = explode( "\n", $string );
-		// h::log( $lines ); 
-		foreach ($lines as $line) {
-			$return .= core\method::tab2space($line);
-		}
-
-		// $return = nl2br( htmlentities( $return, ENT_QUOTES, 'UTF-8' ) );
-		$return = nl2br( $return );
-
-		// h::log( $return );
-		*/
 
 		// kick back ##
 		return $string;
@@ -157,6 +141,7 @@ class map extends willow\buffer {
 
 		}
 
+		// negative, if not found by now ##
 		return false;
 
 		/*
@@ -164,6 +149,7 @@ class map extends willow\buffer {
 		$keys = array_keys(array_column( self::$buffer_map, $key ), $value );
 		h::log( $keys );
 		*/
+		/*
 		if( 
 			! isset( self::$buffer_map[$result] )
 		){
@@ -174,9 +160,10 @@ class map extends willow\buffer {
 
 		}
 
-		h::log( 'key found in row: '.$result );
+		// h::log( 'key found in row: '.$result );
 
 		return $result;
+		*/
 
 	}
 

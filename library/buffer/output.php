@@ -139,6 +139,7 @@ class output extends willow\buffer {
 		// h::log( self::$buffer_markup );
 
 		// clean up left over tags ##
+		// @todo - seems this cleans up willow tags rendered from db calls - need a fix, perhaps ignore inside <code>xx</code> ??
 		willow\parse::cleanup( self::$buffer_args, 'buffer' );
 		
 		// clear buffer objects ##

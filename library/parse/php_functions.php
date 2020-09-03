@@ -274,6 +274,7 @@ class php_functions extends willow\parse {
 		}
 
 		// escape ##
+		h::log( 't:>NOTE, that escape is being called here, with old flag format.... and seems mixed html OR js ??' );
 		if( 
 			isset( self::$flags_function['e'] ) 
 		){

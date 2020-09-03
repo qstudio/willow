@@ -28,7 +28,11 @@ class lowercase extends willow\filter {
 	public static function variable( $value, $key ) {
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['l'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['l'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['lowercase'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['strtolower'] ) 
+		){
 
 			// h::log( 'e:>Variable tag lowercaseping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
@@ -52,7 +56,11 @@ class lowercase extends willow\filter {
 		// h::log( self::$args );
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['l'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['global']['l'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['lowercase'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['strtolower'] ) 
+		){
 
 			// h::log( 'e:>Global tag lowercaseping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 

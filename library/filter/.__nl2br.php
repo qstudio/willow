@@ -35,7 +35,10 @@ class nl2br extends willow\filter {
 		// h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['n'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['global']['n'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['nl2br'] ) 
+		){
 
 			// h::log( 'e:>Global string escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
@@ -57,7 +60,10 @@ class nl2br extends willow\filter {
 		// h::log( 'Key: '.$key );
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['n'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['n'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['nl2br'] ) 
+		){
 
 			// h::log( 'd:>Variable escaping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 

@@ -4,6 +4,7 @@ namespace q\willow;
 
 use q\willow;
 use q\willow\core;
+use q\willow\filter;
 use q\willow\core\helper as h;
 
 class flags extends willow\parse {
@@ -32,7 +33,6 @@ class flags extends willow\parse {
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			
 			$fla_o = strpos( $string, trim( willow\tags::g( 'fla_o' )) );
 			$fla_c = strrpos( $string, trim( willow\tags::g( 'fla_c' )) );
 			/*
@@ -51,7 +51,7 @@ class flags extends willow\parse {
 			return $return_string;
 			*/
 
-			h::log( self::$args['task'].'~>n:>Found opening fla_o @ "'.$fla_o.'" and closing fla_c @ "'.$fla_c.'"'  ); 
+			// h::log( 'd:>Found opening fla_o @ "'.$fla_o.'" and closing fla_c @ "'.$fla_c.'"'  ); 
 
 			return true;
 
@@ -83,6 +83,8 @@ class flags extends willow\parse {
 
 		}
 
+		// h::log( $string );
+
 		// sanity ##
 		if(
 			core\method::starts_with( $string, trim( willow\tags::g( 'fla_o' ) ) )
@@ -97,63 +99,51 @@ class flags extends willow\parse {
 				)
 			);
 
-			// h::log( 'd:>FOUND flags in string: '.$string );
-			// h::log( $flags );
+			// prepare filters ##
+			$flags_array = filter\method::prepare([ 'filters' => $flags, 'use' => $use ] );
+			
+			// h::log( $flags_array );
 
-			// assign flags based on use-case ##
+			// assign filters based on use-case ##
 			switch( $use ) {
 
 				default :
 				case "willow" :
 
-					// h::log( 'd:>Preparing flags for tag' );
-					self::$flags_willow = str_split( $flags );
-					self::$flags_willow = array_fill_keys( self::$flags_willow, true );
-					// h::log( self::$flags );
+					self::$flags_willow = $flags_array;
 
 				break ;
 
 				case "php_function" :
 
-					// h::log( 'd:>Preparing flags for tag' );
-					self::$flags_function = str_split( $flags );
-					self::$flags_function = array_fill_keys( self::$flags_function, true );
-					// h::log( self::$flags );
+					self::$flags_function = $flags_array;
 
 				break ;
 
 				case "comment" :
 
-					// h::log( 'd:>Preparing flags for tag' );
-					self::$flags_comment = str_split( $flags );
-					self::$flags_comment = array_fill_keys( self::$flags_comment, true );
-					// h::log( self::$flags );
+					self::$flags_comment = $flags_array;
 
 				break ;
 
 				case "variable" :
 
-					// h::log( 'd:>Preparing flags for tag' );
-					self::$flags_variable = str_split( $flags );
-					self::$flags_variable = array_fill_keys( self::$flags_variable, true );
-					// h::log( self::$flags );
+					self::$flags_variable = $flags_array;
 
 				break ;
 
 				case "argument" :
 
-					// h::log( 'd:>Preparing flags_args for argument' );
-					self::$flags_argument = str_split( $flags );
-					self::$flags_argument = array_fill_keys( self::$flags_argument, true );
-					// h::log( self::$flags );
+					self::$flags_argument = $flags_array;
 
 				break ;
 
 			}
 
+			// get entire string, with tags ##
 			$flags_all = core\method::string_between( $string, trim( willow\tags::g( 'fla_o' ) ), trim( willow\tags::g( 'fla_c' ) ), true );
 
-			// remove flags ##
+			// remove flags from passed string ##
 			$string = str_replace( $flags_all, '', $string );
 
 			// kick it back ##

@@ -13,7 +13,7 @@
  * Plugin Name:     Q Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
- * Version:         1.2.4
+ * Version:         1.3.0
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -40,7 +40,7 @@ if ( ! class_exists( 'q_willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.2.4';
+        const version = '1.3.0';
         const text_domain = 'q-willow'; // for translation ##
 		
 		protected static
@@ -61,9 +61,9 @@ if ( ! class_exists( 'q_willow' ) ) {
 
 			$output 	= null, // return string ##
 			$fields 	= null, // array of field names and values ##
+			$fields_map = [], // field map for variables which are altered by filters ##
 			$markup 	= null, // array to store passed markup and extra keys added by formatting ##
 			$log		= null, // tracking array for feedback ##
-			$filter		= null, // post-processing of willows and variables ##
 			$hash 		= null, // willow hash log, with data about calling method ##
 
 			// default args to merge with passed array ##
@@ -168,13 +168,8 @@ if ( ! class_exists( 'q_willow' ) ) {
 				'term_parent',
 				'term_count'
 
-			]
+			],
 			
-		;
-
-		// tags ##
-		protected static 
-
 			/* define template delimiters */
 			// based on Mustache, but not the same... https://github.com/bobthecow/mustache.php/wiki/Mustache-Tags
 			$tags = [
@@ -239,7 +234,48 @@ if ( ! class_exists( 'q_willow' ) ) {
 					'close' 	=> ' !}', // close ##
 				],
 
-			]
+			],
+
+			// post-processing of tags and variables ##
+			$filter		= null, // array that holds all collected filters to be processed ##
+
+			// list of allowed filters ##
+			// used in tags like [ escape:html, format:uppercase ] can be chained ##
+			$filters 	= [
+				'escape' 				=> [
+					'html' 				=> 'esc_html',
+					'attr' 				=> 'esc_attr',
+					'url' 				=> 'esc_url',
+					'urlraw' 			=> 'urlraw',
+					'urlencode' 		=> 'urlencode',
+					'js' 				=> 'esc_js',
+					'textarea' 			=> 'esc_textarea'
+				],
+				'format'				=> [
+					'uppercase' 		=> 'strtoupper',
+					'lowercase' 		=> 'strtolower',
+					'strip_tags' 		=> 'strip_tags',
+					'nl2br' 			=> 'nl2br',
+					'wpautop'			=> 'wpautop',
+					'intval'			=> 'intval',
+					'absint'			=> 'absint',
+				],
+				'sanitize'				=> [
+					'title_with_dashes' => 'sanitize_title_with_dashes',
+					'title' 			=> 'sanitize_title',
+					'email' 			=> 'sanitize_email',
+					'key' 				=> 'sanitize_key',
+					'file_name'			=> 'sanitize_file_name',
+					'html_class'		=> 'sanitize_html_class',
+					'text_field'		=> 'sanitize_text_field',
+					'text_field'		=> 'sanitize_text_field',
+					'user'				=> 'sanitize_user',
+				]
+			], 
+
+			// load filters once, with callback filter to allow for changes - this property tracks the load status ##
+			$filters_filtered = false
+			// $filter_hash
 
 		;
 

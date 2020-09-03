@@ -28,7 +28,11 @@ class uppercase extends willow\filter {
 	public static function variable( $value, $key ) {
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['u'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['u'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['uppercase'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$key]['strtoupper'] ) 
+		){
 
 			// h::log( 'e:>Variable tag uppercaseping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 
@@ -52,7 +56,11 @@ class uppercase extends willow\filter {
 		// h::log( self::$args );
 
 		// global first ##
-		if( isset( self::$filter[self::$args['context']][self::$args['task']]['global']['u'] ) ){
+		if( 
+			isset( self::$filter[self::$args['context']][self::$args['task']]['global']['u'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['uppercase'] ) 
+			|| isset( self::$filter[self::$args['context']][self::$args['task']]['global']['strtoupper'] ) 
+		){
 
 			// h::log( 'e:>Global tag uppercaseping on: '.self::$args['context'].'->'.self::$args['task'].'->'.$key );
 

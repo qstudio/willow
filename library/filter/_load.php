@@ -29,22 +29,29 @@ class filter extends \q_willow  {
     public static function load()
     {
 
-		// h::log( 't:>TODO - filter extension method, like context registration...' );
+		// filter methods ##
+		require_once self::get_plugin_path( 'library/filter/method.php' );
 
-		// escape ##
-		require_once self::get_plugin_path( 'library/filter/escape.php' );
+		// apply filters ##
+		require_once self::get_plugin_path( 'library/filter/apply.php' );
+
+		// format string, such as lowercase, uppercase, nl2br etc ---> format:uppercase ##
+		// require_once self::get_plugin_path( 'library/filter/format.php' );
+
+		// sanitization functions to convert strings to safe keys etc ---> sanitize:key ##
+		// require_once self::get_plugin_path( 'library/filter/sanitize.php' );
 
 		// lowercase ##
-		require_once self::get_plugin_path( 'library/filter/lowercase.php' );
+		// require_once self::get_plugin_path( 'library/filter/lowercase.php' );
 
 		// uppercase ##
-		require_once self::get_plugin_path( 'library/filter/uppercase.php' );
+		// require_once self::get_plugin_path( 'library/filter/uppercase.php' );
 
 		// strip tags ##
-		require_once self::get_plugin_path( 'library/filter/strip.php' );
+		// require_once self::get_plugin_path( 'library/filter/strip.php' );
 
 		// nl2br ##
-		require_once self::get_plugin_path( 'library/filter/nl2br.php' );
+		// require_once self::get_plugin_path( 'library/filter/nl2br.php' );
 			
 	}
 	

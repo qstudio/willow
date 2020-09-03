@@ -39,7 +39,7 @@ class loops extends willow\parse {
 	/**
 	 * Format single loop
 	 * 
-	 * @since 4.1.0
+	 * @since 1.0.0
 	*/
 	public static function format( $match = null, $position = null, $process = 'internal' ){
 
@@ -72,7 +72,7 @@ class loops extends willow\parse {
 		self::$loop = core\method::string_between( $match, $loop_open, $loop_close );
 		self::$position = $position;
 
-		// get field + markup .... HMM ##, this will not work with embedded args
+		// get field + markup .... HMM ##, this might not work with embedded args
 		self::$loop_field = core\method::string_between( $match, $scope_open, $scope_close );
 		self::$loop_markup = core\method::string_between( $match, $scope_close, $loop_close );
 
@@ -106,14 +106,14 @@ class loops extends willow\parse {
 		// self::$args[$field] = $markup;
 		self::$markup[self::$loop_hash] = self::$loop_markup;
 
-		// BREAK -- we might need to check for isset ( markup->field ) ++ markup-> template if not create -- template +
-
 		// finally -- add a variable "{{ $loop_field }}" before this block at $position to markup->template ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_hash, 'close' => 'var_c' ]);
 		// parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
 
-		// MOVED to swap method ##
+		// swap method ##
 		parse\markup::swap( self::$loop_match, $variable, 'loop', 'variable', $process ); 
+
+		// h::log( 'd:>variable: "'.$variable.'"' );
 
 		// clear slate ##
 		self::reset();
@@ -148,7 +148,7 @@ class loops extends willow\parse {
 			$loo_o = strpos( $string, trim( willow\tags::g( 'loo_o' )) );
 			$loo_c = strrpos( $string, trim( willow\tags::g( 'loo_c' )) );
 
-			h::log( self::$args['task'].'~>d:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			// h::log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
@@ -170,6 +170,66 @@ class loops extends willow\parse {
 		return false;
 
 	}
+
+
+
+	/**
+	 * Check if passed string includes a {: scope :} 
+	*/
+	public static function scope( $string = null ){
+
+		// sanity ##
+		if(
+			is_null( $string )
+		){
+
+			h::log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		// h::log( '$string: '.$string  );
+
+		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		if(
+			strpos( $string, trim( willow\tags::g( 'sco_o' )) ) !== false
+			&& strpos( $string, trim( willow\tags::g( 'sco_c' )) ) !== false
+			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
+		){
+
+			// $sco_o = strpos( $string, trim( willow\tags::g( 'sco_o' )) );
+			// $sco_c = strrpos( $string, trim( willow\tags::g( 'sco_c' )) );
+
+			// h::log( 'd:>Found opening sco_o & closing sco_c'  ); 
+
+			$scope = core\method::string_between( $string, trim( willow\tags::g( 'sco_o' )), trim( willow\tags::g( 'sco_c' )) );
+			$scope = trim( $scope );
+
+			/*
+			// get string between opening and closing args ##
+			$scope = substr( 
+				$string, 
+				( $sco_o + strlen( trim( willow\tags::g( 'sco_o' ) ) ) ), 
+				( $sco_c - $sco_c - strlen( trim( willow\tags::g( 'sco_c' ) ) ) ) ); 
+
+			// $return_string = willow\tags::g( 'loo_o' ).$return_string.willow\tags::g( 'loo_c' );
+			*/
+
+			// h::log( 'd:>$scope: "'.$scope.'"' );
+
+			// kick back ##
+			return $scope;
+
+			// return true;
+
+		}
+
+		// no ##
+		return false;
+
+	}
+
 
 
 

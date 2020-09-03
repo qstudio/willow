@@ -3,7 +3,7 @@
 **Tags:** Simple, logic-less, procedural semantic markup language  
 **Requires at least:** 5.0  
 **Tested up to:** 5.5  
-**Stable tag:** 1.2.4    
+**Stable tag:** 1.3.0    
 **License:** GPL2  
 
 Willow ~ A logic-less template engine built for ACF and WordPress.

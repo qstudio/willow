@@ -46,6 +46,8 @@ class fields extends willow\render {
         ]); 
 
 		// h::log( self::$fields );
+		// h::log( self::$fields_map );
+		// h::log( 'hash: '.self::$args['config']['hash'] );
 
         // start loop ##
         foreach ( self::$fields as $field => $value ) {
@@ -73,7 +75,7 @@ class fields extends willow\render {
             ]); 
 
             // Callback methods on specified field ##
-            // Note - field includes a list of standard callbacks, which can be extended via the filter q/render/callbacks/get ##
+            // Note - field includes a list of standard callbacks, which can be extended via the filter q/willow/render/callbacks/get ##
             $value = render\callback::field( $field, $value );
 
             // h::log( 'd:>After callback -- field: '.$field .' With Value:' );
@@ -91,47 +93,118 @@ class fields extends willow\render {
             // Format each field value based on type ( int, string, array, WP_Post Object ) ##
             // each item is filtered as looped over -- q/render/field/GROUP/FIELD - ( $args, $fields ) ##
             // results are saved back to the self::$fields array in String format ##
-            render\format::field( $field, $value );
-
-        }
+			render\format::field( $field, $value );
+			
+		}
+		
+		// push in new duplicate fields from field_map, required for unique filters on variables ##
+		// self::map();
 
         // filter all fields ##
         self::$fields = core\filter::apply([ 
             'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
             'filter'        => 'q/willow/render/fields/prepare/after/fields/'.self::$args['task'], // filter handle ##
             'return'        => self::$fields
-        ]); 
+		]); 
 
     }
 
+
+
+	/**
+	 * dupliate fields, for unique filters 
+	 * these fields should then run in the next loop, adding required markup ##
+	 * 
+	 * @since 	1.2.0
+	 * @return 	void
+	 * 
+	*/
+	public static function map(){
+
+		// h::log( self::$fields_map );
+		// h::log( 'hash: '.self::$args['config']['hash'] );
+
+		// start loop ##
+		foreach ( self::$fields as $field => $value ) {
+
+			if( false !== strpos( $field, '.' ) ) {
+			
+				$field_array = explode( '.', $field );
+				$find_field = end( $field_array );
+			
+			} else {
+
+				$find_field = $field ;
+
+			}
+			
+			// h::log( 'Search for: '.$field.' in fields_map' );
+
+			if( 
+				self::$fields_map
+				&& is_array( self::$fields_map )
+				&& core\method::array_key_exists( self::$fields_map, $find_field )
+			){
+
+				// h::log( 'Found: '.$find_field.' in fields_map' );
+
+				if( ! is_array( self::$fields_map[ self::$args['config']['hash'] ][ $find_field ] ) ){
+
+					// h::log( $find_field.' in fields_maps is not an array, so continuing...' );
+
+				} else {
+
+					foreach( self::$fields_map[ self::$args['config']['hash'] ][ $find_field ] as $map_key => $map_value ){
+
+						// h::log( 'map_value: '.$map_value );
+						// h::log( '$find_field: '.$find_field );
+						// h::log( self::$args );
+
+						// work out correct key to insert ##
+						// table_of_contents_repeater.0.row_title + row_title.yYdObM5Omk = table_of_contents_repeater.0.row_title.yYdObM5Omk
+
+						$new_key = $field.str_replace( $find_field, '', $map_value );
+
+						// h::log( 'New Key: '.$new_key );
+
+						// assign existing key value to new key ##
+						self::$fields[$new_key] = $value;
+
+						// h::log( self::$markup['template'] );
+
+						// the problem is that we have added new data fields, but not affected the markup
+						// either the main template of specific field for loops... 
+						/*
+						$variable_hash_replace = str_replace( $variable, $variable_hash, $args['variable'] ); 
+						$args['tag'] = str_replace( $args['variable'], $variable_hash_replace, $args['tag'] );
+						// h::log( $args['tag'] );
+
+						// variable replacement string ##
+						$variable_replace = str_replace( $variable, $variable_hash, $args['variable'] );
+						// h::log( '$variable_replace: '.$variable_replace );			
+
+						// alter buffer_map ##
+						self::$buffer_map[0] = str_replace( $args['variable'], $variable_replace, self::$buffer_map[0] );
+						*/
+
+					}
+
+				}
+
+			}
+
+		}
+
+		// h::log( self::$fields );
+		
+	}
 
 
 	
 	/**
 	 * Define $fields args for render methods
 	 * 
-	 * @since 4.0.0
-	 * 
-	*/
-	/*
-	context->task hits a function, it might return:
-	- false
-	- null
-	- empty array
-	- string
-	- int
-	- good array
-	- etc...
-
-	HOW DO WE KNOW WHAT IS GOOD DATA ??
-		- this method requires an array of data - at least key->value and also MD arrays ##
-
-	This method is hit twice:
-		- once to gather validate data from context->ui method and push into self::$fields ( ginstigated by parse/willows )
-		- a second time from the buffer[$hash] as it iterates over keys from {{ variables }} in the markup 
-
-	WHY DO BAD REQUESTS RETURN THE BUFFER ID??
-		- they don't, that is the second buffer hit looking for data ##
+	 * @since 1.0.0
 	*/
 	public static function define( $args = null ){
 
@@ -296,86 +369,6 @@ class fields extends willow\render {
 		return true;
 
 	}	
-
-
-	/*
-	// escape variables, not entire values ##
-	public static function escape( $field = null, $value = null ) {
-
-		// sanity ##
-		if(
-			is_null( $field )
-			|| is_null( $value )
-		){
-
-			h::log( 'e:>Error in passed arguments' );
-
-			return false;
-
-		}
-
-		// h::log( self::$args );
-
-		// return $value;
-
-		// @TODO -- this needs to be applied to some data, but not all, as ACF fields, for examples, are already escaped ##
-		if ( isset( self::$args['process'][$field]['escape'] ) ){
-
-			h::log( 'd:>escaping field: '.$field );
-			h::log( $value );
-
-			// $field_variables = willow\parse\markup::get( $value, 'variable' );
-
-			if ( 
-				$field_variables = parse\markup::get( $value, 'variable' ) 
-			){
-
-				h::log( $field_variables );
-
-				// $return_value = '';
-
-				// foreach( $field_variables as $variable_key => $variable_value ){
-
-
-
-				// }
-
-			}
-
-			$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
-			$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-		}
-
-		return $value;
-
-	}
-
-
-
-	// @todo - escape ## per call, or globally ## ??
-	public static function strip( $field = null, $value = null ) {
-
-		// sanity ##
-
-		// h::log( self::$args );
-
-		// return $value;
-
-		if ( isset( self::$args['process'][$field]['strip'] ) ){
-
-			// h::log( 'd:>stripping tags from value: '.$value );
-
-			$value = strip_tags( $value );
-			// $value = htmlentities( $value, ENT_QUOTES, 'UTF-8' ); 
-
-		}
-
-		return $value;
-
-	}
-	*/
-
 
     
     /**

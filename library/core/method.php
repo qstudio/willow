@@ -911,4 +911,85 @@ class method extends \q_willow {
 	}
 
 
+	/**
+	 * Make a nice hash ( of it.. )
+	 * 
+	 * @since 	1.2.0
+	 * @return 	String
+	*/
+	public static function hash( $length = 10 ){
+			
+		$token = "";
+		$codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+		$codeAlphabet.= "0123456789";
+		$max = strlen($codeAlphabet); // edited
+
+		for ($i=0; $i < $length; $i++) {
+			$token .= $codeAlphabet[ self::hash_helper( 0, $max-1 ) ];
+		}
+
+		return $token;
+
+	}
+
+
+	/**
+	 * Hash Helper
+	 * 
+	 * @since 	1.2.0
+	 * @return 	String
+	*/
+	public static function hash_helper( $min, $max ){
+
+		$range = $max - $min;
+		if ($range < 1) return $min; // not so random...
+		$log = ceil(log($range, 2));
+		$bytes = (int) ($log / 8) + 1; // length in bytes
+		$bits = (int) $log + 1; // length in bits
+		$filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+		do {
+			$rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+			$rnd = $rnd & $filter; // discard irrelevant bits
+		} while ($rnd > $range);
+
+		return $min + $rnd;
+
+	}
+
+
+
+	
+	/**
+	 * Check is key_exists in MD array
+	 * 
+	 * @since 	1.2.0
+	 * @return	Boolean
+	*/
+	public static function array_key_exists( array $array, $key ){
+
+		// is in base array?
+		if ( array_key_exists( $key, $array ) ) {
+			return true;
+		}
+	
+		// check arrays contained in this array
+		foreach ( $array as $element ) {
+
+			if ( is_array( $element ) ) {
+
+				if ( self::array_key_exists( $element, $key ) ) {
+
+					return true;
+
+				}
+			
+			}
+	
+		}
+	
+		return false;
+	}
+	
+
 }

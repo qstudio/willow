@@ -1,3 +1,7 @@
+### 1.3.0 ###
+
+* Formatting flags replaced with extensible filters - https://github.com/qstudio/q-willow/wiki/Tags-Flag
+
 ### 1.2.4 ###
 
 * New: {{ [u] Uppercase }} and {{ [l] Lowercase }} filters for variables and strings

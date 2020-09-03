@@ -44,37 +44,12 @@ class markup extends willow\render {
         // h::log( self::$fields );
 		// h::log( self::$markup );
 		
-		// pre-format markup to extract comments ##
-		// self::comments();
-
         // new string to hold output ## 
 		$string = self::$markup['template'];
+		// $string = core\method::string_between( self::$args['config']['tag'], trim( willow\tags::g( 'arg_o' )), trim( willow\tags::g( 'arg_c' )) );
 
-		// h::log( $string );
-
-		// willow\flags::cleanup( null, 'internal' );
-
-		// h::log( $string );
-		/*
-		$open = trim( willow\tags::g( 'fla_o' ) );
-		$close = trim( willow\tags::g( 'fla_c' ) );
-
-		// strip all function blocks, we don't need them now ##
-		$regex = \apply_filters( 
-			'q/willow/parse/flags/cleanup/regex', 
-			// "\\$open(.*?)\\$close"
-			"/\\$open.*?\\$close/"
-			// "~\\$open\s+(.*?)\s+\\$close~"   
-			// \[(.*?)\]
-			// '/\[.*?\]/'
-	   	);
-
-		// use callback to allow for feedback ##
-		// $string = preg_replace( $regex, '', $string );
-		*/
-		  
 		// h::log( '$string: '.$string );
-		// h::log( self::$fields );
+		// h::log( self::$args );
 		
         // loop over each field, replacing variables with values ##
         foreach( self::$fields as $key => $value ) {
@@ -160,6 +135,8 @@ class markup extends willow\render {
 			$string = self::string([ 'key' => $key, 'value' => $value, 'string' => $string ]);
 
 		}
+
+		// h::log( self::$fields );
 		
 		// optional wrapper, html passed in markup->wrap with {{ template }} variable ##
 		$string = self::wrap([ 'string' => $string ]);
@@ -438,7 +415,7 @@ class markup extends willow\render {
 		$value = $args['value'];
 		$key = $args['key'];
 
-		// h::log( 'key: "'.$key.'" - value: "'.$value.'"' );
+		// h::log( 'key: "'.$key.'" - value: "'.$value.'" - string: "'.$string.'"' );
 
 		// filter ##
 		$string = core\filter::apply([ 
@@ -446,11 +423,10 @@ class markup extends willow\render {
              'filter'        => 'q/willow/render/markup/string/before/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
-		
-		// h::log( 'd:>$string: '.$string );
 
 		// key might be in object.iterator.property format - we only need the property for filters ##
 		$filter_key = $key;
+		// $regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		if( false !== strpos( $key, '.' ) ){ 
 		
 			$filter_keys = explode( '.', $key ); 
@@ -458,21 +434,114 @@ class markup extends willow\render {
 			// h::log( $filter_keys );
 			
 			$filter_key = end( $filter_keys ); 
+
+			// $regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$filter_key\s*\\$close~" ); 
 		
 		}
 
-		// h::log( 'e:>Filter Key: '.$filter_key );
+		// h::log( 'e:>Filter Key: '.$filter_key.' ~ '.$key );
+		// h::log( self::$fields );
+
+		// filters ##
+		// we need to find each {{ variable }} in the passed string which matches the current "key"
+		if ( 
+            $variables = parse\markup::get( $string, 'variable' ) 
+        ) {
+
+			// check variables ##
+			// h::log( $variables );
+
+			foreach( $variables as $var_key => $var_value ){
+
+				// strip filter flags ##
+				$filters = core\method::string_between( $var_value, trim( willow\tags::g( 'fla_o' )), trim( willow\tags::g( 'fla_c' )), true );
+
+				// h::log( '$filters: '.$filters );
+
+				if( ! $filters ){
+
+					// h::log( 'd:>No filters found in variable: '.$var_value );
+
+					continue;
+
+				}
+
+				// strip variable tags ##
+				$raw_var_value = str_replace( [ $filters, trim( willow\tags::g( 'var_o' )), trim( willow\tags::g( 'var_c' )) ], '', $var_value );
+
+				// clean up - with trim ##
+				$raw_var_value = trim( $raw_var_value );
+
+				// h::log( 'd:>$raw_var_value: "'.$raw_var_value.'"' );
+
+				// check if raw_var_value matches current $key - if not, skip ##
+				if( $raw_var_value != $key ){
+
+					// h::log( 'd:>$raw_var_value != $key: '.$raw_var_value .' - '.$key );
+
+					continue;
+
+				}
+
+				// grab filters again, this time without tags ##
+				$filters = core\method::string_between( $var_value, trim( willow\tags::g( 'fla_o' )), trim( willow\tags::g( 'fla_c' )), false );
+
+				// h::log( $filters );
+
+				// get filters ##
+				$filters = willow\filter\method::prepare([ 'filters' => $filters ]);
+
+				// h::log( $filters );
+
+				// store pre-filter value ##
+				$pre_value = $value; 
+
+				// run filters ##
+				$filter_value = willow\filter\method::apply([ 
+					'filters'	=> $filters,
+					'string' 	=> $value, 
+					'use' 		=> 'variable', // for filters ##
+				]);
+
+				// compare pre and post filter values ##
+				if( $filter_value != $pre_value ){
+
+					// h::log( 'd:>Filtered value is different: '.$filter_value );
+					// h::log( 'd:>Replace: "'.$var_value.'" with "'.$filter_value.'"' );
+
+					// run unique str_replace on whole variable ##
+					$string = str_replace( $var_value, $filter_value, $string );
+
+				}
+
+			}
+
+		}
 
 		// filter variable ##
-		$value = apply_filters( 'q/willow/render/markup/variable', $value, $filter_key );
+		// $pre_filter = $value;
+		// instead of a filter, let's run this directly as a command ##
+		// $value = apply_filters( 'q/willow/render/markup/variable', $value, $filter_key );
+		/*
+		$value = willow\filter\method::apply([ 
+			'string' 	=> $value, 
+			'use' 		=> 'variable', // for filters ##
+		]);
+		*/
+		// if ( $value != $pre_filter ) h::log( 'value after filter: '.$value );
+		// h::log( 'string before regex: '.$string );
 
 		// variable replacement -- regex way ##
 		$open = trim( willow\tags::g( 'var_o' ) );
 		$close = trim( willow\tags::g( 'var_c' ) );
+
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
 		$regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		
+		// REGEX respects flags in {{ [flags] variable }} - so, the whole variable is replaced with $value ##
 		$string = preg_replace( $regex, $value, $string ); 
+
+		// h::log( 'string after regex: '.$string );
 
 		// filter ##
 		$string = core\filter::apply([ 
@@ -481,7 +550,7 @@ class markup extends willow\render {
              'return'        => $string
 		]); 
 
-		// filter markup ##
+		// filter whole tag markup, filters are extraced earlier from the {~ Willow ~} ##
 		$string = apply_filters( 'q/willow/render/markup/tag', $string, $filter_key );
 
 		// return ##
@@ -608,8 +677,8 @@ class markup extends willow\render {
         // h::log( 'Update template markup for field: '.$field.' @ count: '.$count );
 
         // look for required markup ##
-        // if ( ! isset( self::$args[$field] ) ) {
 		// h::log( self::$markup );
+		// h::log( '$field: '.$field );
 		if ( ! isset( self::$markup[$field] ) ) {
 
 			// log ##
@@ -655,7 +724,10 @@ class markup extends willow\render {
         }
 
         // test ##
-        // helper::log( $variables );
+		// helper::log( $variables );
+		
+		// h::log( self::$fields_map );
+		// h::log( 'hash: '.self::$args['config']['hash'] );
 
         // iterate over {{ variables }} adding prefix ##
         $new_variables = [];
@@ -663,7 +735,7 @@ class markup extends willow\render {
 
 			// h::log( 'Working variable: '.$value );
 			// h::log( 'variable_open: '.willow\tags::g( 'var_o' ) );
-
+			/*
 			$open = trim( willow\tags::g( 'fla_o' ) );
 			$close = trim( willow\tags::g( 'fla_c' ) );
 
@@ -676,6 +748,30 @@ class markup extends willow\render {
 			);
 
 			$value = preg_replace( $regex_flags, "", $value ); 
+			*/
+
+			// get flags ##
+			$flags = ''; // nada ##
+			
+			if(
+				core\method::string_between( $value, trim( willow\tags::g( 'fla_o' ) ), trim( willow\tags::g( 'fla_c' ) ) )
+			){
+
+				// store flags ##
+				$flags = trim(
+					core\method::string_between( 
+						$value, 
+						trim( willow\tags::g( 'fla_o' ) ), 
+						trim( willow\tags::g( 'fla_c' ) ) 
+					)
+				);
+
+				$flags = willow\tags::g( 'fla_o' ).$flags.willow\tags::g( 'fla_c' ).' ';
+
+				// remove flags
+				$value = str_replace( $flags, "", $value ); 
+
+			}
 
 			// h::log( 'Flagless variable: '.$value );
 
@@ -686,9 +782,10 @@ class markup extends willow\render {
 				willow\tags::g( 'var_c' ),
 				trim( willow\tags::g( 'var_c' ) )
 			];
+
 			// new variable ##
-			// h::log( 't:>todo.. make this new field name more reliable' );
-			$new = willow\tags::g( 'var_o' ).trim($field).'.'.trim($count).'.'.trim( str_replace( $array_replace, '', trim($value) ) ).willow\tags::g( 'var_c' );
+			// WHAT about flags... flags in the original markup will not be added here ##
+			$new = willow\tags::g( 'var_o' ).$flags.trim($field).'.'.trim($count).'.'.trim( str_replace( $array_replace, '', trim($value) ) ).willow\tags::g( 'var_c' );
 
 			/*
 			WAS

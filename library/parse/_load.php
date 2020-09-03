@@ -50,7 +50,7 @@ class parse extends \q_willow {
 		// markup methods ##
 		require_once self::get_plugin_path( 'library/parse/markup.php' );
 
-		// flags ##
+		// flags - used to indicate filters and pre-processors ##
 		require_once self::get_plugin_path( 'library/parse/flags.php' );
 
 		// find + decode methods for variable + function arguments ##
