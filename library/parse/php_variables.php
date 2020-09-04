@@ -297,7 +297,7 @@ class php_variables extends willow\parse {
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/render/parse/php_variable/cleanup/regex', 
-		 	"/$open.*?$close/ms" 
+		 	"/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|$open.*?$close/ms" 
 		// 	// "/{{#.*?\/#}}/ms"
 		);
 

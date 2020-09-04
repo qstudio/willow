@@ -564,10 +564,11 @@ class willows extends willow\parse {
 		$close = trim( willow\tags::g( 'wil_c' ) );
 
 		// strip all function blocks, we don't need them now ##
-		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
+		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/willow/parse/willows/cleanup/regex', 
-		 	"/$open.*?$close/ms" 
+			"/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <pre>tag</pre> ##
+			//  "/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|{~.*?~}/ms" 
 		);
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 

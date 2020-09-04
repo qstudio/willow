@@ -1,3 +1,7 @@
+### 1.3.2 ###
+
+* Added <pre>tag</pre> exception to regex cleanup of Willow tags, to allow them to be skipped - thanks Wiktor Stribiżew :) https://stackoverflow.com/users/3832970/wiktor-stribi%c5%bcew
+
 ### 1.3.1 ###
 
 * WP_Post object meta properties added to return - available via field_name.meta.meta_field

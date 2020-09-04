@@ -436,7 +436,7 @@ class php_functions extends willow\parse {
 		$open = trim( willow\tags::g( 'php_fun_o' ) );
 		$close = trim( willow\tags::g( 'php_fun_c' ) );
 
-		// h::log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
+		// h::log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
 			'q/willow/parse/php_functions/regex/find', 
@@ -501,7 +501,7 @@ class php_functions extends willow\parse {
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/render/parse/php_functions/cleanup/regex', 
-		 	"/$open.*?$close/ms" 
+		 	"/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|$open.*?$close/ms" 
 		// 	// "/{{#.*?\/#}}/ms"
 		);
 
