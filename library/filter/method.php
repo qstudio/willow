@@ -49,7 +49,7 @@ class method extends \q_willow {
 			false === strpos( $args['filters'], ':' ) 
 		){
 
-			h::log( 'd:>No ":" in string, so presuming single letter filter, such as "a", "b", or "r"' );
+			// h::log( 'd:>No ":" in string, so presuming single letter filter, such as "a", "b", or "r"' );
 
 			// split single characters into an array ##
 			$split = str_split( $args['filters'] ) ;

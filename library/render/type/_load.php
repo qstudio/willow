@@ -32,6 +32,9 @@ class type extends willow\render {
 		// post fields ##
 		require_once self::get_plugin_path( 'library/render/type/post.php' );
 
+		// meta ## ##
+		require_once self::get_plugin_path( 'library/render/type/meta.php' );
+
 		// author fields ##
 		require_once self::get_plugin_path( 'library/render/type/author.php' );
 

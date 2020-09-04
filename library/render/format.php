@@ -555,6 +555,14 @@ class format extends willow\render {
 
 				break ;
 
+				case 'meta' :
+		
+					// h::log( self::$args );
+
+					$string = render\type::meta( $wp_post, $wp_post_field, $field, $context );
+
+				break ;
+
 			}
 
 			if ( is_null( $string ) ) {

@@ -1,3 +1,7 @@
+### 1.3.1 ###
+
+* WP_Post object meta properties added to return - available via field_name.meta.meta_field
+
 ### 1.3.0 ###
 
 * Formatting flags replaced with extensible filters - https://github.com/qstudio/q-willow/wiki/Tags-Flag
