@@ -260,7 +260,7 @@ class partials extends willow\parse {
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
 			'q/willow/parse/partials/cleanup/regex', 
-			"/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|$open.*?$close/ms" 
+			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" 
 		);
 
 		// sanity -- method requires requires ##

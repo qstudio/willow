@@ -567,8 +567,8 @@ class willows extends willow\parse {
 		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/willow/parse/willows/cleanup/regex', 
-			"/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <pre>tag</pre> ##
-			//  "/(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|{~.*?~}/ms" 
+			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <pre>tag</pre> ##
+			//  "/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|{~.*?~}/ms" 
 		);
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 

@@ -143,7 +143,7 @@ class arguments extends willow\parse {
 		$regex = \apply_filters( 
 		 	'q/willow/parse/argument/cleanup/regex', 
 			"~\\$open\s+(.*?)\s+\\$close~"
-			// "~(?s)<pre[^<]*>.*?<\/pre>(*SKIP)(*F)|\\$open\s+(.*?)\s+\\$close~"
+			// "~(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|\\$open\s+(.*?)\s+\\$close~"
 		);
 
 		// sanity -- method requires requires ##
