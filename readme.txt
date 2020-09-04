@@ -7,7 +7,7 @@ Requires PHP: 5.6
 Stable tag: 1.3.1    
 License: GPL2  
 
-Willow ~ A logic-less template engine built for ACF and WordPress.
+Willow ~ A logic-less template engine built for WordPress.
 
 Willow has been designed to meet the needs of both front-end and back-end developers by providing a small, yet powerful set of tags and tools to speed up template development and prototype iteration.
 
