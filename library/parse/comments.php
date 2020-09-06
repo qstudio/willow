@@ -186,8 +186,14 @@ class comments extends willow\parse {
 				// h::log( 'd:>comment hash: "'.self::$comment_hash.'"' );
 
 				// html comments are rendered on the UI, so require to add a variable tag to the markup ##
-				if ( 
-					isset( self::$flags_comment['h'] )
+				if( 
+					// isset( self::$flags_comment['h'] )
+					self::$flags_comment
+					&& is_array( self::$flags_comment )
+					&& (
+						in_array( 'html', self::$flags_comment )
+						|| in_array( 'h', self::$flags_comment ) // shortcut to 'html' ##
+					)
 				){
 
 					// add data to buffer map ##
@@ -202,7 +208,13 @@ class comments extends willow\parse {
 				
 				// PHP log ##
 				if ( 
-					isset( self::$flags_comment['p'] )
+					// isset( self::$flags_comment['p'] )
+					self::$flags_comment
+					&& is_array( self::$flags_comment )
+					&& (
+						in_array( 'php', self::$flags_comment )
+						|| in_array( 'p', self::$flags_comment ) // shortcut to 'php' ##
+					)
 				){
 
 					// also, add a log entry ##

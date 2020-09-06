@@ -19,15 +19,15 @@ class parse extends \q_willow {
 
 		// per match flags ##
 		$flags_willow = false,
-		$flags_function = false,
 		$flags_argument = false,
 		$flags_variable = false,
 		$flags_comment = false,
+		$flags_php_function = false,
+		$flags_php_variable = false,
 
 		// $parse_args = false,
 		$parse_context = false,
 		$parse_task = false
-		// $flags_function = false,
 
 	;
 

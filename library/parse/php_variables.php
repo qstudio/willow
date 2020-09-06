@@ -12,7 +12,7 @@ class php_variables extends willow\parse {
 	private static 
 
 		$return,
-		$php_var_hash, 
+		// $php_var_hash, 
 		$php_var,
 		$php_var_match, // full string matched ##
 		$arguments,
@@ -27,8 +27,8 @@ class php_variables extends willow\parse {
 	private static function reset(){
 
 		$return = false; 
-		$php_var_hash = false; 
-		$flags_function = false;
+		// $php_var_hash = false; 
+		$flags_php_variable = false;
 		$php_var = false;
 		$arguments = false;
 		$class = false;
@@ -65,8 +65,9 @@ class php_variables extends willow\parse {
 		// h::log( '$php_var_match: '.$php_var_match );
 
 		// look for flags ##
+		$php_var = flags::get( self::$function, 'php_variable' );
 		// $php_var = flags::get( $php_var, 'function' );
-		// h::log( $flags_function );
+		// h::log( self::$flags_php_variable );
 		// h::log( $php_var );
 
 		// clean up ##
@@ -122,16 +123,50 @@ class php_variables extends willow\parse {
 		// $_POST ##
 		} elseif( false !== strpos( $php_var, '$_POST' ) ){
 
-			h::log( 'e:>IS a poster..' );
+			h::log( 'e:>Willow does not return $_POST data to templates, use a PHP controller instead.' );
 
 		// $_REQUEST ?? needed? ##
 		} elseif( false !== strpos( $php_var, '$_REQUEST' ) ){
 
-			h::log( 'e:>IS a requester..' );
+			h::log( 'e:>Willow does not return $_REQUEST data to templates, use a PHP controller instead.' );
 
 		}
 
 		if( $return ) {
+
+			// filter ##
+			// h::log( self::$flags_php_variable );
+			if( 
+				self::$flags_php_variable
+				&& is_array( self::$flags_php_variable )
+			){
+
+				// h::log( self::$flags_php_variable );
+				// h::log( self::$return );
+				// bounce to filter::apply() ##
+				$filter_return = filter\method::apply([ 
+					'filters' 	=> self::$flags_php_variable, 
+					'string' 	=> self::$return, 
+					'use' 		=> 'php_function', // for filters ##
+				]);
+
+				// h::log( $filter_return );
+
+				// check if filters changed value ##
+				if( 
+					$filter_return // return set ##
+					&& '' != $filter_return // not empty ##
+					&& $filter_return != self::$return // value chaged ##
+				){
+
+					h::log( 'd:>php_function fitlers changed value: '.$filter_return );
+
+					// update class property ##
+					self::$return = $filter_return;
+
+				}
+
+			}
 
 			// h::log( 'hash set to: '.$php_var_hash );
 

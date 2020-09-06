@@ -33,8 +33,8 @@ class flags extends willow\parse {
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			$fla_o = strpos( $string, trim( willow\tags::g( 'fla_o' )) );
-			$fla_c = strrpos( $string, trim( willow\tags::g( 'fla_c' )) );
+			// $fla_o = strpos( $string, trim( willow\tags::g( 'fla_o' )) );
+			// $fla_c = strrpos( $string, trim( willow\tags::g( 'fla_c' )) );
 			/*
 			h::log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
@@ -69,8 +69,8 @@ class flags extends willow\parse {
 
 	Requirements: 
 
-	[seg] = split, escape, global
-	[a] = array
+	[ esc_html, strip_tags ] = split, escape etc ##
+	[ array ] = array
 	*/
 	public static function get( $string = null, $use = 'willow' ){
 
@@ -99,7 +99,7 @@ class flags extends willow\parse {
 				)
 			);
 
-			// prepare filters ##
+			// prepare flags / filters ##
 			$flags_array = filter\method::prepare([ 'filters' => $flags, 'use' => $use ] );
 			
 			// h::log( $flags_array );
@@ -110,17 +110,31 @@ class flags extends willow\parse {
 				default :
 				case "willow" :
 
+					// @todo - validate that flags are allowed again self::$flags_willows ##
+
 					self::$flags_willow = $flags_array;
 
 				break ;
 
 				case "php_function" :
 
-					self::$flags_function = $flags_array;
+					// @todo - validate that flags are allowed again self::$flags_php ##
+
+					self::$flags_php_function = $flags_array;
+
+				break ;
+
+				case "php_variable" :
+
+					// @todo - validate that flags are allowed again self::$flags_php ##
+
+					self::$flags_php_variable = $flags_array;
 
 				break ;
 
 				case "comment" :
+
+					// @todo - validate that flags are allowed again self::$flags_comment ##
 
 					self::$flags_comment = $flags_array;
 
@@ -128,11 +142,15 @@ class flags extends willow\parse {
 
 				case "variable" :
 
+					// varialbe flags are validated just before they are applied ##
+
 					self::$flags_variable = $flags_array;
 
 				break ;
 
 				case "argument" :
+
+					// @todo - validate that flags are allowed again self::$flags_argument ##
 
 					self::$flags_argument = $flags_array;
 

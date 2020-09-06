@@ -61,8 +61,7 @@ class arguments extends willow\parse {
 		// trim string ##
 		self::$string = trim( self::$string );
 
-		// check for "<" at start and ">" at end ##
-		// @todo - move to flags check for [a]
+		// flags check for [a]
 		self::$string = flags::get( self::$string, 'argument' );
 		// h::log( self::$flags_argument );
 		if( 

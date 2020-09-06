@@ -14,9 +14,6 @@ class apply extends willow\filter {
 
 	public static function __run(){
 
-		// filter variable ##
-		// \add_filter( 'q/willow/render/markup/variable', [ get_class(), 'variable' ], 10, 2 );
-
 		// filter tag ##
 		\add_filter( 'q/willow/render/markup/tag', [ get_class(), 'tag' ], 10, 2 );
 
@@ -35,8 +32,8 @@ class apply extends willow\filter {
 
 		// check for tag filter ##
 		if( 
-			isset( self::$filter[ self::$args['config']['hash'] ]['tag'] )
-			&& is_array( self::$filter[ self::$args['config']['hash'] ]['tag'] )
+			isset( self::$filter[ self::$args['config']['hash'] ] )
+			&& is_array( self::$filter[ self::$args['config']['hash'] ] )
 		){
 
 			// h::log( 'e:>Filters set for Willow tag: "{~ '.self::$args['context'].'~'.self::$args['task'].' ~}"' );
@@ -44,7 +41,7 @@ class apply extends willow\filter {
 			// h::log( $value );
 
 			// get filters ##
-			// $filters = filter\method::prepare([ 'filters' => self::$filter[ self::$args['config']['hash'] ]['tag'] ]);
+			// $filters = filter\method::prepare([ 'filters' => self::$filter[ self::$args['config']['hash'] ] ]);
 
 			// h::log( $filters );
 
@@ -53,10 +50,10 @@ class apply extends willow\filter {
 
 			// bounce to filter::apply()
 			$filter_value = filter\method::apply([ 
-				'filters' 	=> self::$filter[ self::$args['config']['hash'] ]['tag'], 
+				'filters' 	=> self::$filter[ self::$args['config']['hash'] ], 
 				'string' 	=> $value, 
 				'use' 		=> 'tag', // for filters ##
-				'key'		=> $key
+				// 'key'		=> $key
 			]);
 
 			// compare pre and post filter values ##
@@ -70,55 +67,6 @@ class apply extends willow\filter {
 				return $filter_value;
 
 			}
-
-			return $value;
-
-		}
-
-		// nothing cooking -- return raw value ##
-		return $value;
-
-	}
-
-
-
-	/**
-	 * Apply filters to single {{ variable }}
-	 * 
-	 * @since 	1.2.0
-	 * @return	String
-	*/
-	public static function variable( $value, $filter_key ) {
-
-		// h::log( self::$filter );
-		// h::log( self::$args );
-		// h::log( 'hash: '.self::$args['config']['hash'] );
-		// h::log( 'Key: '.$key );
-		// h::log( 'Filter Key: '.$filter_key );
-
-		// check for variable tag ##
-		if( 
-			isset( self::$filter[ self::$args['config']['hash'] ]['variable'][ $filter_key ] )
-			&& is_array( self::$filter[ self::$args['config']['hash'] ]['variable'][ $filter_key ] )
-			// isset( self::$filter[self::$args['context']][self::$args['task']]['variables'][$filter_key] ) 
-			// && is_array( self::$filter[self::$args['context']][self::$args['task']]['variables'][$filter_key] ) 
-		){
-
-			// h::log( 'd:>Variable filters set for: "{~ '.self::$args['context'].'~'.self::$args['task'].' ~} -> {{ '.$filter_key.' }}"' );
-			// h::log( 'Key: '.$key );
-			// h::log( 'Filter Key: '.$filter_key );
-			// h::log( '$value: '.$value );
-
-			// bounce to filter::apply()
-			$value = filter\method::apply([ 
-				'filters' 		=> self::$filter[ self::$args['config']['hash'] ]['variable'][ $filter_key ], 
-				'string' 		=> $value, 
-				'use' 			=> 'variable', // for filters ##
-				'filter_key'	=> $filter_key,
-				// 'key'			=> $key
-			]);
-
-			// h::log( '$value: '.$value );
 
 			return $value;
 

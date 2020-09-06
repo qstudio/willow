@@ -21,11 +21,11 @@ class method extends \q_willow {
 	public static function prepare( $args = null ){
 
 		/*
-		One or multiple filters, should always contain ":" key:value delimiter and be delimited into sets by "," comman
+		One or multiple filters, should be delimited into sets by "," comma
 
-		format:strip_tags, escape:html
-		escape:url
-		sanitize:key, format:uppercase
+		strip_tags, esc_html
+		esc_url
+		sanitize_key, strtoupper
 		*/
 
 		// sanity ##
@@ -42,14 +42,16 @@ class method extends \q_willow {
 
 		}
 
-		// h::log( $args['filters'] );
+		// h::log( 'Filters: '.$args['filters'] );
 
+		/*
 		// format check ##
 		if( 
-			false === strpos( $args['filters'], ':' ) 
+			// false === strpos( $args['filters'], ':' ) 
+			1 === strlen( $args['filters'] )
 		){
 
-			// h::log( 'd:>No ":" in string, so presuming single letter filter, such as "a", "b", or "r"' );
+			h::log( 'e:>presuming single letter filter, such as "a", "b", or "r"' );
 
 			// split single characters into an array ##
 			$split = str_split( $args['filters'] ) ;
@@ -64,18 +66,22 @@ class method extends \q_willow {
 			return $array;
 
 		}
+		*/
 
 		// empty array to hold filters ##
-		$array = [];
+		// $array = [];
 
 		// explode at "," comma, into array of key:values ##
-		$explode = explode( ',', $args['filters'] );
+		$array = explode( ',', $args['filters'] );
 
 		// clean up array ##
-		$explode = array_map( 'trim', $explode );
+		$array = array_map( 'trim', $array );
+
+		// fill array keys, set boolean true as value ##
+		// $array = array_fill_keys( $array, true );
 
 		// h::log( $explode );
-		
+		/*
 		foreach( $explode as $key => $value ){
 
 			// sub processor - i.e. "sanitize:key" ) ##
@@ -95,11 +101,12 @@ class method extends \q_willow {
 			}
 
 		}
+		*/
 
 		// h::log( $array );
 
 		// clean up array ##
-		$array = array_map( 'trim', $array );
+		// $array = array_map( 'trim', $array );
 		$array = array_filter( $array );
 
 		// kick back ##
@@ -119,7 +126,7 @@ class method extends \q_willow {
 	* @since 	1.3.0
 	* @return	Boolean
 	*/
-	public static function apply( $args = null ):string {
+	public static function apply( $args = null ) {
 
 		// sanity ##
 		if(
@@ -186,47 +193,50 @@ class method extends \q_willow {
 		}
 
 		/*
-		Filters are stored in an array, with the following format
+		allowed $filters are stored in an array, with the following format
 
 		$filters 	= [
-				'escape' 				=> [
-					'html' 				=> 'esc_html'
-				};
+			'0' => 'esc_html',
+			'1' => 'strtolower'
+			'2' => 'etc'
+		]
 		*/
 
 		// we are passed a string and will return a string ##
 		$return = $args['string'];
 
 		/*
-		$args['filters'] contains an array in the following format:
+		passed $args['filters'] contains an array in the following format:
 
 		Array (
-			[escape] => html
-			[format] => lowercase
+			'0' => 'esc_html',
+			'1' => 'strtolower'
 		)
 		*/
 
-		// h::log( $args['filters'] );
+		// h::log( self::$filters );
 
 		// now, loop over each filter, allow it to be altered ( via apply_filters ) validate it exists and run it
-		foreach( $args['filters'] as $filter_group => $filter_function ) {
+		foreach( $args['filters'] as $function ) {
 
-			// check that requested function is in the allowed list - which has now passed by the load filter also ##
+			// h::log( 'e:>Filter Function: '.$function );
+
+			// check that requested function is in the allowed list - which has now passed by the load filter ##
 			if (
 				// ! is_array( self::$filters[$filter_group] )
 				// || empty( self::$filters[$filter_group] )
-				! core\method::array_key_exists( self::$filters, $filter_group )
-				|| ! core\method::array_key_exists( self::$filters, $filter_function )
+				! in_array( $function, self::$filters )
+				// || ! core\method::array_key_exists( self::$filters, $filter_function )
 			){
 
-				h::log( 'e:>Error. Defined filter is not available "'.$filter_function.'". Skipping' );
+				h::log( 'e:>Error. Defined filter is not available "'.$function.'". Skipping' );
 
 				continue;
 
 			}
 
 			// get function value from $filters matching request ##
-			$function = self::$filters[$filter_group][$filter_function];
+			// $function = self::$filters[$filter_group][$filter_function];
 			// h::log( '$function: '.$function );
 
 			// filter function - allows for replacement by use-case ( tag OR variable ) ##

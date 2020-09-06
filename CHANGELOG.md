@@ -1,3 +1,8 @@
+### 1.3.3 ###
+
+* Update : Standerdization of filters across Willows, variables, php_functions and php_variables
+* Update : Standerdization of flags across comments, arguments, php_functions
+
 ### 1.3.2 ###
 
 * Added <pre>tag</pre> exception to regex cleanup of Willow tags, to allow them to be skipped - thanks Wiktor Stribiżew :) https://stackoverflow.com/users/3832970/wiktor-stribi%c5%bcew

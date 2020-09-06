@@ -112,12 +112,12 @@ class variables extends willow\parse {
 			// h::log( self::$flags_variable );
 
 			// clean up variable ##
-			$variable = trim( $variable );
+			// $variable = trim( $variable );
 
 			// if we do find flags, we need to create a unique variable reference key, to avoid duplicate filters on re-used variables ##
 			// but, at this point, we have no data -- so, we need to set a future-flag for use when filters are applied late on ##
 			// h::log( self::$fields );
-			$variable_hash = $variable.'_'.core\method::hash();
+			// $variable_hash = $variable.'_'.core\method::hash();
 			// h::log( 'Original: '.$variable_original.' --> $args: '.$args['variable'].' --> variable_hash: '.$variable_hash );
 
 			// h::log( 'Willow Hash: '.$args['hash'] );

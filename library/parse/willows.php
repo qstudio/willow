@@ -187,7 +187,7 @@ class willows extends willow\parse {
 				// grab loop {: scope :} ##
 				$scope = loops::scope( self::$config_string );
 				
-				// check if string contains any [ flags ] ##
+				// check if string contains any [ flags ] -- technically filters.. ##
 				if( flags::has( self::$config_string ) ) {
 
 					// h::log( $args['task'].'~>n:>FLAG set so take just loop_markup: '.$loop_markup );
@@ -237,10 +237,11 @@ class willows extends willow\parse {
 				|| ! is_array( self::$arguments ) 
 			) {
 
-				h::log( $args['task'].'~>d:>No array arguments found in willow args, but perhaps we still have flags in the vars' );
+				h::log( $args['task'].'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
 				h::log( $args['task'].'~>d:>'.self::$config_string );
 
-				self::$config_string = flags::get( self::$config_string, 'variable' );
+				// check for variable filters ##
+				self::$config_string = flags::get( self::$config_string, 'variable' );	
 
 				// clean up ## -- 
 				self::$config_string = trim( self::$config_string ); // trim whitespace ##
@@ -321,6 +322,7 @@ class willows extends willow\parse {
 
 				// h::log( 'variable: '.$arg_var_v );
 
+				// check for variable filters ##
 				variables::flags([
 					'variable' 	=> $arg_var_v, 
 					'context' 	=> self::$class, 
@@ -351,12 +353,17 @@ class willows extends willow\parse {
 		if( self::$flags_willow ) {
 
 			// store filters under willow hash - this avoids conflicts if Willows are re-used ##
-			self::$filter[ self::$willow_hash ]['tag'] = self::$flags_willow;
+			self::$filter[ self::$willow_hash ] = self::$flags_willow;
 
 		}
 
-		// b = output buffer, collect return data which would render if not __NOT RECOMMENDED__ ##
-		if( isset( self::$flags_willow['b'] ) ) {
+		// buffer => output buffer, collect return data which would render if not __NOT RECOMMENDED__ ##
+		if( 
+			// isset( self::$flags_willow['buffer'] ) 
+			self::$flags_willow
+			&& is_array( self::$flags_willow )
+			&& in_array( 'buffer', self::$flags_willow )
+		) {
 
 			self::$arguments = core\method::parse_args( 
 				self::$arguments, 
@@ -493,13 +500,12 @@ class willows extends willow\parse {
 
 		$regex_find = \apply_filters( 
 			'q/willow/parse/willows/regex/find', 
-			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
+			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces ##
 		);
 
 		// h::log( $args );
 		// h::log( self::$parse_args );
 
-		// h::log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
 		if ( 
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
@@ -567,7 +573,7 @@ class willows extends willow\parse {
 		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
 		 	'q/willow/parse/willows/cleanup/regex', 
-			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <pre>tag</pre> ##
+			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <code>tag</code> ##
 			//  "/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|{~.*?~}/ms" 
 		);
 		

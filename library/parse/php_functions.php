@@ -28,7 +28,7 @@ class php_functions extends willow\parse {
 
 		self::$return = false; 
 		self::$function_hash = false; 
-		self::$flags_function = false;
+		self::$flags_php_function = false;
 		self::$function = false;
 		self::$arguments = false;
 		self::$class = false;
@@ -66,7 +66,7 @@ class php_functions extends willow\parse {
 
 		// look for flags ##
 		self::$function = flags::get( self::$function, 'php_function' );
-		// h::log( self::$flags_function );
+		// h::log( self::$flags_php_function );
 		// h::log( self::$function );
 
 		// clean up ##
@@ -121,7 +121,7 @@ class php_functions extends willow\parse {
 					false !== strpos( self::$config_string, ',' )
 				){
 
-					h::log('d:>Args are in csv: '.self::$config_string );
+					// h::log('d:>Args are in csv: '.self::$config_string );
 
 					$config_explode = explode( ',', self::$config_string );
 					// $config_explode = array_map( trim, $config_explode );
@@ -273,17 +273,6 @@ class php_functions extends willow\parse {
 
 		}
 
-		// escape ##
-		h::log( 't:>NOTE, that escape is being called here, with old flag format.... and seems mixed html OR js ??' );
-		if( 
-			isset( self::$flags_function['e'] ) 
-		){
-
-			// JS or HTML ?? @todo ##
-			self::$return = \esc_js( self::$return );
-
-		}
-
 		// h::log( self::$return );
 
 		if ( ! isset( self::$return ) ) {
@@ -310,7 +299,7 @@ class php_functions extends willow\parse {
 
 		}
 
-		// return is still nt a string ##
+		// return is still not a string ##
 		if(
 			! is_string( self::$return )
 			&& ! is_integer( self::$return )
@@ -325,14 +314,51 @@ class php_functions extends willow\parse {
 
 		}
 
-		// add fields - perhaps we do not always need this -- perhaps based on [r] flag ##
+		// filter ##
+		// h::log( self::$flags_php_function );
+		if( 
+			self::$flags_php_function
+			&& is_array( self::$flags_php_function )
+		){
+
+			// h::log( self::$flags_php_function );
+			// h::log( self::$return );
+			// bounce to filter::apply() ##
+			$filter_return = filter\method::apply([ 
+				'filters' 	=> self::$flags_php_function, 
+				'string' 	=> self::$return, 
+				'use' 		=> 'php_function', // for filters ##
+			]);
+
+			// h::log( $filter_return );
+
+			// check if filters changed value ##
+			if( 
+				$filter_return // return set ##
+				&& '' != $filter_return // not empty ##
+				&& $filter_return != self::$return // value chaged ##
+			){
+
+				h::log( 'd:>php_function fitlers changed value: '.$filter_return );
+
+				// update class property ##
+				self::$return = $filter_return;
+
+			}
+
+		}
+
+		// add fields - perhaps we do not always need this -- perhaps based on [return] flag ##
 		render\fields::define([
 			self::$function_hash => self::$return
 		]);
 
 		// replace function tag with raw return value for willw parse ##
+		// h::log( self::$flags_php_function );
 		if( 
-			isset( self::$flags_function['r'] ) 
+			self::$flags_php_function
+			&& is_array( self::$flags_php_function )
+			&& in_array( 'return', self::$flags_php_function )
 		){
 
 			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
