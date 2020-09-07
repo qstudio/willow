@@ -13,7 +13,7 @@
  * Plugin Name:     Q Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
- * Version:         1.3.3
+ * Version:         1.3.4
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -30,6 +30,12 @@ defined( 'ABSPATH' ) OR exit;
 /* Check for Class */
 if ( ! class_exists( 'q_willow' ) ) {
 
+	// activation ##
+	register_activation_hook( __FILE__, array ( 'q_willow', 'register_activation_hook' ) );
+			
+	// deactvation ##
+	register_deactivation_hook( __FILE__, array ( 'q_willow', 'register_deactivation_hook' ) );
+
     // instatiate plugin via WP plugins_loaded ##
     add_action( 'plugins_loaded', array ( 'q_willow', 'get_instance' ), 1 );
 
@@ -40,7 +46,7 @@ if ( ! class_exists( 'q_willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.3.2';
+        const version = '1.3.4';
         const text_domain = 'q-willow'; // for translation ##
 		
 		protected static
@@ -322,12 +328,6 @@ if ( ! class_exists( 'q_willow' ) ) {
         private function __construct()
         {
 
-            // activation ##
-            register_activation_hook( __FILE__, array ( $this, 'register_activation_hook' ) );
-
-            // deactvation ##
-            register_deactivation_hook( __FILE__, array ( $this, 'register_deactivation_hook' ) );
-
             // set text domain ##
             add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
 
@@ -347,8 +347,17 @@ if ( ! class_exists( 'q_willow' ) ) {
          *
          * @since   0.2
          */
-        public function register_activation_hook()
+        public static function register_activation_hook()
         {
+
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+				
+				return;
+
+			}
+
+	        $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+    	    check_admin_referer( "activate-plugin_{$plugin}" );
 
             $q_options = array(
                 'configured'    => true
@@ -356,8 +365,28 @@ if ( ! class_exists( 'q_willow' ) ) {
             );
 
             // init running, so update configuration flag ##
-            add_option( 'q_willow', $q_options, '', true );
+			add_option( 'q_willow', $q_options, '', true );
 
+			// Get path to main .htaccess for WordPress ##
+			$htaccess = trailingslashit(ABSPATH).'.htaccess';
+
+			/*
+			# BEGIN Willow
+			<Files ~ "\.willow$">
+			Order allow,deny
+			Deny from all
+			</Files>
+			# END Willow
+			*/
+
+			$lines = [];
+			$lines[] = "<Files ~ '\.willow$'>";
+			$lines[] = "Order allow,deny";
+			$lines[] = "Deny from all";
+			$lines[] = "</Files>";
+
+			\insert_with_markers( $htaccess, "Q ~ Willow", $lines );
+			
         }
 
 
@@ -366,8 +395,17 @@ if ( ! class_exists( 'q_willow' ) ) {
          *
          * @since   0.2
          */
-        public function register_deactivation_hook()
+        public static function register_deactivation_hook()
         {
+
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+			
+				return;
+			
+			}
+
+        	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+        	check_admin_referer( "deactivate-plugin_{$plugin}" );
 
             // de-configure plugin ##
             delete_option('q_willow');
