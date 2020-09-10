@@ -1,3 +1,7 @@
+### 1.3.5 ###
+
+* Update: Removed Extension context, merged into module on Q
+
 ### 1.3.4 ###
 
 * New: Added htaccess rules to protect .willow files on plugin activation

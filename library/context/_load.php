@@ -50,7 +50,7 @@ class context extends \q_willow {
 		require_once self::get_plugin_path( 'library/context/taxonomy.php' );
 
 		// extension ##
-		require_once self::get_plugin_path( 'library/context/extension.php' );
+		// require_once self::get_plugin_path( 'library/context/extension.php' );
 
 		// modules ##
 		require_once self::get_plugin_path( 'library/context/module.php' );

@@ -13,7 +13,7 @@
  * Plugin Name:     Q Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
- * Version:         1.3.4
+ * Version:         1.3.5
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -46,7 +46,7 @@ if ( ! class_exists( 'q_willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.3.4';
+        const version = '1.3.5';
         const text_domain = 'q-willow'; // for translation ##
 		
 		protected static
