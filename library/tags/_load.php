@@ -1,6 +1,6 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
 // Q ##
 use q\core;
@@ -9,8 +9,8 @@ use q\get;
 use q\render;
 
 // willow ##
-use q\willow\core\helper as h;
-use q\willow;
+use willow\core\helper as h;
+use willow;
 
 class tags extends \willow {
 

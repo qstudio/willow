@@ -511,6 +511,15 @@ if ( ! class_exists( 'willow' ) ) {
 			// getters ##
 			require_once self::get_plugin_path( 'library/get/_load.php' );
 
+			// view ##
+			require_once self::get_plugin_path( 'library/view/_load.php' );
+
+			// strings ##
+			require_once self::get_plugin_path( 'library/strings/_load.php' );
+
+			// plugins ##
+			require_once self::get_plugin_path( 'library/plugin/_load.php' );
+
 			// parsers ##
 			require_once self::get_plugin_path( 'library/parse/_load.php' );
 
@@ -523,10 +532,10 @@ if ( ! class_exists( 'willow' ) ) {
 			// context ##
 			require_once self::get_plugin_path( 'library/context/_load.php' );
 
-			// data filters ##
+			// filters ##
 			require_once self::get_plugin_path( 'library/filter/_load.php' );
 
-			// output buffer ##
+			// output ##
 			require_once self::get_plugin_path( 'library/buffer/_load.php' );
 
         }

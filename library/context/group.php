@@ -1,12 +1,11 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\willow\core\helper as h;
-use q\willow;
-use q\willow\render; 
+use willow\core\helper as h;
+use willow\render; 
 
-class group extends willow\context {
+class group extends \willow\context {
 
 
 	/**
@@ -21,12 +20,10 @@ class group extends willow\context {
 
 		$method = 'fields';
 
-		// @todo -- add filter to return value and avoid Q check and get routine ##
-
 		// Q needed to run get method ##
 		if(
-			! method_exists( '\q\get\group', $method )
-			|| ! is_callable([ '\q\get\group', $method ])
+			! method_exists( '\willow\get\group', $method )
+			|| ! is_callable([ '\willow\get\group', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: q\get\group\\'.$method );
@@ -37,7 +34,7 @@ class group extends willow\context {
 
 		// method returns an array with 'data' and 'fields' ##
 		if ( 
-			$array = \q\get\group::fields( $args )
+			$array = \willow\get\group::fields( $args )
 		){
 			// h::log( $array );
 			

@@ -1,15 +1,12 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\core\helper as h;
-// use q\ui;
-use q\get;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
+use willow\core\helper as h;
+use willow\get;
+use willow\context;
 
-class taxonomy extends willow\context {
+class taxonomy extends \willow\context {
 
 
 	public static function get( $args = null ){
@@ -32,19 +29,19 @@ class taxonomy extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\q\get\taxonomy', $method )
-			|| ! is_callable([ '\q\get\taxonomy', $method ])
+			! method_exists( '\willow\get\taxonomy', $method )
+			|| ! is_callable([ '\willow\get\taxonomy', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: q\get\taxonomy\\'.$method );
+			h::log( 'e:>Class method is not callable: willow\get\taxonomy\\'.$method );
 
 			return false;
 
 		}
 
-		// return \q\get\post::$method;
+		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: q\get\taxonomy\\'.$method );
+		// h::log( 'e:>Class method IS callable: willow\get\taxonomy\\'.$method );
 
 		// call method ##
 		$return = call_user_func_array (

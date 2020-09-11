@@ -1,13 +1,13 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
 use q\core\helper as h;
 // use q\ui;
 use q\get;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
+use willow;
+use willow\context;
+use willow\render; 
 
 class navigation extends willow\context {
 
@@ -31,17 +31,17 @@ class navigation extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\q\get\navigation', $method )
-			|| ! is_callable([ '\q\get\navigation', $method ])
+			! method_exists( '\willow\get\navigation', $method )
+			|| ! is_callable([ '\willow\get\navigation', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: q\get\navigation\\'.$method );
+			h::log( 'e:>Class method is not callable: willow\get\navigation\\'.$method );
 
 			return false;
 
 		}
 
-		// return \q\get\post::$method;
+		// return \willow\get\post::$method;
 
 		// h::log( 'e:>Class method IS callable: q\get\post\\'.$method );
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
 // use q\core\core as core;
-use q\willow\core\helper as h;
+use willow\core\helper as h;
 
 // load it up ##
-\q\willow\core::__run();
+\willow\core::__run();
 
 class core extends \willow {
 

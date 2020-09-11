@@ -1,14 +1,14 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
 // use q\core;
-use q\willow\core\helper as h;
+use willow\core\helper as h;
 use q\view;
 use q\get;
-use q\willow;
-use q\willow\parse;
-use q\willow\render;
+use willow;
+use willow\parse;
+use willow\render;
 
 class format extends willow\render {
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow;
-use q\willow\core;
-use q\willow\filter;
-use q\willow\core\helper as h;
+use willow;
+use willow\core;
+use willow\filter;
+use willow\core\helper as h;
 
 class flags extends willow\parse {
 

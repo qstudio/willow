@@ -1,9 +1,9 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
-use q\willow\core\helper as h;
-use q\willow;
+use willow\core\helper as h;
+use willow;
 
 class log extends willow\render {
 

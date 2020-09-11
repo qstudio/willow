@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow\core\helper as h;
-use q\willow;
+use willow\core\helper as h;
+use willow;
 
 // load it up ##
-\q\willow\filter::__run();
+\willow\filter::__run();
 
 class filter extends \willow  { 
 

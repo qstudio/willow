@@ -1,13 +1,13 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 // use q\view;
-use q\willow\get;
-use q\willow;
-use q\willow\parse;
+use willow\get;
+use willow;
+use willow\parse;
 
 class markup extends willow\render {
 

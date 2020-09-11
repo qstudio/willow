@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow\get;
-use q\willow;
+use willow\core;
+use willow\core\helper as h;
+use willow\get;
+use willow;
 
 class method extends willow\render {
 
@@ -312,8 +312,8 @@ class method extends willow\render {
 		){
 
 			// variable replacement -- regex way ##
-			$open = \q\willow\tags::g( 'var_o' );
-			$close = \q\willow\tags::g( 'var_c' );
+			$open = \willow\tags::g( 'var_o' );
+			$close = \willow\tags::g( 'var_c' );
 
 		} else {
 

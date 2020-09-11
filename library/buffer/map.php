@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow\buffer;
+namespace willow\buffer;
 
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow;
-use q\willow\render;
-use q\willow\buffer;
+use willow\core;
+use willow\core\helper as h;
+use willow;
+use willow\render;
+use willow\buffer;
 
 class map extends willow\buffer {
 

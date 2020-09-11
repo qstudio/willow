@@ -1,15 +1,12 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\willow\core\helper as h;
-// use q\ui;
-// use q\get;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
+use willow\core\helper as h;
+use willow\context;
+use willow\render; 
 
-class meta extends willow\context {
+class meta extends \willow\context {
 
 	public static function get( $args = null ){
 
@@ -31,19 +28,19 @@ class meta extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\q\get\meta', $method )
-			|| ! is_callable([ '\q\get\meta', $method ])
+			! method_exists( '\willow\get\meta', $method )
+			|| ! is_callable([ '\willow\get\meta', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: q\get\meta\\'.$method );
+			h::log( 'e:>Class method is not callable: willow\get\meta\\'.$method );
 
 			return false;
 
 		}
 
-		// return \q\get\post::$method;
+		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: q\get\meta\\'.$method );
+		// h::log( 'e:>Class method IS callable: willow\get\meta\\'.$method );
 
 		// call method ##
 		$return = call_user_func_array (
@@ -71,13 +68,8 @@ class meta extends willow\context {
      */
     public static function field( $args = null ) {
 
-		// @todo -- add filter to return value and avoid Q check and get routine ##
-
-		// Q needed to run get method ##
-		if ( ! class_exists( 'Q' ) ){ return false; }
-
 		// return an array with the field "task" as the placeholder key and value
-		return [ $args['task'] => \q\get\meta::field( $args ) ];
+		return [ $args['task'] => \willow\get\meta::field( $args ) ];
 
 	}
 

@@ -5,7 +5,7 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
     exit();
 
 $options = array (
-    'q__willow_options'
+    'willow_options'
 );
 
 // For Single site

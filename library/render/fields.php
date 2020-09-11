@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow;
-use q\willow\parse;
-use q\willow\render;
+use willow\core;
+use willow\core\helper as h;
+use willow;
+use willow\parse;
+use willow\render;
 
 class fields extends willow\render {
 

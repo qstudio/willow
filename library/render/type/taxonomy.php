@@ -1,13 +1,13 @@
 <?php
 
-namespace q\willow\render\type;
+namespace willow\render\type;
 
 // use q\core;
-use q\willow\core\helper as h;
+use willow\core\helper as h;
 // use q\ui;
-use q\willow;
+use willow;
 // use q\get;
-use q\willow\render;
+use willow\render;
 
 class taxonomy extends render\type {
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
 // use q\core;
-use q\willow\core\helper as h;
-use q\willow\render;
-use q\willow\context;
-use q\willow;
+use willow\core\helper as h;
+use willow\render;
+use willow\context;
+use willow;
 
 // load it up ##
-\q\willow\context::__run();
+\willow\context::__run();
 
 class context extends \willow {
 

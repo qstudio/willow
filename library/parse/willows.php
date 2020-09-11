@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow;
-use q\willow\render;
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow;
+use willow\render;
+use willow\core;
+use willow\core\helper as h;
 
 class willows extends willow\parse {
 
@@ -269,7 +269,7 @@ class willows extends willow\parse {
 		self::$willow_hash = self::$willow.'.'.core\method::hash(); // rand()
 		
 		// format namespace to willow::context ##
-		self::$willow = '\\q\\willow\\context::'.self::$willow;
+		self::$willow = '\\willow\\context::'.self::$willow;
 
 		// break function into class::method parts ##
 		list( self::$class, self::$method ) = explode( '::', self::$willow ); // '::' ##

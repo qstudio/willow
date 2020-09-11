@@ -1,14 +1,14 @@
 <?php
 
-namespace q\willow\filter;
+namespace willow\filter;
 
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow;
-use q\willow\filter;
+use willow\core;
+use willow\core\helper as h;
+use willow;
+use willow\filter;
 
 // load it up ##
-\q\willow\filter\apply::__run();
+\willow\filter\apply::__run();
 
 class apply extends willow\filter {
 

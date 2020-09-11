@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
 // use q\core;
-use q\willow;
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow;
+use willow\core;
+use willow\core\helper as h;
 // use q\ui;
 // use q\render; // @TODO ##
 

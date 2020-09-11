@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 
 // load it up ##
-\q\willow\get::__run();
+\willow\get::__run();
 
 class get extends \willow {
 
@@ -21,41 +21,40 @@ class get extends \willow {
     *
     * @since        2.0.0
     */
-    public static function load()
-    {
+    public static function load(){
 
 		// methods ##
-		// require_once self::get_plugin_path( 'get/method.php' );
+		require_once self::get_plugin_path( 'library/get/method.php' );
 
-		// taxonomy object ##
-		// require_once self::get_plugin_path( 'get/plugin.php' );
+		// plugins ##
+		require_once self::get_plugin_path( 'library/get/plugin.php' );
 
-		// taxonomy object ##
-		// require_once self::get_plugin_path( 'get/theme.php' );
+		// themes ##
+		require_once self::get_plugin_path( 'library/get/theme.php' );
 
 		// WP_Post queries ##
-		// require_once self::get_plugin_path( 'get/query.php' );
+		require_once self::get_plugin_path( 'library/get/query.php' );
 
 		// has::xx queries ##
-		// require_once self::get_plugin_path( 'get/has.php' );
+		require_once self::get_plugin_path( 'library/get/has.php' );
 
 		// post object ##
 		require_once self::get_plugin_path( 'library/get/post.php' );
 
 		// post meta ##
-		// require_once self::get_plugin_path( 'get/meta.php' );
+		require_once self::get_plugin_path( 'library/get/meta.php' );
 
 		// field group ##
-		// require_once self::get_plugin_path( 'get/group.php' );
+		require_once self::get_plugin_path( 'library/get/group.php' );
 
 		// taxonomy object ##
-		// require_once self::get_plugin_path( 'get/taxonomy.php' );
+		require_once self::get_plugin_path( 'library/get/taxonomy.php' );
 
 		// modules ##
-		// require_once self::get_plugin_path( 'get/module.php' );
+		require_once self::get_plugin_path( 'library/get/module.php' );
 
 		// navigation items ##
-		// require_once self::get_plugin_path( 'get/navigation.php' );
+		require_once self::get_plugin_path( 'library/get/navigation.php' );
 
 		// media objects ##
 		require_once self::get_plugin_path( 'library/get/media.php' );

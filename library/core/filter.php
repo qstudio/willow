@@ -1,9 +1,9 @@
 <?php
 
-namespace q\willow\core;
+namespace willow\core;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 
 class filter extends \willow {
 

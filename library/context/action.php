@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\willow\core\helper as h;
+use willow\core\helper as h;
 // use q\get;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
+use willow;
+use willow\context;
+use willow\render; 
 
 class action extends willow\context {
 

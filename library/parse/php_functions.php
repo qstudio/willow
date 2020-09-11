@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow;
-use q\willow\render;
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow;
+use willow\render;
+use willow\core;
+use willow\core\helper as h;
 
 class php_functions extends willow\parse {
 

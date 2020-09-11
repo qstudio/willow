@@ -1,13 +1,13 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 // use q\view;
 // use q\get;
-use q\willow;
-use q\willow\render;
+use willow;
+use willow\render;
 
 class callback extends willow\render {
 

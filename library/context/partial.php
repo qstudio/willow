@@ -1,15 +1,11 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\core\helper as h;
-use q\get;
-use q\willow;
-use q\willow\core;
-use q\willow\context;
-use q\willow\render; 
+use willow\core\helper as h;
+use willow\core;
 
-class partial extends willow\context {
+class partial extends \willow\context {
 
 	/**
      * Generic Getter - looks for properties in config matching context->task

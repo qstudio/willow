@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
 use q\core\helper as h;
 use q\get;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
+use willow;
+use willow\context;
+use willow\render; 
 
 class media extends willow\context {
 
@@ -31,8 +31,8 @@ class media extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\q\get\media', $method )
-			|| ! is_callable([ '\q\get\media', $method ])
+			! method_exists( '\willow\get\media', $method )
+			|| ! is_callable([ '\willow\get\media', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: q\get\media\\'.$method );
@@ -41,7 +41,7 @@ class media extends willow\context {
 
 		}
 
-		// return \q\get\post::$method;
+		// return \willow\get\post::$method;
 
 		// h::log( 'e:>Class method IS callable: q\get\media\\'.$method );
 

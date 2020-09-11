@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow\core;
+namespace willow\core;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 
 // run ##
-\q\willow\core\log::__run();
+\willow\core\log::__run();
 
 class log extends \willow {
 

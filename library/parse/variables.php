@@ -1,10 +1,10 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow;
+use willow\core;
+use willow\core\helper as h;
+use willow;
 
 class variables extends willow\parse {
 

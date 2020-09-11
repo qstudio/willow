@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
-use q\willow;
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow\render;
+use willow;
+use willow\core;
+use willow\core\helper as h;
+use willow\render;
 
 class comments extends willow\parse {
 

@@ -1,14 +1,11 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\willow\core\helper as h;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
-// use q\widget as widgets;
+use willow\core\helper as h;
+use willow\context;
 
-class widget extends willow\context {
+class widget extends \willow\context {
 
 	// BASE CONTEXT ##
 	

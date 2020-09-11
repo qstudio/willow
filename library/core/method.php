@@ -1,9 +1,9 @@
 <?php
 
-namespace q\willow\core;
+namespace willow\core;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 // use q\ui;
 // use q\plugin;
 // use q\get;
@@ -990,6 +990,70 @@ class method extends \willow {
 	
 		return false;
 	}
+
+
 	
+    /**
+     * Save a value to the options table, either updating or creating a new key
+     * 
+     * @since       1.5.0
+     * @return      Void
+     */
+    public static function add_update_option( $option_name, $new_value, $deprecated = '', $autoload = 'no' ) 
+    {
+    
+        if ( \get_option( $option_name ) != $new_value ) {
+
+            \update_option( $option_name, $new_value );
+
+        } else {
+
+            \add_option( $option_name, $new_value, $deprecated, $autoload );
+
+        }
+    
+    }
+	
+
+
+	/**
+	 * Convert an array to an object
+	 * 
+	 * @since 	1.5.0
+	 * @return 	Mixed
+	*/
+    public static function array_to_object( $array ) {
+        
+        if ( ! is_array( $array ) ) {
+
+            return $array;
+
+        }
+    
+        $object = new \stdClass();
+
+        if ( is_array( $array ) && count( $array ) > 0 ) {
+
+            foreach ( $array as $name => $value ) {
+
+                $name = strtolower( trim( $name ) );
+
+                if ( ! empty( $name ) ) {
+
+                    $object->$name = self::array_to_object( $value );
+
+                }
+
+            }
+
+            return $object;
+
+        } else {
+          
+            return false;
+        
+        }
+
+	}
 
 }

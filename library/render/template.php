@@ -1,14 +1,14 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
 
 // Q ##
-use q\willow\get;
-use q\willow\core\helper as h;
-use q\willow;
-use q\willow\core;
-use q\willow\render;
+use willow\get;
+use willow\core\helper as h;
+use willow;
+use willow\core;
+use willow\render;
 
 class template extends willow\render {
 

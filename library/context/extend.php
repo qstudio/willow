@@ -1,17 +1,14 @@
 <?php
 
-namespace q\willow\context;
+namespace willow\context;
 
-use q\willow\core\helper as h;
-// use q\get;
-use q\willow;
-use q\willow\context;
-use q\willow\render; 
+use willow\core\helper as h;
+use willow\context;
 
 // load it up ##
-\q\willow\context\extend::run();
+\willow\context\extend::run();
 
-class extend extends willow\context {
+class extend extends \willow\context {
 
 	/**
 	 * Fire things up
@@ -19,7 +16,7 @@ class extend extends willow\context {
 	public static function run(){
 
 		// allow for class extensions ##
-		\do_action( 'q/willow/context/extend/register', [ get_class(), 'register' ] );
+		\do_action( 'willow/context/extend/register', [ get_class(), 'register' ] );
 
 	}
 

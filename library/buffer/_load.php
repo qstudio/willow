@@ -1,14 +1,14 @@
 <?php
 
-namespace q\willow;
+namespace willow;
 
 use q\core;
 use q\core\helper as h;
-use q\willow\core\helper as wh;
-use q\willow;
-use q\willow\render;
+use willow\core\helper as wh;
+use willow;
+use willow\render;
 
-\q\willow\buffer::__run();
+\willow\buffer::__run();
 
 class buffer extends \willow {
 

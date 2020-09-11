@@ -1,11 +1,11 @@
 <?php
 
-namespace q\willow\render\type;
+namespace willow\render\type;
 
-use q\willow\core;
-use q\willow\core\helper as h;
-use q\willow\get;
-use q\willow\render;
+use willow\core;
+use willow\core\helper as h;
+use willow\get;
+use willow\render;
 
 class media extends render\type {
 

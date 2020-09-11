@@ -1,13 +1,13 @@
 <?php
 
-namespace q\willow\render;
+namespace willow\render;
 
 // use q\core;
-use q\willow\core\helper as h;
-use q\willow;
+use willow\core\helper as h;
+use willow;
 
 // load it up ##
-\q\willow\render\type::__run();
+\willow\render\type::__run();
 
 class type extends willow\render {
 	
@@ -113,7 +113,7 @@ class type extends willow\render {
 		}
 
 		// test namespace ##
-		$namespace = '\\q\\willow\\render\\type\\'.$function;
+		$namespace = '\\willow\\render\\type\\'.$function;
 		$method_function = 'format';
 		// h::log( $namespace.'::'.$function );
 

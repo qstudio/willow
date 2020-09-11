@@ -1,9 +1,9 @@
 <?php
 
-namespace q\willow\render\type;
+namespace willow\render\type;
 
-use q\willow\core\helper as h;
-use q\willow\render;
+use willow\core\helper as h;
+use willow\render;
 
 class author extends render\type {
 

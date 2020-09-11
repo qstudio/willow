@@ -1,12 +1,12 @@
 <?php
 
-namespace q\willow\core;
+namespace willow\core;
 
-use q\willow\core;
-use q\willow\core\helper as h;
+use willow\core;
+use willow\core\helper as h;
 // use q\view;
 
-\q\willow\core\config::__run();
+\willow\core\config::__run();
 
 class config extends \willow {
 
@@ -92,7 +92,7 @@ class config extends \willow {
 		}
 
 		// if theme debugging, then load from single config files ##
-		if ( self::$debug ) { /* class_exists( 'Q' ) && \Q::$debug */
+		if ( self::$debug ) { 
 
 			// h::log('d:>Deubbing, so we do not need to resave __q.php.' );
 			// h::log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
@@ -150,7 +150,7 @@ class config extends \willow {
 		// if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
 		// if theme debugging, then load from indiviual config files ##
-		if ( self::$debug ) { /* \Q::$debug */
+		if ( self::$debug ) { 
 
 			// h::log( 'd:>Theme is debugging, so load from individual context files...' );
 
