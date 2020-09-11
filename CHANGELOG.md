@@ -13,7 +13,7 @@
 
 ### 1.3.2 ###
 
-* Added <pre>tag</pre> exception to regex cleanup of Willow tags, to allow them to be skipped - thanks Wiktor Stribiżew :) https://stackoverflow.com/users/3832970/wiktor-stribi%c5%bcew
+* Added `<code>tag</code>` exception to regex cleanup of Willow tags, to allow them to be skipped - thanks Wiktor Stribiżew :) https://stackoverflow.com/users/3832970/wiktor-stribi%c5%bcew
 
 ### 1.3.1 ###
 
