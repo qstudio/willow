@@ -10,7 +10,7 @@ use q\willow\render;
 
 \q\willow\buffer::__run();
 
-class buffer extends \q_willow {
+class buffer extends \willow {
 
 	/**
 	 * Check for view template and start OB, if correct

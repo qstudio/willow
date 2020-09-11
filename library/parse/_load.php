@@ -8,7 +8,7 @@ use q\willow;
 // load it up ##
 \q\willow\parse::__run();
 
-class parse extends \q_willow {
+class parse extends \willow {
 
 	protected static 
 		$regex = [

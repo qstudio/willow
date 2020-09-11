@@ -8,7 +8,7 @@ use q\willow\core\helper as h;
 // run ##
 \q\willow\core\log::__run();
 
-class log extends \q_willow {
+class log extends \willow {
 
 	// track who called what ##
 	public static 
@@ -312,7 +312,7 @@ class log extends \q_willow {
 		// @todo - sanity ##
 
 		// h::hard_log( '$value: '.$value );
-		// h::hard_log( \q_willow::$log );
+		// h::hard_log( \willow::$log );
 
 		// grab reference of self::$log ##
 		$log = self::$log;

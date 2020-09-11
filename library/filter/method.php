@@ -7,7 +7,7 @@ use q\willow\core\helper as h;
 use q\willow;
 use q\willow\filter;
 
-class method extends \q_willow {
+class method extends \willow {
 
 	/**
 	* prepare passed flags before adding to $filter property

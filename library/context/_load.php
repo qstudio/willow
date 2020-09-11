@@ -11,7 +11,7 @@ use q\willow;
 // load it up ##
 \q\willow\context::__run();
 
-class context extends \q_willow {
+class context extends \willow {
 
 	public static function __run(){
 
@@ -173,7 +173,7 @@ class context extends \q_willow {
 			// h::log( 'e:>Context Loaded: '.$hash );
 
 			// log hash ##
-			\q_willow::$hash 	= [
+			\willow::$hash 	= [
 				'hash'			=> $hash,
 				'context'		=> $args['context'],
 				'task'			=> $args['task'],

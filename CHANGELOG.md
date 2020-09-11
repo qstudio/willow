@@ -1,3 +1,7 @@
+### 1.3.6 ###
+
+* Update: Removed Q namespace, plugin now called "Willow" with main class "willow"
+
 ### 1.3.5 ###
 
 * Update: Removed Extension context, merged into module on Q

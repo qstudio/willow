@@ -12,7 +12,7 @@ use q\render;
 use q\willow\core\helper as h;
 use q\willow;
 
-class tags extends \q_willow {
+class tags extends \willow {
 
 	// properties ##
 	protected static 

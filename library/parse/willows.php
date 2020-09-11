@@ -268,7 +268,7 @@ class willows extends willow\parse {
 		// hash creation moved here ##
 		self::$willow_hash = self::$willow.'.'.core\method::hash(); // rand()
 		
-		// format namespace to q_willow::context ##
+		// format namespace to willow::context ##
 		self::$willow = '\\q\\willow\\context::'.self::$willow;
 
 		// break function into class::method parts ##

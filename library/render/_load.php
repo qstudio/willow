@@ -8,7 +8,7 @@ use q\willow;
 // load it up ##
 \q\willow\render::__run();
 
-class render extends \q_willow  { 
+class render extends \willow  { 
 
 	/**
 	 * Fire things up

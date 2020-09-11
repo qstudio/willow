@@ -42,13 +42,13 @@ class media extends \q\willow\get {
 
 		// handle filtered into config by markup pre-processor ##
 		} else if ( 
-			class_exists( 'q_willow' )
-			&& isset( \q_willow::$args ) // @TODO - should be self::$args - test ##
+			class_exists( 'willow' )
+			&& isset( \willow::$args ) // @TODO - should be self::$args - test ##
 			&& isset( $args['field'] )
-			&& isset( \q_willow::$args[ $args['field'] ]['config']['handle'] ) 
+			&& isset( \willow::$args[ $args['field'] ]['config']['handle'] ) 
 		){
 
-			$args['handle'] = \q_willow::$args[ $args['field'] ]['config']['handle'];
+			$args['handle'] = \willow::$args[ $args['field'] ]['config']['handle'];
 
 		// filterable default ##
 		} else {
@@ -65,7 +65,7 @@ class media extends \q\willow\get {
         // h::log( 'Handle: '.$args['handle'] );
 
         // test incoming args ##
-        // h::log( \q_willow::$args[ $args['field'] ] );
+        // h::log( \willow::$args[ $args['field'] ] );
 
         // set-up a new array ##
         $array = [];
@@ -73,7 +73,7 @@ class media extends \q\willow\get {
         // self::log( 'Handle: '.$args['handle'] );
 		if ( ! $src = \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) ){
 
-			h::log( \q_willow::$args['task'].'~>n wp_get_attachment_image_src did not return data' );
+			h::log( \willow::$args['task'].'~>n wp_get_attachment_image_src did not return data' );
 
 			return false;
 
@@ -105,15 +105,15 @@ class media extends \q\willow\get {
 		if ( 
 			// set locally..
 			(
-				class_exists( 'q_willow' )
-				&& isset( \q_willow::$args['config']['meta'] )
-				&& true === \q_willow::$args['config']['meta'] 
+				class_exists( 'willow' )
+				&& isset( \willow::$args['config']['meta'] )
+				&& true === \willow::$args['config']['meta'] 
 			)
 			/*
 			||
 			// OR, set globally ##
 			(
-				class_exists( 'q_willow' )
+				class_exists( 'willow' )
 				&& isset( \q\willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['meta'] )
 				&& true == \q\willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['meta']
 			)
@@ -135,15 +135,15 @@ class media extends \q\willow\get {
         if ( 
 			// set locally..
 			(	
-				class_exists( 'q_willow' )
-				&& isset( \q_willow::$args['config']['srcset'] )
-            	&& true === \q_willow::$args['config']['srcset'] 
+				class_exists( 'willow' )
+				&& isset( \willow::$args['config']['srcset'] )
+            	&& true === \willow::$args['config']['srcset'] 
 			)
 			/*
 			||
 			// OR, set globally ##
 			(
-				class_exists( 'q_willow' )
+				class_exists( 'willow' )
 				&& isset( \q\willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
 				&& true == \q\willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset']
 			)

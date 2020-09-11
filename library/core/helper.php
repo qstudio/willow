@@ -8,9 +8,9 @@ use q\willow\core;
 
 /**
  * helper Class
- * @package   q_willow\core
+ * @package   willow\core
  */
-class helper extends \q_willow {
+class helper extends \willow {
 
 
     /**

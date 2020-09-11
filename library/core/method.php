@@ -10,7 +10,7 @@ use q\willow\core\helper as h;
 // use q\view;
 // use q\asset;
 
-class method extends \q_willow {
+class method extends \willow {
 
     
     /**

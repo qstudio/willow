@@ -8,7 +8,7 @@ use q\willow\core\helper as h;
 
 \q\willow\core\config::__run();
 
-class config extends \q_willow {
+class config extends \willow {
 
 	private static
 		// loaded config ##
@@ -111,7 +111,7 @@ class config extends \q_willow {
 		}
 
 		// cache in DB ##
-		\set_site_transient( 'q_willow_config', self::$config, 24 * HOUR_IN_SECONDS );
+		\set_site_transient( 'willow_config', self::$config, 24 * HOUR_IN_SECONDS );
 
 		// h::log('d:>saved config to DB...' );
 
@@ -157,7 +157,7 @@ class config extends \q_willow {
 			// load ##
 			if ( self::$delete_config ) {
 
-				\delete_site_transient( 'q_willow_config' );
+				\delete_site_transient( 'willow_config' );
 
 				// h::log( 'd:>Deleted config cache from DB...' );
 
@@ -185,9 +185,9 @@ class config extends \q_willow {
 		}
 
 		// h::log( 'd:>Child theme method found, so trying to load data from __q.php' );
-		// h::log( \get_site_transient( 'q_willow_config' ) );
+		// h::log( \get_site_transient( 'willow_config' ) );
 		if ( 
-			$array = \get_site_transient( 'q_willow_config' )
+			$array = \get_site_transient( 'willow_config' )
 		) {
 
 			// log ##

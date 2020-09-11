@@ -3,14 +3,14 @@
 /*
  * Willow is a logic-less, procedural, semantic template engine
  *
- * @package         q-willow
+ * @package         willow
  * @author          Q Studio <social@qstudio.us>
  * @license         GPL-2.0+
  * @link            http://qstudio.us/
  * @copyright       2020 Q Studio
  *
  * @wordpress-plugin
- * Plugin Name:     Q Willow
+ * Plugin Name:     Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine 
  * Version:         1.3.5
@@ -18,36 +18,36 @@
  * Author URI:      https://www.qstudio.us
  * License:         GPL
  * Copyright:       Q Studio
- * Class:           q_willow
- * Text Domain:     q-willow
+ * Class:           willow
+ * Text Domain:     willow
  * Domain Path:     /languages
- * GitHub Plugin URI: qstudio/q-willow
+ * GitHub Plugin URI: qstudio/willow
 */
 
 // quick check :) ##
 defined( 'ABSPATH' ) OR exit;
 
 /* Check for Class */
-if ( ! class_exists( 'q_willow' ) ) {
+if ( ! class_exists( 'willow' ) ) {
 
 	// activation ##
-	register_activation_hook( __FILE__, array ( 'q_willow', 'register_activation_hook' ) );
+	register_activation_hook( __FILE__, array ( 'willow', 'register_activation_hook' ) );
 			
 	// deactvation ##
-	register_deactivation_hook( __FILE__, array ( 'q_willow', 'register_deactivation_hook' ) );
+	register_deactivation_hook( __FILE__, array ( 'willow', 'register_deactivation_hook' ) );
 
     // instatiate plugin via WP plugins_loaded ##
-    add_action( 'plugins_loaded', array ( 'q_willow', 'get_instance' ), 1 );
+    add_action( 'plugins_loaded', array ( 'willow', 'get_instance' ), 1 );
 
     // Q Class ##
-    class q_willow {
+    class willow {
 
         // Refers to a single instance of this class. ##
         private static $instance = null;
 
         // Plugin Settings
         const version = '1.3.5';
-        const text_domain = 'q-willow'; // for translation ##
+        const text_domain = 'willow'; // for translation ##
 		
 		protected static
 
@@ -365,7 +365,7 @@ if ( ! class_exists( 'q_willow' ) ) {
             );
 
             // init running, so update configuration flag ##
-			add_option( 'q_willow', $q_options, '', true );
+			add_option( 'willow', $q_options, '', true );
 
 			// Get path to main .htaccess for WordPress ##
 			$htaccess = trailingslashit(ABSPATH).'.htaccess';
@@ -408,7 +408,7 @@ if ( ! class_exists( 'q_willow' ) ) {
         	check_admin_referer( "deactivate-plugin_{$plugin}" );
 
             // de-configure plugin ##
-            delete_option('q_willow');
+            delete_option('willow');
 
         }
 

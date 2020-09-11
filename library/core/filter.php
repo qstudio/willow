@@ -5,7 +5,7 @@ namespace q\willow\core;
 use q\willow\core;
 use q\willow\core\helper as h;
 
-class filter extends \q_willow {
+class filter extends \willow {
 
     /**
      * Filter items at set points to allow for manipulation

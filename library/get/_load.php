@@ -8,7 +8,7 @@ use q\willow\core\helper as h;
 // load it up ##
 \q\willow\get::__run();
 
-class get extends \q_willow {
+class get extends \willow {
 
 	public static function __run(){
 

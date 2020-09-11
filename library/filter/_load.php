@@ -8,7 +8,7 @@ use q\willow;
 // load it up ##
 \q\willow\filter::__run();
 
-class filter extends \q_willow  { 
+class filter extends \willow  { 
 
 	/**
 	 * Fire things up
