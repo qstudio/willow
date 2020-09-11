@@ -42,4 +42,4 @@ Willow says <strong>Hello<strong>
 ```
 ## Wiki
 
-Visit the Wiki for further details -> https://qstudio.us/docs/willow/
+Visit the documentation site for further details -> https://qstudio.us/docs/willow/
