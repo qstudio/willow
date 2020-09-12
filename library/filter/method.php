@@ -138,7 +138,7 @@ class method extends \willow {
 			|| ! isset( $args['string'] ) // string to apply filter to ##
 		){
 
-			h::log( 'e:>Error. Missing required args' );
+			h::log( 'e:>Missing required args' );
 
 			return $args['string'];
 
@@ -149,7 +149,8 @@ class method extends \willow {
 			! is_string( $args['string'] )
 		){
 
-			h::log( 'e:>Error. Passed $string is not in a valid string format' );
+			h::log( 'e:>Passed $string is not in a valid string format' );
+			// h::log( $args['string'] );
 
 			return $args['string'];
 

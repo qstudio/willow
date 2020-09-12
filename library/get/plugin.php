@@ -2,7 +2,6 @@
 
 namespace willow\get;
 
-// Q ##
 use willow\core;
 use willow\core\helper as h;
 use willow\get;

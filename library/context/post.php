@@ -44,7 +44,7 @@ class post extends willow\context {
 
 		// call method ##
 		$return = call_user_func_array (
-				array( '\\q\\get\\post', $method )
+				array( '\\willow\\get\\post', $method )
 			,   array( $args )
 		);
 
@@ -83,7 +83,7 @@ class post extends willow\context {
 		]);
 
         // pass to get_posts -- and validate that we get an array back ##
-		if ( ! $array = \q\get\query::posts( $args ) ) {
+		if ( ! $array = \willow\get\query::posts( $args ) ) {
 
 			// log ##
 			h::log( self::$args['task'].'~>n:query::posts did not return any data');
@@ -125,7 +125,7 @@ class post extends willow\context {
 			// self::$fields = [
 			$return = [
 				'total' 		=> $array['query']->found_posts, // total posts ##
-				'pagination'	=> \q\get\navigation::pagination( $args ), // get pagination, returns string ##
+				'pagination'	=> \willow\get\navigation::pagination( $args ), // get pagination, returns string ##
 				'results'		=> $array['query']->posts // array of WP_Posts ##
 			];
 

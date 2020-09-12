@@ -290,7 +290,7 @@ class post extends \willow\get {
 
             $array['content'] =
                 \get_the_author_meta( 'description' ) ?
-                strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                \willow\strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else if (
@@ -304,7 +304,7 @@ class post extends \willow\get {
 
             $array['content'] =
                 \category_description() ?
-                strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                \willow\strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else {
@@ -401,7 +401,7 @@ class post extends \willow\get {
 		// h::log( \get_post_field( 'post_content', $args['config']['post'] ) );
 
 		// get the post_content with filters applied ##
-		$array['content'] = \apply_filters( 'the_content', strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
+		$array['content'] = \apply_filters( 'the_content', \willow\strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
 
 		// h::log( $array );
 

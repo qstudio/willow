@@ -45,7 +45,7 @@ class taxonomy extends \willow\context {
 
 		// call method ##
 		$return = call_user_func_array (
-				array( '\\q\\get\\taxonomy', $method )
+				array( '\\willow\\get\\taxonomy', $method )
 			,   array( $args )
 		);
 

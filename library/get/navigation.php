@@ -177,7 +177,7 @@ class navigation extends \willow\get {
 		// h::log( $items );
 
 		// markup array ##
-		$string = strings\method::markup( $config['markup']['template'], $items, $config['markup'] );
+		$string = \willow\strings\method::markup( $config['markup']['template'], $items, $config['markup'] );
 
 		// h::log( $string );
 
@@ -379,7 +379,7 @@ class navigation extends \willow\get {
 			$array[$count]['post_modified_date'] = \get_the_modified_date( '', $post->ID ) ;
 			
 			// title ##
-            $array[$count]['post_excerpt'] = get\post::excerpt_from_id( $post->ID, 200 );
+            $array[$count]['post_excerpt'] =  \willow\get\post::excerpt_from_id( $post->ID, 200 );
 
             // permalink ##
             $array[$count]['post_permalink'] = \get_permalink( $post->ID );

@@ -3,15 +3,7 @@
 namespace willow\context;
 
 use willow\core\helper as h;
-// use q\ui;
-// use q\get;
 use willow;
-use willow\core;
-use willow\context;
-use willow\render; 
-
-// Q Theme ##
-use q\theme;
 
 class module extends willow\context {
 
@@ -28,7 +20,7 @@ class module extends willow\context {
     public static function get( $args = null ) {
 
 		// h::log( $args );
-		return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return \willow\core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

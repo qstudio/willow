@@ -3,10 +3,9 @@
 namespace willow\context;
 
 use willow\core\helper as h;
-use willow\context;
-use willow\render; 
+use willow;
 
-class meta extends \willow\context {
+class meta extends willow\context {
 
 	public static function get( $args = null ){
 
@@ -44,7 +43,7 @@ class meta extends \willow\context {
 
 		// call method ##
 		$return = call_user_func_array (
-				array( '\\q\\get\\meta', $method )
+				array( '\\willow\\get\\meta', $method )
 			,   array( $args )
 		);
 

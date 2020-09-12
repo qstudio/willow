@@ -55,6 +55,9 @@ class context extends \willow {
 		// modules ##
 		require_once self::get_plugin_path( 'library/context/module.php' );
 
+		// plugins ##
+		require_once self::get_plugin_path( 'library/context/plugin.php' );
+
 		// widgets ##
 		require_once self::get_plugin_path( 'library/context/widget.php' );
 

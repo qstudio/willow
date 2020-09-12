@@ -44,7 +44,7 @@ class template extends willow\render {
 			|| ! is_array( $args['data'] )
 		){
 
-			h::log( 'e:>A valid array of data is required to markup the template.' );
+			h::log( 'e:>A valid array of data is required to markup the template from "'.$args['context'].'~'.$args['task'].'"' );
 
 			return false;
 

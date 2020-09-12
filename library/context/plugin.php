@@ -2,13 +2,10 @@
 
 namespace willow\context;
 
-use q\core\helper as h;
-use q\get;
+use willow\core\helper as h;
 use willow;
-use willow\context;
-use willow\render; 
 
-class media extends willow\context {
+class plugin extends willow\context {
 
 
 	public static function get( $args = null ){
@@ -31,11 +28,11 @@ class media extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\media', $method )
-			|| ! is_callable([ '\willow\get\media', $method ])
+			! method_exists( '\willow\get\plugin', $method )
+			|| ! is_callable([ '\willow\get\plugin', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\media\\'.$method );
+			h::log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );
 
 			return false;
 
@@ -43,11 +40,11 @@ class media extends willow\context {
 
 		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: q\get\media\\'.$method );
+		h::log( 'e:>Class method IS callable: willow\get\plugin\\'.$method );
 
 		// call method ##
 		$return = call_user_func_array (
-				array( '\\willow\\get\\media', $method )
+				array( '\\willow\\get\\plugin', $method )
 			,   array( $args )
 		);
 
@@ -60,7 +57,5 @@ class media extends willow\context {
 	}
 
 
-	/// ---- deprecated by get()
-
-
+	
 }

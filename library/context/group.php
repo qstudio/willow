@@ -26,7 +26,7 @@ class group extends \willow\context {
 			|| ! is_callable([ '\willow\get\group', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: q\get\group\\'.$method );
+			h::log( 'e:>Class method is not callable: willow\get\group\\'.$method );
 
 			return false;
 
