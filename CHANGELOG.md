@@ -1,3 +1,9 @@
+### 1.4.0 ###
+
+* New: Moved all getter methods in to Willow, acf, wp, etc
+* New: Strings classes, for string data manipulation
+* New: Willow is more stand-alone ready, less dependent on Q plugin
+
 ### 1.3.6 ###
 
 * Update: Removed Q namespace, plugin now called "Willow" with main class "willow"
