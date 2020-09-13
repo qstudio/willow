@@ -1,24 +1,11 @@
 <?php
 
-namespace q\plugin;
+namespace willow\plugin;
 
-use q\core;
-use q\core\helper as h;
-// use q\wordpress as wordpress;
+use willow\core;
+use willow\core\helper as h;
 
-// load it up ##
-\q\plugin\acf::run();
-
-class acf extends \Q {
-
-    public static function run()
-    {
-
-        // // filter q/tab/special/script ##
-        // \add_filter( 'q/tab/special/script', [ get_class(), 'tab_special_script' ], 10, 2 );
-
-    }
-
+class acf extends \willow {
 
 
     /**
@@ -57,7 +44,7 @@ class acf extends \Q {
 			// h::log( 'Filter: '.'q/plugin/acf/add_field_groups/'.$key );
 
             // filter groups -- NEW ##
-			$value = \apply_filters( 'q/plugin/acf/add_field_groups/'.$key, $value );
+			$value = \apply_filters( 'willow/plugin/acf/add_field_groups/'.$key, $value );
 			
             // h::log( $value );
 
@@ -67,30 +54,6 @@ class acf extends \Q {
         }
 
     }
-
-
-
-    // /**
-    //  * Get field group
-    //  */
-    // public static function get_field_group( String $group = null ) {
-
-    //     // @todo -- sanity ##
-    //     if ( ! \function_exists('acf_get_field_group') ) {
-
-    //         h::log( 'function "acf_get_field_group" not found' );
-
-    //         return false;
-
-    //     }
-
-    //     // @todo -- check if string passed ##
-
-    //     // @todo -- look for field group and return boolen if fails ##
-
-    //     return \acf_get_field_group( $group );
-
-    // }   
 
 
 
@@ -117,15 +80,6 @@ class acf extends \Q {
 
         }
 
-        // the $group string might be passed without the prefix "group_" - if it's missing, add it ##
-        if ( 'group_' !== substr( $group, 0, 6 ) ) {
-
-            // h::log( 'e:>Notice -> "group" "group_" prefix REMOVED...' );
-
-            // $group = "group_".$group;
-
-        }
-
         // look for field group and return boolen if fails ##
         if ( ! $array = \acf_get_fields( $group ) ) {
 
@@ -136,7 +90,7 @@ class acf extends \Q {
         }
 
         // filter ##
-        $array = \apply_filters( 'q/plugin/acf/get_field_group/'.$group, $array );
+        $array = \apply_filters( 'willow/plugin/acf/get_field_group/'.$group, $array );
 
         // return ##
         return $array;
