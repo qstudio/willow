@@ -1,3 +1,7 @@
+### 1.4.1 ###
+
+* FIX: Bad namespace in plugin/acf
+
 ### 1.4.0 ###
 
 * New: Moved all getter methods in to Willow, acf, wp, etc

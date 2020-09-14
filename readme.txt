@@ -4,7 +4,7 @@ Tags: Simple, logic-less, procedural semantic markup language
 Requires at least: 5.0  
 Tested up to: 5.5  
 Requires PHP: 5.6
-Stable tag: 1.4.0    
+Stable tag: 1.4.1    
 License: GPL2  
 
 Willow ~ A logic-less template engine built for WordPress.
