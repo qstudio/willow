@@ -130,12 +130,12 @@ class type extends willow\render {
 
 			// filter post fields -- global ##
 			$string = \apply_filters( 
-				'q/willow/render/type/'.$args[1], $string 
+				'willow/render/type/'.$args[1], $string 
 			);
 
 			// filter group/field -- field specific ##
 			$string = \apply_filters( 
-				'q/willow/render/type/'.self::$args['task'].'/'.$args[1], $string
+				'willow/render/type/'.self::$args['task'].'/'.$args[1], $string
 			);
 
 			// test ##
@@ -162,7 +162,7 @@ class type extends willow\render {
     public static function get_allowed()
     {
 
-        return \apply_filters( 'q/willow/render/type/get', self::$type );
+        return \apply_filters( 'willow/render/type/get', self::$type );
 
     }
 

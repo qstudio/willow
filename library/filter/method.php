@@ -4,7 +4,7 @@ namespace willow\filter;
 
 use willow\core;
 use willow\core\helper as h;
-use willow;
+// use willow;
 use willow\filter;
 
 class method extends \willow {
@@ -44,70 +44,16 @@ class method extends \willow {
 
 		// h::log( 'Filters: '.$args['filters'] );
 
-		/*
-		// format check ##
-		if( 
-			// false === strpos( $args['filters'], ':' ) 
-			1 === strlen( $args['filters'] )
-		){
-
-			h::log( 'e:>presuming single letter filter, such as "a", "b", or "r"' );
-
-			// split single characters into an array ##
-			$split = str_split( $args['filters'] ) ;
-
-			// clean up, with trim ##
-			$split = array_map( 'trim', $split );
-
-			// fill array keys, set boolean true as value ##
-			$array = array_fill_keys( $split, true );
-
-			// kick back ##
-			return $array;
-
-		}
-		*/
-
-		// empty array to hold filters ##
-		// $array = [];
-
 		// explode at "," comma, into array of key:values ##
 		$array = explode( ',', $args['filters'] );
 
 		// clean up array ##
 		$array = array_map( 'trim', $array );
 
-		// fill array keys, set boolean true as value ##
-		// $array = array_fill_keys( $array, true );
-
-		// h::log( $explode );
-		/*
-		foreach( $explode as $key => $value ){
-
-			// sub processor - i.e. "sanitize:key" ) ##
-			// h::log( 'checking value: '.$value );
-			if ( false !== strpos( $value, ':' ) ){
-
-				list( $sub_key, $sub_value ) = explode( ":", $value, 2 );
-				// $flags_split[$key] = 'split';
-
-				$array[ $sub_key ] = $sub_value;
-
-			// reject fitler, we can enforce the key:value format here ##
-			} else {
-
-				h::log( 'e:>Error in filter "'.$value.'". All filters should be in "key:value" format, this filter has been removed.' );
-
-			}
-
-		}
-		*/
+		// clean up array ##
+		$array = array_filter( $array );
 
 		// h::log( $array );
-
-		// clean up array ##
-		// $array = array_map( 'trim', $array );
-		$array = array_filter( $array );
 
 		// kick back ##
 		return $array;
@@ -150,7 +96,7 @@ class method extends \willow {
 		){
 
 			h::log( 'e:>Passed $string is not in a valid string format' );
-			// h::log( $args['string'] );
+			h::log( $args['string'] );
 
 			return $args['string'];
 
@@ -186,7 +132,7 @@ class method extends \willow {
 		// load all stored filters, if filters_loaded is empty ##
 		if( ! self::$filters_filtered ){
 
-			self::$filters = \apply_filters( 'q/willow/filters', self::$filters );
+			self::$filters = \apply_filters( 'willow/filters', self::$filters );
 
 			// update tracker ##
 			self::$filters_filtered = true;
@@ -224,10 +170,7 @@ class method extends \willow {
 
 			// check that requested function is in the allowed list - which has now passed by the load filter ##
 			if (
-				// ! is_array( self::$filters[$filter_group] )
-				// || empty( self::$filters[$filter_group] )
 				! in_array( $function, self::$filters )
-				// || ! core\method::array_key_exists( self::$filters, $filter_function )
 			){
 
 				h::log( 'e:>Error. Defined filter is not available "'.$function.'". Skipping' );
@@ -237,11 +180,10 @@ class method extends \willow {
 			}
 
 			// get function value from $filters matching request ##
-			// $function = self::$filters[$filter_group][$filter_function];
 			// h::log( '$function: '.$function );
 
 			// filter function - allows for replacement by use-case ( tag OR variable ) ##
-			$function = \apply_filters( 'q/willow/filter/apply/'.$function.'/'.$args['use'], $function );
+			$function = \apply_filters( 'willow/filter/apply/'.$function.'/'.$args['use'], $function );
 
 			// sanitize function name -- in case something funky was returned by filters or altered in the default list ##
 			$function = core\method::sanitize( $function, 'php_function' );

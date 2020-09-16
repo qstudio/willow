@@ -15,7 +15,7 @@ class apply extends willow\filter {
 	public static function __run(){
 
 		// filter tag ##
-		\add_filter( 'q/willow/render/markup/tag', [ get_class(), 'tag' ], 10, 2 );
+		\add_filter( 'willow/render/markup/tag', [ get_class(), 'tag' ], 10, 2 );
 
 	}
 

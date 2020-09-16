@@ -4,7 +4,6 @@ namespace willow\core;
 
 use willow\core;
 use willow\core\helper as h;
-// use q\view;
 
 \willow\core\config::__run();
 
@@ -13,7 +12,7 @@ class config extends \willow {
 	private static
 		// loaded config ##
 		$has_config = false,
-		$delete_config = true,
+		$delete_config = false,
 		$cache_files = [], // track array of files loaded, with ful path, so we can remove duplicates ##
 		$config = [],
 		$cache = [],
@@ -23,36 +22,38 @@ class config extends \willow {
 	public static function __run(){
 
 		// filter Willow Config ##
-		// Priority -- Q = 1, Q Plugin = 10, Extension = 10, Parent Theme = 100, Child Theme = 1000 ##
-		\add_filter( 'q/willow/config/load', 
+		// Priority -- ###Q = 1###, Plugins = 1, Extension = 10, Parent Theme = 100, Child Theme = 1000 ##
+		/*
+		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = null; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 1, 1 );
+		*/
 
-		\add_filter( 'q/willow/config/load', 
+		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'plugin'; // context source ##
 				return self::filter( $args, $source );
 			}
-		, 10, 1 );
+		, 1, 1 );
 
-		\add_filter( 'q/willow/config/load', 
+		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'extend'; // context source ##
 				return self::filter( $args, $source );
 			}
-		, 50, 1 );
+		, 10, 1 );
 		
-		\add_filter( 'q/willow/config/load', 
+		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'parent'; // context source ##
 				return self::filter( $args, $source );
 			}
 		, 100, 1 );
 
-		\add_filter( 'q/willow/config/load', 
+		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'child'; // context source ##
 				return self::filter( $args, $source );
@@ -159,7 +160,7 @@ class config extends \willow {
 
 				\delete_site_transient( 'willow_config' );
 
-				// h::log( 'd:>Deleted config cache from DB...' );
+				// h::log( 'e:>Deleted config cache from DB...' );
 
 				if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
@@ -169,7 +170,7 @@ class config extends \willow {
 
 						unlink( $file );
 
-						// h::log( 'd:>...also deleting __q.php, so cache is clear' );
+						h::log( 'd:>...also deleting __q.php, so cache is clear' );
 
 					}
 
@@ -261,7 +262,7 @@ class config extends \willow {
 	/**
 	 * Get configuration files
 	 *
-	 * @used by filter q/willow/config/get/all
+	 * @used by filter willow/config/get/all
 	 *
 	 * @return		Array $array -- must return, but can be empty ##
 	 */
@@ -305,13 +306,13 @@ class config extends \willow {
 		}
 
 		// config file extension ##
-		$extensions = \apply_filters( 'q/willow/config/load/ext', [ 
+		$extensions = \apply_filters( 'willow/config/load/ext', [ 
 			'.willow',
 			'.php', 
 		] );
 
 		// config file path ( h::get will do fallback checks form child theme, parent theme, plugin + Q.. )
-		$path = \apply_filters( 'q/willow/config/load/path', 'view/context/' );
+		$path = \apply_filters( 'willow/config/load/path', 'willow/' );
 
 		// array of config files to load -- key ( for cache ) + value ##
 		$array = [
@@ -337,7 +338,7 @@ class config extends \willow {
 		];
 
 		// filter options ##
-		$array = \apply_filters( 'q/willow/config/load/array', $array );
+		$array = \apply_filters( 'willow/config/load/array', $array );
 
 		// h::log( 'd:>looking for source: '.$source );
 		if( 'extend' == $source ) {
@@ -365,7 +366,14 @@ class config extends \willow {
 
 		// h::log( $extended_lookups );
 
+		// check for child theme path method ##
+		$child_theme_path = method_exists( 'q_theme', 'get_child_theme_path' );
+
+		// check for parent theme path method ##
+		$parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
+
 		// loop over allowed extensions ##
+		// TODO - this could be a whole load more effecient... ##
 		foreach( $extensions as $ext ) {
 
 			// loop over array values ##
@@ -377,8 +385,8 @@ class config extends \willow {
 					case "child" :
 
 						// check for theme method ##
-						if ( ! method_exists( 'q_theme', 'get_child_theme_path' ) ){ break; }
-						$file = \q_theme::get_child_theme_path( '/library/'.$path.$source.'/'.$v.$ext );
+						if ( ! $child_theme_path ){ break; }
+						$file = \q_theme::get_child_theme_path( '/library/'.$path.'/'.$v.$ext );
 						// h::log( 'd:>child->looking up file: '.$file );
 
 					break  ;
@@ -387,13 +395,12 @@ class config extends \willow {
 					case "parent" :
 
 						// check for theme method ##
-						if ( ! method_exists( 'q_theme', 'get_parent_theme_path' ) ){ break; }
-						$file = \q_theme::get_parent_theme_path( '/library/'.$path.$source.'/'.$v.$ext );
+						if ( ! $parent_theme_path ){ break; }
+						$file = \q_theme::get_parent_theme_path( '/library/'.$path.'/'.$v.$ext );
 						// h::log( 'd:>parent->looking up file: '.$file );
 
 					break  ;
 
-					// TODO -- how to inject plugin lookups ???? 
 					case "extend" :
 
 						if( ! empty( $extended_lookups ) ){
@@ -420,7 +427,7 @@ class config extends \willow {
 
 					break ;
 
-					// global lookup, so context/XX.php
+					// global lookup, so willow/FILE.ext
 					default :
 
 						$file = h::get( $path.$v.$ext, 'return', 'path' );
@@ -481,7 +488,7 @@ class config extends \willow {
 	public static function get( $args = null ) {
 
 		// without $context or $task, we can't get anything specific, so just run main filter ##
-		// \apply_filters( 'q/willow/config/get/all', self::$config, isset( $args['field'] ) ?: $args['field'] );
+		// \apply_filters( 'willow/config/get/all', self::$config, isset( $args['field'] ) ?: $args['field'] );
 
 		// shortcut.. allow for string passing, risky.. ##
 		if(
@@ -563,7 +570,7 @@ class config extends \willow {
 			}
 
 			// filter single property values -- too slow ??
-			// $return = \apply_filters( 'q/willow/config/get/'.$args['context'].'/'.$args['task'], $return );
+			// $return = \apply_filters( 'willow/config/get/'.$args['context'].'/'.$args['task'], $return );
 
 			// single loading -- good idea? ##
 			// $found = true;
@@ -598,7 +605,7 @@ class config extends \willow {
 
 		// h::log( $args );
 
-		\apply_filters( 'q/willow/config/load', self::$config_args );
+		\apply_filters( 'willow/config/load', self::$config_args );
 
 	}
 
@@ -739,7 +746,7 @@ class config extends \willow {
 
 					$filter = 
 						\apply_filters( 
-							'q/willow/config/load/'.self::$config_args['context'].'/'.self::$config_args['task'], 
+							'willow/config/load/'.self::$config_args['context'].'/'.self::$config_args['task'], 
 							$property
 					);
 

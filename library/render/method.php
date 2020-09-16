@@ -85,19 +85,19 @@ class method extends willow\render {
 		}
 
 		// last filter on array, before applying markup ##
-		$array = \apply_filters( 'q/willow/render/prepare/'.$method.'/array', $array, $args );
+		$array = \apply_filters( 'willow/render/prepare/'.$method.'/array', $array, $args );
 
 		// do markup ##
 		$string = self::markup( $args['markup'], $array, $args );
 
 		// filter $string by $method ##
-		$string = \apply_filters( 'q/willow/render/prepare/'.$method.'/string', $string, $args );
+		$string = \apply_filters( 'willow/render/prepare/'.$method.'/string', $string, $args );
 
 		// filter $array by method/template ##
 		if ( $template = core\method::template() ) {
 
 			// h::log( 'Filter: "q/theme/get/string/'.$method.'/'.$template.'"' );
-			$string = \apply_filters( 'q/willow/render/prepare/'.$method.'/string/'.$template, $string, $args );
+			$string = \apply_filters( 'willow/render/prepare/'.$method.'/string/'.$template, $string, $args );
 
 		}
 

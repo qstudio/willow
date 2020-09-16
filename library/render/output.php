@@ -33,7 +33,7 @@ class output extends willow\render {
                 'args'      => self::$args, 
 				'output'    => self::$output 
 			], 
-            'filter'        => 'q/willow/render/output/'.self::$args['task'], // filter handle ##
+            'filter'        => 'willow/render/output/'.self::$args['task'], // filter handle ##
             'return'        => self::$output
 		]); 
 		

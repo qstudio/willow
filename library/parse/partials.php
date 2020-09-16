@@ -100,7 +100,7 @@ class partials extends willow\parse {
 		// h::log( 'open: '.$open. ' - close: '.$close );
 
 		$regex = \apply_filters( 
-			'q/willow/render/parse/partials/regex/find', 
+			'willow/render/parse/partials/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 		);
 
@@ -259,7 +259,7 @@ class partials extends willow\parse {
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
-			'q/willow/parse/partials/cleanup/regex', 
+			'willow/parse/partials/cleanup/regex', 
 			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" 
 		);
 

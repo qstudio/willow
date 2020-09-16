@@ -371,7 +371,7 @@ class markup extends willow\render {
 			$markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$args['task'], 'close' => 'var_c' ]); // takes "task" as default ##
 
 			// filter ##
-			$markup = \apply_filters( 'q/willow/render/markup/default', $markup );
+			$markup = \apply_filters( 'willow/render/markup/default', $markup );
 
 			// note ##
 			h::log(  self::$args['task'].'~>n:>Using default markup'.$for.' : '.$markup );
@@ -420,13 +420,13 @@ class markup extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'q/willow/render/markup/string/before/'.self::$args['task'].'/'.$key, // filter handle ##
+             'filter'        => 'willow/render/markup/string/before/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
 
 		// key might be in object.iterator.property format - we only need the property for filters ##
 		$filter_key = $key;
-		// $regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
+		// $regex = \apply_filters( 'willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		if( false !== strpos( $key, '.' ) ){ 
 		
 			$filter_keys = explode( '.', $key ); 
@@ -435,7 +435,7 @@ class markup extends willow\render {
 			
 			$filter_key = end( $filter_keys ); 
 
-			// $regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$filter_key\s*\\$close~" ); 
+			// $regex = \apply_filters( 'willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$filter_key\s*\\$close~" ); 
 		
 		}
 
@@ -521,7 +521,7 @@ class markup extends willow\render {
 		// filter variable ##
 		// $pre_filter = $value;
 		// instead of a filter, let's run this directly as a command ##
-		// $value = apply_filters( 'q/willow/render/markup/variable', $value, $filter_key );
+		// $value = apply_filters( 'willow/render/markup/variable', $value, $filter_key );
 		/*
 		$value = willow\filter\method::apply([ 
 			'string' 	=> $value, 
@@ -536,7 +536,7 @@ class markup extends willow\render {
 		$close = trim( willow\tags::g( 'var_c' ) );
 
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
-		$regex = \apply_filters( 'q/willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
+		$regex = \apply_filters( 'willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		
 		// REGEX respects flags in {{ [flags] variable }} - so, the whole variable is replaced with $value ##
 		$string = preg_replace( $regex, $value, $string ); 
@@ -546,12 +546,12 @@ class markup extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'q/willow/render/markup/string/after/'.self::$args['task'].'/'.$key, // filter handle ##
+             'filter'        => 'willow/render/markup/string/after/'.self::$args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
 
 		// filter whole tag markup, filters are extraced earlier from the {~ Willow ~} ##
-		$string = apply_filters( 'q/willow/render/markup/tag', $string, $filter_key );
+		$string = apply_filters( 'willow/render/markup/tag', $string, $filter_key );
 
 		// return ##
 		return $string;
@@ -628,7 +628,7 @@ class markup extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'q/willow/render/markup/string/wrap/'.self::$args['context'].'/'.self::$args['task'], // filter handle ##
+             'filter'        => 'willow/render/markup/string/wrap/'.self::$args['context'].'/'.self::$args['task'], // filter handle ##
              'return'        => $string
         ]); 
 
@@ -743,7 +743,7 @@ class markup extends willow\render {
 
 			// strip all flags, we don't need them now ##
 			$regex_flags = \apply_filters( 
-				'q/willow/parse/flags/markup/regex', 
+				'willow/parse/flags/markup/regex', 
 				"/\\$open.*?\\$close/ms"
 			);
 

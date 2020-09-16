@@ -465,7 +465,7 @@ class markup extends willow\parse {
 
 		// regex ##
 		$regex_find = \apply_filters( 
-			'q/willow/parse/markup/regex/find', 
+			'willow/parse/markup/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 		);
 
@@ -563,7 +563,7 @@ class markup extends willow\parse {
 
 		// regex ##
 		$regex_find = \apply_filters( 
-			'q/willow/parse/markup/regex/find', 
+			'willow/parse/markup/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);

@@ -33,7 +33,7 @@ class log extends willow\render {
 		h::log( 'd:>Debugging is turned ON for : "'.$args['task'].'"' );
 
 		// filter in group to debug ##
-		\add_filter( 'q/willow/core/log/debug', function( $key ) use ( $args ){ 
+		\add_filter( 'willow/core/log/debug', function( $key ) use ( $args ){ 
 			// h::log( $key );
 			$return = is_array( $key ) ? array_merge( $key, [ $args['task'] ] ) : [ $key, $args['task'] ]; 
 			// h::log( $return );

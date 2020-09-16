@@ -307,7 +307,7 @@ class loops extends willow\parse {
 		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
 		$regex_find = \apply_filters( 
-			'q/willow/render/markup/loop/regex/find', 
+			'willow/render/markup/loop/regex/find', 
 			"/$loop_open\s+(.*?)\s+$loop_close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);
@@ -376,7 +376,7 @@ class loops extends willow\parse {
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
-			'q/willow/parse/loops/regex/remove', 
+			'willow/parse/loops/regex/remove', 
 			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" 
 		);
 		// self::$markup['template'] = preg_replace( $regex_remove, "", self::$markup['template'] ); 

@@ -423,7 +423,7 @@ class variables extends willow\parse {
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
-		 	'q/willow/parse/variables/cleanup/regex', 
+		 	'willow/parse/variables/cleanup/regex', 
 			"~(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|\\$open\s+(.*?)\s+\\$close~"
 		);
 

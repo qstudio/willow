@@ -186,7 +186,7 @@ class flags extends willow\parse {
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
-		 	'q/willow/parse/flags/cleanup/regex', 
+		 	'willow/parse/flags/cleanup/regex', 
 			"/\\$open.*?\\$close/"
 		);
 

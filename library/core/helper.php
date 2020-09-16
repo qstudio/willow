@@ -24,11 +24,11 @@ class helper extends \willow {
 		
 		// shift callback level, as we added another level.. ##
 		\add_filter( 
-			'q/willow/core/log/backtrace/function', function () {
+			'willow/core/log/backtrace/function', function () {
 			return 4;
 		});
 		\add_filter( 
-			'q/willow/core/log/backtrace/file', function () {
+			'willow/core/log/backtrace/file', function () {
 			return 3;
 		});
 		

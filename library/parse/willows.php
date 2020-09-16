@@ -499,7 +499,7 @@ class willows extends willow\parse {
 		// h::log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
 
 		$regex_find = \apply_filters( 
-			'q/willow/parse/willows/regex/find', 
+			'willow/parse/willows/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces ##
 		);
 
@@ -572,7 +572,7 @@ class willows extends willow\parse {
 		// strip all function blocks, we don't need them now ##
 		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
 		$regex = \apply_filters( 
-		 	'q/willow/parse/willows/cleanup/regex', 
+		 	'willow/parse/willows/cleanup/regex', 
 			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <code>tag</code> ##
 			//  "/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|{~.*?~}/ms" 
 		);

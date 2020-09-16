@@ -104,7 +104,7 @@ class comments extends willow\parse {
 		// h::log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
-			'q/willow/parse/comments/regex/find', 
+			'willow/parse/comments/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 		);
 
@@ -244,7 +244,7 @@ class comments extends willow\parse {
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
-			'q/willow/parse/comments/cleanup/regex', 
+			'willow/parse/comments/cleanup/regex', 
 			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" 
 		);
 

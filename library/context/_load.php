@@ -64,7 +64,7 @@ class context extends \willow {
 		// ui render methods - open, close.. etc ##
 		require_once self::get_plugin_path( 'library/context/ui.php' );
 
-		// elements, html snippets, which can be processed to expand via {{> markdown }} ##
+		// elements, html snippets, which can be processed to expand via {> markdown <} ##
 		require_once self::get_plugin_path( 'library/context/partial.php' );
 
 		// user context ##

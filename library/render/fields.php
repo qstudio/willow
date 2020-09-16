@@ -34,14 +34,14 @@ class fields extends willow\render {
         // filter $args now that we have fields data from ACF ##
         self::$args = core\filter::apply([ 
             'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
-            'filter'        => 'q/willow/render/fields/prepare/before/args/'.self::$args['task'], // filter handle ##
+            'filter'        => 'willow/render/fields/prepare/before/args/'.self::$args['task'], // filter handle ##
             'return'        => self::$args
         ]); 
 
         // filter all fields before processing ##
         self::$fields = core\filter::apply([ 
             'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
-            'filter'        => 'q/willow/render/fields/prepare/before/fields/'.self::$args['task'], // filter handle ##
+            'filter'        => 'willow/render/fields/prepare/before/fields/'.self::$args['task'], // filter handle ##
             'return'        => self::$fields
         ]); 
 
@@ -70,12 +70,12 @@ class fields extends willow\render {
             // filter field before callback ##
             $field = core\filter::apply([ 
                 'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => self::$args, 'fields' => self::$fields ], // params
-                'filter'        => 'q/willow/render/fields/prepare/before/callback/'.self::$args['task'].'/'.$field, // filter handle ##
+                'filter'        => 'willow/render/fields/prepare/before/callback/'.self::$args['task'].'/'.$field, // filter handle ##
                 'return'        => $field
             ]); 
 
             // Callback methods on specified field ##
-            // Note - field includes a list of standard callbacks, which can be extended via the filter q/willow/render/callbacks/get ##
+            // Note - field includes a list of standard callbacks, which can be extended via the filter willow/render/callbacks/get ##
             $value = render\callback::field( $field, $value );
 
             // h::log( 'd:>After callback -- field: '.$field .' With Value:' );
@@ -84,7 +84,7 @@ class fields extends willow\render {
             // filter field before format ##
             $field = core\filter::apply([ 
                 'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => self::$args, 'fields' => self::$fields ], // params
-                'filter'        => 'q/willow/render/fields/prepare/before/format/'.self::$args['task'].'/'.$field, // filter handle ##
+                'filter'        => 'willow/render/fields/prepare/before/format/'.self::$args['task'].'/'.$field, // filter handle ##
                 'return'        => $field
 			]); 
 			
@@ -103,7 +103,7 @@ class fields extends willow\render {
         // filter all fields ##
         self::$fields = core\filter::apply([ 
             'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
-            'filter'        => 'q/willow/render/fields/prepare/after/fields/'.self::$args['task'], // filter handle ##
+            'filter'        => 'willow/render/fields/prepare/after/fields/'.self::$args['task'], // filter handle ##
             'return'        => self::$fields
 		]); 
 
@@ -160,32 +160,13 @@ class fields extends willow\render {
 						// h::log( '$find_field: '.$find_field );
 						// h::log( self::$args );
 
-						// work out correct key to insert ##
-						// table_of_contents_repeater.0.row_title + row_title.yYdObM5Omk = table_of_contents_repeater.0.row_title.yYdObM5Omk
-
+						// prepare new key ##
 						$new_key = $field.str_replace( $find_field, '', $map_value );
 
 						// h::log( 'New Key: '.$new_key );
 
 						// assign existing key value to new key ##
 						self::$fields[$new_key] = $value;
-
-						// h::log( self::$markup['template'] );
-
-						// the problem is that we have added new data fields, but not affected the markup
-						// either the main template of specific field for loops... 
-						/*
-						$variable_hash_replace = str_replace( $variable, $variable_hash, $args['variable'] ); 
-						$args['tag'] = str_replace( $args['variable'], $variable_hash_replace, $args['tag'] );
-						// h::log( $args['tag'] );
-
-						// variable replacement string ##
-						$variable_replace = str_replace( $variable, $variable_hash, $args['variable'] );
-						// h::log( '$variable_replace: '.$variable_replace );			
-
-						// alter buffer_map ##
-						self::$buffer_map[0] = str_replace( $args['variable'], $variable_replace, self::$buffer_map[0] );
-						*/
 
 					}
 
@@ -272,68 +253,6 @@ class fields extends willow\render {
 			}
 
 		}
-
-		// @TODO -- if not array - reject ##
-		/*
-		if( 
-			is_array( $args )
-			&& ! array_filter( $args ) 
-			&& isset( self::$args['config']['default'] )
-			&& is_array( self::$args['config']['default'] )
-		){
-
-			// h::log( $args );
-			// h::log( self::$args );
-
-			// reset( $args );
-			// $first_key = key( $args );
-
-			h::log( 'args is an empty array and config->default is defined: '.self::$args['context'].'::'.self::$args['task']);
-			// $args = [];
-			// $args[$first_key] = self::$args['config']['empty'];
-			// h::log( $args );
-			// $args = [
-			// 	'data' => self::$args['config']['empty']
-			// ];
-
-			// h::log( self::$markup );
-			
-			// self::$markup = []; // blank out ##
-			
-			// self::$markup['template'] = "{{ data }}";
-
-			// $args['key'] = self::$args['config']['default'];
-			$args = self::$args['config']['default'];
-			// self::$fields[$first_key] = self::$args['config']['empty'];
-
-			// h::log( self::$markup );
-
-			// $args = false;
-
-			// return true;
-
-		} else {	
-
-			// h::log( 'd:>Good Args' );
-			// h::log( $args );
-
-		}
-
-		// h::log( self::$markup );
-
-		// self::$markup['template'] = 'EMPTY';
-
-		// assign string to key 'value' ##
-		/*
-		if ( is_string( $args ) ){
-
-			h::log( 'e:>Calling fields/define with a string value is __deprectated..' );
-
-			return false;
-			// return self::$fields['value'] = $args;
-
-		}
-		*/
 
 		// h::log( $args );
 		// loop over array - saving key + value to self::$fields ##

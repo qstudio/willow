@@ -102,7 +102,7 @@ class format extends willow\render {
 
         // assign default in case we don't find a matching type ##
         // this is alterable via a filter ##
-        $return = \apply_filters( 'q/willow/render/format/default', 'format_text' ); 
+        $return = \apply_filters( 'willow/render/format/default', 'format_text' ); 
 
         // h::log( 'Default method is: '.$return );
 
@@ -149,7 +149,7 @@ class format extends willow\render {
         }
 
         // final filter on field format type ##
-        $return = \apply_filters( 'q/willow/render/format/get/'.self::$args['task'].'/'.$field, $return );
+        $return = \apply_filters( 'willow/render/format/get/'.self::$args['task'].'/'.$field, $return );
 
         // kick back ##
         return $return;
@@ -245,7 +245,7 @@ class format extends willow\render {
 
         // h::log( $value );
 
-        return \apply_filters( 'q/willow/render/format/text/'.self::$args['task'].'/'.$field, $value );
+        return \apply_filters( 'willow/render/format/text/'.self::$args['task'].'/'.$field, $value );
 
     }
 
@@ -257,7 +257,7 @@ class format extends willow\render {
     public static function format_integer( $value = null, $field = null )
     {
 
-        return \apply_filters( 'q/willow/render/format/integer/'.self::$args['task'].'/'.$field, $value );
+        return \apply_filters( 'willow/render/format/integer/'.self::$args['task'].'/'.$field, $value );
 
     }
 
@@ -276,7 +276,7 @@ class format extends willow\render {
     {
 
         // allow filtering early ##
-        $value = \apply_filters( 'q/willow/render/format/array/'.self::$args['task'].'/'.$field, $value );
+        $value = \apply_filters( 'willow/render/format/array/'.self::$args['task'].'/'.$field, $value );
 
         // array of arrays containing named indexes ( not WP_Post Objects ) needs to be be marked up as a block, like an Object ##
 
@@ -433,7 +433,7 @@ class format extends willow\render {
     {
 
         // allow filtering early ##
-        $value = \apply_filters( 'q/willow/render/format/object/'.self::$args['task'].'/'.$field, $value );
+        $value = \apply_filters( 'willow/render/format/object/'.self::$args['task'].'/'.$field, $value );
 
         // WP_Post Object ##
         if ( $value instanceof \WP_Post ) {
@@ -747,7 +747,7 @@ class format extends willow\render {
     public static function get_allowed()
     {
 
-        return \apply_filters( 'q/willow/render/format/get_allowed', self::$format );
+        return \apply_filters( 'willow/render/format/get_allowed', self::$format );
 
     }
 

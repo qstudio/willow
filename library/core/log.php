@@ -39,8 +39,8 @@ class log extends \willow {
 	public static function __run(){
 
 		// filter pre-defined actions ##
-		$on_run 			= \apply_filters( 'q/willow/core/log/on_run', self::$on_run );
-		$on_shutdown 		= \apply_filters( 'q/willow/core/log/on_shutdown', self::$on_shutdown );
+		$on_run 			= \apply_filters( 'willow/core/log/on_run', self::$on_run );
+		$on_shutdown 		= \apply_filters( 'willow/core/log/on_shutdown', self::$on_shutdown );
 
 		// on_run set to true ##
 		if ( $on_run ) {
@@ -75,11 +75,11 @@ class log extends \willow {
 	private static function get_backtrace( $args = null ){
 
 		// called directly, else called from h::log() ##
-		// $level_function = apply_filters( 'q/willow/core/log/backtrace/function', 3 );
-		// $level_file = apply_filters( 'q/willow/core/log/backtrace/file', 2 );
+		// $level_function = apply_filters( 'willow/core/log/backtrace/function', 3 );
+		// $level_file = apply_filters( 'willow/core/log/backtrace/file', 2 );
 
 		$backtrace_1 = core\method::backtrace([ 
-			'level' 	=> \apply_filters( 'q/willow/core/log/backtrace/function', 3 ), 
+			'level' 	=> \apply_filters( 'willow/core/log/backtrace/function', 3 ), 
 			'return' 	=> 'class_function' 
 		]);
 
@@ -87,7 +87,7 @@ class log extends \willow {
 		$backtrace_1 = strtolower( str_replace( [ '()' ], [ '' ], $backtrace_1 ) );
 			
 		$backtrace_2 = core\method::backtrace([ 
-			'level' 	=> \apply_filters( 'q/willow/core/log/backtrace/file', 2 ), 
+			'level' 	=> \apply_filters( 'willow/core/log/backtrace/file', 2 ), 
 			'return' 	=> 'file_line' 
 		]);
 
@@ -219,7 +219,7 @@ class log extends \willow {
 		}
 
 		// filter delimters ##
-		self::$delimiters = \apply_filters( 'q/willow/core/log/delimiters', self::$delimiters );
+		self::$delimiters = \apply_filters( 'willow/core/log/delimiters', self::$delimiters );
 
 		// string ##
 		if ( 
@@ -544,7 +544,7 @@ class log extends \willow {
 		// @todo -- sanity ##
 
 		// filter special keys ##
-		self::$special_keys = \apply_filters( 'q/willow/core/log/special_keys', self::$special_keys );
+		self::$special_keys = \apply_filters( 'willow/core/log/special_keys', self::$special_keys );
 
 		// lookfor key
 		if ( 
@@ -611,6 +611,10 @@ class log extends \willow {
 
 		// clean up ##
 		// $return = self::array_unique_multidimensional( $return );
+
+		// take first key, skip one level ##
+		$first_key = array_key_first( $return );
+		$return = $return[ $first_key ];
 
 		// debugging is on in WP, so write to error_log ##
         if ( true === WP_DEBUG ) {
@@ -788,8 +792,8 @@ class log extends \willow {
 		// var_dump( self::$log );
 
 		// filter what to write to log - defaults to "error" key ##
-		$key = \apply_filters( 'q/willow/core/log/default', self::$shutdown_key );
-		$key_debug = \apply_filters( 'q/willow/core/log/debug', self::$shutdown_key_debug );
+		$key = \apply_filters( 'willow/core/log/default', self::$shutdown_key );
+		$key_debug = \apply_filters( 'willow/core/log/debug', self::$shutdown_key_debug );
 
 		// var_dump( $key ); echo '<br/><br/>';
 		// var_dump( $key_debug ); echo '<br/><br/>';

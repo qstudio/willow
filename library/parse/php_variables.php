@@ -265,7 +265,7 @@ class php_variables extends willow\parse {
 		// h::log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
-			'q/willow/parse/php_variables/regex/find', 
+			'willow/parse/php_variables/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 			// "/{{#(.*?)\/#}}/s" 
 		);

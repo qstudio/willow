@@ -47,7 +47,7 @@ class navigation extends willow\context {
 
 		// call method ##
 		$return = call_user_func_array (
-				array( '\\q\\get\\navigation', $method )
+				array( '\\willow\\get\\navigation', $method )
 			,   array( $args )
 		);
 

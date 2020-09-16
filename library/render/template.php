@@ -56,7 +56,7 @@ class template extends willow\render {
 		// filter ##
 		$config = core\filter::apply([ 
 			'parameters'    => [ 'config' => $config ], // pass ( $template ) as single array ##
-			'filter'        => 'q/willow/render/template/config/'.$args['context'].'/'.$args['task'], // filter handle ##
+			'filter'        => 'willow/render/template/config/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $config
 	   	]); 
 
@@ -68,7 +68,7 @@ class template extends willow\render {
 		// filter ##
 		$markup = core\filter::apply([ 
 			'parameters'    => [ 'markup' => $markup ], // pass ( $template ) as single array ##
-			'filter'        => 'q/willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
+			'filter'        => 'willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $markup
 	   	]); 
 
@@ -95,7 +95,7 @@ class template extends willow\render {
 		// filter ##
 		$string = core\filter::apply([ 
 			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-			'filter'        => 'q/willow/render/template/string/'.$args['context'].'/'.$args['task'], // filter handle ##
+			'filter'        => 'willow/render/template/string/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $string
 	   	]); 
 
