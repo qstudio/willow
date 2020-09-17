@@ -90,6 +90,18 @@ class method extends \willow {
 
 		}
 
+		// we need a string, but we've been passed an integer, let's cast it ##
+		if( 
+			filter_var( $args['string'], FILTER_VALIDATE_INT) !== false
+		){
+
+			h::log( 'e:>Passed $string is actually an integer: "'.$args['string'].'" Willow will cast it to a string value' );
+			// h::log( $args['string'] );
+
+			$args['string'] = (string) $args['string'];
+
+		}
+
 		// we need a string, so validate format ##
 		if( 
 			! is_string( $args['string'] )

@@ -1,3 +1,8 @@
+### 1.4.6 ###
+
+* Update: Reduced lookup filter runs for loaded config, performance improvements
+* Update: cast true integer values to strings, when passed as return values before render
+
 ### 1.4.5 ###
 
 * Update: Debugging Log merged into main WP log file
