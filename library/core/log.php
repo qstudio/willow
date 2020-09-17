@@ -12,8 +12,8 @@ class log extends \willow {
 
 	// track who called what ##
 	public static 
-		$file				= \WP_CONTENT_DIR."/willow.log",
-		$file_wp			= \WP_CONTENT_DIR."/debug.log",
+		$file				= \WP_CONTENT_DIR."/debug.log",
+		// $file_wp			= \WP_CONTENT_DIR."/debug.log",
 		$empty 				= false, // track emptied ##
 		$backtrace 			= false,
 		$backtrace_key 		= false,
@@ -46,7 +46,7 @@ class log extends \willow {
 		if ( $on_run ) {
 
 			// earliest possible action.. empty log ##
-			self::empty();  
+			if( ! class_exists( 'Q' ) ) self::empty();  
 
 			// also, pre-ajax ##
 			if( 
@@ -55,7 +55,7 @@ class log extends \willow {
 			) {
 
 				// h::hard_log( 'DOING AJAX...' );
-				self::empty();
+				if( ! class_exists( 'Q' ) ) self::empty();
 
 			}
 
@@ -585,6 +585,19 @@ class log extends \willow {
 
 		}
 
+		// if key set, check if exists, else bale ##
+		if ( 
+			// array_filter( self::$log[$key] )
+			// || 
+			empty( self::$log[$key] )
+		) {
+
+			// self::set( '"'.$key.'" Log is empty.' );
+
+			return false;
+
+		}
+
 		// option to debug only specific key ##
 		if ( isset( $key ) ) {
 			
@@ -613,8 +626,8 @@ class log extends \willow {
 		// $return = self::array_unique_multidimensional( $return );
 
 		// take first key, skip one level ##
-		$first_key = array_key_first( $return );
-		$return = $return[ $first_key ];
+		// $first_key = array_key_first( $return );
+		// $return = $return[ $first_key ];
 
 		// debugging is on in WP, so write to error_log ##
         if ( true === WP_DEBUG ) {
@@ -853,10 +866,10 @@ class log extends \willow {
 		}
 
 		// assign to new key ##
-		self::$log['shutdown'] = $log;
+		self::$log['willow'] = $log;
 
 		// write new key to log ##
-		self::write( 'shutdown' );
+		self::write( 'willow' );
 
 		// done ##
 		return true;

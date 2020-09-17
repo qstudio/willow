@@ -36,7 +36,7 @@ class media extends \willow\get {
 			! isset( $args['config']['post'] )
 		){
 
-			$args['config']['post'] = get\post::object();
+			$args['post'] = get\post::object();
 
 		} else {
 
@@ -59,7 +59,7 @@ class media extends \willow\get {
 		// check for post thumbnail ##
         if ( ! \has_post_thumbnail( $args['post']->ID ) ) { 
 			
-			h::log( 'd:>'.$args['post']->post_type.': "'.$args['post']->post_title.'" does not have a thumbnail' );
+			h::log( 'd:>'.$args['post']->post_type.' "'.$args['post']->post_title.'" does not have a thumbnail' );
 
 			return false; 
 		
@@ -67,10 +67,10 @@ class media extends \willow\get {
 
 		// get thumbnail ID ##
 		if ( 
-			! $args['attachment_id'] = \get_post_thumbnail_id( $args['config']['post']->ID ) 
+			! $args['attachment_id'] = \get_post_thumbnail_id( $args['post']->ID ) 
 		){
 
-			h::log('d:>get_post_thumbnail_id() for Post: "'.$args['config']['post']->post_title.'" returned false' );
+			h::log('d:>get_post_thumbnail_id() for '.$args['post']->post_type.' "'.$args['post']->post_title.'" returned false' );
 
 			return false;
 

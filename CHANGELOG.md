@@ -1,3 +1,9 @@
+### 1.4.5 ###
+
+* Update: Debugging Log merged into main WP log file
+* Update: Willow loading time improvements due to reduction and standerdization of lookup locations
+* Fix: Removed additional Q references and dependencies
+
 ### 1.4.1 ###
 
 * FIX: Bad namespace in plugin/acf
