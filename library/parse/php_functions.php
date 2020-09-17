@@ -361,7 +361,9 @@ class php_functions extends willow\parse {
 			&& in_array( 'return', self::$flags_php_function )
 		){
 
-			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
+			// h::log( self::$flags_php_function );
+
+			h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
 
 			$string = self::$return;
 
@@ -371,6 +373,14 @@ class php_functions extends willow\parse {
 
 			// update markup for willow parse ##
 			parse\markup::swap( self::$function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
+
+			// remove used flags ##
+			/*
+			if ( ( $filter_key = array_search( 'return', self::$flags_php_function) ) !== false) {
+				unset( self::$flags_php_function[ $filter_key ] );
+			}
+			h::log( self::$flags_php_function );
+			*/
 
 		} else {
 

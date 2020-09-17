@@ -91,6 +91,7 @@ class method extends \willow {
 		}
 
 		// we need a string, but we've been passed an integer, let's cast it ##
+		/*
 		if( 
 			filter_var( $args['string'], FILTER_VALIDATE_INT) !== false
 		){
@@ -101,13 +102,15 @@ class method extends \willow {
 			$args['string'] = (string) $args['string'];
 
 		}
+		*/
 
 		// we need a string, so validate format ##
 		if( 
-			! is_string( $args['string'] )
+			! is_string( $args['string'] ) // not a string 
+			&& filter_var( $args['string'], FILTER_VALIDATE_INT) === false // && not an integer
 		){
 
-			h::log( 'e:>Passed $string is not in a valid string format' );
+			h::log( 'e:>Passed $string is not in a valid string or integer format' );
 			h::log( $args['string'] );
 
 			return $args['string'];
@@ -185,7 +188,7 @@ class method extends \willow {
 				! in_array( $function, self::$filters )
 			){
 
-				h::log( 'e:>Error. Defined filter is not available "'.$function.'". Skipping' );
+				h::log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
 
 				continue;
 
@@ -206,7 +209,7 @@ class method extends \willow {
 				|| ! is_callable( $function ) 
 			) {
 
-				h::log( 'e:>Error. Function "'.$function.'" does not exist or is not callable' );
+				h::log( 'e:>Function "'.$function.'" does not exist or is not callable' );
 
 				continue;
 
