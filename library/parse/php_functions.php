@@ -363,7 +363,7 @@ class php_functions extends willow\parse {
 
 			// h::log( self::$flags_php_function );
 
-			h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
+			// h::log( 'e:>Replacing function: "'.self::$function_match.'" with function return value: '.self::$return );
 
 			$string = self::$return;
 
