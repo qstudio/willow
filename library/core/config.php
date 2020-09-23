@@ -346,7 +346,7 @@ class config extends \willow {
 			&& isset( self::$config[ $args['context'] ][ $args['task'] ] ) 
 		){ 
 			
-			h::log( 'd:>Config loading from cache file: '.$args['context'].'->'.$args['task'] ); 
+			// h::log( 'd:>Config loading from cache file: '.$args['context'].'->'.$args['task'] ); 
 			// h::log( self::$config );
 			
 			return $args; 
