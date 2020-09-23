@@ -8,7 +8,7 @@ use willow;
 use willow\render;
 use willow\buffer;
 
-\willow\buffer\output::run();
+\willow\buffer\output::__run();
 
 class output extends willow\buffer {
 
@@ -17,7 +17,13 @@ class output extends willow\buffer {
 	/**
 	 * Check for view template and start OB, if correct
 	*/
-	public static function run(){
+	public static function __run(){
+
+		// https://stackoverflow.com/questions/38693992/notice-ob-end-flush-failed-to-send-buffer-of-zlib-output-compression-1-in
+		\remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
+		\add_action( 'shutdown', function() {
+			while ( @ob_end_flush() );
+		} );
 
 		// start here ##
 		self::$filter = [];
