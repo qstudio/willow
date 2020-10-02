@@ -1,3 +1,7 @@
+### 1.4.7 ###
+
+* New: Example cache clear hook - from Fastest Cache plugin
+
 ### 1.4.6 ###
 
 * Update: Reduced lookup filter runs for loaded config, performance improvements

@@ -77,6 +77,9 @@ class config extends \willow {
 		// notes ##
 		// h::log( 't:>config is collecting data as it goes.. perhaps this will blow up, but seems ok so far..' );
 
+		// hook into Fastest Cache clear routine ##
+		\add_action( 'wpfc_delete_cache', [ get_class(), 'delete_from_fastest_cache' ], 1 );
+
 	}
 
 
@@ -198,6 +201,9 @@ class config extends \willow {
 			// load ##
 			if ( self::$delete_config ) {
 
+				self::delete_cache();
+				/*
+
 				\delete_site_transient( 'willow_config' );
 
 				// h::log( 'e:>Deleted config cache from DB...' );
@@ -218,6 +224,7 @@ class config extends \willow {
 
 				// update tracker ##
 				self::$delete_config = false;
+				*/
 
 			}
 
@@ -283,7 +290,7 @@ class config extends \willow {
 		}
 		*/
 
-		h::log( 'e:>failed to load config data from DB, perhaps we need to re-generate from here..' );
+		h::log( 'e:>Cache check to DB is empty, so new cache being generated from here..' );
 
 		return false;
 
@@ -294,6 +301,47 @@ class config extends \willow {
 		// 	return false;
 
 		// }
+
+	}
+
+
+	/**
+	 * Hook into Fastest Cache delete routine - as an example how to clear Willow cache from third party plugin
+	 * 
+	 * @since 	1.4.7
+	 * @return 	void
+	*/
+	public static function delete_from_fastest_cache(){
+
+		h::log( 'e:>Delete Willow cache from Fastest Cache hook...' );
+		
+		self::delete_cache();
+
+	}
+
+
+	public static function delete_cache(){
+
+		\delete_site_transient( 'willow_config' );
+
+		h::log( 'e:>Deleted config cache from DB...' );
+
+		if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
+
+			$file = \q_theme::get_child_theme_path('/__q.php');
+
+			if ( $file && file_exists( $file ) ) {
+
+				unlink( $file );
+
+				h::log( 'd:>...also deleting __q.php, so cache is clear' );
+
+			}
+
+		}
+
+		// update tracker ##
+		self::$delete_config = false;
 
 	}
 
