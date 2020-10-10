@@ -196,7 +196,7 @@ class group extends \willow\get {
             'return'        => $array
         ]); 
 
-        // assign to class property ##
+        // assign to class properties ##
 		self::$fields = $array; // capture all fields for type and callback lookups ##
 		self::$data = $array; // data to return to fields\define ##
 

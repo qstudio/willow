@@ -313,7 +313,7 @@ class config extends \willow {
 	*/
 	public static function delete_from_fastest_cache(){
 
-		h::log( 'e:>Delete Willow cache from Fastest Cache hook...' );
+		// h::log( 'e:>Delete Willow cache from Fastest Cache hook...' );
 		
 		self::delete_cache();
 
@@ -324,7 +324,7 @@ class config extends \willow {
 
 		\delete_site_transient( 'willow_config' );
 
-		h::log( 'e:>Deleted config cache from DB...' );
+		// h::log( 'e:>Deleted config cache from DB...' );
 
 		if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
@@ -334,7 +334,7 @@ class config extends \willow {
 
 				unlink( $file );
 
-				h::log( 'd:>...also deleting __q.php, so cache is clear' );
+				// h::log( 'd:>...also deleting __q.php, so cache is clear' );
 
 			}
 

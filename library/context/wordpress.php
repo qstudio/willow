@@ -22,7 +22,27 @@ class wordpress extends willow\context {
 
 		return \get_site_option( $args );
 
-    }
+	}
+	
+
+
+	/**
+     * wp_enqueue_script
+     *
+     * @param       Array       $args
+     * @since       1.3.0
+     * @return      String
+     */
+    public static function enqueue_script( $args = null ) {
+
+		h::log( $args );
+
+		// check if we have a valid script to enquque ##
+		// \wp_enqueue_script( $args[''] );
+
+		return [  ];
+
+	}
 
 
 }
