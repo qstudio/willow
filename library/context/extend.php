@@ -6,17 +6,72 @@ use willow\core\helper as h;
 use willow\context;
 
 // load it up ##
-\willow\context\extend::run();
+\willow\context\extend::__run();
 
 class extend extends \willow\context {
+
+	protected static $filtered = [];
 
 	/**
 	 * Fire things up
 	*/
-	public static function run(){
+	public static function __run(){
 
 		// allow for class extensions ##
 		\do_action( 'willow/context/extend/register', [ get_class(), 'register' ] );
+
+		// filter in context extensions ## 
+		// \add_action( 'after_setup_theme', [ get_class(), 'filter' ], 2 );
+
+		// merge filtered context extensions ## 
+		// \add_action( 'after_setup_theme', [ get_class(), 'filter' ], 10 );
+
+	}
+
+
+	public static function filter(){
+
+		// filter extensions ##
+		$array = \apply_filters( 'willow/context/extend', [] );
+
+		h::log( $array );
+
+		// sanity ##
+		if( 
+			! $array
+			|| ! is_array( $array ) 
+		){
+
+			h::log( 'e:>Not an Array' );
+
+			return false;
+
+		}
+
+		// merge in - validate later ##
+		self::$filtered = array_merge( $array, self::$filtered );
+
+		h::log( self::$filtered );
+
+		/*
+		$merge = [];
+
+		foreach( $array as $key => $value ){
+
+			h::log( $key );
+
+			$merge[ $key['class'] ] = $key;
+
+		}
+
+		h::log( $merge );
+
+		// merge into class property ##
+		self::$extend = array_merge(
+			self::$extend, $merge
+		);
+
+		*/
 
 	}
 
@@ -33,7 +88,7 @@ class extend extends \willow\context {
 			|| ! isset( $args['context'] )
 			|| ! isset( $args['class'] )
 			|| ! isset( $args['methods'] )
-			|| ! is_array( $args['methods'] )
+			// || ! is_array( $args['methods'] )
 		){
 
 			h::log( 'e:>Error in passed params' );
@@ -58,7 +113,7 @@ class extend extends \willow\context {
 			|| ! isset( $args['context'] )
 			|| ! isset( $args['class'] )
 			|| ! isset( $args['methods'] )
-			|| ! is_array( $args['methods'] )
+			// || ! is_array( $args['methods'] )
 		){
 
 			h::log( 'e:>Error in passed params' );
@@ -67,18 +122,82 @@ class extend extends \willow\context {
 
 		}
 
+		// reject invalid class objects ##
+		if( 
+			! class_exists( $args['class'] ) 
+			// ! is_call( $args['class'] ) 
+		){
+
+			h::log( 'Invalid class: '.$args['class'] );
+
+			return false;
+
+		}
+
 		// we only want to get "public" methods -- in this case, listed without __FUNCTION at start ##
 		$methods = [];
-		foreach( $args['methods'] as $method ){
 
-			// h::log( 'd:>checking method: '.$method );
-			// skip quasi-private __METHODS ##
-			if ( false !== strpos( $method, '__' ) ){ continue; } 
-			
+		// methods can be passed as a string with value 'all' or 'public' ##
+		if ( 
+			is_string( $args['methods'] ) 
+			&&  ( 
+				'public' == $args['methods']
+				|| 'all' == $args['methods']
+			)
+		){
+
+			// switch methods ##
+			switch( $args['methods'] ) {
+
+				default :
+				case "public" :
+
+					$class = new \ReflectionClass( $args['class'] );
+					$public_methods = $class->getMethods( \ReflectionMethod::IS_PUBLIC );
+					// h::log( $public_methods );
+					foreach( $public_methods as $key ){ 
+						
+						// match format returned by get_class_methods() ##
+						$methods[] = $key->name; 
+					
+					} 
+
+				break ;
+
+				case "all" :
+
+					$methods = get_class_methods( $args['class'] );
+
+				break ;
+
+			}
+
+		} else {
+		
 			// grab method ##
-			$methods[] = $method;
+			$methods = $args['methods'];
 
-		};
+		}
+
+		// remove quasi-private methods with __NAME ##
+		foreach ( $methods as $key ) {
+
+			// h::log( 'Checking method: '.$key );
+
+			if( substr( $key, 0, 2, ) === '__' ) {
+
+				// remove ##
+				if ( ( $remove_key = array_search( $key, $methods )) !== false) {
+
+					unset($methods[$remove_key]);
+
+					// h::log( 'Removing method: '.$args['class'].'::'.$key );
+					
+				}
+
+			}
+
+		}
 
 		// if methods is empty, don't store class ##
 		if ( 
@@ -91,6 +210,8 @@ class extend extends \willow\context {
 			return false;
 
 		}
+
+		// h::log( $methods );
 
 		return self::$extend[ $args['class'] ] = [
 			'context' 	=> $args['context'],

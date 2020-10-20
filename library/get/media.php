@@ -12,8 +12,7 @@ class media extends \willow\get {
      * Check for a return post thumbnail images and exif-data baed on passed settings ##
      *
      */
-    public static function thumbnail( $args = null )
-    {
+    public static function thumbnail( $args = null ){
 
 		// h::log( \willow::$args );
 
@@ -101,8 +100,7 @@ class media extends \willow\get {
      * Check for a return post thumbnail images and exif-data baed on passed settings ##
      *
      */
-    public static function gallery( $args = null )
-    {
+    public static function gallery( $args = null ){
 
 		// h::log( $args );
 
@@ -207,8 +205,7 @@ class media extends \willow\get {
      * Check for a return src and exif-data from attachment ID ##
      *
      */
-    public static function src( $args = null )
-    {
+    public static function src( $args = null ){
 
 		// sanity ##
 		if (

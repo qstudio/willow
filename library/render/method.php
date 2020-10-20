@@ -287,8 +287,7 @@ class method extends willow\render {
      * @since    2.0.0
      * @return   Mixed
      */
-    public static function markup( $markup = null, $data = null, $args = null )
-    {
+    public static function markup( $markup = null, $data = null, $args = null ){
 
         // sanity ##
         if (

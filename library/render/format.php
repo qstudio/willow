@@ -77,8 +77,7 @@ class format extends willow\render {
      * Get format of $field $value from defined list of allowed formats ##
      * 
      */
-    public static function get( $value = null, $field = null )
-    {
+    public static function get( $value = null, $field = null ){
 
         // sanity ##
         if ( 
@@ -163,8 +162,7 @@ class format extends willow\render {
      * Allow text field to be filtered ##
      * 
      */
-    public static function apply( $value = null, String $field = null, String $format = null )
-    {
+    public static function apply( $value = null, String $field = null, String $format = null ){
 
         // sanity ##
         if ( 
@@ -240,8 +238,7 @@ class format extends willow\render {
      * Format text - allow for external filtering ##
      * 
      */
-    public static function format_text( $value = null, $field = null )
-    {
+    public static function format_text( $value = null, $field = null ){
 
         // h::log( $value );
 
@@ -254,8 +251,7 @@ class format extends willow\render {
      * Allow integer field to be filtered ##
      * 
      */
-    public static function format_integer( $value = null, $field = null )
-    {
+    public static function format_integer( $value = null, $field = null ){
 
         return \apply_filters( 'willow/render/format/integer/'.self::$args['task'].'/'.$field, $value );
 
@@ -272,8 +268,7 @@ class format extends willow\render {
      * we need to update the template based on number of array items and defined markup with numbered values ##
      * 
      */
-    public static function format_array( $value = null, $field = null )
-    {
+    public static function format_array( $value = null, $field = null ){
 
         // allow filtering early ##
         $value = \apply_filters( 'willow/render/format/array/'.self::$args['task'].'/'.$field, $value );
@@ -358,8 +353,7 @@ class format extends willow\render {
 
 
 
-    public static function format_array_repeater( $value = null, $field = null )
-    {
+    public static function format_array_repeater( $value = null, $field = null ){
 
         // h::log( 'Formatting repeater array...' );
         // h::log( $value );

@@ -260,6 +260,7 @@ if ( ! class_exists( 'willow' ) ) {
 				'urlencode',
 				'esc_js',
 				'esc_textarea',
+				'html_entity_decode',
 
 				// format ##
 				'strtoupper',
