@@ -1,3 +1,7 @@
+### 1.4.8 ###
+
+* New: html_entity_decode filter
+
 ### 1.4.7 ###
 
 * New: Example cache clear hook - from Fastest Cache plugin
