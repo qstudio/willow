@@ -208,7 +208,7 @@ class context extends \willow {
 	
 				render\log::set( $args );
 				
-				h::log( 'e:>Args validation failed' );
+				// h::log( 'e:>Args validation failed' );
 
 				// reset all args ##
 				render\args::reset();

@@ -305,7 +305,7 @@ class php_functions extends willow\parse {
 			&& ! is_integer( self::$return )
 		){
 
-			h::log( 'Return from "'.self::$function.'" is not a string or integer, so rejecting' );
+			h::log( 'Return from "'.self::$function.'" is not a string or integer, so Willow rejected it' );
 			// h::log( self::$return );
 
 			parse\markup::swap( self::$function_match, '', 'php_function', 'string', $process );

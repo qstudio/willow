@@ -116,7 +116,7 @@ if ( ! class_exists( 'willow' ) ) {
 				],
 				'string'            => [
 					'type'          => 'is_string',
-					'method'        => 'format_text',
+					'method'        => 'format_string',
 				],
 			],
 			

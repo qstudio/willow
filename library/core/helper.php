@@ -45,10 +45,9 @@ class helper extends \willow {
      * @since       4.1.0
      * @return      void
      */
-    public static function hard_log( $args = null )
-    {
+    public static function hard_log( $args = null ){
 		
-		error_log( $args );
+		// error_log( $args );
 
 		// sanity ##
 		if ( is_null( $args ) ) { 

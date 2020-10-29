@@ -101,7 +101,7 @@ class format extends willow\render {
 
         // assign default in case we don't find a matching type ##
         // this is alterable via a filter ##
-        $return = \apply_filters( 'willow/render/format/default', 'format_text' ); 
+        $return = \apply_filters( 'willow/render/format/default', 'format_string' ); 
 
         // h::log( 'Default method is: '.$return );
 
@@ -235,10 +235,10 @@ class format extends willow\render {
 
 
     /**
-     * Format text - allow for external filtering ##
+     * Format string - allow for external filtering ##
      * 
      */
-    public static function format_text( $value = null, $field = null ){
+    public static function format_string( $value = null, $field = null ){
 
         // h::log( $value );
 
@@ -331,7 +331,10 @@ class format extends willow\render {
         render\fields::remove( $field, 'Removed by format_array after working' );
 
         // checkout markup ##
-        // h::log( self::$markup['template'] );
+		// h::log( self::$markup['template'] );
+		
+		// h::log( self::$fields );
+		// h::log( self::$markup);
 
         // returning false will delete the original passed field ##
         return true;
@@ -355,36 +358,63 @@ class format extends willow\render {
 
     public static function format_array_repeater( $value = null, $field = null ){
 
-        // h::log( 'Formatting repeater array...' );
-        // h::log( $value );
+        // h::log( 'Formatting repeater array for field: '.$field );
+        // h::hard_log( $value );
 
         // check how many items are in array and format ##
-        $count = 0;
+		$count = 0;
+		
+		// build an array to pass to field setter, to handle repeaters of WP_Post objects ##
+		// $array = [];
 
         // loop over array of arrays, work inner keys and values ## 
         foreach( $value as $r1 => $v1 ) {
 
             foreach( $v1 as $r2 => $v2 ) {
 
-                // h::log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
+				// h::log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
+				// h::hard_log( $r2 ); // 'space'
+				// h::hard_log( $v2 ); // WP_Post
 
-                // create a new, named and numbered field based on field__COUNT.row_key ##
-				// $key_field = $field.'__'.$count.'__'.$r2;
-				// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
-                render\fields::set( $field.'.'.$count.'.'.$r2, $v2 );
+				// WP_Post Object ##
+				if ( $v2 instanceof \WP_Post ) {
+
+					// h::log( 'WP Post Object...' );
+
+					// pass to WP formatter and capture returned array ##
+					self::format_object_wp_post( $v2, $field.'.'.$count );
+
+				} else {
+
+					// create a new, named and numbered field based on field__COUNT.row_key ##
+					// $key_field = $field.'__'.$count.'__'.$r2;
+					// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
+					render\fields::set( $field.'.'.$count.'.'.$r2, $v2 );
+				
+				}
 
             }
 
             // format ran ok ##
-            render\markup::set( $field, $count );
-
+			render\markup::set( $field, $count );
+			
             // iterate count ##
             $count ++ ;
 
 		}
+
+		// if ( ! empty( $array ) ) {
+
+			// we need to assign the correct key ##
+			// h::log( [ $field => $array ] );
+
+			// store array ##
+			// self::$fields[$field] = $array;
+
+		// }
 		
 		// ALSO -- if array only has one row - add key.property fields ##
-		if ( 1 == count( $value ) ){
+		if ( 1 === count( $value ) ){
 
 			// h::log( 'e:>'.$field.' is a Single ROW array..' );
 
@@ -392,12 +422,24 @@ class format extends willow\render {
 			foreach( $value as $r1 => $v1 ) {
 
 				foreach( $v1 as $r2 => $v2 ) {
+
+					// WP_Post Object ##
+					if ( $v2 instanceof \WP_Post ) {
+
+						// h::hard_log( 'WP Post Object...' );
+
+						// pass to WP formatter ##
+						self::format_object_wp_post( $v2, $field );
+
+					} else {
 	
-					// h::log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
-	
-					// create a new, named and numbered field based on field__COUNT.row_key ##
-					// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
-					render\fields::set( $field.'.'.$r2, $v2 );
+						// h::log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
+		
+						// create a new, named and numbered field based on field__COUNT.row_key ##
+						// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
+						render\fields::set( $field.'.'.$r2, $v2 );
+
+					}
 	
 				}
 	
@@ -411,6 +453,9 @@ class format extends willow\render {
 
 		}
 
+		// h::log( self::$fields );
+		// h::log( self::$markup);
+
         return true;
 
     }
@@ -423,8 +468,7 @@ class format extends willow\render {
      * Currently, we only support Objects of type WP_Post - so validate with instance of ## 
      * @todo -- Extend this method a lot to deal with extra object types ##
      */
-    public static function format_object( $value = null, $field = null )
-    {
+    public static function format_object( $value = null, $field = null ){
 
         // allow filtering early ##
         $value = \apply_filters( 'willow/render/format/object/'.self::$args['task'].'/'.$field, $value );
@@ -469,7 +513,7 @@ class format extends willow\render {
     /**
      * Format WP_Post Objects
      */
-    public static function format_object_wp_post( \WP_Post $wp_post = null, $field = null ) :bool {
+    public static function format_object_wp_post( \WP_Post $wp_post = null, $field = null ): bool {
 
         // sanity ##
         if (
@@ -486,6 +530,9 @@ class format extends willow\render {
 
 		// define context ##
 		$context = 'WP_Post';
+
+		// return array of fields ##
+		// $array = [];
 		
 		// h::log( 'Formatting WP Post Object: '.$wp_post->post_title );
 		// h::log( 'Field: '.$field ); // whole object ##
@@ -568,6 +615,7 @@ class format extends willow\render {
 
 				// @@ todo.. do we need to remove field or markup ?? ##
 
+				// next ... ##
 				continue;
 
 			}
@@ -575,6 +623,9 @@ class format extends willow\render {
 			// assign field and value ##
 			render\fields::set( $field.'.'.$wp_post_field, $string );
 			// render\fields::set( $field.'__'.$wp_post_field, $string );
+
+			// store data ##
+			// $array[ $wp_post_field ] = $string;
 
 		}
 

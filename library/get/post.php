@@ -19,8 +19,7 @@ class post extends \willow\get {
      * @since       1.0.7
      * @return      Object      WP_Post object
      */
-    public static function object( $args = null )
-    {
+    public static function object( $args = null ){
 
         // h::log( $args );
 
@@ -86,8 +85,7 @@ class post extends \willow\get {
      *
      * @since       4.0.0
      */
-    public static function object_terms( $args = null )
-    {
+    public static function object_terms( $args = null ){
 
 		// sanity ##
 		if (
@@ -256,8 +254,7 @@ class post extends \willow\get {
      *
      * @since       1.0.7
      */
-    public static function excerpt( $args = null )
-    {
+    public static function excerpt( $args = null ){
 
 		// sanity ##
 		if (
@@ -334,8 +331,7 @@ class post extends \willow\get {
      *
      * @since 0.1
      */
-    public static function excerpt_from_id( $post = null, $length = 155, $tags = null, $extra = '&hellip;' )
-    {
+    public static function excerpt_from_id( $post = null, $length = 155, $tags = null, $extra = '&hellip;' ){
 
 		// null post ##
 		if ( is_null( $post ) ) {
@@ -378,8 +374,7 @@ class post extends \willow\get {
     * @since       1.0.1
     * @return      string       HTML
     */
-    public static function content( $args = null )
-    {
+    public static function content( $args = null ){
 
 		// h::log( 'e:>post->content hit..' );
 
@@ -407,6 +402,32 @@ class post extends \willow\get {
 
 		// return ##
 		return get\method::prepare_return( $args, $array );
+
+	}
+
+
+
+	/**
+	 * Returns the permalink for a page based on the incoming slug.
+	 *
+	 * @param   string  $slug   The slug of the page to which we're going to link.
+	 * @return  string          The permalink of the page
+	 * @since   1.0
+	 */
+	public static function permalink_by_slug( $slug = null ){
+
+		// sanity ##
+		if(
+			is_null( $slug )
+		){
+
+			h::log( 'e:>Error in passed $slug' );
+
+			return false;
+
+		}
+
+		// ... TODO ##
 
 	}
 

@@ -401,7 +401,9 @@ class willows extends willow\parse {
 			|| ! is_array( self::$return )
 		) {
 
-			h::log( self::$args['task'].'~>n:>Willow "'.self::$willow_match.'" did not return a value, perhaps it is a hook.' );
+			$task = isset( self::$args['task'] ) ? self::$args['task'] : $args['task'];
+
+			h::log( $task.'~>n:>Willow "'.self::$willow_match.'" did not return a value, perhaps it is a hook.' );
 
 		}
 
