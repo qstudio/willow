@@ -50,8 +50,12 @@ class template extends willow\render {
 
 		}
 
+		// h::log( $args );
+
 		// get template ##
 		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+
+		// h::log( $config );
 
 		// filter ##
 		$config = core\filter::apply([ 
@@ -60,10 +64,10 @@ class template extends willow\render {
 			'return'        => $config
 	   	]); 
 
-		// h::log( $config );
-
 		// args->template - if not set, define to task ##
 		$markup = isset( $args['markup'] ) ? $args['markup'] : $args['task'] ;
+
+		// h::log( 'markup: '.$markup );
 
 		// filter ##
 		$markup = core\filter::apply([ 
@@ -87,7 +91,7 @@ class template extends willow\render {
 
 		}
 
-		// h::log( $config['markup'][ $template ] );
+		// h::log( $config['markup'][ $markup ] );
 
 		// markup string ##
 		$string = render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );

@@ -74,10 +74,7 @@ class config extends \willow {
 		// save stored config to file ##
 		\add_action( 'shutdown', [ get_class(), 'set_cache' ], 100000 );
 
-		// notes ##
-		// h::log( 't:>config is collecting data as it goes.. perhaps this will blow up, but seems ok so far..' );
-
-		// hook into Fastest Cache clear routine ##
+		// hook into Fastest Cache clear routine -- @todo, this should be in a plugin filter ##
 		\add_action( 'wpfc_delete_cache', [ get_class(), 'delete_from_fastest_cache' ], 1 );
 
 	}
@@ -421,20 +418,6 @@ class config extends \willow {
 
 		}
 
-		/*
-		// config file extension ##
-		$extensions = \apply_filters( 'willow/config/load/ext', [ 
-			'.willow',
-			'.php', 
-		] );
-
-		// config file path ( h::get will do fallback checks form child theme, parent theme, plugin + Q.. )
-		$willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
-
-		// template ##
-		$template = core\method::template() ? core\method::template() : '404';
-		*/
-
 		// array of config files to load -- key ( for cache ) + value ##
 		$array = [
 
@@ -704,11 +687,12 @@ class config extends \willow {
 				&& isset( self::$config[ $args['context'] ][ $args['task'] ][ $args['property'] ] )
 			){
 
+				// get single property values
 				$return = self::$config[ $args['context'] ][ $args['task'] ][ $args['property'] ];
 
 			} else {
 
-				// get property value ##
+				// get task values ##
 				$return = self::$config[ $args['context'] ][ $args['task'] ];
 
 			}
@@ -725,6 +709,10 @@ class config extends \willow {
 
 		}
 
+		// filter return with specific context/task/ ##
+		$return = \apply_filters( 'willow/config/get/'.self::$config_args['context'].'/'.self::$config_args['task'], $return );
+
+		// kick back ##
 		return $return;
 
 	}
@@ -762,8 +750,7 @@ class config extends \willow {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function load( $file = null, $handle = null )
-	{
+	public static function load( $file = null, $handle = null ){
 
 		// return args for other filters ### ?? ###
 		$return = self::$config_args;

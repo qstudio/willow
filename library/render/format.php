@@ -384,6 +384,12 @@ class format extends willow\render {
 					// pass to WP formatter and capture returned array ##
 					self::format_object_wp_post( $v2, $field.'.'.$count );
 
+				// WP_Term Object ##
+				} elseif ( $v2 instanceof \WP_Term ) {
+
+					// pass to WP formatter ##
+					self::format_object_wp_term( $v2, $field.'.'.$count );
+
 				} else {
 
 					// create a new, named and numbered field based on field__COUNT.row_key ##
@@ -430,6 +436,12 @@ class format extends willow\render {
 
 						// pass to WP formatter ##
 						self::format_object_wp_post( $v2, $field );
+
+					// WP_Term Object ##
+					} elseif ( $v2 instanceof \WP_Term ) {
+
+						// pass to WP formatter ##
+						self::format_object_wp_term( $v2, $field );
 
 					} else {
 	
