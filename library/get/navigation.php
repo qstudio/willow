@@ -301,14 +301,14 @@ class navigation extends \willow\get {
 	
 
 
+
 	/**
      * Get children pages
      *
      * @since       1.0.1
      * @return      string       HTML Menu
      */
-    public static function children( $args = null )
-    {
+    public static function children( $args = null ){
 
 		// sanity ##
 		if (
@@ -339,11 +339,11 @@ class navigation extends \willow\get {
 		// query for child or sibling's post ##
 		// @todo - pass arguments from context/navigation
         $wp_args = array(
-            'post_type'         => 'page', //$args->post_type,
+            'post_type'         => 'page', // $args->post_type,
             'post_parent'       => $args['config']['post']->ID,
             'orderby'           => 'menu_order',
             'order'             => 'ASC',
-            'posts_per_page'    => -1,//$args->posts_per_page,
+            'posts_per_page'    => -1, //$args->posts_per_page,
             // 'meta_query'        => $meta_query
         );
 
@@ -367,7 +367,7 @@ class navigation extends \willow\get {
         foreach ( $object->posts as $post ) {
 
             // make WP functions available ##
-			setup_postdata( $post );
+			\setup_postdata( $post );
 			
 			// id ##
 			$array[$count]['post_id'] = $post->ID ;

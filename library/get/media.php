@@ -211,7 +211,6 @@ class media extends \willow\get {
 		if (
 			is_null( $args )
 			|| ! isset( $args['attachment_id'] )
-			// || ! isset( $args['handle'] )
 		){
 
 			h::log( 'e:>Error in passed args' );
