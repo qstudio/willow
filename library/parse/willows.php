@@ -47,9 +47,10 @@ class willows extends willow\parse {
 	*/
 	public static function is( $string = null ){
 
-		// @todo - sanity ##
+		// sanity ##
 		if(
 			is_null( $string )
+			|| ! is_string( $string )
 		){
 
 			h::log( 'e:>No string passed to method' );
@@ -60,9 +61,8 @@ class willows extends willow\parse {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( willow\tags::g( 'wil_o' )) ) !== false
-			&& strrpos( $string, trim( willow\tags::g( 'wil_c' )) ) !== false
-			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
+			strpos( $string, trim( willow\tags::g( 'wil_o' )) ) !== false // start ##
+			&& strrpos( $string, trim( willow\tags::g( 'wil_c' )) ) !== false // end ##
 		){
 
 			/*
@@ -123,6 +123,8 @@ class willows extends willow\parse {
 		// return entire function string, including tags for tag swap ##
 		self::$willow_match = core\method::string_between( $match, $open, $close, true );
 		self::$willow = core\method::string_between( $match, $open, $close );
+
+		// h::log( self::$willow );
 
 		// look for Willow flags -- assigned to a filter for use late on, pre-rendering ##
 		self::$willow = flags::get( self::$willow, 'willow' );
@@ -187,7 +189,7 @@ class willows extends willow\parse {
 				// grab loop {: scope :} ##
 				$scope = loops::scope( self::$config_string );
 				
-				// check if string contains any [ flags ] -- technically filters.. ##
+				// check if string contains any [ flags ] -- technically filters -- ##
 				if( flags::has( self::$config_string ) ) {
 
 					// h::log( $args['task'].'~>n:>FLAG set so take just loop_markup: '.$loop_markup );
@@ -227,6 +229,8 @@ class willows extends willow\parse {
 				self::$arguments, 
 				willow\arguments::decode( self::$config_string )
 			);
+
+			// h::log( self::$arguments );
 
 			$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
 			self::$willow = trim( $willow_explode[0] );

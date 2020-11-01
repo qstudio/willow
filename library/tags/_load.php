@@ -63,6 +63,9 @@ class tags extends \willow {
 			
 			'loo_o' => self::$filtered_tags['loop']['open'],
 			'loo_c' => self::$filtered_tags['loop']['close'],
+
+			'i18n_o' => self::$filtered_tags['i18n']['open'],
+			'i18n_c' => self::$filtered_tags['i18n']['close'],
 			
 			'php_fun_o' => self::$filtered_tags['php_function']['open'],
 			'php_fun_c' => self::$filtered_tags['php_function']['close'],

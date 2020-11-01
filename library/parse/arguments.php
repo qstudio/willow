@@ -61,7 +61,7 @@ class arguments extends willow\parse {
 		// trim string ##
 		self::$string = trim( self::$string );
 
-		// flags check for [a]
+		// flags check for [array]
 		self::$string = flags::get( self::$string, 'argument' );
 		// h::log( self::$flags_argument );
 		if( 
@@ -88,7 +88,7 @@ class arguments extends willow\parse {
 		// h::log( 'd:>string --> '.self::$string );
 		// h::log( self::$flags_argument );
 
-		// extract data from string ##
+		// extract data array from string ##
 		self::$array = core\method::parse_str( self::$string );
 
 		// h::log( self::$array );
@@ -103,6 +103,7 @@ class arguments extends willow\parse {
 			// ! $config_string
 			! self::$array
 			|| ! is_array( self::$array )
+			|| empty( self::$array ) // added empty check ##
 			// || ! isset( $matches[0] ) 
 			// || ! $matches[0]
 		){

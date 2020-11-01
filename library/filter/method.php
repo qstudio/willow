@@ -188,10 +188,18 @@ class method extends \willow {
 				! in_array( $function, self::$filters )
 			){
 
-				// @todo - add exception for "return" + "buffer".. etc willow filters, not variable filters ##
+				// No need to warn about missing $flags ##
+				if( 
+					! in_array( $function, self::$flags )
+				) {
 
-				h::log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
+					h::log( self::$flags );
 
+					h::log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
+
+				}
+
+				// carry on.. ##
 				continue;
 
 			}

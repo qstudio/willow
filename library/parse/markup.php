@@ -507,6 +507,15 @@ class markup extends willow\parse {
 
 			break;
 
+			// allow for string translations ##
+			case "i18n" :
+
+				// check if variable is correctly formatted --> {{ STRING }} ##
+				$needle_start = willow\tags::g( 'i18n_o' ); #'{_ ';
+				$needle_end = willow\tags::g( 'i18n_c' ); #' _}';
+
+			break;
+
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##

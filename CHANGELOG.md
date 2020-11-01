@@ -1,3 +1,7 @@
+### 1.4.9 ###
+
+* New: i18n parser for translation strings in templates
+
 ### 1.4.8 ###
 
 * New: html_entity_decode filter

@@ -29,12 +29,16 @@ class extend extends \willow\context {
 	}
 
 
+
+	/**
+	 * @todo
+	*/
 	public static function filter(){
 
 		// filter extensions ##
 		$array = \apply_filters( 'willow/context/extend', [] );
 
-		h::log( $array );
+		// h::log( $array );
 
 		// sanity ##
 		if( 
@@ -51,7 +55,7 @@ class extend extends \willow\context {
 		// merge in - validate later ##
 		self::$filtered = array_merge( $array, self::$filtered );
 
-		h::log( self::$filtered );
+		// h::log( self::$filtered );
 
 		/*
 		$merge = [];

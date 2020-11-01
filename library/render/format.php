@@ -578,18 +578,17 @@ class format extends willow\render {
 				// taxonomy handlers ##	
 				case substr( $wp_post_field, 0, strlen( 'category_' ) ) === 'category_' :
 				// case substr( $wp_post_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
-				// case substr( $wp_post_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
 
 					$string = render\type::taxonomy( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
 				// post thumbnail ###
-				// @todo --- avoid media lookups, when markups does not require them ###
+				// @todo --- avoid media lookups, when markup does not require them ###
 				// this could be done by checking markup, pre-compile - for "src" attr ... ??
 				case 'media' : // @todo
 	
-					// // note, we pass the attachment ID to src handler ##
+					// note, we pass the attachment ID to src handler ##
 					// $attachment_id = \get_post_thumbnail_id( $wp_post );
 					// $attachment = \get_post( $attachment_id );
 
@@ -599,7 +598,7 @@ class format extends willow\render {
 
 				case 'src' :
 		
-					// // note, we pass the attachment ID to src handler ##
+					// note, we pass the attachment ID to src handler ##
 					// $attachment_id = \get_post_thumbnail_id( $wp_post );
 					// $attachment = \get_post( $attachment_id );
 					// h::log( self::$args );
@@ -670,7 +669,10 @@ class format extends willow\render {
 
 		// define context ##
 		$context = 'WP_Term';
+		// $taxonomy = $wp_term->taxonomy ?? 'category'; // default to category ##
 		
+		// h::log( $wp_term );
+		// h::log( '$taxonomy: '.$taxonomy );
 		// h::log( 'Formatting WP Term Object: '.$wp_term->name );
 		// h::log( $field ); // whole object ##
 
@@ -693,6 +695,10 @@ class format extends willow\render {
 			'term_description',
 			'term_parent',
 			'term_count'
+			*/
+
+			/*
+			extend taxonomy term, if there are extra acf fields registered
 			*/
 
 			switch( $wp_term_field ) {
@@ -787,6 +793,50 @@ class format extends willow\render {
 			// assign field and value ##
 			render\fields::set( $field.'.'.$wp_term_field, $string );
 			// render\fields::set( $field.'__'.$type_field, $string );
+
+		}
+
+		// filter in custom taxonomy field data ##
+		$taxonomy = $wp_term->taxonomy ?? 'category'; // default to category ##
+		if ( \has_filter( 'willow/format/wp_term/'.$taxonomy ) ) {
+
+			// run filter ##
+			$array = \apply_filters( 
+				'willow/format/wp_term/'.$taxonomy,
+				$field,
+				$wp_term
+			);
+
+			if (
+				! $array
+				|| ! is_array( $array )
+			){
+
+				// h::log( 'd:>Filter did not return a usable array' );
+
+				return false;
+
+			}
+
+			// h::log( $array );
+
+			foreach( $array as $key => $value ) {
+
+				// h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
+
+				// validate $value is a string ##
+				if( ! is_string( $value ) ){
+
+					h::log( 'e:>"'.$key.'" value is not a string' );
+
+					continue;
+
+				}
+
+				// assign field and value ##
+				render\fields::set( $field.'.'.$key, $value );
+
+			}
 
 		}
 

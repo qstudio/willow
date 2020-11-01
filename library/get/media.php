@@ -221,7 +221,7 @@ class media extends \willow\get {
 		}
 
 		// check and assign ##
-		// h::log( render::$args );
+		// h::log( \willow::$args );
 		// h::log( $args );
 		// handle could be assigned in a few ways -- so, let's check them all in specific to generic order ##
 		// from passed args ##
@@ -232,7 +232,7 @@ class media extends \willow\get {
 			// nothing to do ##
 			// h::log( 'e:> Handle passed $args->handle: '.$args['handle'] );
 
-		// handle filtered into config by markup pre-processor ##
+		// handle filtered into config by markup pre-processor at field level ##
 		} else if ( 
 			class_exists( 'willow' )
 			&& isset( \willow::$args )
@@ -242,7 +242,19 @@ class media extends \willow\get {
 
 			$args['handle'] = \willow::$args[ $args['field'] ]['config']['handle'];
 
-			// h::log( 'e:> Handle grabbed from willow config->handle: '.$args['handle'] );
+			// h::log( 'e:> Handle grabbed from field specific... config->handle: '.$args['handle'] );
+
+		// handle filtered into config by markup pre-processor at global level ##
+		} else if ( 
+			class_exists( 'willow' )
+			&& isset( \willow::$args )
+			// && isset( $args['field'] )
+			&& isset( \willow::$args['config']['handle'] ) 
+		){
+
+			$args['handle'] = \willow::$args['config']['handle'];
+
+			// h::log( 'e:> Handle grabbed from global args... config->handle: '.$args['handle'] );
 
 		// filterable default ##
 		} else {
@@ -258,9 +270,9 @@ class media extends \willow\get {
         //     self::$args['field']['src']['handle'] : // get handle defined in calling args ##
         //     \apply_filters( 'q/render/type/src/handle', 'medium' ); // filterable default ##
 
-		/*
 		// Testing feedback ##
-		h::log( 'e:>Handle: '.$args['handle'] );
+		// h::log( 'e:>Handle: '.$args['handle'] );
+		/*
 		h::log( \get_intermediate_image_sizes() );
 		global $_wp_additional_image_sizes;
 		if ( isset( $_wp_additional_image_sizes[ $args['handle'] ] ) ) {

@@ -44,8 +44,7 @@ class parse extends \willow {
     *
     * @since        2.0.0
     */
-    public static function load()
-    {
+    public static function load(){
 
 		// markup methods ##
 		require_once self::get_plugin_path( 'library/parse/markup.php' );
@@ -55,6 +54,9 @@ class parse extends \willow {
 
 		// find + decode methods for variable + function arguments ##
 		require_once self::get_plugin_path( 'library/parse/arguments.php' );
+
+		// string translation ##
+		require_once self::get_plugin_path( 'library/parse/i18n.php' );
 
 		// comments ##
 		require_once self::get_plugin_path( 'library/parse/comments.php' );
@@ -108,6 +110,10 @@ class parse extends \willow {
 
 		// h::log( self::$args['markup'] );
 
+		// pre-format markup to run any >> translatable strings << ##
+		// runs early and might be used to return data to arguments ##
+		i18n::prepare( $args, $process );
+
 		// pre-format markup to run any >> php variables << ##
 		// runs early and might be used to return data to arguments ##
 		php_variables::prepare( $args, $process );
@@ -155,6 +161,9 @@ class parse extends \willow {
 
 		// remove all spare args... ##
 		// arguments::cleanup( $args, $process ); // @todo -- if required ##
+
+		// remove left-over i18n strings
+		i18n::cleanup( $args, $process );
 
 		// remove left-over php variables
 		php_variables::cleanup( $args, $process );

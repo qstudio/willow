@@ -16,6 +16,9 @@ class loops extends willow\parse {
 		$loop_match, // full string matched ##
 		$loop_field,
 		$loop_markup,
+		$loop_arguments,
+		$loop_variables,
+		$loop_scope,
 		$config_string,
 		$return,
 		$position
@@ -32,6 +35,9 @@ class loops extends willow\parse {
 		self::$config_string = false;
 		self::$return = false;
 		self::$position = false;
+		self::$loop_arguments = false;
+		self::$loop_variables = false;
+		self::$loop_scope = false;
 
 	}
 
@@ -76,6 +82,10 @@ class loops extends willow\parse {
 		self::$loop_field = core\method::string_between( $match, $scope_open, $scope_close );
 		self::$loop_markup = core\method::string_between( $match, $scope_close, $loop_close );
 
+		// get scope ##
+		self::$loop_scope = self::scope( self::$loop_match );
+		// h::log( 'scope: '.self::$loop_scope );
+
 		// sanity ##
 		if ( 
 			! isset( self::$loop_field ) 
@@ -91,6 +101,70 @@ class loops extends willow\parse {
 		// clean up ##
 		self::$loop_field = trim(self::$loop_field);
 		self::$loop_markup = trim(self::$loop_markup);
+
+		// h::log( self::$loop_markup );
+
+		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		// if(
+		// 	strpos( self::$loop_markup, trim( willow\tags::g( 'arg_o' )) ) !== false
+		// 	&& strpos( self::$loop_markup, trim( willow\tags::g( 'arg_c' )) ) !== false
+		// ){
+
+		if ( 
+			self::$loop_variables = parse\markup::get( self::$loop_markup, 'variable' ) 
+		) {
+	
+			// log ##
+			// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
+			// h::log( 'd:>"'.count( self::$loop_variables ) .'" variables found in string');
+	
+			// h::log( $variables );
+	
+			// remove any leftover variables in string ##
+			foreach( self::$loop_variables as $key => $value ) {
+	
+				if(
+				 	strpos( $value, trim( willow\tags::g( 'arg_o' )) ) !== false // open ##
+				 	&& strrpos( $value, trim( willow\tags::g( 'arg_c' )) ) !== false // close ##
+				){
+
+					// get arguments ##
+					$arguments = core\method::string_between( $value, trim( tags::g( 'arg_o' )), trim( tags::g( 'arg_c' )) );
+
+					// decode to array ##
+					$arguments_array = willow\arguments::decode( $arguments );
+
+					if( 
+						$arguments_array 
+						&& is_array( $arguments_array )
+					) {
+
+						// test array ##
+						// h::log( $arguments_array );
+
+						// debug ##
+						// h::log( 'variable "'.$value.'" has arguments: '.$arguments );
+
+						$arguments_tag = core\method::string_between( $value, trim( tags::g( 'arg_o' )), trim( tags::g( 'arg_c' )), true );
+
+						// store arguments for later use ##
+						self::$args = core\method::parse_args( 
+							self::$args, 
+							$arguments_array
+						);
+
+						// h::log( self::$args );
+
+						// remove args from variable ##
+						self::$loop_markup = str_replace( $arguments_tag, '', self::$loop_markup );
+
+					}
+
+				}
+	
+			}
+
+		}
 
 		// set hash ##
 		self::$loop_hash = self::$loop_field;
@@ -352,6 +426,8 @@ class loops extends willow\parse {
 
 				// take match ##
 				$match = $matches[0][$match][0];
+
+				// h::log( $match );
 
 				// h::log( 'd:>position: '.$position );
 				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 

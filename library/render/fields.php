@@ -223,7 +223,7 @@ class fields extends willow\render {
 
 			// h::log( $args );
 
-			h::log( 'e:>Error in $args ( empty or not an array ) by "'.core\method::backtrace([ 'level' => 4, 'return' => 'class_function' ]).'"' );
+			// h::log( 'e:>Error in $args ( empty or not an array ) by "'.core\method::backtrace([ 'level' => 4, 'return' => 'class_function' ]).'"' );
 
 			// return false;
 			// $args = [];
