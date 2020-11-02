@@ -1,3 +1,8 @@
+### 1.5.0 ###
+
+* New: filters to extend wp_post and wp_term objects
+* Update: standardized return objects from navigation contexts
+
 ### 1.4.9 ###
 
 * New: i18n parser for translation strings in templates
