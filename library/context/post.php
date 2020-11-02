@@ -63,8 +63,7 @@ class post extends willow\context {
     *
     * @since       1.0.2
     */
-    public static function query( $args = [] )
-    {
+    public static function query( $args = [] ){
 
 		// @todo -- add filter to return value and avoid Q check and get routine ##
 

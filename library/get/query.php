@@ -19,8 +19,7 @@ class query extends \willow\get {
      *
      * @since       1.0.2
      */
-    public static function posts( $args = null )
-    {
+    public static function posts( $args = null ){
 
 		// sanity ##
 		if (
@@ -62,22 +61,47 @@ class query extends \willow\get {
             // merge all args together ##
             $wp_query_args = array_merge( $wp_query->query_vars, $wp_query_args );
 
-			// h::log('added query vars');
+			// h::log('e:>added query vars');
 
-        }
-
-		// h::log( $wp_query_args );
-
+		}
+		
 		// filter posts_args ##
 		$wp_query_args = \apply_filters( 'willow/get/query/posts/wp_query_args', $wp_query_args );
+
+		// h::log( $wp_query_args );
 		
 		// set-up new array to hold returned post objects ##
 		$array = [];
 
         // run query ##
 		$q_query = new \WP_Query( $wp_query_args );
+
+		// fix sticky post weirdness.. ##
+		/*
+		$sticky_posts = \get_option( 'sticky_posts' ) ? count( \get_option( 'sticky_posts' ) ) : 0 ;
+		if( 
+			$sticky_posts > 0 
+			&& count( $q_query->posts ) > $wp_query_args['posts_per_page'] 
+		){
+
+			// h::log( 'e:>Sticky mess...' );
+			
+			// h::log( $q_query->posts );
+
+			h::log( 'Old count: '.count( $q_query->posts ) );
+
+			// slice ##
+			$sliced_array = array_slice( $q_query->posts, 0, $wp_query_args['posts_per_page'] );
+
+			h::log( 'New count: '.count( $sliced_array ) );
+
+			// re-assign ##
+			$q_query->posts = $sliced_array;
+
+		}
+		*/
 		
-		// put in the array key 'query' ##
+		// put results in the array key 'query' ##
 		$array['query'] = $q_query ;
 
 		// h::log( $array );
@@ -96,8 +120,7 @@ class query extends \willow\get {
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function posts_by_meta( $args = array() )
-    {
+    public static function posts_by_meta( $args = array() ){
 
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
         $args = ( object ) \wp_parse_args( $args, core\config::get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );

@@ -543,6 +543,8 @@ class format extends willow\render {
 		// define context ##
 		$context = 'WP_Post';
 
+		// h::log( $wp_post );
+
 		// return array of fields ##
 		// $array = [];
 		
@@ -588,8 +590,6 @@ class format extends willow\render {
 				// this could be done by checking markup, pre-compile - for "src" attr ... ??
 				case 'media' : // @todo
 	
-					// note, we pass the attachment ID to src handler ##
-					// $attachment_id = \get_post_thumbnail_id( $wp_post );
 					// $attachment = \get_post( $attachment_id );
 
 					$string = render\type::media( $wp_post, $wp_post_field, $field, $context );
@@ -598,9 +598,6 @@ class format extends willow\render {
 
 				case 'src' :
 		
-					// note, we pass the attachment ID to src handler ##
-					// $attachment_id = \get_post_thumbnail_id( $wp_post );
-					// $attachment = \get_post( $attachment_id );
 					// h::log( self::$args );
 
 					$string = render\type::media( $wp_post, $wp_post_field, $field, $context );
@@ -624,8 +621,6 @@ class format extends willow\render {
 				// log ##
 				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
 
-				// @@ todo.. do we need to remove field or markup ?? ##
-
 				// next ... ##
 				continue;
 
@@ -633,10 +628,53 @@ class format extends willow\render {
 
 			// assign field and value ##
 			render\fields::set( $field.'.'.$wp_post_field, $string );
-			// render\fields::set( $field.'__'.$wp_post_field, $string );
 
-			// store data ##
-			// $array[ $wp_post_field ] = $string;
+		}
+
+		// filter in custom post field data ##
+		$post_type = $wp_post->post_type ?? 'post'; // default to post ##
+
+		// check for defined filter ##
+		if ( \has_filter( 'willow/format/wp_post/'.$post_type ) ) {
+
+			// run filter ##
+			$array = \apply_filters( 
+				'willow/format/wp_post/'.$post_type,
+				$field,
+				$wp_post
+			);
+
+			// validate filter return ##
+			if (
+				! $array
+				|| ! is_array( $array )
+			){
+
+				h::log( 'd:>Filter did not return a usable array' );
+
+				return false;
+
+			}
+
+			// h::log( $array );
+			// loo over array values ##
+			foreach( $array as $key => $value ) {
+
+				h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
+
+				// validate $value is a string ##
+				if( ! is_string( $value ) ){
+
+					h::log( 'e:>"'.$key.'" value is not a string' );
+
+					continue;
+
+				}
+
+				// assign field and value ##
+				render\fields::set( $field.'.'.$key, $value );
+
+			}
 
 		}
 
@@ -759,22 +797,6 @@ class format extends willow\render {
 
 				break ;
 
-				/* TODO
-				// term_id ##	
-				case 'term_ID' :
-
-					$string = $wp_term->term_id;
-
-				break ;
-
-				// term_id ##	
-				case 'term_ID' :
-
-					$string = $wp_term->term_id;
-
-				break ;
-				*/
-
 			}
 
 			if ( is_null( $string ) ) {
@@ -784,20 +806,20 @@ class format extends willow\render {
 				// log ##
 				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$wp_term_field.'" returned an empty string');
 
-				// @@ todo.. do we need to remove field or markup ?? ##
-
+				// keep moving...
 				continue;
 
 			}
 
 			// assign field and value ##
 			render\fields::set( $field.'.'.$wp_term_field, $string );
-			// render\fields::set( $field.'__'.$type_field, $string );
 
 		}
 
 		// filter in custom taxonomy field data ##
 		$taxonomy = $wp_term->taxonomy ?? 'category'; // default to category ##
+
+		// check for defined filter ##
 		if ( \has_filter( 'willow/format/wp_term/'.$taxonomy ) ) {
 
 			// run filter ##
@@ -807,6 +829,7 @@ class format extends willow\render {
 				$wp_term
 			);
 
+			// validate filter return ##
 			if (
 				! $array
 				|| ! is_array( $array )
@@ -819,7 +842,7 @@ class format extends willow\render {
 			}
 
 			// h::log( $array );
-
+			// loo over array values ##
 			foreach( $array as $key => $value ) {
 
 				// h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );

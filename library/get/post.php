@@ -55,7 +55,10 @@ class post extends \willow\get {
 
                 if ( $object = \get_post( $post ) ) {
 
-                    // h::log( 'got post: '.$object->ID );
+					// h::log( 'got post: '.$object->ID );
+					
+					// pre cache post meta ##
+					$object->meta = \get_post_meta( $object->ID );
 
                     return (object) $object;
 
@@ -63,14 +66,24 @@ class post extends \willow\get {
 
             } else if ( is_object ( $post ) ) {
 
+				// pre cache post meta ##
+				$post->meta = \get_post_meta( $post->ID );
+
                 return $post;
 
             }
 
 		}
 		
-        // next, let's try the global scope ##
-        global $post;
+        // next, let's try the global scope -- this might be empty, but will return false ##
+		global $post;
+		
+		if( $post ){
+
+			// pre cache post meta ##
+			$post->meta = \get_post_meta( $post->ID );
+
+		}
 
         // kick it back ##
         return $post;

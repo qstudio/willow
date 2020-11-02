@@ -206,8 +206,7 @@ class navigation extends \willow\get {
      * @since       1.0.1
      * @return      string       HTML Menu
      */
-    public static function siblings( $args = null )
-    {
+    public static function siblings( $args = null ){
 
 		// sanity ##
 		if (
@@ -232,70 +231,37 @@ class navigation extends \willow\get {
 
 		// h::log( $args );
 
-        // meta_query to exclude certain sub pages from desktop on screen sub navigation ##
-        $meta_query = []; // nada ##
-
-		// query for child or sibling's post ##
-		// @todo - pass arguments from context/navigation
+		// query for sibling's posts ##
         $wp_args = array(
-            'post_type'         => 'page', //$args->post_type,
+            'post_type'         => $args['args']['post_type'],
             'post_parent'       => $args['config']['post']->post_parent,
             'orderby'           => 'menu_order',
             'order'             => 'ASC',
-            'posts_per_page'    => -1,//$args->posts_per_page,
-            // 'meta_query'        => $meta_query
+            'posts_per_page'    => $args['args']['posts_per_page'],
         );
 
-        #pr( $wp_args );
-
-        $object = new \WP_Query( $wp_args );
-
-        // test returned array ##
-        // h::log( $object->posts );
-
-        // nothing cooking ##
-        if ( ! $object->have_posts() ) { return false; }
-
-        // $posts array ##
-		$array = [];
+		#pr( $wp_args );
 		
-		// iterate ##
-		$count = 0;
+		// filter args ##
+		$wp_args = \apply_filters( 'willow/get/siblings/wp_args', $wp_args );
 
-        // loop over all posts ##
-        foreach ( $object->posts as $post ) {
+		// get posts ##
+		$posts = \get_posts( $wp_args );
 
-            // make WP functions available ##
-			setup_postdata( $post );
-			
-			// id ##
-			$array[$count]['post_id'] = $post->ID ;
+		// h::log( $posts );
 
-            // title ##
-            $array[$count]['post_title'] = $post->post_title ;
+		// we need to manipulate the array of post objects a little...
+		foreach( $posts as $post => $post_value ){
 
-            // permalink ##
-            $array[$count]['post_permalink'] = \get_permalink( $post->ID );
+			// class & highlight ##
+            $posts[$post]->highlight = $post_value->ID === $args['config']['post']->ID ? 'active current' : '' ;
 
-            // class & highlight ##
-            $array[$count]['highlight'] = 
-                $post->ID === $args['config']['post']->ID ? 
-                'active current' : 
-                '' ;
+		}
 
-            // sort out global $post after WP_Query loop ##
-            \wp_reset_postdata();
+		// h::log( $posts );
 
-			// iterate ##
-			$count ++;
-
-        }
-
-        // test posts #
-        // h::log( $array );
-
-		// return ##
-		return get\method::prepare_return( $args, $array );
+		// return posts array to Willow ##
+		return $posts;
 
 	}
 	
@@ -333,76 +299,25 @@ class navigation extends \willow\get {
 
 		// h::log( $args );
 
-        // meta_query to exclude certain sub pages from desktop on screen sub navigation ##
-        $meta_query = []; // nada ##
-
-		// query for child or sibling's post ##
-		// @todo - pass arguments from context/navigation
+		// query for child posts ##
         $wp_args = array(
-            'post_type'         => 'page', // $args->post_type,
+            'post_type'         => $args['args']['post_type'],
             'post_parent'       => $args['config']['post']->ID,
             'orderby'           => 'menu_order',
             'order'             => 'ASC',
-            'posts_per_page'    => -1, //$args->posts_per_page,
-            // 'meta_query'        => $meta_query
-        );
-
-        #pr( $wp_args );
-
-        $object = new \WP_Query( $wp_args );
-
-        // test returned array ##
-        // h::log( $object->posts );
-
-        // nothing cooking ##
-        if ( ! $object->have_posts() ) { return false; }
-
-        // $posts array ##
-		$array = [];
+            'posts_per_page'    => $args['args']['posts_per_page'],
+		);
 		
-		// iterate ##
-		$count = 0;
+		// filter args ##
+		$wp_args = \apply_filters( 'willow/get/navigation/wp_args', $wp_args );
 
-        // loop over all posts ##
-        foreach ( $object->posts as $post ) {
+		// get posts ##
+		$posts = \get_posts( $wp_args );
 
-            // make WP functions available ##
-			\setup_postdata( $post );
-			
-			// id ##
-			$array[$count]['post_id'] = $post->ID ;
+		// h::log( $posts );
 
-            // title ##
-			$array[$count]['post_title'] = $post->post_title ;
-
-			// modified ##
-			$array[$count]['post_modified_date'] = \get_the_modified_date( '', $post->ID ) ;
-			
-			// title ##
-            $array[$count]['post_excerpt'] =  \willow\get\post::excerpt_from_id( $post->ID, 200 );
-
-            // permalink ##
-            $array[$count]['post_permalink'] = \get_permalink( $post->ID );
-
-            // class & highlight ##
-            $array[$count]['highlight'] = 
-                $post->ID === $args['config']['post']->ID ? 
-                'active current' : 
-                '' ;
-
-            // sort out global $post after WP_Query loop ##
-            \wp_reset_postdata();
-
-			// iterate ##
-			$count ++;
-
-        }
-
-        // test posts #
-        // h::log( $array );
-
-		// return ##
-		return get\method::prepare_return( $args, $array );
+		// return posts array to Willow ##
+		return $posts;
 
     }
 	
@@ -415,8 +330,7 @@ class navigation extends \willow\get {
     * @since       1.3.3
     * @return      string   HTML
 	*/
-    public static function menu( $args = null, $blog_id = 1 )
-    {
+    public static function menu( $args = null, $blog_id = 1 ){
 
 		// h::log( $args );
 
