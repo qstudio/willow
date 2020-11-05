@@ -1,3 +1,7 @@
+### 1.5.1 ###
+
+* Update: Speed improvements by simplification of loops process
+
 ### 1.5.0 ###
 
 * New: filters to extend wp_post and wp_term objects

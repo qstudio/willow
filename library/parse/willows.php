@@ -13,17 +13,24 @@ class willows extends willow\parse {
 
 		$willow_matches, // array of matches ##
 		$willow,
-		$willow_match, // full string matched ##
+		// $willow_match, // full string matched ##
 		$arguments,
 		$class,
 		$method,
 		$willow_array,
 		$willow_hash, // moved creation of unique hash earlier, to track filters on as-yet unavailable data ##
-		$config_string,
+		$argument_string,
 		$return
-	
+
 	;
 
+	// public static $willow_match; // full string matched ##
+
+	// loop scope trackers - built and reset for each Willow routine ##
+	// public
+	// 	$scope_count = 0,
+	// 	$scope_map = []
+	// ;
 
 	private static function reset(){
 
@@ -35,8 +42,13 @@ class willows extends willow\parse {
 		self::$method = false;
 		self::$willow_array = false;
 		self::$willow_matches = false;
-		self::$config_string = false;
+		self::$willow_match = false; // ?? <<--
+		self::$argument_string = false;
 		self::$return = false;
+
+		// reset loop_scope_count - as this accumulates on a per Willow basis ##
+		self::$scope_count = 0;
+		self::$scope_map = [];
 
 	}
 
@@ -114,6 +126,7 @@ class willows extends willow\parse {
 
 		// h::log( $args );
 
+		// get Willow tags ##
 		$open = trim( willow\tags::g( 'wil_o' ) );
 		$close = trim( willow\tags::g( 'wil_c' ) );
 
@@ -122,6 +135,9 @@ class willows extends willow\parse {
 
 		// return entire function string, including tags for tag swap ##
 		self::$willow_match = core\method::string_between( $match, $open, $close, true );
+		// h::log( self::$willow_match );
+
+		// get Willow, without tags ##
 		self::$willow = core\method::string_between( $match, $open, $close );
 
 		// h::log( self::$willow );
@@ -144,11 +160,12 @@ class willows extends willow\parse {
 
 		}
 
+		// check format ##
 		if(
-			false === strpos( self::$willow, '~' ) // '::' ##
+			false === strpos( self::$willow, '~' ) 
 		){
 
-			h::log( 'e:>Error all willows must be in context::task format' );
+			h::log( 'e:>Error: All Willows must be in "context~task" format' );
 
 			return false; 
 
@@ -156,7 +173,7 @@ class willows extends willow\parse {
 
 		// h::log( $args );
 
-		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
+		// get position of first arg_o and position of last arg_c ( in case the string includes additional args )
 		if(
 			strpos( self::$willow, trim( willow\tags::g( 'arg_o' )) ) !== false
 			&& strrpos( self::$willow, trim( willow\tags::g( 'arg_c' )) ) !== false
@@ -168,70 +185,76 @@ class willows extends willow\parse {
 			// h::log( 'e:>Found opening arg_o @ "'.$arg_o.'" and closing arg_c @ "'.$arg_c.'" for willow: '.self::$willow  ); 
 
 			// get string between opening and closing args ##
-			self::$config_string = substr( 
+			self::$argument_string = substr( 
 				self::$willow, 
 				( $arg_o + strlen( trim( willow\tags::g( 'arg_o' ) ) ) ), 
 				( $arg_c - $arg_o - strlen( trim( willow\tags::g( 'arg_c' ) ) ) ) ); 
 
 		}
 
-		// go with it ##
+		// argument_string looks ok, so go with it ##
 		if ( 
-			self::$config_string 
+			self::$argument_string 
 		){
 
-			// check for loops ##
-			if( $loop_markup = loops::has( self::$config_string ) ){
+			/*
+			// REMOVED ENTIRE LOOP CHECK.. seemed to add no value to output ##
+			// MIGHT BE MORE IMPORTANT WITH MULTIPLE LOOPS ??
+			// check for loops in argument string - might be one or multiple ##
+			if( $loop = loops::has( self::$argument_string ) ){
+
+				// NOTE, removed check for flags, which returned partial parkup if true - and broke loop rendering ##
 
 				// h::log( $args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
 				// h::log( 'd:>HAS a loop so taking part of config string as markup' );
+				// h::log( $loop );
 
-				// grab loop {: scope :} ##
-				$scope = loops::scope( self::$config_string );
-				
 				// check if string contains any [ flags ] -- technically filters -- ##
-				if( flags::has( self::$config_string ) ) {
+				// if( flags::has( self::$argument_string ) ) {
 
-					// h::log( $args['task'].'~>n:>FLAG set so take just loop_markup: '.$loop_markup );
-					// h::log( 'd:>Flags set, so take just loop_markup: '.$loop_markup );
-
-					self::$arguments = core\method::parse_args( 
-						self::$arguments, 
-						[ 
-							'markup' 	=> $loop_markup, // markup ##
-							'scope'		=> $scope // {: scope :}
-						]
-					);
-
-				} else {
-
-					// h::log( $args['task'].'~>n:>NO flags, so take whole string: '.self::$config_string );
-					// h::log( 'd:>No Flags, so take whole string: '.self::$config_string );
+					// h::log( $args['task'].'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
+					// h::log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
 
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
 						[ 
-							'markup' 	=> self::$config_string, // whole string ##
-							'scope'		=> $scope // {: scope :}
+							'markup' 	=> self::$argument_string // $loop['markup'], // markup ##
+							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
 						]
 					);
 
-				}
+				// } else {
+
+					// h::log( $args['task'].'~>n:>NO flags, so take whole string: '.self::$argument_string );
+					// h::log( 'd:>No Flags, so take whole string: '.self::$argument_string );
+
+					// self::$arguments = core\method::parse_args( 
+						// self::$arguments, 
+						// [ 
+							// 'markup' 	=> self::$argument_string, // whole string ##
+							// 'scope'		=> $loop['scope'] // {: scope :}
+						// ]
+					// );
+
+				// }
 
 				// take the first part of the passed string, before the arg_o tag as the {~ Willow ~} ##
-				$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
-				self::$willow = trim( $willow_explode[0] );
+				// --> REMOVED <-- //
+				// $willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
+				// self::$willow = trim( $willow_explode[0] );
 
 			} 
+			*/
 
 			// parse arguments ##
 			self::$arguments = core\method::parse_args( 
 				self::$arguments, 
-				willow\arguments::decode( self::$config_string )
+				willow\arguments::decode( self::$argument_string )
 			);
 
 			// h::log( self::$arguments );
 
+			// take the first part of the passed string, before the arg_o tag as the {~ Willow ~} ##
 			$willow_explode = explode( trim( willow\tags::g( 'arg_o' )), self::$willow );
 			self::$willow = trim( $willow_explode[0] );
 
@@ -242,17 +265,17 @@ class willows extends willow\parse {
 			) {
 
 				h::log( $args['task'].'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
-				h::log( $args['task'].'~>d:>'.self::$config_string );
+				h::log( $args['task'].'~>d:>'.self::$argument_string );
 
 				// check for variable filters ##
-				self::$config_string = flags::get( self::$config_string, 'variable' );	
+				self::$argument_string = flags::get( self::$argument_string, 'variable' );	
 
 				// clean up ## -- 
-				self::$config_string = trim( self::$config_string ); // trim whitespace ##
-				self::$config_string = trim( self::$config_string, '"' ); // trim leading and trailing double quote ##
+				self::$argument_string = trim( self::$argument_string ); // trim whitespace ##
+				self::$argument_string = trim( self::$argument_string, '"' ); // trim leading and trailing double quote ##
 
 				// assign string to markup - as this is the only argument we can find ##
-				self::$arguments = [ 'markup' => self::$config_string ];
+				self::$arguments = [ 'markup' => self::$argument_string ];
 
 			}
 			
@@ -266,17 +289,18 @@ class willows extends willow\parse {
 			self::$willow 
 		);
 
-		// format passed context~task to PHP class::method ##
+		// format passed context~task to "$class__$method" ##
 		self::$willow = str_replace( '~', '__', self::$willow ); // '::' ##
 
-		// hash creation moved here ##
-		self::$willow_hash = self::$willow.'.'.core\method::hash(); // rand()
+		// create hash ##
+		self::$willow_hash = self::$willow.'.'.core\method::hash(); 
+		// h::log( 'willow_hash: '.self::$willow_hash );
 		
-		// format namespace to willow::context ##
+		// add escaped Willow namespace --- \willow\context:: ##
 		self::$willow = '\\willow\\context::'.self::$willow;
 
 		// break function into class::method parts ##
-		list( self::$class, self::$method ) = explode( '::', self::$willow ); // '::' ##
+		list( self::$class, self::$method ) = explode( '::', self::$willow ); 
 
 		// check ##
 		if ( 
@@ -316,17 +340,19 @@ class willows extends willow\parse {
 		// context_class ##
 		$willow_array = explode( '__', self::$method );
 
+		// get all {{ variables }} in $argument_string and check for flags ##
 		if ( 
-			$argument_variables = parse\markup::get( self::$config_string, 'variable' )
+			$argument_variables = parse\markup::get( self::$argument_string, 'variable' )
 		){
 
 			// h::log( $argument_variables );
 
+			// loop each variable ##
 			foreach( $argument_variables as $arg_var_k => $arg_var_v ){
 
 				// h::log( 'variable: '.$arg_var_v );
 
-				// check for variable filters ##
+				// check for variable filters ( formally flags  )##
 				variables::flags([
 					'variable' 	=> $arg_var_v, 
 					'context' 	=> self::$class, 
@@ -341,7 +367,7 @@ class willows extends willow\parse {
 
 		// h::log( self::$willow_match );
 
-		// pass hash to buffer ##
+		// add hash, process, tag + parent values to arguments array ##
 		self::$arguments = core\method::parse_args( 
 			self::$arguments, 
 			[ 
@@ -354,19 +380,19 @@ class willows extends willow\parse {
 			]
 		);
 
+		// Does the willow have flags / filters ##
 		if( self::$flags_willow ) {
 
-			// store filters under willow hash - this avoids conflicts if Willows are re-used ##
+			// store filters under willow hash - this avoids conflicts if Willows are re-used in the same template / view ##
 			self::$filter[ self::$willow_hash ] = self::$flags_willow;
 
 		}
 
-		// buffer => output buffer, collect return data which would render if not __NOT RECOMMENDED__ ##
+		// buffer => output buffer, collect return data which would render if not  ##
 		if( 
-			// isset( self::$flags_willow['buffer'] ) 
-			self::$flags_willow
-			&& is_array( self::$flags_willow )
-			&& in_array( 'buffer', self::$flags_willow )
+			self::$flags_willow // flags set ##
+			&& is_array( self::$flags_willow ) // is an array 
+			&& in_array( 'buffer', self::$flags_willow ) // buffer defined ##
 		) {
 
 			self::$arguments = core\method::parse_args( 
@@ -380,7 +406,7 @@ class willows extends willow\parse {
 		}
 
 		// collect current process state ##
-		render\args::collect(); // <--- WHY @TODO ??
+		render\args::collect();
 		
 		// pass args, if set ##
 		if( self::$arguments ){
@@ -412,9 +438,9 @@ class willows extends willow\parse {
 		}
 
 		// restore previous process state ##
-		render\args::set(); // <--- WHY @TODO ??
+		render\args::set();
 
-		// clear slate ##
+		// clear slate for next run ##
 		self::reset();
 
 	}

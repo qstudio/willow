@@ -188,7 +188,7 @@ class markup extends willow\render {
 
 
 	/**
-	 * filter passed args for markup
+	 * filter passed args for markup - accepts an array of keys+values or a string
 	 * 
 	 * @since 4.1.0
 	*/
@@ -244,30 +244,16 @@ class markup extends willow\render {
 		// convert string passed args, presuming it to be markup...??... ##
 		if ( is_string( $args ) ) {
 
-			// create args array ##
-			// $args = [];
-
 			// h::log('d:>Using string markup:' );
 			h::log( $args );
 
 			// add markup->template ##
 			return self::$markup = [
-				// 'markup' => [
-					'template' => $args
-				// ]
+				'template' => $args
 			];
 
 		} 
 		
-		// if(
-		// 	is_array( $args )
-		// 	&& isset( $args['markup'] )
-		// ) {
-
-		// 	self::$markup = $args['markup'];
-
-		// }
-
 		// h::log( self::$markup );
 
 		// kick back ##
@@ -683,25 +669,24 @@ class markup extends willow\render {
 
 			// log ##
 			h::log( self::$args['task'].'~>n:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
+			h::log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
 
             // bale if not found ##
             return false;
 
         }
 
-        // get markup ##
-        // $markup = self::$args[$field];
+        // h::log( self::$markup[$field] );
 
         // get target variable ##
-		// $placeholder = '{{ '.$field.' }}';
 		$tag = willow\tags::wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
         if ( 
-			// ! placeholder::exists( $placeholder )
 			! self::contains( $tag )
         ) {
 
 			// log ##
 			h::log( self::$args['task'].'~>n:>Tag: "'.$tag.'" is not in the passed markup template' );
+			h::log( 'd:>Tag: "'.$tag.'" is not in the passed markup template' );
 
             return false;
 
@@ -712,12 +697,12 @@ class markup extends willow\render {
 
         // get all variables from markup->$field ##
         if ( 
-			// ! $placeholders = placeholder::get( self::$markup[$field] ) 
 			! $variables = parse\markup::get( self::$markup[$field], 'variable' ) 
         ) {
 
 			// log ##
 			h::log( self::$args['task'].'~>n:>No variables found in passed string' );
+			h::log( 'e:>No variables found in passed string' );
 
             return false;
 
@@ -733,22 +718,7 @@ class markup extends willow\render {
         $new_variables = [];
         foreach( $variables as $key => $value ) {
 
-			// h::log( 'Working variable: '.$value );
-			// h::log( 'variable_open: '.willow\tags::g( 'var_o' ) );
-			/*
-			$open = trim( willow\tags::g( 'fla_o' ) );
-			$close = trim( willow\tags::g( 'fla_c' ) );
-
-			// h::log( self::$markup['template'] );
-
-			// strip all flags, we don't need them now ##
-			$regex_flags = \apply_filters( 
-				'willow/parse/flags/markup/regex', 
-				"/\\$open.*?\\$close/ms"
-			);
-
-			$value = preg_replace( $regex_flags, "", $value ); 
-			*/
+			// h::log( 'e:>Working variable: '.$value );
 
 			// get flags ##
 			$flags = ''; // nada ##
@@ -766,16 +736,17 @@ class markup extends willow\render {
 					)
 				);
 
+				// wrap stored flag in flag tags ##
 				$flags = willow\tags::g( 'fla_o' ).$flags.willow\tags::g( 'fla_c' ).' ';
 
-				// remove flags
+				// remove flags from worked string $value ##
 				$value = str_replace( $flags, "", $value ); 
 
 			}
 
 			// h::log( 'Flagless variable: '.$value );
 
-			// var open and close, with and without whitespace ##
+			// var open and close, with and without whitespace  at start and end ##
 			$array_replace = [
 				willow\tags::g( 'var_o' ),
 				trim( willow\tags::g( 'var_o' ) ),
@@ -784,19 +755,12 @@ class markup extends willow\render {
 			];
 
 			// new variable ##
-			// WHAT about flags... flags in the original markup will not be added here ##
 			$new = willow\tags::g( 'var_o' ).$flags.trim($field).'.'.trim($count).'.'.trim( str_replace( $array_replace, '', trim($value) ) ).willow\tags::g( 'var_c' );
-
-			/*
-			WAS
-
-			$new = willow\tags::g( 'var_o' ).trim($field).'__'.trim($count).'__'.trim( str_replace( $array_replace, '', trim($value) ) ).willow\tags::g( 'var_c' );
-			*/
 
 			// single whitespace max ## @might be needed ##
 			// $new = preg_replace( '!\s+!', ' ', $new );	
 
-			// h::log( 'new_variable: '.$new );
+			// h::log( 'e:>new_variable: '.$new );
 
 			$new_variables[] = $new;
 
@@ -810,7 +774,8 @@ class markup extends willow\render {
         // generate new markup from template with new_variables ##
         $new_markup = str_replace( $variables, $new_variables, self::$markup[$field] );
 
-        // helper::log( $new_markup );
+		// h::log( self::$markup[$field] );
+        // h::log( $new_markup );
 
         // use strpos to get location of {{ variable }} ##
         $position = strpos( self::$markup['template'], $tag );

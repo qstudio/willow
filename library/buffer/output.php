@@ -137,7 +137,7 @@ class output extends willow\buffer {
 		// force methods to return for collection by output buffer ##
 		self::$args_default['config']['return'] = 'return';
 
-		// prepare .willow template markup ##
+		// prepare .willow template markup -- affects self::$buffer_map ##
 		willow\parse::prepare( self::$buffer_args, 'buffer' );
 
 		// h::log( self::$buffer_map );
@@ -145,7 +145,6 @@ class output extends willow\buffer {
 		// h::log( self::$buffer_markup );
 
 		// clean up left over tags ##
-		// @todo - seems this cleans up willow tags rendered from db calls - need a fix, perhaps ignore inside <code>xx</code> ??
 		willow\parse::cleanup( self::$buffer_args, 'buffer' );
 		
 		// clear buffer objects ##

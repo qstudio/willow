@@ -2,13 +2,7 @@
 
 namespace willow;
 
-// Q ##
-use q\core;
-use q\view;
-use q\get;
-use q\render;
-
-// willow ##
+// use classes ##
 use willow\core\helper as h;
 use willow;
 
@@ -17,14 +11,7 @@ class tags extends \willow {
 	// properties ##
 	protected static 
 		$filtered_tags = false
-		// $tag_map = []
 	;
-
-	// public static function __callStatic( $function, $args ){	
-
-	// 	self::g( $args );
-
-	// }
 
 	private static function map( $tag = null ){
 
@@ -55,6 +42,7 @@ class tags extends \willow {
 
 		// build map ##
 		$tag_map = [
+
 			'wil_o' => self::$filtered_tags['willow']['open'],
 			'wil_c' => self::$filtered_tags['willow']['close'],
 
@@ -87,14 +75,15 @@ class tags extends \willow {
 			
 			'fla_o' => self::$filtered_tags['flag']['open'],
 			'fla_c' => self::$filtered_tags['flag']['close'],
+
 		];
 
-		// full back, in case not requested via shortcode ##
-		if ( ! isset( $tag_map[$tag] ) ){
+		// @todo -- full back, in case not requested via shortcode ##
+		// if ( ! isset( $tag_map[$tag] ) ){
 
 			// return isset @todo...
 
-		}
+		// }
 
 		// search for and return matching key, if found ##
 		return $tag_map[$tag] ?: false ;
@@ -103,6 +92,9 @@ class tags extends \willow {
 
 
 
+	/**
+	 * Cache tags, and run filter once per load 
+	*/
 	protected static function cache(){
 
 		// check if we have already filtered load ##
@@ -112,8 +104,8 @@ class tags extends \willow {
 
 		}
 		
-		// per run filter on tags ##
-		return self::$filtered_tags = \apply_filters( 'q/render/tags', self::$tags );
+		// filter tags once per load ##
+		return self::$filtered_tags = \apply_filters( 'willow/render/tags', self::$tags );
 
 	}
 
@@ -165,7 +157,7 @@ class tags extends \willow {
 			$array[] = rtrim(self::map( $args['open'] )).$args['value'].self::map( $args['close'] ); // trim right on open ##
 			$array[] = self::map( $args['open'] ).$args['value'].ltrim(self::map( $args['close'] )); // trim left on close ##
 
-			h::log( $array );
+			// h::log( $array );
 			// h::log( 'value: "'.$args['value'].'"' );
 
 			return $array;

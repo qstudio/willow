@@ -25,8 +25,7 @@ class context extends \willow {
     *
     * @since        4.1.0
     */
-    public static function load()
-    {
+    public static function load(){
 
 		// context extensions ##
 		require_once self::get_plugin_path( 'library/context/extend.php' );
@@ -171,7 +170,7 @@ class context extends \willow {
 
 			// create hash ##
 			$hash = false;
-			$hash = $args['config']['hash'] ?: $args['context'].'__'.$args['task'].'.'.rand(); // HASH now passed from calling Willow ## 
+			$hash = $args['config']['hash'] ?: $args['context'].'__'.$args['task'].'.'.rand(); // HASH can be passed from calling Willow ## 
 
 			// h::log( 'e:>Context Loaded: '.$hash );
 
@@ -185,11 +184,12 @@ class context extends \willow {
 			];
 
 			if (
-				! \method_exists( $namespace, 'get' ) // base method is get() ##
-				&& ! \method_exists( $namespace, $args['task'] ) ##
-				&& ! context\extend::get( $args['context'], $args['task'] ) // look for extends ##
+				! \method_exists( $namespace, 'get' ) // base context method is get() -- and missing ##
+				&& ! \method_exists( $namespace, $args['task'] ) // ... also, context + specific task missing ##
+				&& ! context\extend::get( $args['context'], $args['task'] ) // ... and no extended context method match ##
 			) {
-	
+				
+				// log stop point ##
 				render\log::set( $args );
 	
 				h::log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
@@ -199,6 +199,7 @@ class context extends \willow {
 				// reset all args ##
 				render\args::reset();
 
+				// kick out ##
 				return false;
 	
 			}
@@ -225,7 +226,7 @@ class context extends \willow {
 			// call class::method to gather data ##
 			// $namespace::run( $args );
 
-			// internal->internal buffering ##
+			// internal->buffering ##
 			if(
 				isset( $args['config']['buffer'] )
 			){
@@ -315,15 +316,21 @@ class context extends \willow {
 
 			}
 
+			// h::log( $return_array );
+
 			// assign fields ##
 			render\fields::define( $return_array );
 
-			// h::log( self::$markup['template'] );
+			// h::log( self::$markup );
 
 			// h::log( $return_array );
 
 			// prepare field data ##
 			render\fields::prepare();
+
+			// h::log( self::$markup );
+
+			// h::log( self::$fields );
 
 			// h::log( self::$markup['template'] );
 
@@ -345,6 +352,8 @@ class context extends \willow {
 
 			// Prepare template markup ##
 			render\markup::prepare();
+
+			// h::log( self::$markup );
 
 			// h::log( 'running-> '.$extend['class'].'::'.$extend['method'] );
 			// if( 'hello' == $args['task'] ) {

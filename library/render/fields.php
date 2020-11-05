@@ -89,6 +89,7 @@ class fields extends willow\render {
 			]); 
 			
 			// h::log( 'd:>Field value: '.$value );
+			// h::log( $value );
 
             // Format each field value based on type ( int, string, array, WP_Post Object ) ##
             // each item is filtered as looped over -- q/render/field/GROUP/FIELD - ( $args, $fields ) ##
@@ -97,6 +98,7 @@ class fields extends willow\render {
 			
 		}
 		
+		// THIS COULD BE THE LOOPS FIX.. JUST NEEDS WORKING OUT ##
 		// push in new duplicate fields from field_map, required for unique filters on variables ##
 		// self::map();
 

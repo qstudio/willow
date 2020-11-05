@@ -182,7 +182,7 @@ class format extends willow\render {
 
         }
 
-        // h::log( 'Checking Format for - Field: '.$field.' with method: '.$format );
+        // h::log( 'd:>Checking Format for - Field: "'.$field.'" with method: "'.$format.'"' );
 
         // we can now distribute the $value to the relevant format method ##
         if (
@@ -271,7 +271,9 @@ class format extends willow\render {
     public static function format_array( $value = null, $field = null ){
 
         // allow filtering early ##
-        $value = \apply_filters( 'willow/render/format/array/'.self::$args['task'].'/'.$field, $value );
+		$value = \apply_filters( 'willow/render/format/array/'.self::$args['task'].'/'.$field, $value );
+		
+		// h::log( $value );
 
         // array of arrays containing named indexes ( not WP_Post Objects ) needs to be be marked up as a block, like an Object ##
 
@@ -391,6 +393,8 @@ class format extends willow\render {
 					self::format_object_wp_term( $v2, $field.'.'.$count );
 
 				} else {
+
+					// h::log( 'format: '.$v2 );
 
 					// create a new, named and numbered field based on field__COUNT.row_key ##
 					// $key_field = $field.'__'.$count.'__'.$r2;

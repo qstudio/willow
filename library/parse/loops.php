@@ -14,14 +14,13 @@ class loops extends willow\parse {
 		$loop_hash, 
 		$loop,
 		$loop_match, // full string matched ##
-		$loop_field,
+		$loop_scope,
+		$loop_scope_full,
 		$loop_markup,
 		$loop_arguments,
 		$loop_variables,
-		$loop_scope,
 		$config_string,
-		$return,
-		$position
+		$return
 	
 	;
 
@@ -29,15 +28,14 @@ class loops extends willow\parse {
 	private static function reset(){
 
 		self::$loop_hash = false; 
-		self::$loop_field = false;
+		self::$loop_scope = false;
+		self::$loop_scope_full = false;
 		self::$loop_markup = false;
 		self::$loop = false;
 		self::$config_string = false;
 		self::$return = false;
-		self::$position = false;
 		self::$loop_arguments = false;
 		self::$loop_variables = false;
-		self::$loop_scope = false;
 
 	}
 
@@ -47,12 +45,11 @@ class loops extends willow\parse {
 	 * 
 	 * @since 1.0.0
 	*/
-	public static function format( $match = null, $position = null, $process = 'internal' ){
+	public static function format( $match = null, $process = 'internal' ){
 
 		// sanity ##
 		if(
 			is_null( $match )
-			|| is_null( $position )
 		){
 
 			h::log( 'e:>No function match or postion passed to format method' );
@@ -62,7 +59,7 @@ class loops extends willow\parse {
 		}
 
 		// get all sections, add markup to $markup->$field ##
-		// note, we trim() white space off tags, as this is handled by the regex ##
+		// note, we trim() white space off tags, as variable whitespace is handled by the regex ##
 		$loop_open = trim( willow\tags::g( 'loo_o' ) );
 		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
 
@@ -76,19 +73,19 @@ class loops extends willow\parse {
 		// return entire loop string, including tags for tag swap ##
 		self::$loop_match = core\method::string_between( $match, $loop_open, $loop_close, true );
 		self::$loop = core\method::string_between( $match, $loop_open, $loop_close );
-		self::$position = $position;
 
-		// get field + markup .... HMM ##, this might not work with embedded args
-		self::$loop_field = core\method::string_between( $match, $scope_open, $scope_close );
+		// get markup ##
 		self::$loop_markup = core\method::string_between( $match, $scope_close, $loop_close );
 
 		// get scope ##
 		self::$loop_scope = self::scope( self::$loop_match );
-		// h::log( 'scope: '.self::$loop_scope );
+		self::$loop_scope_full = self::scope( self::$loop_match, true );
+		// h::log( 'tagless scope: '.self::$loop_scope );
+		// h::log( 'full scope: '.self::$loop_scope_full );
 
 		// sanity ##
 		if ( 
-			! isset( self::$loop_field ) 
+			! isset( self::$loop_scope ) 
 			|| ! isset( self::$loop_markup ) 
 		){
 
@@ -99,17 +96,12 @@ class loops extends willow\parse {
 		}
 
 		// clean up ##
-		self::$loop_field = trim(self::$loop_field);
+		self::$loop_scope = trim(self::$loop_scope);
 		self::$loop_markup = trim(self::$loop_markup);
 
 		// h::log( self::$loop_markup );
 
-		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
-		// if(
-		// 	strpos( self::$loop_markup, trim( willow\tags::g( 'arg_o' )) ) !== false
-		// 	&& strpos( self::$loop_markup, trim( willow\tags::g( 'arg_c' )) ) !== false
-		// ){
-
+		// look for {{ variables }} inside loop markup string ##
 		if ( 
 			self::$loop_variables = parse\markup::get( self::$loop_markup, 'variable' ) 
 		) {
@@ -145,6 +137,7 @@ class loops extends willow\parse {
 						// debug ##
 						// h::log( 'variable "'.$value.'" has arguments: '.$arguments );
 
+						// get fill arguments string - with tags ##
 						$arguments_tag = core\method::string_between( $value, trim( tags::g( 'arg_o' )), trim( tags::g( 'arg_c' )), true );
 
 						// store arguments for later use ##
@@ -166,28 +159,90 @@ class loops extends willow\parse {
 
 		}
 
-		// set hash ##
-		self::$loop_hash = self::$loop_field;
+		// set loop hash ##
+		self::$loop_hash = self::$loop_scope; // hash based only on scope value ## <<--- OLD SCOPE VALUE ##
+
+		/*
+		@@ TODO @@
+		IF we give each loop "scope" a unique hash - how can we pair the markup with the field data and do the correct replacements ??
+
+		IDEA:
+
+		data is data - we just need to duplicate it for new loop scopes - so:
+
+		one.1.title is copied to one_1.1.title <-- but data is not generated until later in the process, so we need to build a map and apply later..
+
+		THEN - we need to manipulate the stored buffer_map and the defined $markup to reflect the new scope
+
+		Perhaps we only need to do this when there is more than one scope in the passed markup ???
+
+		...
+
+		*/
+
+		// h::log( self::$markup );
+
+		/*
+
+		// ## BREAKING CHANGE ##
+		if( 'buffer' == $process ) {
+
+			self::$loop_hash = self::$loop_scope.'_'.self::$scope_count; // hash based on scope + iterated count ##
+
+			// store map of scopes ##
+			self::$scope_map[self::$scope_count] = self::$loop_scope;
+
+			// we need to replace "{: scope :}" with  "{: scope_x :}" ##
+			// h::log( 'process: '.$process );
+			// h::log( 'loop_markup: '.self::$loop_markup );
+			// h::log( 'loop_scope: '.self::$loop_scope );
+			// h::log( 'scope_count: '.self::$scope_count );
+
+			// now, we need to edit the markup in two places -- or just one ??
+			// create updated loop scope tag ##
+			$loop_scope_tag = willow\tags::g( 'sco_o' ).self::$loop_hash.willow\tags::g( 'sco_c' );
+			// h::log( 'New loop scope tag: '.$loop_scope_tag );
+
+			h::log( self::$markup );
+
+			// replace markup in principle markup map ##
+			self::$buffer_map[0] = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$buffer_map[0] );
+
+			// replace stored tag in parent Willow markup ##
+			self::$buffer_map[1]['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$buffer_map[1]['tag'] );
+			// self::$willow_match = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$willow_match );
+
+			// h::log( self::$buffer_map[1]['tag'] );
+			// h::log( self::$willow_match );
+			// h::log( self::$buffer_map[0] );
+			// h::log( self::$scope_map );
+
+		}
+
+		*/
+
 
 		// test what we have ##
-		// h::log( 'd:>field: "'.self::$loop_field.'"' );
+		// h::log( 'd:>field: "'.self::$loop_scope.'"' );
 		// h::log( 'd:>markup: "'.self::$loop_markup.'"' );
 		// h::log( 'd:>match: "'.self::$loop_match.'"' );
 		// h::log( 'd:>hash: "'.self::$loop_hash.'"' );
 		// h::log( 'd:>position: "'.self::$position.'"' );
 
 		// so, we can add a new field value to $args array based on the field name - with the markup as value
-		// self::$args[$field] = $markup;
 		self::$markup[self::$loop_hash] = self::$loop_markup;
 
-		// finally -- add a variable "{{ $loop_field }}" before this block at $position to markup->template ##
+		// generate a variable {{ $loop_scope }} ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_hash, 'close' => 'var_c' ]);
 		// parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
 
-		// swap method ##
+		// swap the entire {@ loop_match @} string for a single {{ variable }} matching the passed {: scope :} ##
 		parse\markup::swap( self::$loop_match, $variable, 'loop', 'variable', $process ); 
 
 		// h::log( 'd:>variable: "'.$variable.'"' );
+
+		// iterate scope count ##
+		self::$scope_count ++ ;
 
 		// clear slate ##
 		self::reset();
@@ -201,7 +256,7 @@ class loops extends willow\parse {
 	*/
 	public static function has( $string = null ){
 
-		// @todo - sanity ##
+		// sanity ##
 		if(
 			is_null( $string )
 		){
@@ -212,35 +267,82 @@ class loops extends willow\parse {
 
 		}
 
-		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
-		if(
-			strpos( $string, trim( willow\tags::g( 'loo_o' )) ) !== false
-			&& strrpos( $string, trim( willow\tags::g( 'loo_c' )) ) !== false
-			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
+		// get loop tags ##
+		$loo_o =  willow\tags::g( 'loo_o' );
+		$loo_c =  willow\tags::g( 'loo_c' );
+
+		// test string ##
+		// h::log( $string );
+
+		// the passed $string comes from a single Willow and might include one or multiple loops ##
+		$loop_count_open = substr_count( $string, trim( $loo_o ) ); // loop openers ##
+		$loop_count_close = substr_count( $string, trim( $loo_c ) ); // loop closers ##
+
+		// check ##
+		// h::log( 'Count Open: '.$loop_count_open.' ~ Count Close: '.$loop_count_close ); 
+
+		// no loops, return false;
+		if( 
+			0 === $loop_count_open
+			|| 0 === $loop_count_close
 		){
 
-			$loo_o = strpos( $string, trim( willow\tags::g( 'loo_o' )) );
-			$loo_c = strrpos( $string, trim( willow\tags::g( 'loo_c' )) );
+			h::log( 'd:>No loops in passed string, returning false.' );
 
-			// h::log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			return false;
+
+		}
+
+		// if we have multiple loops and the loop open and close counts match, regex loop strings from $string ##
+
+		// else, single loop, so get string between loo_o and loo_c - including tags ##
+		if(
+			// strpos( $string, trim( $loo_o ) ) !== false
+			// && strpos( $string, trim( $loo_c ) ) !== false
+			$loop_string = core\method::string_between( $string, trim( $loo_o ), trim( $loo_c ), true )
+		){
+
+			// h::log( $loop_string );
+
+			/*
+			$loo_o = strpos( $string, trim( $loo_o ) );
+			$loo_c = strpos( $string, trim( $loo_c ) );
+
+			h::log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
 				$string, 
-				( $loo_o + strlen( trim( willow\tags::g( 'loo_o' ) ) ) ), 
-				( $loo_c - $loo_o - strlen( trim( willow\tags::g( 'loo_c' ) ) ) ) ); 
+				( $loo_o + strlen( trim( $loo_o ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( $loo_c ) ) ) ); 
 
-			$return_string = willow\tags::g( 'loo_o' ).$return_string.willow\tags::g( 'loo_c' );
+			$return_string = $loo_o.$return_string.$loo_c;
+			*/
 
-			// h::log( 'e:>$string: "'.$return_string.'"' );
+			// grab loop {: scope :} ##
+			// $scope = loops::scope( $loop_string );
 
-			return $return_string;
+			// h::log( 'scope: '.$scope );
 
-			// return true;
+			// add scope count ##
+			// $scope = $scope.'_'.self::$loop_scope_count;
+
+			// h::log( 'scope: '.$scope );
+
+			// h::log( 'e:>$string: "'.$loop_string.'"' );
+
+			// iterate loop count ##
+			// self::$loop_scope_count ++ ;
+
+			// return array with markup + scope ##
+			return [ 
+				'markup' 	=> $loop_string
+				// 'scope'		=> $scope
+			];
 
 		}
 
-		// no ##
+		// backup ##
 		return false;
 
 	}
@@ -249,8 +351,11 @@ class loops extends willow\parse {
 
 	/**
 	 * Check if passed string includes a {: scope :} 
+	 * 
+	 * @param 	$inclusive 	Boolean 	fallows to return whole scope string inside tags
+	 * 
 	*/
-	public static function scope( $string = null ){
+	public static function scope( $string = null, $inclusive = false ){
 
 		// sanity ##
 		if(
@@ -277,7 +382,7 @@ class loops extends willow\parse {
 
 			// h::log( 'd:>Found opening sco_o & closing sco_c'  ); 
 
-			$scope = core\method::string_between( $string, trim( willow\tags::g( 'sco_o' )), trim( willow\tags::g( 'sco_c' )) );
+			$scope = core\method::string_between( $string, trim( willow\tags::g( 'sco_o' )), trim( willow\tags::g( 'sco_c' )), $inclusive );
 			$scope = trim( $scope );
 
 			/*
@@ -287,7 +392,7 @@ class loops extends willow\parse {
 				( $sco_o + strlen( trim( willow\tags::g( 'sco_o' ) ) ) ), 
 				( $sco_c - $sco_c - strlen( trim( willow\tags::g( 'sco_c' ) ) ) ) ); 
 
-			// $return_string = willow\tags::g( 'loo_o' ).$return_string.willow\tags::g( 'loo_c' );
+			// $return_string = willow\tags::g( 'loo_o' ).$return_string.$loo_c;
 			*/
 
 			// h::log( 'd:>$scope: "'.$scope.'"' );
@@ -422,7 +527,7 @@ class loops extends willow\parse {
 				}
 
 				// get position from first ( whole string ) match ##
-				$position = $matches[0][$match][1]; 
+				// $position = $matches[0][$match][1]; 
 
 				// take match ##
 				$match = $matches[0][$match][0];
@@ -433,7 +538,7 @@ class loops extends willow\parse {
 				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
 				// pass match to function handler ##
-				self::format( $match, $position, $process );
+				self::format( $match, $process );
 
 			}
 
