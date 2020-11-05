@@ -39,7 +39,7 @@ class php_functions extends willow\parse {
 	}
 
 
-	public static function format( $match = null, $process = 'internal' ){
+	public static function format( $match = null, $process = 'secondary' ){
 
 		// sanity ##
 		if(
@@ -369,7 +369,7 @@ class php_functions extends willow\parse {
 
 			// function returns which update the template also need to update the buffer_map, for later find/replace ##
 			// Seems like a potential pain-point ##
-			self::$buffer_map[0] = str_replace( self::$function_match, $string, self::$buffer_map[0] );
+			self::$markup_template = str_replace( self::$function_match, $string, self::$markup_template );
 
 			// update markup for willow parse ##
 			parse\markup::swap( self::$function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
@@ -406,12 +406,12 @@ class php_functions extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-    public static function prepare( $args = null, $process = 'internal' ){
+    public static function prepare( $args = null, $process = 'secondary' ){
 
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 				! isset( self::$markup )
 				|| ! is_array( self::$markup )
@@ -420,7 +420,7 @@ class php_functions extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 				! isset( self::$buffer_markup )
 				)
@@ -437,14 +437,14 @@ class php_functions extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -528,7 +528,7 @@ class php_functions extends willow\parse {
 
 
 
-	public static function cleanup( $args = null, $process = 'internal' ){
+	public static function cleanup( $args = null, $process = 'secondary' ){
 
 		$open = trim( willow\tags::g( 'php_fun_o' ) );
 		$close = trim( willow\tags::g( 'php_fun_c' ) );
@@ -548,7 +548,7 @@ class php_functions extends willow\parse {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 					! isset( self::$markup )
 					|| ! is_array( self::$markup )
@@ -557,7 +557,7 @@ class php_functions extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 					! isset( self::$buffer_markup )
 				)
@@ -574,14 +574,14 @@ class php_functions extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -623,14 +623,14 @@ class php_functions extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// set markup ##
 				self::$markup['template'] = $string;
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// set markup ##
 				self::$buffer_markup = $string;

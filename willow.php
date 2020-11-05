@@ -13,7 +13,7 @@
  * Plugin Name:     Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine built for WordPress
- * Version:         1.5.1
+ * Version:         1.5.2
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -46,7 +46,7 @@ if ( ! class_exists( 'willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.5.1';
+        const version = '1.5.2';
         const text_domain = 'willow'; // for translation ##
 		
 		protected static
@@ -75,9 +75,9 @@ if ( ! class_exists( 'willow' ) ) {
 			// share willow match across parsers ##
 			$willow_match = false,
 
-			// used to attribute unique count ID to loop scopes ##
-			$scope_count = 0,
-			$scope_map = [],
+			// used to map original {: scope :} value to unqiue {: scope_hash :} ##
+			// $scope_count = 0,
+			$scope_map = [], 
 
 			// default args to merge with passed array ##
 			$args_default = [
@@ -88,10 +88,11 @@ if ( ! class_exists( 'willow' ) ) {
 				],
 			],
 
-			// BUFFER, -- @TODO, perhaps can be protected ##
+			// BUFFER ##
 			$buffer_args 	= null,
 			$buffer_markup 	= null,
-			$buffer_map		= [] // buffer markup map ##
+			$buffer_map		= [], // buffer markup map ##
+			$markup_template = '' // original markup from viewed template
 
 		;
 

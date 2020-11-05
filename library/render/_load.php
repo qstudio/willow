@@ -26,8 +26,7 @@ class render extends \willow  {
     *
     * @since        4.1.0
     */
-    public static function load()
-    {
+    public static function load(){
 
 		// methods ##
 		require_once self::get_plugin_path( 'library/render/method.php' );

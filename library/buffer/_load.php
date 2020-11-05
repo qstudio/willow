@@ -30,8 +30,7 @@ class buffer extends \willow {
     *
     * @since        4.1.0
     */
-    public static function load()
-    {
+    public static function load(){
 
 		// prepare map ##
 		require_once self::get_plugin_path( 'library/buffer/output.php' );

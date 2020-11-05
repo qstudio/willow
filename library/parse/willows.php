@@ -47,7 +47,7 @@ class willows extends willow\parse {
 		self::$return = false;
 
 		// reset loop_scope_count - as this accumulates on a per Willow basis ##
-		self::$scope_count = 0;
+		// self::$scope_count = 0;
 		self::$scope_map = [];
 
 	}
@@ -111,7 +111,7 @@ class willows extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function format( $match = null, $args = null, $process = 'internal', $position = null ){
+	public static function format( $match = null, $args = null, $process = 'secondary', $position = null ){
 
 		// sanity ##
 		if(
@@ -375,7 +375,7 @@ class willows extends willow\parse {
 					'hash'		=> self::$willow_hash, // pass hash ##
 					'process'	=> $process,
 					'tag'		=> self::$willow_match,
-					'parent'	=> $process == 'buffer' ? false : self::$args['config']['tag'],
+					'parent'	=> $process == 'primary' ? false : self::$args['config']['tag'],
 				] 
 			]
 		);
@@ -392,7 +392,7 @@ class willows extends willow\parse {
 		if( 
 			self::$flags_willow // flags set ##
 			&& is_array( self::$flags_willow ) // is an array 
-			&& in_array( 'buffer', self::$flags_willow ) // buffer defined ##
+			&& in_array( 'buffer', self::$flags_willow ) // output buffer defined ##
 		) {
 
 			self::$arguments = core\method::parse_args( 
@@ -453,7 +453,7 @@ class willows extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-    public static function prepare( $args = null, $process = 'internal' ){ // type can be "buffer" or "internal"
+    public static function prepare( $args = null, $process = 'secondary' ){ // type can be "primary" or "secondary"
 
 		// h::log( '$process: '.$process );
 		// h::log( $args );
@@ -461,7 +461,7 @@ class willows extends willow\parse {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 					! isset( self::$markup )
 					|| ! is_array( self::$markup )
@@ -470,7 +470,7 @@ class willows extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 					! isset( self::$buffer_markup )
 				)
@@ -487,14 +487,14 @@ class willows extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -596,7 +596,7 @@ class willows extends willow\parse {
 
 
 
-	public static function cleanup( $args = null, $process = 'internal' ){
+	public static function cleanup( $args = null, $process = 'secondary' ){
 
 		$open = trim( willow\tags::g( 'wil_o' ) );
 		$close = trim( willow\tags::g( 'wil_c' ) );
@@ -614,7 +614,7 @@ class willows extends willow\parse {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 					! isset( self::$markup )
 					|| ! is_array( self::$markup )
@@ -623,7 +623,7 @@ class willows extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 					! isset( self::$buffer_markup )
 				)
@@ -640,14 +640,14 @@ class willows extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -689,14 +689,14 @@ class willows extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// set markup ##
 				self::$markup['template'] = $string;
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// set markup ##
 				self::$buffer_markup = $string;

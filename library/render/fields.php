@@ -49,6 +49,9 @@ class fields extends willow\render {
 		// h::log( self::$fields_map );
 		// h::log( 'hash: '.self::$args['config']['hash'] );
 
+		// push in new duplicate fields from field_map, required for unique filters on variables ##
+		self::map();
+
         // start loop ##
         foreach ( self::$fields as $field => $value ) {
 
@@ -95,13 +98,9 @@ class fields extends willow\render {
             // each item is filtered as looped over -- q/render/field/GROUP/FIELD - ( $args, $fields ) ##
             // results are saved back to the self::$fields array in String format ##
 			render\format::field( $field, $value );
-			
+
 		}
 		
-		// THIS COULD BE THE LOOPS FIX.. JUST NEEDS WORKING OUT ##
-		// push in new duplicate fields from field_map, required for unique filters on variables ##
-		// self::map();
-
         // filter all fields ##
         self::$fields = core\filter::apply([ 
             'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
@@ -123,10 +122,56 @@ class fields extends willow\render {
 	*/
 	public static function map(){
 
-		// h::log( self::$fields_map );
+		// h::log( self::$scope_map );
 		// h::log( 'hash: '.self::$args['config']['hash'] );
 
-		// start loop ##
+		if ( 
+			! self::$scope_map
+			|| ! is_array( self::$scope_map )
+		){
+
+			// no mapping required ##
+			return false;
+
+		}
+
+		foreach( self::$fields as $field => $value ){
+
+			// store
+			$field_matches = [];
+
+			// get first part of field key name  - before first dot ##
+			$field_key = explode( '.', $field );
+
+			// h::log( 'field: '.$field_key[0] );
+
+			if( array_key_exists( $field_key[0], self::$scope_map ) ){
+
+				// h::log( 'scope map includes: '.$field_key[0] );
+
+				foreach( self::$scope_map[ $field_key[0] ] as $scope => $hash ){
+
+					// h::log( 'hash: '.$hash );
+
+					// create new field key value ##
+					$new_field_key = $field_key[0].'__'.$hash.str_replace( $field_key[0], '', $field );
+
+					// h::log( 'new_field_key: '.$new_field_key );
+
+					// add field ##
+					self::$fields[$new_field_key] = $value;
+
+				}
+
+			}
+
+		}
+
+		// h::log( $field_matches );
+
+
+		/*
+		// start loop -- this was first patch for field data.. perhaps we'll NOT need it ##
 		foreach ( self::$fields as $field => $value ) {
 
 			if( false !== strpos( $field, '.' ) ) {
@@ -177,6 +222,7 @@ class fields extends willow\render {
 			}
 
 		}
+		*/
 
 		// h::log( self::$fields );
 		
@@ -204,7 +250,7 @@ class fields extends willow\render {
 		){
 
 			// we cannot set default fields on buffer runs ##
-			if( 'buffer' == self::$args['context'] ){
+			if( 'primary' == self::$args['context'] ){
 
 				// h::log( 'NOT on buffer..' );
 

@@ -12,7 +12,7 @@ use willow\buffer;
 
 class output extends willow\buffer {
 
-	protected static $is_willow;
+	// protected static $is_willow;
 
 	/**
 	 * Check for view template and start OB, if correct
@@ -37,7 +37,7 @@ class output extends willow\buffer {
 			// if ( 'willow' == \q\view\is::format() ){
 
 				// h::log( 'e:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
-				// h::log( 't:>TODO -- find out why large content breaks this...??' );
+				// h::log( 't:>TODO -- find out why large template content breaks this...??' );
 				return ob_start();
 
 			// }
@@ -126,28 +126,28 @@ class output extends willow\buffer {
 				'return' 		=> 'return',
 				'debug'			=> false,
 			],
-			'context'			=> 'buffer',
+			'context'			=> 'primary',
 			'task'				=> 'prepare',
 		];
 
 		// take buffer output string as markup->template ##
 		self::$buffer_markup = $string; // used for parsers to reference buffer markup template ##
-		self::$buffer_map[0] = $string; // for easy debugging of map
+		self::$markup_template = $string; // original markup reference
 
 		// force methods to return for collection by output buffer ##
 		self::$args_default['config']['return'] = 'return';
 
 		// prepare .willow template markup -- affects self::$buffer_map ##
-		willow\parse::prepare( self::$buffer_args, 'buffer' );
+		willow\parse::prepare( self::$buffer_args, 'primary' );
 
 		// h::log( self::$buffer_map );
 		self::$buffer_markup = buffer\map::prepare();
 		// h::log( self::$buffer_markup );
 
 		// clean up left over tags ##
-		willow\parse::cleanup( self::$buffer_args, 'buffer' );
+		willow\parse::cleanup( self::$buffer_args, 'primary' );
 		
-		// clear buffer objects ##
+		// reset properties ##
 		self::$buffer_map = [];
 		self::$buffer_args = null;
 		self::$filter = null;

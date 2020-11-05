@@ -6,25 +6,11 @@ use willow;
 use willow\core;
 use willow\core\helper as h;
 
-/*
-About Loops:
-
-- Loops can be embedded in "primary" or "secondary" Willows - so either direclty in the main template or within a .willow file - but we only process Loops on the secondary process cycle ( parse )
-- Loops must ALWAYS have a {: scope :} tag
-	==> validated when parsing markup
-- Loops contain {{ variables }} which can include [ flags ]
-	==> each scope is manimpuated to create a unique hash 
-- {: scopes :} can be re-used multiple times within the same {~ Willow ~}
-	--> meaning, the source markup will show the same {: scope :} ( as this is data connector ) - but Willow needs to manipulate the markup to create a new unique {: scope :} reference and store a map to connect the data correctly
-- {: scopes :} pull data from indexed arrays  - whose key matches the {: scope :} value	- returned via the Willow context lookup
-	--> meaning, we need to manipulate future data ( as Loops are pared before data is gathered ) - this can be controlled by the scope_map array
-- {{ variable }} data can be formatted differently within different {: scope :} loops, within the same {~ Willow ~}
-	--> meaning we need to create seperate filter reference for each variable per scope
-*/
-
 class loops extends willow\parse {
 
+
 	private static 
+
 		$loop_hash, 
 		$loop,
 		$loop_match, // full string matched ##
@@ -35,9 +21,12 @@ class loops extends willow\parse {
 		$loop_variables,
 		$config_string,
 		$return
+	
 	;
 
+
 	private static function reset(){
+
 		self::$loop_hash = false; 
 		self::$loop_scope = false;
 		self::$loop_scope_full = false;
@@ -47,6 +36,7 @@ class loops extends willow\parse {
 		self::$return = false;
 		self::$loop_arguments = false;
 		self::$loop_variables = false;
+
 	}
 
 
@@ -55,7 +45,7 @@ class loops extends willow\parse {
 	 * 
 	 * @since 1.0.0
 	*/
-	public static function format( $match = null, $process = 'secondary', $args = null ){
+	public static function format( $match = null, $process = 'secondary' ){
 
 		// sanity ##
 		if(
@@ -92,9 +82,6 @@ class loops extends willow\parse {
 		self::$loop_scope_full = self::scope( self::$loop_match, true );
 		// h::log( 'tagless scope: '.self::$loop_scope );
 		// h::log( 'full scope: '.self::$loop_scope_full );
-
-		// h::log( $args['context'] );
-		// h::log( $args['context'].' - '.self::$loop_scope.'<br />'.$match );
 
 		// sanity ##
 		if ( 
@@ -173,54 +160,65 @@ class loops extends willow\parse {
 		}
 
 		// set loop hash ##
-		// self::$loop_hash = self::$loop_scope; // hash based only on scope value ## <<--- OLD SCOPE VALUE ##
-		
+		self::$loop_hash = self::$loop_scope; // hash based only on scope value ## <<--- OLD SCOPE VALUE ##
+
+		/*
+		@@ TODO @@
+		IF we give each loop "scope" a unique hash - how can we pair the markup with the field data and do the correct replacements ??
+
+		IDEA:
+
+		data is data - we just need to duplicate it for new loop scopes - so:
+
+		one.1.title is copied to one_1.1.title <-- but data is not generated until later in the process, so we need to build a map and apply later..
+
+		THEN - we need to manipulate the stored buffer_map and the defined $markup to reflect the new scope
+
+		Perhaps we only need to do this when there is more than one scope in the passed markup ???
+
+		*/
+		/*
+
 		// ## BREAKING CHANGE ##
-		// make a hash and store it for this loop ##
-		self::$loop_hash = core\method::hash();
+		if( 'primary' == $process ) {
 
-		// store map of scopes + hashes ##
-		if ( isset( self::$scope_map[self::$loop_scope] ) ) {
+			self::$loop_hash = self::$loop_scope.'_'.self::$scope_count; // hash based on scope + iterated count ##
 
-			self::$scope_map[self::$loop_scope][] = self::$loop_hash;
+			// store map of scopes ##
+			self::$scope_map[self::$scope_count] = self::$loop_scope;
 
-		} else {
+			// we need to replace "{: scope :}" with  "{: scope_x :}" ##
+			// h::log( self::$markup );
+			// h::log( 'process: '.$process );
+			// h::log( 'loop_markup: '.self::$loop_markup );
+			// h::log( 'loop_scope: '.self::$loop_scope );
+			// h::log( 'scope_count: '.self::$scope_count );
 
-			self::$scope_map[self::$loop_scope] = [];
+			// now, we need to edit the markup in two places -- or just one ??
+			// create updated loop scope tag ##
+			$loop_scope_tag = willow\tags::g( 'sco_o' ).self::$loop_hash.willow\tags::g( 'sco_c' );
+			// h::log( 'New loop scope tag: '.$loop_scope_tag );
 
-			self::$scope_map[self::$loop_scope][] = self::$loop_hash;
+			h::log( self::$markup );
+
+			// replace markup in principle markup map ##
+			self::$buffer_map[0] = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$buffer_map[0] );
+
+			// replace stored tag in parent Willow markup ##
+			self::$buffer_map[1]['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$buffer_map[1]['tag'] );
+			// self::$willow_match = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$willow_match );
+
+			// h::log( self::$buffer_map[1]['tag'] );
+			// h::log( self::$willow_match );
+			// h::log( self::$buffer_map[0] );
+			// h::log( self::$scope_map );
 
 		}
 
-		// update "{: scope :}" to  "{: scope__x :}" ##
-		self::$loop_scope = self::$loop_scope.'__'.self::$loop_hash;
+		*/
 
-		
-
-		// now, we need to edit the markup in two places -- or just one ??
-		// create updated loop scope tag ##
-		$loop_scope_tag = willow\tags::g( 'sco_o' ).self::$loop_scope.willow\tags::g( 'sco_c' );
-		// h::log( 'New loop scope tag: '.$loop_scope_tag );
-
-		// h::log( self::$markup );
-
-		// replace markup in principle markup template ##
-		self::$markup_template = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
-
-		// replace stored tag in parent Willow $hash ##
-		\willow::$hash['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
 
 		// test what we have ##
-		// h::log( self::$markup );
-		// h::log( 'process: '.$process );
-		// h::log( 'loop_markup: '.self::$loop_markup );
-		// h::log( 'loop_scope: '.self::$loop_scope );
-		// h::log( 'scope_count: '.self::$scope_count );
-		// h::log( \willow::$hash['tag'] );
-		// h::log( self::$args );
-		// h::log( self::$willow_match );
-		// h::log( self::$markup_template );
-		// h::log( self::$scope_map );
 		// h::log( 'd:>field: "'.self::$loop_scope.'"' );
 		// h::log( 'd:>markup: "'.self::$loop_markup.'"' );
 		// h::log( 'd:>match: "'.self::$loop_match.'"' );
@@ -228,10 +226,10 @@ class loops extends willow\parse {
 		// h::log( 'd:>position: "'.self::$position.'"' );
 
 		// so, we can add a new field value to $args array based on the field name - with the markup as value
-		self::$markup[self::$loop_scope] = self::$loop_markup;
+		self::$markup[self::$loop_hash] = self::$loop_markup;
 
 		// generate a variable {{ $loop_scope }} ##
-		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_scope, 'close' => 'var_c' ]);
+		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_hash, 'close' => 'var_c' ]);
 		// parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
 
 		// swap the entire {@ loop_match @} string for a single {{ variable }} matching the passed {: scope :} ##
@@ -240,7 +238,7 @@ class loops extends willow\parse {
 		// h::log( 'd:>variable: "'.$variable.'"' );
 
 		// iterate scope count ##
-		// self::$scope_count ++ ;
+		self::$scope_count ++ ;
 
 		// clear slate ##
 		self::reset();
@@ -417,12 +415,7 @@ class loops extends willow\parse {
 	*/
 	public static function prepare( $args = null, $process = 'secondary' ){
 
-		// we do NOT need to parse Loops on the primary check
-		if( 'primary' == $process ){
-
-			return false;
-
-		}
+		// h::log( $args );
 
 		// sanity -- method requires requires ##
 		if ( 
@@ -481,7 +474,6 @@ class loops extends willow\parse {
 
 		}
 
-		// h::log( $args );
 		// h::log('d:>'.$string);
 
 		// get all sections, add markup to $markup->$field ##
@@ -542,7 +534,7 @@ class loops extends willow\parse {
 				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
 				// pass match to function handler ##
-				self::format( $match, $process, $args );
+				self::format( $match, $process );
 
 			}
 
