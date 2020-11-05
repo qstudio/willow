@@ -669,7 +669,7 @@ class markup extends willow\render {
 
 			// log ##
 			h::log( self::$args['task'].'~>n:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
-			h::log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
+			// h::log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
 
             // bale if not found ##
             return false;
