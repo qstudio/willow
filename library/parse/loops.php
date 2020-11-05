@@ -195,8 +195,6 @@ class loops extends willow\parse {
 		// update "{: scope :}" to  "{: scope__x :}" ##
 		self::$loop_scope = self::$loop_scope.'__'.self::$loop_hash;
 
-		
-
 		// now, we need to edit the markup in two places -- or just one ??
 		// create updated loop scope tag ##
 		$loop_scope_tag = willow\tags::g( 'sco_o' ).self::$loop_scope.willow\tags::g( 'sco_c' );

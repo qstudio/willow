@@ -197,9 +197,6 @@ class willows extends willow\parse {
 			self::$argument_string 
 		){
 
-			/*
-			// REMOVED ENTIRE LOOP CHECK.. seemed to add no value to output ##
-			// MIGHT BE MORE IMPORTANT WITH MULTIPLE LOOPS ??
 			// check for loops in argument string - might be one or multiple ##
 			if( $loop = loops::has( self::$argument_string ) ){
 
@@ -210,7 +207,7 @@ class willows extends willow\parse {
 				// h::log( $loop );
 
 				// check if string contains any [ flags ] -- technically filters -- ##
-				// if( flags::has( self::$argument_string ) ) {
+				if( flags::has( self::$argument_string ) ) {
 
 					// h::log( $args['task'].'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
 					// h::log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
@@ -218,25 +215,25 @@ class willows extends willow\parse {
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
 						[ 
-							'markup' 	=> self::$argument_string // $loop['markup'], // markup ##
+							'markup' 	=> $loop['markup'] // markup ##
 							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
 						]
 					);
 
-				// } else {
+				} else {
 
 					// h::log( $args['task'].'~>n:>NO flags, so take whole string: '.self::$argument_string );
 					// h::log( 'd:>No Flags, so take whole string: '.self::$argument_string );
 
-					// self::$arguments = core\method::parse_args( 
-						// self::$arguments, 
-						// [ 
-							// 'markup' 	=> self::$argument_string, // whole string ##
-							// 'scope'		=> $loop['scope'] // {: scope :}
-						// ]
-					// );
+					self::$arguments = core\method::parse_args( 
+						self::$arguments, 
+						[ 
+							'markup' 	=> self::$argument_string //, whole string ##
+							// 'scope'		=> $loop['scope'] {: scope :}
+						]
+					);
 
-				// }
+				}
 
 				// take the first part of the passed string, before the arg_o tag as the {~ Willow ~} ##
 				// --> REMOVED <-- //
@@ -244,7 +241,6 @@ class willows extends willow\parse {
 				// self::$willow = trim( $willow_explode[0] );
 
 			} 
-			*/
 
 			// parse arguments ##
 			self::$arguments = core\method::parse_args( 
