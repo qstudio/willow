@@ -9,7 +9,6 @@ use willow\render;
 
 class output extends willow\render {
 
-    
     public static function prepare() {
 
 		// sanity ##

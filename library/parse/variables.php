@@ -157,10 +157,10 @@ class variables extends willow\parse {
 			// h::log( '$variable_replace: '.$variable_replace );			
 
 			// alter buffer_map ##
-			// self::$buffer_map[0] = str_replace( $args['variable'], $variable_replace, self::$buffer_map[0] );
+			// self::$markup_template = str_replace( $args['variable'], $variable_replace, self::$markup_template );
 
 			// h::log( 'MARKUP->> '.self::$markup['template'] );
-			// h::log( self::$buffer_map[0] );
+			// h::log( self::$markup_template );
 			// h::log( $args['tag'] );
 			// h::log(  );
 			// $args['tag'] = 'hello';
@@ -184,7 +184,7 @@ class variables extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function format( $match = null, $args = null, $process = 'internal' ){
+	public static function format( $match = null, $args = null, $process = 'secondary' ){
 
 		// sanity ##
 		if(
@@ -320,12 +320,12 @@ class variables extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function prepare( $args = null, $process = 'internal' ){
+	public static function prepare( $args = null, $process = 'secondary' ){
 
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 					! isset( self::$markup )
 					|| ! is_array( self::$markup )
@@ -334,7 +334,7 @@ class variables extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 					! isset( self::$buffer_markup )
 				)
@@ -351,14 +351,14 @@ class variables extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -418,7 +418,7 @@ class variables extends willow\parse {
 
 
 
-	public static function cleanup( $args = null, $process = 'internal' ){
+	public static function cleanup( $args = null, $process = 'secondary' ){
 
 		$open = trim( willow\tags::g( 'var_o' ) );
 		$close = trim( willow\tags::g( 'var_c' ) );
@@ -432,7 +432,7 @@ class variables extends willow\parse {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 					! isset( self::$markup )
 					|| ! is_array( self::$markup )
@@ -441,7 +441,7 @@ class variables extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 					! isset( self::$buffer_markup )
 				)
@@ -458,14 +458,14 @@ class variables extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -514,14 +514,14 @@ class variables extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// set markup ##
 				self::$markup['template'] = $string;
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// set markup ##
 				self::$buffer_markup = $string;

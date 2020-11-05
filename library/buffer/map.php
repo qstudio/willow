@@ -21,7 +21,7 @@ class map extends willow\buffer {
 		if ( 
 			is_null( self::$buffer_map )
 			|| ! is_array( self::$buffer_map )
-			|| is_null( self::$buffer_map['0'] )
+			// || is_null( self::$buffer_map['0'] )
 		){
 
 			// log ##
@@ -32,11 +32,8 @@ class map extends willow\buffer {
 
 		}
 
-		// get string ##
-		$string = self::$buffer_map['0'];
-
-		// h::log( $string );
-		// $return = '';
+		// get orignal markup string ##
+		$string = self::$markup_template;
 
 		// h::log( self::$buffer_map );
 
@@ -44,8 +41,9 @@ class map extends willow\buffer {
 		foreach( self::$buffer_map as $key => $value ){
 
 			if( 
-				'0' == $key // skip first key, this contains the buffer markup ##
-				|| ! $value['parent'] // skip rows without a parent value ##
+				// '0' == $key // skip first key, this contains the buffer markup ##
+				// ||
+				! $value['parent'] // skip rows without a parent value ( primary parsed elements ) ##
 			){
 
 				continue;
@@ -80,8 +78,9 @@ class map extends willow\buffer {
 
 			// skip first row or rows which do not have a parent ##
 			if( 
-				'0' == $key 
-				|| $value['parent'] // skip rows with a parent value ##
+				// '0' == $key 
+				// || 
+				$value['parent'] // skip rows with a parent value ##
 				|| ! isset( $value['hash'] ) // skip rows without a hash ###
 			){
 
@@ -113,7 +112,7 @@ class map extends willow\buffer {
 	}
 
 
-	public static function get_key_from_value( $key = null, $value = null ){
+	protected static function get_key_from_value( $key = null, $value = null ){
 
 		// sanity ##
 		if( 

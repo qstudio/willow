@@ -101,7 +101,7 @@ class markup extends willow\parse {
      * Set {{ variable }} in self:markup['template'] at defined position
      * 
      */
-    public static function set( string $tag = null, $position = null, $type = 'variable', $process = 'internal' ) { // , $markup = null
+    public static function set( string $tag = null, $position = null, $type = 'variable', $process = 'secondary' ) { // , $markup = null
 
 		// h::log( 't:>Position based replacement seems shaky, perhaps move to swap method...' );
 
@@ -152,7 +152,7 @@ class markup extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// h::log( 'd:>Swapping markup in self::$markup' );
 
@@ -167,7 +167,7 @@ class markup extends willow\parse {
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// h::log( 'd:>Swapping markup in self::$buffer_markup' );
 
@@ -202,7 +202,7 @@ class markup extends willow\parse {
      * Set {{ variable }} in self:markup['template'] at defined position
      * 
      */
-    public static function add( string $tag = null, $before = null, $type = 'variable', $process = 'internal' ) { // , $markup = null
+    public static function add( string $tag = null, $before = null, $type = 'variable', $process = 'secondary' ) { // , $markup = null
 
 		h::log( 't:>TOOO, __deprecate in 1.5.0' );
 
@@ -276,7 +276,7 @@ class markup extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// $before is a string, which we need to find in markup 
 				if( 
@@ -301,7 +301,7 @@ class markup extends willow\parse {
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// $before is a string, which we need to find in markup 
 				if( 
@@ -351,7 +351,7 @@ class markup extends willow\parse {
      * Set {{ variable }} in self:markup['template'] at defined position
      * 
      */
-    public static function swap( string $from = null, string $to = null, $from_type = 'willow', $to_type = 'variable', $process = 'internal' ) { 
+    public static function swap( string $from = null, string $to = null, $from_type = 'willow', $to_type = 'variable', $process = 'secondary' ) { 
 
         // sanity ##
         if (
@@ -603,7 +603,7 @@ class markup extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// h::log( 'd:>Swapping markup in self::$markup' );
 
@@ -618,7 +618,7 @@ class markup extends willow\parse {
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// h::log( 'd:>Swapping markup in self::$buffer_markup' );
 

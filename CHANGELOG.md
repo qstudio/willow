@@ -1,3 +1,7 @@
+### 1.5.2 ###
+
+* New: Repeat loops from same data / scope within single Willow
+
 ### 1.5.1 ###
 
 * Update: Speed improvements by simplification of loops process

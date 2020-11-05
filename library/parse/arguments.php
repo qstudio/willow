@@ -132,7 +132,7 @@ class arguments extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function cleanup( $args = null, $process = 'internal' ){
+	public static function cleanup( $args = null, $process = 'secondary' ){
 
 		$open = trim( willow\tags::g( 'arg_o' ) );
 		$close = trim( willow\tags::g( 'arg_c' ) );
@@ -149,7 +149,7 @@ class arguments extends willow\parse {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'internal' == $process
+				'secondary' == $process
 				&& (
 					! isset( self::$markup )
 					|| ! is_array( self::$markup )
@@ -158,7 +158,7 @@ class arguments extends willow\parse {
 			)
 			||
 			(
-				'buffer' == $process
+				'primary' == $process
 				&& (
 					! isset( self::$buffer_markup )
 				)
@@ -175,14 +175,14 @@ class arguments extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// get markup ##
 				$string = self::$markup['template'];
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// get markup ##
 				$string = self::$buffer_markup;
@@ -229,14 +229,14 @@ class arguments extends willow\parse {
 		switch( $process ){
 
 			default : 
-			case "internal" :
+			case "secondary" :
 
 				// set markup ##
 				self::$markup['template'] = $string;
 
 			break ;
 
-			case "buffer" :
+			case "primary" :
 
 				// set markup ##
 				self::$buffer_markup = $string;

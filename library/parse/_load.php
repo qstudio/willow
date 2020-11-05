@@ -90,7 +90,7 @@ class parse extends \willow {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public static function prepare( $args = null, $process = 'internal' ){
+    public static function prepare( $args = null, $process = 'secondary' ){
 
 		// h::log( $args );
 		// store passed args - context/task ##
@@ -152,7 +152,7 @@ class parse extends \willow {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public static function cleanup( $args = null, $process = 'internal' ){
+    public static function cleanup( $args = null, $process = 'secondary' ){
 
 		// h::log( self::$args['markup'] );
 
