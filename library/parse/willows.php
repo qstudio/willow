@@ -195,19 +195,30 @@ class willows extends willow\parse {
 		// argument_string looks ok, so go with it ##
 		if ( 
 			self::$argument_string 
-		){
+		){	
 
 			// check for loops in argument string - might be one or multiple ##
-			if( $loop = loops::has( self::$argument_string ) ){
+			if( loops::has( self::$argument_string ) ){
 
 				// NOTE, removed check for flags, which returned partial parkup if true - and broke loop rendering ##
 
 				// h::log( $args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
 				// h::log( 'd:>HAS a loop so taking part of config string as markup' );
+
 				// h::log( $loop );
 
+				// we need the markup, without the flags ##
+				$decode_flags = willow\arguments::decode( self::$argument_string );
+				// h::log( willow\arguments::decode( self::$argument_string ) );
+
 				// check if string contains any [ flags ] -- technically filters -- ##
-				if( flags::has( self::$argument_string ) ) {
+				if( 
+					flags::has( self::$argument_string ) 
+					&& $decode_flags
+					&& isset( $decode_flags['markup']['template'] )
+				) {
+
+					h::log( 'template -> '.$decode_flags['markup']['template'] );
 
 					// h::log( $args['task'].'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
 					// h::log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
@@ -215,7 +226,7 @@ class willows extends willow\parse {
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
 						[ 
-							'markup' 	=> $loop['markup'] // markup ##
+							'markup' 	=> $decode_flags['markup']['template'] // $loop['markup'] // markup ##
 							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
 						]
 					);
@@ -261,7 +272,7 @@ class willows extends willow\parse {
 			) {
 
 				h::log( $args['task'].'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
-				h::log( $args['task'].'~>d:>'.self::$argument_string );
+				// h::log( $args['task'].'~>d:>'.self::$argument_string );
 
 				// check for variable filters ##
 				self::$argument_string = flags::get( self::$argument_string, 'variable' );	

@@ -330,11 +330,13 @@ class loops extends willow\parse {
 			// iterate loop count ##
 			// self::$loop_scope_count ++ ;
 
+			return true;
+
 			// return array with markup + scope ##
-			return [ 
-				'markup' 	=> $loop_string
+			// return [ 
+				// 'markup' 	=> $loop_string
 				// 'scope'		=> $scope
-			];
+			// ];
 
 		}
 
