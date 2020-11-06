@@ -1,3 +1,11 @@
+### 1.6.0 ###
+
+* New: New loops functionality more stable, more flexible and potentially faster.
+
+### 1.5.3 ###
+
+* Updates: Fixes to edge-cases usage of repeat loops + Willows
+
 ### 1.5.2 ###
 
 * New: Repeat loops from same data / scope within single Willow

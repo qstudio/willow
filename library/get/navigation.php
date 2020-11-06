@@ -254,7 +254,7 @@ class navigation extends \willow\get {
 		foreach( $posts as $post => $post_value ){
 
 			// class & highlight ##
-            $posts[$post]->highlight = $post_value->ID === $args['config']['post']->ID ? 'active current' : '' ;
+            $posts[$post]->highlight = ( $post_value->ID === $args['config']['post']->ID ) ? ' active current' : '' ;
 
 		}
 
