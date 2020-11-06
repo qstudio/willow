@@ -371,10 +371,13 @@ class variables extends willow\parse {
 		if (  
 			! $string
 			|| is_null( $string )
+			|| ! is_string( $string )
 		){
 
 			h::log( self::$args['task'].'~>e:>Error in $markup' );
 			// h::log( 'd:>Error in $markup' );
+
+			h::log( $string );
 
 			return false;
 

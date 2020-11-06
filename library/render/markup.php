@@ -403,6 +403,16 @@ class markup extends willow\render {
 
 		// h::log( 'key: "'.$key.'" - value: "'.$value.'" - string: "'.$string.'"' );
 
+		// string needs to be a... string.. so check ##
+		if( ! is_string( $string ) ){
+
+			h::log( self::$args['task'].'~>e:>Error in passed args. "string" is not a string' );
+			h::log( $string );
+
+			return false;
+
+		}
+
 		// filter ##
 		$string = core\filter::apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##

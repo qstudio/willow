@@ -207,6 +207,7 @@ class willows extends willow\parse {
 
 				// we need the entire markup, without the flags ##
 				$decode_flags = willow\arguments::decode( self::$argument_string );
+				// h::log( $decode_flags );
 				// h::log( willow\arguments::decode( self::$argument_string ) );
 
 				// check if string contains any [ flags ] -- technically filters -- ##
@@ -223,7 +224,7 @@ class willows extends willow\parse {
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
 						[ 
-							'markup' 	=> $loop['markup'] // $decode_flags['markup']['template']  ##
+							'markup' 	=> $decode_flags['markup']['template']  ## // $loops['markup'] // 
 							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
 						]
 					);

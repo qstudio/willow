@@ -616,6 +616,15 @@ class format extends willow\render {
 
 				break ;
 
+				// keep this as a string ##
+				case 'highlight' :
+		
+					// h::log( '$wp_post->highlight: '.$wp_post->highlight );
+
+					$string = $wp_post->highlight ?? '';
+
+				break ;
+
 			}
 
 			if ( is_null( $string ) ) {
