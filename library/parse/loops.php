@@ -173,8 +173,9 @@ class loops extends willow\parse {
 		}
 
 		// set loop hash ##
-		// self::$loop_hash = self::$loop_scope; // hash based only on scope value ## <<--- OLD SCOPE VALUE ##
+		self::$loop_hash = self::$loop_scope; // hash based only on scope value ## <<--- OLD SCOPE VALUE ##
 		
+		#/*
 		// ## BREAKING CHANGE ##
 		// make a hash and store it for this loop ##
 		self::$loop_hash = core\method::hash();
@@ -199,14 +200,23 @@ class loops extends willow\parse {
 		// create updated loop scope tag ##
 		$loop_scope_tag = willow\tags::g( 'sco_o' ).self::$loop_scope.willow\tags::g( 'sco_c' );
 		// h::log( 'New loop scope tag: '.$loop_scope_tag );
+		// h::log( self::$loop_scope_full );
 
-		// h::log( self::$markup );
+		// h::log( self::$markup_template );
 
 		// replace markup in principle markup template ##
-		self::$markup_template = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
+		self::$markup_template = render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, self::$markup_template, 1 );
+
+		// h::log( self::$markup_template );
+
+		// h::log( \willow::$hash );
 
 		// replace stored tag in parent Willow $hash ##
 		\willow::$hash['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
+
+		// h::log( \willow::$hash );
+
+		#*/
 
 		// test what we have ##
 		// h::log( self::$markup );
@@ -283,7 +293,7 @@ class loops extends willow\parse {
 			|| 0 === $loop_count_close
 		){
 
-			h::log( 'd:>No loops in passed string, returning false.' );
+			// h::log( 'd:>No loops in passed string, returning false.' );
 
 			return false;
 
@@ -316,7 +326,7 @@ class loops extends willow\parse {
 			*/
 
 			// grab loop {: scope :} ##
-			// $scope = loops::scope( $loop_string );
+			$scope = loops::scope( $loop_string );
 
 			// h::log( 'scope: '.$scope );
 
@@ -330,13 +340,13 @@ class loops extends willow\parse {
 			// iterate loop count ##
 			// self::$loop_scope_count ++ ;
 
-			return true;
+			// return true;
 
 			// return array with markup + scope ##
-			// return [ 
-				// 'markup' 	=> $loop_string
-				// 'scope'		=> $scope
-			// ];
+			return [ 
+				'markup' 	=> $loop_string,
+				'scope'		=> $scope
+			];
 
 		}
 

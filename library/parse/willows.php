@@ -192,7 +192,7 @@ class willows extends willow\parse {
 
 		}
 
-		h::log( self::$argument_string  );
+		// h::log( self::$argument_string  );
 
 		// argument_string looks ok, so go with it ##
 		if ( 
@@ -200,7 +200,7 @@ class willows extends willow\parse {
 		){	
 
 			// check for loops in argument string - might be one or multiple ##
-			if( loops::has( self::$argument_string ) ){
+			if( $loops = loops::has( self::$argument_string ) ){
 
 				// h::log( $args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
 				// h::log( 'd:>HAS a loop so taking part of config string as markup' );
@@ -223,7 +223,7 @@ class willows extends willow\parse {
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
 						[ 
-							'markup' 	=> $decode_flags['markup']['template'] // $loop['markup'] // markup ##
+							'markup' 	=> $loop['markup'] // $decode_flags['markup']['template']  ##
 							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
 						]
 					);
