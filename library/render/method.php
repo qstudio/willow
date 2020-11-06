@@ -418,14 +418,10 @@ class method extends willow\render {
 
 		// @todo - sanity ##
 
-		// $find = '/'.preg_quote( $find, '/').'/';
-
-		// return preg_replace( $find, $replace, $subject, $limit );
-		   
-		// $pos = strpos( $haystack, $needle );
-		
+		// check is $find is in $ubject and return start position ##
 		$pos = strpos( $subject, $find );
 
+		// found ##
 		if ( $pos !== false ) {
 
 			return substr_replace( $subject, $replace, $pos, strlen( $find ) );
