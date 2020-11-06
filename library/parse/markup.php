@@ -609,7 +609,7 @@ class markup extends willow\parse {
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				// $new_template = str_replace( $from, $to, self::$markup['template'] );
-				$new_template = \willow\render\method::str_replace_first( $from, $to, self::$markup['template'] );
+				$new_template = \willow\render\method::str_replace_first( $from, $to, self::$markup['template'] ); // only replaces first occurance ##
 
 				// test ##
 				// h::log( 'd:>'.$new_template );
