@@ -195,7 +195,7 @@ class log extends \willow {
 		){
 
 			// h::hard_log( 'is_array OR is_object' );
-			self::push( 'debug', 'Array or Object below from -> '.self::$backtrace, self::$backtrace_key );
+			self::push( 'debug', ( is_object( $args ) ? 'Object' : 'Array' ).' below from'.self::$backtrace, self::$backtrace_key );
 			$return = self::push( 'debug', print_r( $args, true ), self::$backtrace_key );
 			
 			// var_dump( $return );

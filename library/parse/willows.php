@@ -200,14 +200,13 @@ class willows extends willow\parse {
 		){	
 
 			// check for loops in argument string - might be one or multiple ##
-			if( $loop = loops::has( self::$argument_string ) ){
+			if( $loops = loops::has( self::$argument_string ) ){
 
 				// h::log( $args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
 				// h::log( 'd:>HAS a loop so taking part of config string as markup' );
 
 				// we need the entire markup, without the flags ##
 				$decode_flags = willow\arguments::decode( self::$argument_string );
-				// h::log( $decode_flags );
 				// h::log( willow\arguments::decode( self::$argument_string ) );
 
 				// check if string contains any [ flags ] -- technically filters -- ##
@@ -217,14 +216,14 @@ class willows extends willow\parse {
 					&& isset( $decode_flags['markup']['template'] )
 				) {
 
-					h::log( 'template -> '.$decode_flags['markup']['template'] );
+					// h::log( 'template -> '.$decode_flags['markup']['template'] );
 					// h::log( $args['task'].'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
 					// h::log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
 
 					self::$arguments = core\method::parse_args( 
 						self::$arguments, 
 						[ 
-							'markup' 	=> $decode_flags['markup']['template'] // $loop['markup'] // markup ##
+							'markup' 	=> $loop['markup'] // $decode_flags['markup']['template']  ##
 							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
 						]
 					);

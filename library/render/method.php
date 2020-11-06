@@ -414,5 +414,28 @@ class method extends willow\render {
 
 
 
+	public static function str_replace_first( $find = null, $replace = null, $subject = null, $limit = 1 ) {
+
+		// @todo - sanity ##
+
+		// $find = '/'.preg_quote( $find, '/').'/';
+
+		// return preg_replace( $find, $replace, $subject, $limit );
+		   
+		// $pos = strpos( $haystack, $needle );
+		
+		$pos = strpos( $subject, $find );
+
+		if ( $pos !== false ) {
+
+			return substr_replace( $subject, $replace, $pos, strlen( $find ) );
+
+		}
+		
+		// kick it back ##
+		return $subject;
+
+	}
+
 
 }
