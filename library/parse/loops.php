@@ -193,8 +193,10 @@ class loops extends willow\parse {
 
 		}
 
-		// update "{: scope :}" to  "{: scope__x :}" ##
+		// update "{: scope :}" to  "{: scope__$hash :}" ##
 		self::$loop_scope = self::$loop_scope.'__'.self::$loop_hash;
+
+		// h::log( self::$loop_markup ); 
 
 		// now, we need to edit the markup in two places -- or just one ??
 		// create updated loop scope tag ##
@@ -205,14 +207,16 @@ class loops extends willow\parse {
 		// h::log( self::$markup_template );
 
 		// replace markup in principle markup template ##
-		self::$markup_template = render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, self::$markup_template, 1 );
+		// self::$markup_template = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
+		self::$markup_template = render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
 
 		// h::log( self::$markup_template );
 
 		// h::log( \willow::$hash );
 
 		// replace stored tag in parent Willow $hash ##
-		\willow::$hash['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
+		// \willow::$hash['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
+		\willow::$hash['tag'] = render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
 
 		// h::log( \willow::$hash );
 
@@ -235,14 +239,16 @@ class loops extends willow\parse {
 		// h::log( 'd:>hash: "'.self::$loop_hash.'"' );
 		// h::log( 'd:>position: "'.self::$position.'"' );
 
-		// so, we can add a new field value to $args array based on the field name - with the markup as value
+		// so, we can add a new field value to $args array based on the loop scope ( including unique hash ) - with the loop_markup as value ##
 		self::$markup[self::$loop_scope] = self::$loop_markup;
+
+		// h::log( self::$markup );
 
 		// generate a variable {{ $loop_scope }} ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_scope, 'close' => 'var_c' ]);
 		// parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
 
-		// swap the entire {@ loop_match @} string for a single {{ variable }} matching the passed {: scope :} ##
+		// swap the entire {@ loop_match @} string for a single {{ variable }} matching the passed {: scope__$hash :} ##
 		parse\markup::swap( self::$loop_match, $variable, 'loop', 'variable', $process ); 
 
 		// h::log( 'd:>variable: "'.$variable.'"' );
