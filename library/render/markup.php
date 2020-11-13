@@ -70,7 +70,7 @@ class markup extends willow\render {
 				&& ! \is_int( $value ) 
 			) {
 
-				h::log( 'd:>The value of "'.self::$args['context'].'->'.self::$args['task'].'->'.$key.'" is not a string or integer... Willow is checking for a default value' );
+				h::log( 'd:>"'.self::$args['context'].'->'.self::$args['task'].'->'.$key.'" is not a string or integer. Willow will look for a default value' );
 
 				if( 
 					isset( self::$args['config']['default'] ) 
