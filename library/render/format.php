@@ -673,7 +673,7 @@ class format extends willow\render {
 			// loo over array values ##
 			foreach( $array as $key => $value ) {
 
-				h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
+				// h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
 
 				// validate $value is a string ##
 				if( ! is_string( $value ) ){
