@@ -459,7 +459,7 @@ class args extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>No enable defined in $args or enable field found for task: "'.self::$args['task'].'"');
+			h::log( self::$args['task'].'~>n:>No enable defined in $args NOR enable field found for task: "'.self::$args['task'].'"');
 
             return true;
 

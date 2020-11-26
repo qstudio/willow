@@ -11,6 +11,8 @@ class willows extends willow\parse {
 
 	private static 
 
+		$willow_context,
+		$willow_task,
 		$willow_matches, // array of matches ##
 		$willow,
 		// $willow_match, // full string matched ##
@@ -34,6 +36,8 @@ class willows extends willow\parse {
 
 	private static function reset(){
 
+		self::$willow_context = false;
+		self::$willow_task = false;
 		self::$flags_willow = false;
 		self::$willow_hash = false;
 		self::$willow = false;
@@ -144,6 +148,7 @@ class willows extends willow\parse {
 
 		// look for Willow flags -- assigned to a filter for use late on, pre-rendering ##
 		self::$willow = flags::get( self::$willow, 'willow' );
+		// h::log( self::$flags_willow );
 
 		// clean up ##
 		self::$willow = trim( self::$willow );
@@ -170,6 +175,12 @@ class willows extends willow\parse {
 			return false; 
 
 		}
+
+		// grab context and task for debugging ##
+		self::$willow_context = explode( '~', self::$willow, 2 )[0];
+		self::$willow_task = explode( '~', self::$willow, 2 )[1];
+
+		// h::log( 'Willow Context: '.self::$willow_context.' // Task: '.self::$willow_task );
 
 		// h::log( $args );
 
@@ -202,7 +213,7 @@ class willows extends willow\parse {
 			// check for loops in argument string - might be one or multiple ##
 			if( $loops = loops::has( self::$argument_string ) ){
 
-				// h::log( $args['task'].'~>n:>HAS a loop so taking part of config string as markup' );
+				// h::log( self::$willow_task.'~>n:>HAS a loop so taking part of config string as markup' );
 				// h::log( 'd:>HAS a loop so taking part of config string as markup' );
 
 				// we need the entire markup, without the flags ##
@@ -218,7 +229,7 @@ class willows extends willow\parse {
 				) {
 
 					// h::log( 'template -> '.$decode_flags['markup']['template'] );
-					// h::log( $args['task'].'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
+					// h::log( self::$willow_task.'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
 					// h::log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
 
 					self::$arguments = core\method::parse_args( 
@@ -231,7 +242,7 @@ class willows extends willow\parse {
 
 				} else {
 
-					// h::log( $args['task'].'~>n:>NO flags, so take whole string: '.self::$argument_string );
+					// h::log( self::$willow_task.'~>n:>NO flags, so take whole string: '.self::$argument_string );
 					// h::log( 'd:>No Flags, so take whole string: '.self::$argument_string );
 
 					self::$arguments = core\method::parse_args( 
@@ -269,7 +280,7 @@ class willows extends willow\parse {
 				|| ! is_array( self::$arguments ) 
 			) {
 
-				h::log( $args['task'].'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
+				h::log( self::$willow_task.'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
 				// h::log( $args['task'].'~>d:>'.self::$argument_string );
 
 				// check for variable filters ##
@@ -410,19 +421,36 @@ class willows extends willow\parse {
 			);
 		}
 
+		// debug => output debug data for this single Willow ##
+		if( 
+			self::$flags_willow // flags set ##
+			&& is_array( self::$flags_willow ) // is an array 
+			&& in_array( 'debug', self::$flags_willow ) // debug defined ##
+		) {
+
+			self::$arguments = core\method::parse_args( 
+				self::$arguments, 
+				[ 
+					'config' => [ 
+						'debug' => true 
+					] 
+				]
+			);
+		}
+
 		// collect current process state ##
 		render\args::collect();
 		
 		// pass args, if set ##
 		if( self::$arguments ){
 
-			// h::log( 'passing args array to: '.self::$class.'::'.self::$method );
+			h::log( self::$willow_task.'~>n:>Passing args array to: '.self::$class.'::'.self::$method );
 			// h::log( self::$arguments );
 			self::$return = call_user_func_array( self::$willow_array, [ 0 => self::$arguments ] ); // 0 index is for static class args gatherer ##
 
 		} else { 
 
-			// h::log( 'NOT passing args array to: '.self::$class.'::'.self::$method );
+			h::log( self::$willow_task.'~>n:>NOT passing args array to: '.self::$class.'::'.self::$method );
 			self::$return = call_user_func_array( self::$willow_array ); 
 
 		}	

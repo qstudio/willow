@@ -1,3 +1,7 @@
+### 1.6.1 ###
+
+* New: [ debug ] flag added to Willows to allow for quickl debugging of single Willow
+
 ### 1.6.0 ###
 
 * New: New loops functionality more stable, more flexible and potentially faster.

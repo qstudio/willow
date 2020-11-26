@@ -103,6 +103,7 @@ class flags extends willow\parse {
 			$flags_array = filter\method::prepare([ 'filters' => $flags, 'use' => $use ] );
 			
 			// h::log( $flags_array );
+			// h::log( 'use: '.$use );
 
 			// assign filters based on use-case ##
 			switch( $use ) {
@@ -110,7 +111,7 @@ class flags extends willow\parse {
 				default :
 				case "willow" :
 
-					// @todo - validate that flags are allowed again self::$flags_willows ##
+					// @todo - validate that flags are allowed against self::$flags_willows ##
 
 					self::$flags_willow = $flags_array;
 
@@ -118,7 +119,7 @@ class flags extends willow\parse {
 
 				case "php_function" :
 
-					// @todo - validate that flags are allowed again self::$flags_php ##
+					// @todo - validate that flags are allowed against self::$flags_php ##
 
 					self::$flags_php_function = $flags_array;
 
@@ -126,7 +127,7 @@ class flags extends willow\parse {
 
 				case "php_variable" :
 
-					// @todo - validate that flags are allowed again self::$flags_php ##
+					// @todo - validate that flags are allowed against self::$flags_php ##
 
 					self::$flags_php_variable = $flags_array;
 
@@ -134,7 +135,7 @@ class flags extends willow\parse {
 
 				case "comment" :
 
-					// @todo - validate that flags are allowed again self::$flags_comment ##
+					// @todo - validate that flags are allowed against self::$flags_comment ##
 
 					self::$flags_comment = $flags_array;
 
