@@ -193,7 +193,7 @@ class method extends \willow {
 					! in_array( $function, self::$flags )
 				) {
 
-					h::log( self::$flags );
+					// h::log( self::$flags );
 
 					h::log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
 

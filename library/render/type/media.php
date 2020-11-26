@@ -54,6 +54,8 @@ class media extends render\type {
 				$args['attachment_id'] = \get_post_thumbnail_id( $wp_post );
 				// $att vachment = \get_post( $attachment_id );
 
+				// h::log( $args );
+
 				$array = get\media::src( $args );
 
 				// h::log( $array );
@@ -91,6 +93,7 @@ class media extends render\type {
 				// $string = render\method::markup( $markup, $array );
 
 				// $string = $array['src'];
+				// h::log( self::$args );
 
 				// conditional -- add img meta values ( sizes ) and srcset ##
 				if ( 

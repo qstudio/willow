@@ -53,7 +53,7 @@ class media extends \willow\get {
 		}
 
         // test incoming args ##
-        // h::log( $args );
+        h::log( $args );
 
 		// check for post thumbnail ##
         if ( ! \has_post_thumbnail( $args['post']->ID ) ) { 
@@ -271,6 +271,7 @@ class media extends \willow\get {
 
 		// Testing feedback ##
 		// h::log( 'e:>Handle: '.$args['handle'] );
+		// h::log( \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) );
 		/*
 		h::log( \get_intermediate_image_sizes() );
 		global $_wp_additional_image_sizes;
@@ -315,7 +316,6 @@ class media extends \willow\get {
 		
 		}
 		
-		// h::log( 't:>MEDIA config is not respecting passed values from willow or task specific config - why not??' );
 		// conditional -- add img caption ##
 		if ( 
 			// set locally..
