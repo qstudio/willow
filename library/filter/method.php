@@ -213,6 +213,9 @@ class method extends \willow {
 			// sanitize function name -- in case something funky was returned by filters or altered in the default list ##
 			$function = core\method::sanitize( $function, 'php_function' );
 
+			// check clean function name ##
+			// h::log( '$function: '.$function );
+
 			// check if function exists ##
 			if ( 
 				! function_exists( $function ) 

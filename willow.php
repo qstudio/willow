@@ -13,7 +13,7 @@
  * Plugin Name:     Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Simple, logic-less, procedural semantic template engine built for WordPress
- * Version:         1.6.1
+ * Version:         1.6.2
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
  * License:         GPL
@@ -46,7 +46,7 @@ if ( ! class_exists( 'willow' ) ) {
         private static $instance = null;
 
         // Plugin Settings
-        const version = '1.6.1';
+        const version = '1.6.2';
         const text_domain = 'willow'; // for translation ##
 		
 		protected static
@@ -271,6 +271,7 @@ if ( ! class_exists( 'willow' ) ) {
 			// list of allowed filters ##
 			// used in tags like [ esc_html, strtoupper ] can be chained ##
 			$filters 	= [
+
 				// escape ##
 				'esc_html',
 				'esc_attr',
@@ -289,6 +290,8 @@ if ( ! class_exists( 'willow' ) ) {
 				'wpautop',
 				'intval',
 				'absint',
+				'w__substr_first',
+				'w__substr_last',
 
 				// sanitize ##
 				'sanitize_title_with_dashes',
@@ -328,8 +331,7 @@ if ( ! class_exists( 'willow' ) ) {
          *
          * @return  Foo     A single instance of this class.
          */
-        public static function get_instance()
-        {
+        public static function get_instance(){
 
             if ( null == self::$instance ) {
                 self::$instance = new self;
@@ -346,8 +348,7 @@ if ( ! class_exists( 'willow' ) ) {
          * @since       0.2
          * @return      void
          */
-        private function __construct()
-        {
+        private function __construct(){
 
             // set text domain ##
             add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
@@ -368,8 +369,7 @@ if ( ! class_exists( 'willow' ) ) {
          *
          * @since   0.2
          */
-        public static function register_activation_hook()
-        {
+        public static function register_activation_hook(){
 
 			if ( ! current_user_can( 'activate_plugins' ) ) {
 				
@@ -416,8 +416,7 @@ if ( ! class_exists( 'willow' ) ) {
          *
          * @since   0.2
          */
-        public static function register_deactivation_hook()
-        {
+        public static function register_deactivation_hook(){
 
 			if ( ! current_user_can( 'activate_plugins' ) ) {
 			
@@ -440,8 +439,7 @@ if ( ! class_exists( 'willow' ) ) {
          * @since       1.7.0
          *
          */
-        public function load_plugin_textdomain()
-        {
+        public function load_plugin_textdomain(){
 
             // set text-domain ##
             $domain = self::text_domain;
@@ -463,8 +461,7 @@ if ( ! class_exists( 'willow' ) ) {
          * If Q debug is true -- all debugging is true
          * else follow settings in Q, or this plugin $debug variable
          */
-        public static function debug()
-        {
+        public static function debug(){
 
             // define debug ##
             self::$debug = 
@@ -493,8 +490,7 @@ if ( ! class_exists( 'willow' ) ) {
          * @param       string      $path   Path to plugin directory
          * @return      string      Absoulte URL to plugin directory
          */
-        public static function get_plugin_url( $path = '' )
-        {
+        public static function get_plugin_url( $path = '' ){
 
             #return plugins_url( ltrim( $path, '/' ), __FILE__ );
             return plugins_url( $path, __FILE__ );
@@ -509,8 +505,7 @@ if ( ! class_exists( 'willow' ) ) {
          * @param       string      $path   Path to plugin directory
          * @return      string      Absoulte URL to plugin directory
          */
-        public static function get_plugin_path( $path = '' )
-        {
+        public static function get_plugin_path( $path = '' ){
 
             return plugin_dir_path( __FILE__ ).$path;
 
@@ -523,8 +518,7 @@ if ( ! class_exists( 'willow' ) ) {
         *
         * @since        2.0
         */
-		private static function load_libraries()
-        {
+		private static function load_libraries(){
 
             // methods ##
 			require_once self::get_plugin_path( 'library/core/_load.php' );
