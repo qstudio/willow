@@ -419,6 +419,48 @@ class post extends \willow\get {
 	}
 
 
+	 /**
+     * Get Post object data to render
+     *
+     * @since       1.6.2
+     * @return      Array       
+     */
+    public static function data( $args = null ){
+
+		// sanity ##
+		if (
+			is_null( $args )
+			|| ! is_array( $args )
+		){
+
+			h::log( 'e:>Error in pased args' );
+
+			return false;
+
+		}
+
+		// to make this more generic, we will get the current wp_post, if this is not passed ##
+		if (
+			! isset( $args['config']['post'] )
+			|| ! ( $args['config']['post'] instanceof \WP_Post )
+		){
+
+			$post = get\post::object();
+
+		} else {
+
+			$post = $args['config']['post'];
+
+		}
+
+		// h::log( $post );
+
+		// return post object to Willow ##
+		return $post;
+
+	}
+
+
 
 	/**
 	 * Returns the permalink for a page based on the incoming slug.

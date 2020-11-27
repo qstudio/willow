@@ -22,9 +22,12 @@ class fields extends willow\render {
             || ! is_array( self::$fields ) 
         ) {
 
-			/// log ##
+			// h::log( self::$fields );
+
+			// log ##
 			h::log( self::$args['task'].'~>e:>Error in $fields array' );
 
+			// kick out ##
             return false;
 
 		}

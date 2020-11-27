@@ -57,6 +57,18 @@ class post extends willow\context {
 	}
 
 
+	/**
+    * Full object callback
+    *
+    * @since       4.1.0
+    */
+    public static function data( $args = null ){
+
+		return [ 'data' => \willow\get\post::data( $args ) ];
+
+	}
+
+
 	
     /**
     * Render WP_Query
