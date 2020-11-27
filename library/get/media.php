@@ -53,7 +53,7 @@ class media extends \willow\get {
 		}
 
         // test incoming args ##
-        h::log( $args );
+        // h::log( $args );
 
 		// check for post thumbnail ##
         if ( ! \has_post_thumbnail( $args['post']->ID ) ) { 
