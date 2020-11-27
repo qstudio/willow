@@ -1,3 +1,7 @@
+### 1.6.2 ###
+
+* New: Addional variable filters added - w__substr_first & w__substr_first
+
 ### 1.6.1 ###
 
 * New: [ debug ] flag added to Willows to allow for quickl debugging of single Willow
