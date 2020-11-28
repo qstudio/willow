@@ -443,7 +443,6 @@ class markup extends willow\parse {
 		}
 
 		// validate strings ##
-		// @todo - perhaps need to be more liberal or restrictive on this.. will see ##
 		if(
 			'string' == $to_type
 			&& ! is_string( $to )
@@ -470,8 +469,6 @@ class markup extends willow\parse {
 		);
 
         if (
-            // ! core\method::starts_with( $to, $needle_start ) 
-			// || ! core\method::ends_with( $to, $needle_end ) 
 			! preg_match( $regex_find, $to )
 			&& 'string' != $to_type // we can skip strings, as their format was validated earlier ##
         ) {

@@ -179,7 +179,7 @@ class php_variables extends willow\parse {
 			self::$markup_template = str_replace( $php_var_match, $return, self::$markup_template );
 
 			// update markup for willow parse ##
-			parse\markup::swap( $php_var_match, $return, 'php_variable', 'string', $process ); // '{{ '.$field.' }}'
+			parse\markup::swap( $php_var_match, $return, 'php_variable', 'string', $process ); 
 
 		}
 		

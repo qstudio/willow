@@ -389,7 +389,7 @@ class meta extends \willow\get {
 		$array['date_human'] = \human_time_diff( \get_the_date( 'U', $post->ID ), \current_time('timestamp') );
 
 		// post time ##
-		$array['date'] = get\post::meta_date( $args );
+		$array['date'] = self::date( $args );
 
 		// post author ##
 		$array = render\method::extract( get\meta::author( $args ), 'author_', $array );

@@ -201,10 +201,10 @@ class navigation extends \willow\get {
 
 	
     /**
-     * Get Sibling pages
+     * Get Sibling page OT posts from same category 
      *
      * @since       1.0.1
-     * @return      string       HTML Menu
+     * @return      Mixed|Array|Boolean
      */
     public static function siblings( $args = null ){
 
@@ -229,32 +229,59 @@ class navigation extends \willow\get {
 
 		}
 
-		// h::log( $args );
-
-		// query for sibling's posts ##
-        $wp_args = array(
-            'post_type'         => $args['args']['post_type'],
-            'post_parent'       => $args['config']['post']->post_parent,
-            'orderby'           => 'menu_order',
-            'order'             => 'ASC',
-            'posts_per_page'    => $args['args']['posts_per_page'],
-        );
-
-		#pr( $wp_args );
+		// h::log( $args['config']['post'] );
 		
-		// filter args ##
-		$wp_args = \apply_filters( 'willow/get/siblings/wp_args', $wp_args );
+		// change behavious, depending on post type ##
+		switch( $args['config']['post']->post_type ){
 
-		// get posts ##
-		$posts = \get_posts( $wp_args );
+			case "post" :
 
-		// h::log( $posts );
+				$cats = \get_the_category();
+				$wp_args = [
+					'post_type' 		=> 'post',
+					'post__not_in' 		=> [ \get_the_ID() ],
+					'posts_per_page' 	=> $args['args']['posts_per_page'],
+					'cat'     			=> $cats[0]->term_id
+				];
 
-		// we need to manipulate the array of post objects a little...
-		foreach( $posts as $post => $post_value ){
+				// filter args ##
+				$wp_args = \apply_filters( 'willow/get/siblings/wp_args', $wp_args );
 
-			// class & highlight ##
-            $posts[$post]->highlight = ( $post_value->ID === $args['config']['post']->ID ) ? ' active current' : '' ;
+				// run query ##
+				$posts = \get_posts( $wp_args );
+
+			break ;
+
+			case "page" :
+
+				// query for sibling's posts ##
+				$wp_args = array(
+					'post_type'         => $args['args']['post_type'],
+					'post_parent'       => $args['config']['post']->post_parent,
+					'orderby'           => 'menu_order',
+					'order'             => 'ASC',
+					'posts_per_page'    => $args['args']['posts_per_page'],
+				);
+		
+				#pr( $wp_args );
+				
+				// filter args ##
+				$wp_args = \apply_filters( 'willow/get/siblings/wp_args', $wp_args );
+		
+				// get posts ##
+				$posts = \get_posts( $wp_args );
+		
+				// h::log( $posts );
+		
+				// we need to manipulate the array of post objects a little...
+				foreach( $posts as $post => $post_value ){
+		
+					// class & highlight ##
+					$posts[$post]->highlight = ( $post_value->ID === $args['config']['post']->ID ) ? ' active current' : '' ;
+		
+				}
+
+			break ;
 
 		}
 

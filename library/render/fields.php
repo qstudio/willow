@@ -367,7 +367,8 @@ class fields extends willow\render {
         self::$fields[$field] = $value;
 
 		// log ##
-		h::log( self::$args['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		h::log( self::$args['task'].'~>fields:>"'.$field.'"' );
+		// h::log( self::$args['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true;

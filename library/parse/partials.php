@@ -177,7 +177,7 @@ class partials extends willow\parse {
 				// h::log( 'd:>partial: "'.$partial.'"' );
 				// h::log( self::$args );
 
-				// perhaps better to hand this to a function, which can grab args ??
+				// perhaps better to hand this to a method, which can grab args ??
 				$partial_data = core\config::get([ 'context' => $context, 'task' => $task ]);
 
 				// no data, no go ##
@@ -192,8 +192,6 @@ class partials extends willow\parse {
 					continue;
 
 				}
-
-				// h::log( $partial_data );
 
 				// data passed as a string, so format
 				if(
@@ -228,7 +226,8 @@ class partials extends willow\parse {
 
 				}
 
-				// hash ##
+				// hash way ##
+				/*
 				$hash = 'partial__'.$task.'__'.rand();
 				// h::log( 'd:>partial hash: '.$hash );
 
@@ -239,6 +238,13 @@ class partials extends willow\parse {
 					'output'	=> $partial_data['markup'],
 					'parent'	=> false,
 				];
+				*/
+
+				// function returns which update the template also need to update the markup_template, for later find/replace ##
+				self::$markup_template = str_replace( $partial_match, $partial_data['markup'], self::$markup_template );
+
+				// update markup for willow parse ##
+				parse\markup::swap( $partial_match, $partial_data['markup'], 'partial', 'string', $process );
 
 				// finally -- add a variable "{{ $field }}" before this partial block in markup->template ##
 				// $variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);

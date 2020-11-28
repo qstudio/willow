@@ -420,12 +420,12 @@ class post extends \willow\get {
 
 
 	 /**
-     * Get Post object data to render
+     * Get current Post object data to render
      *
      * @since       1.6.2
      * @return      Array       
      */
-    public static function data( $args = null ){
+    public static function this( $args = null ){
 
 		// sanity ##
 		if (

@@ -58,13 +58,14 @@ class post extends willow\context {
 
 
 	/**
-    * Full object callback
-    *
-    * @since       4.1.0
+    * Get current post object - returned via post~this
+	* 
+	* @return		Array
+    * @since        1.6.2
     */
-    public static function data( $args = null ){
+    public static function this( $args = null ){
 
-		return [ 'data' => \willow\get\post::data( $args ) ];
+		return [ 'this' => \willow\get\post::this( $args ) ];
 
 	}
 

@@ -110,6 +110,9 @@ class parse extends \willow {
 
 		// h::log( self::$args['markup'] );
 
+		// search for partials in passed markup - these update the markup template with returned markup ##
+		partials::prepare( $args, $process );
+
 		// pre-format markup to run any >> translatable strings << ##
 		// runs early and might be used to return data to arguments ##
 		i18n::prepare( $args, $process );
@@ -127,9 +130,6 @@ class parse extends \willow {
 
 		// pre-format markup to extract loops ##
 		loops::prepare( $args, $process );
-
-		// search for partials in passed markup ##
-		partials::prepare( $args, $process );
 
 		// pre-format markup to extract comments and place in html ##
 		comments::prepare( $args, $process ); // 

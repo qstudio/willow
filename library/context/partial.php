@@ -13,7 +13,6 @@ class partial extends \willow\context {
      *
      * @param       Array       $args
      * @since       1.4.1
-	 * @uses		render\fields::define
      * @return      Array
      */
     public static function get( $args = null ) {

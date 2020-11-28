@@ -56,6 +56,56 @@ class willows extends willow\parse {
 
 	}
 
+
+
+	
+	/**
+	 * Check if passed string includes a Willow 
+	*/
+	public static function has( $string = null ){
+
+		// sanity ##
+		if(
+			is_null( $string )
+		){
+
+			h::log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		// get loop tags ##
+		$wil_o =  willow\tags::g( 'wil_o' );
+		$wil_c =  willow\tags::g( 'wil_c' );
+
+		// test string ##
+		h::log( $string );
+
+		// the passed $string comes from a single Willow and might include one or multiple wilps ##
+		$willow_count_open = substr_count( $string, trim( $wil_o ) ); // willow openers ##
+		$willow_count_close = substr_count( $string, trim( $wil_c ) ); // willow closers ##
+
+		// check ##
+		h::log( 'Count Open: '.$willow_count_open.' ~ Count Close: '.$willow_count_close ); 
+
+		// no loops, return false;
+		if( 
+			0 === $willow_count_open
+			|| 0 === $willow_count_close
+		){
+
+			h::log( 'd:>No Willows in passed string, returning false.' );
+
+			return false;
+
+		}
+
+		// yes ##
+		return true;
+
+	}
+
 	
 
 	/**

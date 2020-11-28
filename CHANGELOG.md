@@ -1,10 +1,15 @@
+### 1.6.3 ###
+
+* New: post.this Willow, which returns all standard WP Post, media and meta info for current post object
+* Update: Partials can now include one or multiple Willows inside them, making for more useful, re-uable snippets.
+
 ### 1.6.2 ###
 
-* New: Addional variable filters added - w__substr_first & w__substr_first
+* New: Additional variable filters added - w__substr_first & w__substr_first
 
 ### 1.6.1 ###
 
-* New: [ debug ] flag added to Willows to allow for quickl debugging of single Willow
+* New: [ debug ] flag added to Willows to allow for quickly debugging of single Willow
 
 ### 1.6.0 ###
 
