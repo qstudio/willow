@@ -5,7 +5,7 @@ namespace Q\willow;
 // import classes ##
 use Q\willow;
 use Q\willow\plugin as plugin;
-use Q\willow\helper;
+use Q\willow\core\helper as h;
 
 // If this file is called directly, Bulk!
 if ( ! defined( 'ABSPATH' ) ) {
@@ -496,9 +496,6 @@ final class plugin {
 		// test
 		// $this->log->set( 'Working from plugin class...' );
 
-		// load libraries ##
-		// $this->load_libraries();
-
         // set text domain on init hook ##
 		\add_action( 'init', [ $this, 'load_plugin_textdomain' ], 1 );
 		
@@ -552,55 +549,6 @@ final class plugin {
         \load_plugin_textdomain( 'willow', FALSE, \plugin_dir_path( __FILE__ ).'src/languages/' );
 
     }
-
-	/**
-	* Load Libraries
-	*
-	* @since        2.0
-	* @return		void
-	*/
-	public function load_libraries(){
-
-		// get the single plugin instance ##
-		$plugin = self::get_instance();
-
-		// load global functions ( sit outside namespace )##
-		require_once $plugin->get_plugin_path( 'library/core/function.php' );
-
-		// core ##
-		// require_once $this->get_plugin_path( 'library/core/_load.php' );
-
-		// getters -- should auto-load ##
-		// require_once $this->get_plugin_path( 'library/get/_load.php' );
-
-		// view -- should auto-load... ##
-		// require_once $this->get_plugin_path( 'library/view/_load.php' );
-
-		// strings ##
-		// require_once self::get_plugin_path( 'library/strings/_load.php' );
-
-		// plugins ##
-		// require_once self::get_plugin_path( 'library/plugin/_load.php' );
-
-		// parsers ##
-		// require_once self::get_plugin_path( 'library/parse/_load.php' );
-
-		// tags ##
-		// require_once self::get_plugin_path( 'library/tags/_load.php' );
-
-		// render ##
-		// require_once self::get_plugin_path( 'library/render/_load.php' );
-
-		// context ##
-		// require_once self::get_plugin_path( 'library/context/_load.php' );
-
-		// filters ##
-		// require_once self::get_plugin_path( 'library/filter/_load.php' );
-
-		// output ##
-		// require_once self::get_plugin_path( 'library/buffer/_load.php' );
-
-	}
 
     /**
      * Plugin activation

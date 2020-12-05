@@ -2,8 +2,8 @@
 
 namespace Q\willow\render;
 
-use Q\willow\get;
 use Q\willow;
+use Q\willow\core\helper as h;
 
 class markup {
 
@@ -228,14 +228,14 @@ class markup {
 			is_null( $args )
 		){
 
-			$this->plugin->log( 'd:>No $args sent from calling method' );
+			h::log( 'd:>No $args sent from calling method' );
 
 			return false;
 
 		}
 		
         // test args sent from view caller ##
-		// $this->plugin->log( $args );
+		// h::log( $args );
 
 		// empty stored markup ##
 		$this->plugin->set( '_markup', [] );
@@ -281,8 +281,12 @@ class markup {
 
 			$_markup['template'] = $args;
 
+			// set markup ##
+			$this->plugin->set( '_markup', $_markup );
+
 			// add markup->template ##
-			return $this->plugin->set( '_markup', $_markup );
+			return $_markup;
+
 			/*
 			return self::$markup = [
 				'template' => $args
@@ -342,6 +346,9 @@ class markup {
 	
 		}
 
+		// get fresh ##
+		$_markup = $this->plugin->get( '_markup' );
+
 		// for ##
 		$for = ' for: '.method::get_context();
 
@@ -389,6 +396,9 @@ class markup {
 
 		}
 
+		// get fresh ##
+		$_markup = $this->plugin->get( '_markup' );
+
 		// @todo no additional markup passes from config.. so we should check if we actually have a markup->template
 		if (
 			! isset( $_markup['template'] )
@@ -409,10 +419,15 @@ class markup {
 			$_markup = \apply_filters( 'willow/render/markup/default', $_markup );
 
 			// note ##
-			$this->plugin->log( $this->plugin->get('_args')['task'].'~>n:>Using default markup'.$for.' : '.$_markup );
+			$this->plugin->log( $this->plugin->get( '_args' )['task'].'~>n:>Using default markup'.$for.' : '.$_markup );
 
 			// assign ##
-			if ( is_null( $_markup ) || ! is_array( $_markup ) ) { $_markup = []; }
+			if ( 
+				is_null( $_markup ) 
+				|| ! is_array( $_markup ) 
+			){ 
+				$_markup = []; 
+			}
 			$_markup['template'] = $_markup;
 			$this->plugin->set( '_markup', $_markup );
 
@@ -506,7 +521,7 @@ class markup {
 					true 
 				);
 
-				$this->plugin->log( '$filters: '.$filters );
+				// $this->plugin->log( '$filters: '.$filters );
 
 				if( ! $filters ){
 
@@ -518,7 +533,11 @@ class markup {
 
 				// strip variable tags ##
 				$raw_var_value = str_replace( 
-					[ $filters, trim( $this->plugin->get( 'tags')->g( 'var_o' )), trim( $this->plugin->get( 'tags')->g( 'var_c' )) ], 
+					[ 
+						$filters, 
+						trim( $this->plugin->get( 'tags')->g( 'var_o' )), 
+						trim( $this->plugin->get( 'tags')->g( 'var_c' )) 
+					], 
 					'', // with nada ## 
 					$var_value 
 				);
@@ -550,7 +569,7 @@ class markup {
 				// get filters ##
 				$filters = $this->filter_method->prepare([ 'filters' => $filters ]);
 
-				$this->plugin->log( $filters );
+				// $this->plugin->log( $filters );
 
 				// store pre-filter value ##
 				$pre_value = $value; 
@@ -591,8 +610,8 @@ class markup {
 		// $this->plugin->log( 'string before regex: '.$string );
 
 		// variable replacement -- regex way ##
-		$open = trim( $this->plugin->get( 'tags')->g( 'var_o' ) );
-		$close = trim( $this->plugin->get( 'tags')->g( 'var_c' ) );
+		$open = trim( $this->plugin->get( 'tags' )->g( 'var_o' ) );
+		$close = trim( $this->plugin->get( 'tags' )->g( 'var_c' ) );
 
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
 		$regex = \apply_filters( 'willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
@@ -603,14 +622,14 @@ class markup {
 		// $this->plugin->log( 'string after regex: '.$string );
 
 		// filter ##
-		$string = $this->filter_method->apply([ 
-             'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'willow/render/markup/string/after/'.$this->plugin->get('_args')['task'].'/'.$key, // filter handle ##
-             'return'        => $string
+		$string = $this->plugin->get('filter')->apply([ 
+			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
+			'filter'        => 'willow/render/markup/string/after/'.$this->plugin->get('_args')['task'].'/'.$key, // filter handle ##
+			'return'        => $string
 		]); 
 
 		// filter whole tag markup, filters are extraced earlier from the {~ Willow ~} ##
-		$string = apply_filters( 'willow/render/markup/tag', $string, $filter_key );
+		$string = \apply_filters( 'willow/render/markup/tag', $string, $filter_key );
 
 		// return ##
 		return $string;
@@ -665,7 +684,7 @@ class markup {
 			// $this->plugin->log( 'd:>wrap string in: '.$markup );
 
 			// filter ##
-			$markup = $this->filter_method->apply([ 
+			$string = $this->plugin->get('filter')->apply([ 
 				'parameters'    => [ 'markup' => $markup ], // pass ( $string ) as single array ##
 				'filter'        => 'q/render/markup/wrap/'.$_args['context'].'/'.$this->plugin->get('_args')['task'], // filter handle ##
 				'return'        => $markup
@@ -688,7 +707,7 @@ class markup {
 		}
 
 		// filter ##
-		$string = $this->filter_method->apply([ 
+		$string = $this->plugin->get('filter')->apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
              'filter'        => 'willow/render/markup/string/wrap/'.$_args['context'].'/'.$this->plugin->get('_args')['task'], // filter handle ##
              'return'        => $string

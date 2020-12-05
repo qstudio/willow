@@ -77,7 +77,7 @@ class output {
 
         } else {
 
-			$_hash = $this->plugin->get( '__hash' );
+			$_hash = $this->plugin->get( '_hash' );
 
 			// build return array ##
 			$return = [ 
@@ -89,7 +89,7 @@ class output {
 
 			// h::log( $return );
 
-			$_buffer_map = $this->plugin->get( '__buffer_map' );
+			$_buffer_map = $this->plugin->get( '_buffer_map' );
 
 			// add data to buffer_map ##
 			$_buffer_map[] = [
@@ -100,7 +100,7 @@ class output {
 			];
 
 			// set buffer map ##
-			$this->plugin->set( '__buffer_map', $_buffer_map );
+			$this->plugin->set( '_buffer_map', $_buffer_map );
 
 			// reset all args ##
 			$render_args->reset();

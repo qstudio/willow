@@ -78,8 +78,6 @@ class log {
 
 	}
 
-
-
 	private function get_backtrace( $args = null ){
 
 		// called directly, else called from h::log() ##
@@ -106,8 +104,6 @@ class log {
 		// $log = $log.' - '.$backtrace;
 
 	}
-
-
 
 	/**
      * Store logs, to render at end of process
@@ -152,8 +148,6 @@ class log {
 		return true;
 
 	}
-
-
 
 	/**
 	 * Hardcore way to directly set a log key and value.. no safety here..

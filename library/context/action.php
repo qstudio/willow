@@ -29,7 +29,7 @@ class action {
 	 * @uses		define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
 		// h::log( $args );
 

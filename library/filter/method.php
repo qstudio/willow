@@ -3,6 +3,7 @@
 namespace Q\willow\filter;
 
 use Q\willow;
+use Q\willow\core\helper as h;
 
 class method {
 
@@ -78,9 +79,6 @@ class method {
 
 	}
 
-
-
-
 	/**
 	* Apply assigned filter function
 	* 
@@ -91,6 +89,8 @@ class method {
 	* @return	Boolean
 	*/
 	public function apply( $args = null ) {
+
+		// h::log( $args );
 
 		// sanity ##
 		if(

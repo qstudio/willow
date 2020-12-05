@@ -3,6 +3,7 @@
 namespace Q\willow\buffer;
 
 use Q\willow;
+use Q\willow\core\helper as h;
 
 class map {
 
@@ -36,7 +37,7 @@ class map {
 		){
 
 			// log ##
-			$this->plugin->log( 'e:>$buffer_map is empty, so nothing to prepare.. stopping here.');
+			$this->plugin->log( 'e:>$_buffer_map is empty, so nothing to prepare.. stopping here.');
 
 			// kick out ##
 			return false;
@@ -44,12 +45,15 @@ class map {
 		}
 
 		// get orignal markup string ##
-		$string = $this->plugin->get( '_markup_template');
+		$string = $this->plugin->get( '_markup_template' );
 
 		// $this->plugin->log( $this->plugin->get( '_buffer_map') );
 
+		// get buffer map ##
+		$_buffer_map = $this->plugin->get( '_buffer_map' );
+
 		// pre format child willows, moving output into parent rows ##
-		foreach( $this->plugin->get( '_buffer_map') as $key => $value ){
+		foreach( $_buffer_map as $key => $value ){
 
 			if( 
 				// '0' == $key // skip first key, this contains the buffer markup ##
@@ -75,7 +79,9 @@ class map {
 			// $this->plugin->log( 'Row: '.$value['hash'].' is a child to: '.$this->plugin->get( '_buffer_map' )[ $row ]['hash'] );
 
 			// str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key... ##
-			$this->plugin->get( '_buffer_map' )[ $row ]['output'] = str_replace( 
+			// self::$buffer_map[ $row ]['output'] = str_replace( $value['tag'], $value['output'], self::$buffer_map[ $row ]['output'] );
+			// $_buffer_map = $this->plugin->get( '_buffer_map' );
+			$_buffer_map[ $row ]['output'] = str_replace( 
 				$value['tag'], 
 				$value['output'], 
 				$this->plugin->get( '_buffer_map' )[ $row ]['output'] 
@@ -89,7 +95,7 @@ class map {
 		// $return = '';
 
 		// now, search and replace tags in parent with tags from buffer_map ##
-		foreach( $this->plugin->get( '_buffer_map' ) as $key => $value ){
+		foreach( $_buffer_map as $key => $value ){
 
 			// skip first row or rows which do not have a parent ##
 			if( 
@@ -119,7 +125,12 @@ class map {
 
 		}
 
+		// check ##
+		// h::log( $string );
 		// $this->plugin->log( $string );
+
+		// save buffer map ##
+		$this->plugin->set( '_buffer_map', $_buffer_map );
 
 		// kick back ##
 		return $string;

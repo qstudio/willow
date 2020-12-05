@@ -41,8 +41,8 @@ class taxonomy {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\taxonomy', $method )
-			|| ! is_callable([ '\willow\get\taxonomy', $method ])
+			! method_exists( 'Q\willow\get\taxonomy', $method )
+			|| ! is_callable([ 'Q\willow\get\taxonomy', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: willow\get\taxonomy\\'.$method );

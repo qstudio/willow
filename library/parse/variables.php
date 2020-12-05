@@ -3,43 +3,169 @@
 namespace Q\willow\parse;
 
 use Q\willow;
+use Q\willow\core\helper as h;
 
 class variables {
 
-	private static 
+	private 
 
-		$arguments,
-		$variable,
-		$new_variable,
-		$field,
-		$field_array,
-		$field_name,
-		$field_type,
-		$variable_config
+		$plugin = false,
+		// $args = false,
+		// $process = false,
+
+		$arguments = false,
+		$variable = false,
+		$new_variable = false,
+		$field = false,
+		$field_array = false,
+		$field_name = false,
+		$field_type = false,
+		$variable_config = false
 	
 	;
 
 
-	private static function reset(){
+	private function reset(){
 
-		self::$arguments = false; 
-		self::$flags_variable = false;
-		self::$variable = false;
-		self::$new_variable = false;
-		self::$variable_config = false;
-		self::$field = false;
-		self::$field_array = false;
-		self::$field_name = false;
-		self::$field_type = false;
+		$this->arguments = false; 
+		$this->flags_variable = false;
+		$this->variable = false;
+		$this->new_variable = false;
+		$this->variable_config = false;
+		$this->field = false;
+		$this->field_array = false;
+		$this->field_name = false;
+		$this->field_type = false;
 
 	}
 
+	/**
+	 * Construct object from passed args
+	 * 
+	 * @since 2.0.0
+	*/
+	public function __construct( \Q\willow\plugin $plugin ){
 
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 	
+	
+	/**
+	 * Scan for arguments in variables and convert to $config->data
+	 * 
+	 * @since 4.1.0
+	*/
+	public function match( $args = null, $process = 'secondary' ){
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'secondary' == $process
+				&& (
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
+				)
+			)
+			||
+			(
+				'primary' == $process
+				&& (
+					! isset( $_buffer_markup )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup' );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $process ){
+
+			default : 
+			case "secondary" :
+
+				// get markup ##
+				$string = $_markup['template'];
+
+			break ;
+
+			case "primary" :
+
+				// get markup ##
+				$string = $_buffer_markup;
+
+			break ;
+
+		} 
+
+		// sanity ##
+		if (  
+			! $string
+			|| is_null( $string )
+			|| ! is_string( $string )
+		){
+
+			// h::log( $_args['task'].'~>e:>Error in $markup' );
+			// h::log( 'd:>Error in $markup' );
+
+			// h::log( $string );
+
+			return false;
+
+		}
+
+		// h::log('d:>'.$string);
+
+		// get all {{ variables }} from markup string ##
+		$parse_markup = new willow\parse\markup( $this->plugin );
+        if ( 
+            ! $variables = $parse_markup->get( $string, 'variable' ) 
+        ) {
+
+			// h::log( self::$args['task'].'~>d:>No variables found in $markup');
+			// h::log( 'd:>No variables found in $markup: '.self::$args['task']);
+
+			return false;
+
+		}
+
+		// log ##
+		// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
+		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
+
+		// h::log( $variables );
+
+		// remove any leftover variables in string ##
+		foreach( $variables as $key => $value ) {
+
+			// pass match to function handler ##
+			$this->format( $value, $args, $process );
+
+		}
+		
+		// clear slate ##
+		$this->reset();
+
+		// kick back ##
+		return true;
+
+	}
+
 	/**
 	 * Check if passed string is a variable 
 	*/
-	public static function is( $string = null ){
+	public function is( $string = null ){
 
 		// @todo - sanity ##
 		if(
@@ -54,8 +180,8 @@ class variables {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( willow\tags::g( 'var_o' )) ) !== false
-			&& strrpos( $string, trim( willow\tags::g( 'var_c' )) ) !== false
+			strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'var_o' )) ) !== false
+			&& strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'var_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
@@ -68,9 +194,7 @@ class variables {
 
 	}
 
-
-
-	public static function flags( $args = null ){
+	public function flags( $args = null ){
 
 		// sanity ##
 		if(
@@ -86,12 +210,12 @@ class variables {
 		}
 
 		// clean up field name - remove variable tags ##
-		$variable = str_replace( [ tags::g( 'var_o' ), tags::g( 'var_c' ) ], '', $args['variable'] );
+		$variable = str_replace( [ $this->plugin->get( 'tags' )->g( 'var_o' ), $this->plugin->get( 'tags' )->g( 'var_c' ) ], '', $args['variable'] );
 		$variable = trim( $variable );
 		$variable_original = $variable;
 		// h::log( '$variable: '.$variable );
 
-		self::$flags_variable = false;
+		$this->flags_variable = false;
 
 		// look for flags ##
 		// $variable = flags::get( $variable, 'variable' );
@@ -99,12 +223,14 @@ class variables {
 		// h::log( '$variable, after flags: '.$variable );
 		// h::log( self::$flags_variable );
 
-		$variable = flags::get( $variable, 'variable' );
+		// $variable = flags::get( $variable, 'variable' );
+		$parse_flags = new willow\parse\flags( $this->plugin );
+		$variable = $parse_flags->get( $variable, 'variable' );
 		// h::log( '$variable: '.trim( $variable ) );
 		// h::log( 'whole variable: '.$args['variable'] );
 
 		if(
-			self::$flags_variable
+			$this->flags_variable
 		){
 
 			// h::log( self::$flags_variable );
@@ -175,14 +301,12 @@ class variables {
 
 	}
 
-
-
 	/**
 	 * Format single variable
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function format( $match = null, $args = null, $process = 'secondary' ){
+	public function format( $match = null, $args = null, $process = 'secondary' ){
 
 		// sanity ##
 		if(
@@ -198,20 +322,20 @@ class variables {
 		// h::log( $args );
 
 		// clear slate ##
-		self::reset();
+		$this->reset();
 
 		// return entire function string, including tags for tag swap ##
-		self::$variable = $match;
+		$this->variable = $match;
 
 		// clean up ##
-		self::$variable = trim( self::$variable );
+		$this->variable = trim( $this->variable );
 
-		// h::log( 'd:>$variable: '.self::$variable );
+		// h::log( 'd:>$variable: '.$this->variable );
 
 		// sanity ##
 		if ( 
-			! self::$variable
-			|| ! isset( self::$variable ) 
+			! $this->variable
+			|| ! isset( $this->variable ) 
 		){
 
 			h::log( 'e:>Error in returned match function' );
@@ -221,11 +345,15 @@ class variables {
 		}
 
 		// store variable ##
-		// self::$variable = $match;
+		// $this->variable = $match;
 
 		if ( 
 			// $config_string = method::string_between( $value, '{+', '+}' )
-			self::$variable_config = core\method::string_between( self::$variable, trim( tags::g( 'arg_o' )), trim( tags::g( 'arg_c' )) )
+			$this->variable_config = willow\core\method::string_between( 
+				$this->variable, 
+				trim( $this->plugin->get( 'tags' )->g( 'arg_o' )), 
+				trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) 
+			)
 		){
 
 			// store variable ##
@@ -236,68 +364,80 @@ class variables {
 			// get field ##
 			// h::log( 'value: '.$value );
 			
-			self::$field = str_replace( self::$variable_config, '', self::$variable );
+			$this->field = str_replace( $this->variable_config, '', $this->variable );
 
 			// clean up field data ## -- @TODO, move to core\method::sanitize();
-			self::$field = preg_replace( "/[^A-Za-z0-9._]/", '', self::$field );
+			$this->field = preg_replace( "/[^A-Za-z0-9._]/", '', $this->field );
 
-			// h::log( 'd:>field: '.self::$field );
+			// h::log( 'd:>field: '.$this->field );
 
 			// check if field is sub field i.e: "field_name.src" ##
-			if ( strpos( self::$field, '.' ) !== false ) {
+			if ( strpos( $this->field, '.' ) !== false ) {
 
-				self::$field_array = explode( '.', self::$field );
+				$this->field_array = explode( '.', $this->field );
 
-				self::$field_name = self::$field_array[0]; // take first part ##
-				self::$field_type = self::$field_array[1]; // take second part ##
+				$this->field_name = $this->field_array[0]; // take first part ##
+				$this->field_type = $this->field_array[1]; // take second part ##
 
 			} else {
 
-				self::$field_name = self::$field; // take first part ##
-				self::$field_type = self::$field; // take second part ##
+				$this->field_name = $this->field; // take first part ##
+				$this->field_type = $this->field; // take second part ##
 
 			}
 
 			// we need field_name, so validate ##
 			if (
-				! self::$field_name
-				|| ! self::$field_type
+				! $this->field_name
+				|| ! $this->field_type
 			){
 
-				h::log( self::$args['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.self::$variable );
+				h::log( $this->plugin->get( '_args' )['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.$this->variable );
 
 				return false;
 
 			}
 
 			// create new variable for markup, based on $field value ##
-			self::$new_variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$field, 'close' => 'var_c' ]);
+			$this->new_variable = $this->plugin->get( 'tags' )->wrap([ 'open' => 'var_o', 'value' => $this->field, 'close' => 'var_c' ]);
 
 			// test what we have ##
-			// h::log( 'd:>variable: "'.self::$variable.'"' );
-			// h::log( 'd:>new_variable: "'.self::$new_variable.'"' );
-			// h::log( 'd:>field_name: "'.self::$field_name.'"' );
-			// h::log( 'd:>field_type: "'.self::$field_type.'"' );
+			// h::log( 'd:>variable: "'.$this->variable.'"' );
+			// h::log( 'd:>new_variable: "'.$this->new_variable.'"' );
+			// h::log( 'd:>field_name: "'.$this->field_name.'"' );
+			// h::log( 'd:>field_type: "'.$this->field_type.'"' );
 
 			// pass to argument handler -- returned value ##
+			$parse_arguments = new willow\parse\arguments( $this->plugin );
 			if ( 
-				self::$arguments = willow\arguments::decode( self::$variable_config ) // string containing arguments ##
+				$this->arguments = $parse_arguments->decode( $this->variable_config ) // string containing arguments ##
 			){
 
-				// merge in new args to args->field ##
-				if ( ! isset( self::$args[self::$field_name] ) ) self::$args[self::$field_name] = [];
+				// get args ##
+				$_args = $this->plugin->get( '_args' );
 
-				self::$args[self::$field_name] = core\method::parse_args( 
-					self::$arguments, 
-					self::$args[self::$field_name] 
+				// merge in new args to args->field ##
+				if ( ! isset( $this->plugin->get( '_args' )[$this->field_name] ) ) {
+					
+					$_args[$this->field_name] = [];
+
+				}
+
+				$_args[$this->field_name] = willow\core\method::parse_args( 
+					$this->arguments, 
+					$_args[$this->field_name] 
 				);
+
+				// set args ##
+				$this->plugin->set( '_args', $_args );
 
 			}
 
 			// h::log( self::$args[$field_name] );
 
 			// now, edit the variable, to remove the config ##
-			parse\markup::swap( self::$variable, self::$new_variable, 'variable', 'variable', $process );
+			$parse_markup = new willow\parse\markup( $this->plugin );
+			$parse_markup->swap( $this->variable, $this->new_variable, 'variable', 'variable', $process );
 
 		}
 
@@ -313,116 +453,16 @@ class variables {
 
 
 
-	/**
-	 * Scan for arguments in variables and convert to $config->data
-	 * 
-	 * @since 4.1.0
-	*/
-	public static function prepare( $args = null, $process = 'secondary' ){
-
-		// sanity -- method requires requires ##
-		if ( 
-			(
-				'secondary' == $process
-				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
-				)
-			)
-			||
-			(
-				'primary' == $process
-				&& (
-					! isset( self::$buffer_markup )
-				)
-			)
-		){
-
-			h::log( 'e:>Error in stored $markup' );
-
-			return false;
-
-		}
-
-		// find out which markup to affect ##
-		switch( $process ){
-
-			default : 
-			case "secondary" :
-
-				// get markup ##
-				$string = self::$markup['template'];
-
-			break ;
-
-			case "primary" :
-
-				// get markup ##
-				$string = self::$buffer_markup;
-
-			break ;
-
-		} 
-
-		// sanity ##
-		if (  
-			! $string
-			|| is_null( $string )
-			|| ! is_string( $string )
-		){
-
-			h::log( self::$args['task'].'~>e:>Error in $markup' );
-			// h::log( 'd:>Error in $markup' );
-
-			h::log( $string );
-
-			return false;
-
-		}
-
-		// h::log('d:>'.$string);
-
-		// get all {{ variables }} from markup string ##
-        if ( 
-            ! $variables = parse\markup::get( $string, 'variable' ) 
-        ) {
-
-			// h::log( self::$args['task'].'~>d:>No variables found in $markup');
-			// h::log( 'd:>No variables found in $markup: '.self::$args['task']);
-
-			return false;
-
-		}
-
-		// log ##
-		// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
-		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
-
-		// h::log( $variables );
-
-		// remove any leftover variables in string ##
-		foreach( $variables as $key => $value ) {
-
-			// pass match to function handler ##
-			self::format( $value, $args, $process );
-
-		}
-		
-		// clear slate ##
-		self::reset();
-
-		// kick back ##
-		return true;
-
-	}
 
 
+	/***/
+	public function cleanup( $args = null, $process = 'secondary' ){
 
-	public static function cleanup( $args = null, $process = 'secondary' ){
-
-		$open = trim( willow\tags::g( 'var_o' ) );
-		$close = trim( willow\tags::g( 'var_c' ) );
+		// vars ##
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$open = trim( $this->plugin->get( 'tags' )->g( 'var_o' ) );
+		$close = trim( $this->plugin->get( 'tags' )->g( 'var_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -435,16 +475,16 @@ class variables {
 			(
 				'secondary' == $process
 				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					! isset( self::$buffer_markup )
+					! isset( $_buffer_markup )
 				)
 			)
 		){
@@ -462,14 +502,14 @@ class variables {
 			case "secondary" :
 
 				// get markup ##
-				$string = self::$markup['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = self::$buffer_markup;
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -509,7 +549,7 @@ class variables {
 			$string
 		);
 
-		// h::log( self::$markup['template'] );
+		// h::log( $_markup['template'] );
 				
 		// find out which markup to affect ##
 		switch( $process ){
@@ -518,14 +558,16 @@ class variables {
 			case "secondary" :
 
 				// set markup ##
-				self::$markup['template'] = $string;
+				$_markup['template'] = $string;
+				$this->plugin->set( '_markup', $_markup );
 
 			break ;
 
 			case "primary" :
 
 				// set markup ##
-				self::$buffer_markup = $string;
+				$_buffer_markup = $string;
+				$this->plugin->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

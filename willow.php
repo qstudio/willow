@@ -28,6 +28,9 @@
 // namespace plugin ##
 namespace Q\willow;
 
+// import ##
+use Q\willow;
+
 // If this file is called directly, Bulk!
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -37,6 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/plugin.php';
 require_once __DIR__ . '/library/core/function.php';
+require_once __DIR__ . '/library/context/_load.php';
 
 // plugin activation hook to store current application and plugin state ##
 \register_activation_hook( __FILE__, [ '\\Q\\willow\\plugin', 'activation_hook' ] );
@@ -48,7 +52,7 @@ require_once __DIR__ . '/library/core/function.php';
 $plugin = plugin::get_instance();
 
 // validate instance ##
-if( ! ( $plugin instanceof \Q\willow\plugin ) ) {
+if( ! ( $plugin instanceof willow\plugin ) ) {
 
 	error_log( 'Error in Willow plugin instance' );
 
@@ -61,4 +65,4 @@ if( ! ( $plugin instanceof \Q\willow\plugin ) ) {
 \add_action( 'init', [ $plugin, 'hooks' ], 0 );
 
 // build output buffer ##
-\add_action( 'init', [ new \Q\willow\buffer\output( $plugin ), 'hooks' ], 1 );
+\add_action( 'init', [ new willow\buffer\output( $plugin ), 'hooks' ], 1 );

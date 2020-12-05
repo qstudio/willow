@@ -3,7 +3,8 @@
 namespace Q\willow\core;
 
 // import ## 
-use Q\willow\core;
+use Q\willow;
+use Q\willow\core\helper as h;
 
 class config {
 
@@ -121,7 +122,7 @@ class config {
 		$this->willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
 
 		// template ##
-		$this->template = core\method::template() ? core\method::template() : '404';
+		$this->template = willow\core\method::template() ? core\method::template() : '404';
 
 		// hit ##
 		$this->properties_loaded = true;
@@ -182,7 +183,7 @@ class config {
 
 			// h::log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
-			core\method::file_put_array( \q_theme::get_child_theme_path( '/__q.php' ), $this->config );
+			willow\core\method::file_put_array( \q_theme::get_child_theme_path( '/__q.php' ), $this->config );
 
 		}
 
@@ -666,7 +667,7 @@ class config {
 		){
 
 			// get caller ##
-			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// config is loaded by context or process, so we need one of those to continue ##
 			h::log( 'e:>Q -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
@@ -787,7 +788,7 @@ class config {
 
 		// h::log( 'd:>Looking for handle: "'.$handle.'" in file: "'.$file.'"' );
 
-		$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+		$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 		// use cached version ##
 		if( isset( $this->cache[$handle] ) ){
@@ -813,7 +814,7 @@ class config {
 		// h::log( 'dealing with file: '.$file. ' - ext: '.core\method::file_extension( $file ) );
 
 		// get file extension ##
-		switch( core\method::file_extension( $file ) ){
+		switch( willow\core\method::file_extension( $file ) ){
 
 			case "willow" :
 
@@ -914,7 +915,7 @@ class config {
 				$this->cache[$handle] = $array;
 
 				// merge results into array ##
-				$this->config = core\method::parse_args( $array, $this->config );
+				$this->config = willow\core\method::parse_args( $array, $this->config );
 
 				// save file again ??
 

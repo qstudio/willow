@@ -20,85 +20,17 @@ class context  {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// load libs - perhaps not needed due to autoloader... ##
-		// $this->load_libraries();
-
 	}
-
-    /**
-    * Load Libraries
-    *
-    * @since        4.1.0
-    */
-    public function load_libraries(){
-
-		// context extensions ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/extend.php' );
-		// $exend_obj = new willow\context\extend( $this->plugin );
-		// $exend_obj->hooks();
-
-		// acf field groups ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/group.php' );
-
-		// post objects content, title, excerpt etc ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/post.php' );
-
-		// author, custom fields etc. ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/meta.php' );
-
-		// navigation items ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/navigation.php' );
-
-		// media items ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/media.php' );
-
-		// taxonomies ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/taxonomy.php' );
-
-		// extension ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/extension.php' );
-
-		// modules ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/module.php' );
-
-		// plugins ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/plugin.php' );
-
-		// widgets ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/widget.php' );
-
-		// ui render methods - open, close.. etc ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/ui.php' );
-
-		// elements, html snippets, which can be processed to expand via {> markdown <} ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/partial.php' );
-
-		// user context ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/user.php' );
-
-		// action hook context ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/action.php' );
-
-		// filter hook context ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/filter.php' );
-
-		// wordpress context ##
-		// require_once $this->plugin->get_plugin_path( 'library/context/wordpress.php' );
-
-	}
-
-
 
 	/** 
 	 * extract and validate args from template to gather data and return via render methods
 	 * 
 	 * @since 0.0.1
 	 */
-	// public static function __callStatic( $function, $args ){
 	public function __call( $function, $args ){	
 
-		h::log( '$function: '.$function );
-		h::log( $args );
+		// h::log( '$function: '.$function );
+		// h::log( $args );
 
 		// reset class::method tracker ##
 		$lookup_error = false;
@@ -142,7 +74,7 @@ class context  {
 
 		// look for "namespace/render/CLASS" ##
 		$namespace = __NAMESPACE__."\\context\\".$class;
-		h::log( 'd:>namespace: '.$namespace );
+		// h::log( 'd:>namespace: '.$namespace );
 
 		if (
 			class_exists( $namespace ) // && exists ##
@@ -205,14 +137,14 @@ class context  {
 			if (
 				! \method_exists( $namespace, 'get' ) // base context method is get() -- and missing ##
 				&& ! \method_exists( $namespace, $args['task'] ) // ... also, context + specific task missing ##
-				&& ! willow\context\extend::get( $args['context'], $args['task'] ) // ... and no extended context method match ##
+				&& ! $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] ) // ... and no extended context method match ##
 			) {
 
 				// log stop point ##
 				// render\log::set( $args );
 				$render_log->set( $args );
 	
-				h::log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
+				// @todo // log-->h::log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
 	
 				// we need to reset the class ##
 
@@ -281,7 +213,15 @@ class context  {
 				// 	h::log( 'load default get() method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from get() ##
-				$return_array = $namespace::get( $this->plugin->get( '_args') ) ;
+				// $return_array = $namespace::get( $this->plugin->get( '_args') ) ;
+
+				// h::log( $this->plugin->get( '_args' ) ); exit;
+
+				// new object ##
+				$object = new $namespace( $this->plugin );
+
+				// return post method to 
+				$return_array = $object->get( $this->plugin->get( '_args' ) );
 
 			} else {
 

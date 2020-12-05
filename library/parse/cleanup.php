@@ -7,7 +7,14 @@ use Q\willow;
 
 class cleanup {
 
-	protected static 
+	private 
+		$plugin = false,
+		$args = false,
+		$process = false
+	;
+
+	/*
+	protected 
 		$regex = [
 			'clean'	=>"/[^A-Za-z0-9_]/" // clean up string to alphanumeric + _
 			// @todo.. move other regexes here ##
@@ -27,7 +34,16 @@ class cleanup {
 		$parse_task = false
 
 	;
+	*/
 
+	public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+		$this->process = $process;
+		$this->args = $args;
+
+	}
 
 	/**
      * Apply Markup changes to passed template
@@ -35,7 +51,7 @@ class cleanup {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public function __construct( $args = null, $process = 'secondary' ){
+    public function hooks(){
 
 		// h::log( self::$args['markup'] );
 
@@ -44,6 +60,9 @@ class cleanup {
 
 		// remove all spare args... ##
 		// arguments::cleanup( $args, $process ); // @todo -- if required ##
+
+
+
 
 		// remove left-over i18n strings
 		i18n::cleanup( $args, $process );
@@ -55,7 +74,9 @@ class cleanup {
 		php_functions::cleanup( $args, $process );
 
 		// clean up stray willow tags ##
-		willows::cleanup( $args, $process );
+		// willows::cleanup( $args, $process );
+		$willows = new willow\parse\willows( $this->plugin );
+		$willows->cleanup( $this->args, $this->process );
 
 		// clean up stray section tags ##
 		loops::cleanup( $args, $process );
@@ -67,7 +88,9 @@ class cleanup {
 		comments::cleanup( $args, $process );
 
 		// remove all spare vars ##
-		variables::cleanup( $args, $process );
+		// variables::cleanup( $args, $process );
+		$variables = new willow\parse\variables( $this->plugin );
+		$variables->cleanup( $this->args, $this->process );
 
 	}
 

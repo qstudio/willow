@@ -18,19 +18,17 @@ class partials {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+	public function __construct( \Q\willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-		$this->process = $process;
-		$this->args = $args;
 
 	}
 
 	/**
 	 * @todo..
 	*/
-	function match(){
+	function match( $args = null, $process = 'secondary' ){
 
 		// global ##
 		$config = $this->plugin->get('config')->get([ 'context' => 'partial', 'task' => 'config' ]);
@@ -50,7 +48,7 @@ class partials {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'secondary' == $this->process
+				'secondary' == $process
 				&& (
 					null === ( $this->plugin->get('_markup') )
 					|| ! is_array( $this->plugin->get('_markup') )
@@ -59,7 +57,7 @@ class partials {
 			)
 			||
 			(
-				'primary' == $this->process
+				'primary' == $process
 				&& (
 					null === $this->plugin->get('_buffer_markup' )
 				)
@@ -73,7 +71,7 @@ class partials {
 		}
 
 		// find out which markup to affect ##
-		switch( $this->process ){
+		switch( $process ){
 
 			default : 
 			case "secondary" :
@@ -263,7 +261,7 @@ class partials {
 
 				// update markup for willow parse ##
 				$markup = new willow\parse\markup( $this->plugin );
-				$markup->swap( $partial_match, $partial_data['markup'], 'partial', 'string', $this->process );
+				$markup->swap( $partial_match, $partial_data['markup'], 'partial', 'string', $process );
 
 				// finally -- add a variable "{{ $field }}" before this partial block in markup->template ##
 				// $variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);

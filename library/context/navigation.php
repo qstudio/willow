@@ -41,8 +41,8 @@ class navigation {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\navigation', $method )
-			|| ! is_callable([ '\willow\get\navigation', $method ])
+			! method_exists( 'Q\willow\get\navigation', $method )
+			|| ! is_callable([ 'Q\willow\get\navigation', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: willow\get\navigation\\'.$method );

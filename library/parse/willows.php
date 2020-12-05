@@ -8,8 +8,6 @@ class willows {
 
 	private 
 		$plugin = false,
-		$args = false,
-		$process = false,
 
 		$willow_context,
 		$willow_task,
@@ -51,12 +49,10 @@ class willows {
 	 * 
 	 * @since 2.0.0
 	*/
-	public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+	public function __construct( \Q\willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-		$this->process = $process; // type can be "primary" or "secondary"
-		$this->args = $args;
 
 	}
 
@@ -65,7 +61,7 @@ class willows {
 	 * 
 	 * @since 4.1.0
 	*/
-    public function match(){ 
+    public function match( $args = null, $process = 'secondary' ){ 
 
 		// local vars ##
 		$_args = $this->plugin->get( '_args' );
@@ -75,7 +71,7 @@ class willows {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'secondary' == $this->process
+				'secondary' == $process
 				&& (
 					! isset( $_markup )
 					|| ! is_array( $_markup )
@@ -84,7 +80,7 @@ class willows {
 			)
 			||
 			(
-				'primary' == $this->process
+				'primary' == $process
 				&& (
 					! isset( $_buffer_markup )
 				)
@@ -98,7 +94,7 @@ class willows {
 		}
 
 		// find out which markup to affect ##
-		switch( $this->process ){
+		switch( $process ){
 
 			default : 
 			case "secondary" :
@@ -200,7 +196,7 @@ class willows {
 				// $this->plugin->log( $args );
 
 				// pass match to function handler ##
-				$this->format( $match, $this->args, $this->process, $position );
+				$this->format( $match, $args, $process, $position );
 
 			}
 
@@ -248,6 +244,8 @@ class willows {
 		$parse_flags = new willow\parse\flags( $this->plugin );
 		$this->willow = $parse_flags->get( $this->willow, 'willow' );
 		// $this->plugin->log( self::$flags_willow );
+
+		$parse_arguments = new willow\parse\arguments( $this->plugin );
 
 		// clean up ##
 		$this->willow = trim( $this->willow );
@@ -318,7 +316,7 @@ class willows {
 				// $this->plugin->log( 'd:>HAS a loop so taking part of config string as markup' );
 
 				// we need the entire markup, without the flags ##
-				$decode_flags = willow\parse\arguments::decode( $this->argument_string );
+				$decode_flags = $parse_arguments->decode( $this->argument_string );
 				// $this->plugin->log( $decode_flags );
 				// $this->plugin->log( willow\arguments::decode( $this->argument_string ) );
 
@@ -364,9 +362,9 @@ class willows {
 			} 
 
 			// parse arguments ##
-			$this->arguments = core\method::parse_args( 
+			$this->arguments = willow\core\method::parse_args( 
 				$this->arguments, 
-				willow\arguments::decode( $this->argument_string )
+				$parse_arguments->decode( $this->argument_string )
 			);
 
 			// $this->plugin->log( $this->arguments );
@@ -443,7 +441,7 @@ class willows {
 		// clean up method name ##
 		$this->method = willow\core\method::sanitize( $this->method, 'php_function' );
 
-		$this->plugin->log( 'class->method -- '.$this->class.'::'.$this->method );
+		// $this->plugin->log( 'class->method -- '.$this->class.'::'.$this->method );
 
 		if ( 
 			! class_exists( $this->class )
@@ -465,6 +463,8 @@ class willows {
 
 		// get all {{ variables }} in $argument_string and check for flags ##
 		$parse_markup = new willow\parse\markup( $this->plugin );
+
+		$parse_variables = new willow\parse\variables( $this->plugin );
 		if ( 
 			$argument_variables = $parse_markup->get( $this->argument_string, 'variable' )
 		){
@@ -477,7 +477,7 @@ class willows {
 				// $this->plugin->log( 'variable: '.$arg_var_v );
 
 				// check for variable filters ( formally flags  )##
-				variables::flags([
+				$parse_variables->flags([
 					'variable' 	=> $arg_var_v, 
 					'context' 	=> $this->class, 
 					'task'		=> $this->method,
@@ -566,13 +566,13 @@ class willows {
 
 			// $this->plugin->log( $this->arguments );
 			
-			$object->{$this->willow}( $this->arguments );
+			$this->return = $object->{$this->willow}( $this->arguments );
 
 		} else { 
 
 			$this->plugin->log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'::'.$this->method );
 			// $this->return = call_user_func_array( $this->willow_array ); 
-			$object->{$this->willow};
+			$this->return = $object->{$this->willow};
 
 		}	
 
@@ -582,10 +582,11 @@ class willows {
 		if ( 
 			! isset( $this->return ) 
 			|| ! $this->return
+			|| false === $this->return
 			|| ! is_array( $this->return )
 		) {
 
-			$task = isset( $this->args['task'] ) ? $this->args['task'] : $args['task'];
+			$task = isset( $args['task'] ) ? $args['task'] : $args['task'];
 
 			$this->plugin->log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
 
@@ -595,7 +596,7 @@ class willows {
 		// render\args::set();
 		$render_args->restore();
 
-		// clear slate for next run ##
+		// clear local props for next run ##
 		$this->reset();
 
 	}
@@ -699,6 +700,9 @@ class willows {
 	/**@todo*/
 	public function cleanup( $args = null, $process = 'secondary' ){
 
+		// vars ##
+		$_markup = $this->pluing->get( '_markup' );
+		$_buffer_markup = $this->pluing->get( '_buffer_markup' );
 		$open = trim( $this->plugin->get( 'tags')->g( 'wil_o' ) );
 		$close = trim( $this->plugin->get( 'tags')->g( 'wil_c' ) );
 
@@ -709,23 +713,21 @@ class willows {
 			"/(?s)<code[^<]*>.*?<\/code>(*SKIP)(*F)|$open.*?$close/ms" // clean up with SKIP <code>tag</code> ##
 		);
 		
-		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
-
 		// sanity -- method requires requires ##
 		if ( 
 			(
 				'secondary' == $process
 				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					! isset( self::$buffer_markup )
+					! isset( $_buffer_markup )
 				)
 			)
 		){
@@ -743,14 +745,14 @@ class willows {
 			case "secondary" :
 
 				// get markup ##
-				$string = self::$markup['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = self::$buffer_markup;
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -792,14 +794,16 @@ class willows {
 			case "secondary" :
 
 				// set markup ##
-				self::$markup['template'] = $string;
+				$_markup['template'] = $string;
+				$this->plugin->set( '_markup', $_markup );
 
 			break ;
 
 			case "primary" :
 
 				// set markup ##
-				self::$buffer_markup = $string;
+				$_buffer_markup = $string;
+				$this->plugin->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

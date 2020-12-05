@@ -35,8 +35,8 @@ class group {
 
 		// Q needed to run get method ##
 		if(
-			! method_exists( '\willow\get\group', $method )
-			|| ! is_callable([ '\willow\get\group', $method ])
+			! method_exists( 'Q\willow\get\group', $method )
+			|| ! is_callable([ 'Q\willow\get\group', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: willow\get\group\\'.$method );

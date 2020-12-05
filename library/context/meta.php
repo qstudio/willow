@@ -44,8 +44,8 @@ class meta {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\meta', $method )
-			|| ! is_callable([ '\willow\get\meta', $method ])
+			! method_exists( 'Q\willow\get\meta', $method )
+			|| ! is_callable([ 'Q\willow\get\meta', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: willow\get\meta\\'.$method );

@@ -41,8 +41,8 @@ class plugin {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\plugin', $method )
-			|| ! is_callable([ '\willow\get\plugin', $method ])
+			! method_exists( 'Q\willow\get\plugin', $method )
+			|| ! is_callable([ 'Q\willow\get\plugin', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );

@@ -38,7 +38,7 @@ class fields {
 			// h::log( self::$fields );
 
 			// log ##
-			h::log( $_args['task'].'~>e:>Error in $fields array' );
+			// @todo // log-->h::log( $_args['task'].'~>e:>Error in $fields array' );
 
 			// kick out ##
             return false;
@@ -88,7 +88,7 @@ class fields {
             ) {
 
 				// log ##
-				h::log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
+				// @todo // log-->h::log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
 
 				// h::log( 'Field empty: '.$field );
 
@@ -409,7 +409,7 @@ class fields {
 		$this->plugin->set( '_fields', $_fields );
 
 		// log ##
-		h::log( $this->plugin->get( '_args' )['task'].'~>fields:>"'.$field.'"' );
+		// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>fields:>"'.$field.'"' );
 		// h::log( $this->plugin->get( '_args' )['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
@@ -442,7 +442,7 @@ class fields {
 		$this->plugin->set( '_fields', $_fields );
 
         // log ##
-		h::log( $this->plugin->get( '_args' )['task'].'~>fields_removed:>"'.$field.'" by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>fields_removed:>"'.$field.'" by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true;
@@ -527,7 +527,7 @@ class fields {
 			// get caller ##
 			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $args->fields empty' );
+			// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $args->fields empty' );
 
 			return false;
 
@@ -587,7 +587,7 @@ class fields {
 			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// log ##
-			h::log( $_args['task'].'~>n:>'.$backtrace.' -> "$args[fields]" is not defined' );
+			// @todo // log-->h::log( $_args['task'].'~>n:>'.$backtrace.' -> "$args[fields]" is not defined' );
 
 			return false;
 

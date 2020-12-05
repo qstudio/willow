@@ -164,6 +164,8 @@ class post {
      */
     public function title( $args = null ) {
 
+		// h::log( $args );
+
 		// sanity ##
 		if (
 			is_null( $args )

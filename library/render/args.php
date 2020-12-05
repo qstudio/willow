@@ -32,8 +32,7 @@ class args {
 		// $this->plugin->log( 'd:>reset args for: '.self::$args['task'] );
 
 		// passed args ##
-        $this->plugin->set( '_args', [ 'fields'	=> [] ] );
-
+        $this->plugin->set( '_args', [ 'fields'	=> [] ] ); // default args array ##
 		$this->plugin->set( '_output', null ); // return string ##
         $this->plugin->set( '_fields', null ); // array of field names and values ##
 		$this->plugin->set( '_markup', null ); // array to store passed markup and extra keys added by formatting ##
@@ -50,11 +49,11 @@ class args {
 
 		// $this->plugin->log( 'd:>collect all args'); ##
 
-		$this->collect['args'] = $this->plugin->get('_args');
-		$this->collect['output'] = $this->plugin->get('_output');
-		$this->collect['fields'] = $this->plugin->get('_fields');
-		$this->collect['markup'] = $this->plugin->get('_markup');
-		$this->collect['hash'] = $this->plugin->get('_hash');
+		$this->collect['args'] = $this->plugin->get( '_args' );
+		$this->collect['output'] = $this->plugin->get( '_output' );
+		$this->collect['fields'] = $this->plugin->get( '_fields' );
+		$this->collect['markup'] = $this->plugin->get( '_markup' );
+		$this->collect['hash'] = $this->plugin->get( '_hash' );
 
 	}
 
@@ -67,11 +66,11 @@ class args {
 
 		// $this->plugin->log( 'd:>set all args'); ##
 
-		$this->plugin->get('_args', $this->collect['args'] );
-		$this->plugin->get('_args', $this->collect['output'] );
-		$this->plugin->get('_args', $this->collect['fields'] );
-		$this->plugin->get('_args', $this->collect['markup'] );
-		$this->plugin->get('_args', $this->collect['hash'] );
+		$this->plugin->set( '_args', $this->collect['args'] );
+		$this->plugin->set( '_output', $this->collect['output'] );
+		$this->plugin->set( '_fields', $this->collect['fields'] );
+		$this->plugin->set( '_markup', $this->collect['markup'] );
+		$this->plugin->set( '_hash', $this->collect['hash'] );
 
 	}
 
@@ -287,7 +286,7 @@ class args {
 
 		}
 
-		$args = $this->plugin->get('_args');
+		$args = $this->plugin->get( '_args' );
 		$args['config']['default'] = $array;
 		$this->plugin->set( '_args' , $args );
 
@@ -343,7 +342,9 @@ class args {
 
 		// Parse incoming $args into an array and merge it with $config defaults ##
 		// allows specific calling methods to alter passed $args ##
-		if ( $config ) $args = willow\core\method::parse_args( $args, $config );
+		if ( $config ) {
+			$args = willow\core\method::parse_args( $args, $config );
+		}
 
 		// $this->plugin->log( $config );
 

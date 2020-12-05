@@ -630,7 +630,7 @@ class markup {
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				// $new_template = str_replace( $from, $to, $this->plugin->get( '_markup')['template'] );
-				$new_template = \willow\render\method::str_replace_first( $from, $to, $markup['template'] ); // only replaces first occurance ##
+				$new_template = willow\render\method::str_replace_first( $from, $to, $markup['template'] ); // only replaces first occurance ##
 
 				// test ##
 				// $this->plugin->log( 'd:>'.$new_template );
@@ -712,8 +712,8 @@ class markup {
 		}
 
         if (
-            ! core\method::starts_with( $variable, $needle_start ) 
-            || ! core\method::ends_with( $variable, $needle_end ) 
+            ! willow\core\method::starts_with( $variable, $needle_start ) 
+            || ! willow\core\method::ends_with( $variable, $needle_end ) 
         ) {
 
 			// log ##

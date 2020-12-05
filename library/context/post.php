@@ -40,17 +40,17 @@ class post {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\post', $method )
-			|| ! is_callable([ '\willow\get\post', $method ])
+			! method_exists( 'Q\willow\get\post', $method )
+			|| ! is_callable([ 'Q\willow\get\post', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\post\\'.$method );
+			h::log( 'e:>Class method is not callable: Q\willow\get\post\\'.$method );
 
 			return false;
 
 		}
 
-		h::log( 'e:>Class method IS callable: willow\get\post\\'.$method );
+		// h::log( 'e:>Class method IS callable: Q\willow\get\post\\'.$method );
 
 		// new object ##
 		$post = new willow\get\post( $this->plugin );
@@ -67,7 +67,7 @@ class post {
 		*/
 
 		// // test ##
-		// h::log( $return );
+		h::log( $return );
 
 		// kick back ##
 		return $return;

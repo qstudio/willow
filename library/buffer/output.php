@@ -3,6 +3,7 @@
 namespace Q\willow\buffer;
 
 use Q\willow;
+use Q\willow\core\helper as h;
 
 class output {
 
@@ -20,8 +21,6 @@ class output {
 	 * CLass Constructer 
 	*/
 	function __construct( $plugin = null ){
-
-		// Log::write( $plugin );
 
         // grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -122,13 +121,12 @@ class output {
 			echo $this->prepare( $string );
 
 			// reset all args ##
-			$args = new \Q\willow\render\args( $this->plugin );
+			$args = new willow\render\args( $this->plugin );
 			$args->reset();
 
 		}, 0 );
 
 	}
-
 
 	/**
 	 * Prepare output for Buffer
@@ -168,22 +166,22 @@ class output {
 		$this->plugin->set( '_markup_template', $string ); // original markup reference
 
 		// force methods to return for collection by output buffer ##
-		$args_default = $this->plugin->get( '_args_default' );
-		$args_default['config']['return'] = 'return';
-		$this->plugin->set( '_args_default', $args_default );
+		$_args_default = $this->plugin->get( '_args_default' );
+		$_args_default['config']['return'] = 'return';
+		$this->plugin->set( '_args_default', $_args_default );
 
 		// prepare .willow template markup -- affects _buffer_map ##
-		$parse = new willow\parse\prepare( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
-		$parse->hooks();
+		$parse_prepare = new willow\parse\prepare( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
+		$parse_prepare->hooks();
 
 		// h::log( self::$buffer_map );
 		$buffer_map = new willow\buffer\map( $this->plugin );
-		$this->plugin->set( '_buffer_markup', $buffer_map->prepare() );
-		// h::log( self::$buffer_markup );
+		$_buffer_map = $buffer_map->prepare();
+		$this->plugin->set( '_buffer_markup', $_buffer_map );
+		// h::log( $this->plugin->get( '_buffer_markup' ) );
 
 		// clean up left over tags ##
-		// TODO - removed for testing ###
-		// new willow\parse\cleanup( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
+		new willow\parse\cleanup( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
 		
 		// reset properties ##
 		$this->plugin->set( '_buffer_map', [] );

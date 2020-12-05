@@ -8,8 +8,8 @@ class loops {
 
 	private 
 		$plugin = false,
-		$args = false,
-		$process = false,
+		// $args = false,
+		// $process = false,
 
 		$loop_hash, 
 		$loop,
@@ -35,12 +35,10 @@ class loops {
 		$this->loop_variables = false;
 	}
 
-	public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+	public function __construct( \Q\willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-		$this->process = $process; // type can be "primary" or "secondary"
-		$this->args = $args;
 
 	}
 
@@ -49,7 +47,7 @@ class loops {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function match(){
+	public function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
 		$_args = $this->plugin->get( '_args' );
@@ -57,7 +55,7 @@ class loops {
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
 		// we do NOT need to parse Loops on the primary check
-		if( 'primary' == $this->process ){
+		if( 'primary' == $process ){
 
 			return false;
 
@@ -66,7 +64,7 @@ class loops {
 		// sanity -- method requires requires ##
 		if ( 
 			(
-				'secondary' == $this->process
+				'secondary' == $process
 				&& (
 					! isset( $_markup )
 					|| ! is_array( $_markup )
@@ -89,7 +87,7 @@ class loops {
 		}
 
 		// find out which markup to affect ##
-		switch( $this->process ){
+		switch( $process ){
 
 			default : 
 			case "secondary" :

@@ -41,8 +41,8 @@ class media {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\media', $method )
-			|| ! is_callable([ '\willow\get\media', $method ])
+			! method_exists( 'Q\willow\get\media', $method )
+			|| ! is_callable([ 'Q\willow\get\media', $method ])
 		){
 
 			h::log( 'e:>Class method is not callable: willow\get\media\\'.$method );

@@ -2,19 +2,15 @@
 
 namespace Q\willow\render;
 
-// use q\core;
-use willow\core\helper as h;
-// use q\view;
-// use q\get;
+use Q\willow\core\helper as h;
 use Q\willow;
-// use willow\parse;
-// use willow\render;
 
 class format {
 
 	private 
 		$plugin = false,
-		$render_fields = false
+		$render_fields = false,
+		$render_markup = false
 	;
 
 	/**
@@ -26,6 +22,9 @@ class format {
 
 		// build render_fields object ##
 		$this->render_fields = new willow\render\fields( $this->plugin );
+
+		// build render_markup object ##
+		$this->render_markup = new willow\render\markup( $this->plugin );
 
 	}
 
@@ -159,7 +158,7 @@ class format {
         if ( false === $tracker ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>No valid value type found for field: "'.$field.'" so assigned: "'.$return.'"');
+			// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>n:>No valid value type found for field: "'.$field.'" so assigned: "'.$return.'"');
 
         }
 
@@ -311,7 +310,7 @@ class format {
 				WAS
 				$key_field = $field.'_'.$count;
 				*/
-                willow\render\fields::set( $key_field, '' );
+                $this->render_fields->set( $key_field, '' );
 
                 // Format each field value based on type ( int, string, array, WP_Post Object ) ##
                 // each item is filtered as looped over -- q/render/format/GROUP/FIELD - ( $args, $fields ) ##
@@ -320,7 +319,7 @@ class format {
 
                     // format ran ok ##
                     // h::log( 'd:>format ran ok.. so now we can update markup for field: '.$field );
-                    willow\render\markup::set( $field, $count );
+                    $this->render_markup->set( $field, $count );
 
                 }
 
@@ -333,11 +332,21 @@ class format {
 
         // remove variable from markup template
 		// self::$markup['template'] = render\markup::remove_placeholder( '{{ '.$field.' }}', self::$markup['template'] );
-		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
-		self::$markup['template'] = parse\markup::remove( $variable, self::$markup['template'], 'variable' );
+
+		// get parse_markup object ##
+		$parse_markup = new willow\parse\markup( $this->plugin );
+
+		// get _markup ##
+		$_markup = $this->plugin->get( '_markup' );
+
+		$variable = $this->plugin->get( 'tags' )->wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
+		$_markup['template'] = $parse_markup->remove( $variable, $_markup['template'], 'variable' );
+
+		// set _markup ##
+		$this->plugin->set( '_markup', $_markup );
 
         // delete sending field ##
-        render\fields::remove( $field, 'Removed by format_array after working' );
+        $this->render_fields->remove( $field, 'Removed by format_array after working' );
 
         // checkout markup ##
 		// h::log( self::$markup['template'] );
@@ -365,7 +374,7 @@ class format {
 
 
 
-    public static function format_array_repeater( $value = null, $field = null ){
+    public function format_array_repeater( $value = null, $field = null ){
 
         // h::log( 'Formatting repeater array for field: '.$field );
         // h::hard_log( $value );
@@ -391,13 +400,13 @@ class format {
 					// h::log( 'WP Post Object...' );
 
 					// pass to WP formatter and capture returned array ##
-					self::format_object_wp_post( $v2, $field.'.'.$count );
+					$this->format_object_wp_post( $v2, $field.'.'.$count );
 
 				// WP_Term Object ##
 				} elseif ( $v2 instanceof \WP_Term ) {
 
 					// pass to WP formatter ##
-					self::format_object_wp_term( $v2, $field.'.'.$count );
+					$this->format_object_wp_term( $v2, $field.'.'.$count );
 
 				} else {
 
@@ -406,14 +415,14 @@ class format {
 					// create a new, named and numbered field based on field__COUNT.row_key ##
 					// $key_field = $field.'__'.$count.'__'.$r2;
 					// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
-					render\fields::set( $field.'.'.$count.'.'.$r2, $v2 );
+					$this->render_fields->set( $field.'.'.$count.'.'.$r2, $v2 );
 				
 				}
 
             }
 
             // format ran ok ##
-			render\markup::set( $field, $count );
+			$this->render_markup->set( $field, $count );
 			
             // iterate count ##
             $count ++ ;
@@ -446,13 +455,13 @@ class format {
 						// h::hard_log( 'WP Post Object...' );
 
 						// pass to WP formatter ##
-						self::format_object_wp_post( $v2, $field );
+						$this->format_object_wp_post( $v2, $field );
 
 					// WP_Term Object ##
 					} elseif ( $v2 instanceof \WP_Term ) {
 
 						// pass to WP formatter ##
-						self::format_object_wp_term( $v2, $field );
+						$this->format_object_wp_term( $v2, $field );
 
 					} else {
 	
@@ -460,7 +469,7 @@ class format {
 		
 						// create a new, named and numbered field based on field__COUNT.row_key ##
 						// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
-						render\fields::set( $field.'.'.$r2, $v2 );
+						$this->render_fields->set( $field.'.'.$r2, $v2 );
 
 					}
 	
@@ -483,9 +492,6 @@ class format {
 
     }
 
-
-
-
     /**
      * Format Object values ##
      * Currently, we only support Objects of type WP_Post - so validate with instance of ## 
@@ -500,13 +506,13 @@ class format {
         if ( $value instanceof \WP_Post ) {
 
             // pass to WP formatter ##
-            $value = self::format_object_wp_post( $value, $field );
+            $value = $this->format_object_wp_post( $value, $field );
 
 		// WP_Term Object ##
 		} elseif ( $value instanceof \WP_Term ) {
 
             // pass to WP formatter ##
-            $value = self::format_object_wp_term( $value, $field );
+            $value = $this->format_object_wp_term( $value, $field );
 
         // @todo - add more formats here ... ##
 
@@ -516,7 +522,7 @@ class format {
 			h::log( $this->plugin->get( '_args' )['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
 
             // this item needs to be removed from self::$fields
-            render\fields::remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
+            $this->render_fields->remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
 
             // we do not return the $value either ##
             return false; 
@@ -524,7 +530,7 @@ class format {
         }
 
         // delete sending field ##
-        render\fields::remove( $field, 'Removed by format_object after working' );
+        $this->render_fields->remove( $field, 'Removed by format_object after working' );
 
         // return false will delete the passed field ##
         return true;

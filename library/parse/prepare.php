@@ -3,6 +3,7 @@
 namespace Q\willow\parse;
 
 use Q\willow;
+use Q\willow\core\helper as h;
 
 class prepare {
 
@@ -34,15 +35,6 @@ class prepare {
 
 	;
 	*/
-
-	
-	// public static function __run(){
-
-	// 	self::load();
-
-	// }
-
-
 	
     /**
      * Apply Markup changes to passed template
@@ -61,7 +53,8 @@ class prepare {
 	
 	public function hooks(){
 
-		// $this->plugin->log( $this->args );
+		// h::log( $this->args );
+		// h::log( 'process: '.$this->process );
 		// exit;
 		// store passed args - context/task ##
 
@@ -79,17 +72,14 @@ class prepare {
 
 		}
 
-		// context controller ##
-		require_once $this->plugin->get_plugin_path( 'library/context/_load.php' );
-
 		// h::log( self::$args['markup'] );
 
 		// prepare arguments object ##
-		$arguments = new willow\parse\arguments( $this->plugin, $this->args, $this->process );
+		$arguments = new willow\parse\arguments( $this->plugin );
 
 		// search for partials in passed markup - these update the markup template with returned markup ##
-		$partials = new willow\parse\partials( $this->plugin, $this->args, $this->process );
-		$partials->match();
+		$partials = new willow\parse\partials( $this->plugin );
+		$partials->match( $this->args, $this->process );
 
 		// pre-format markup to run any >> translatable strings << ##
 		// runs early and might be used to return data to arguments ##
@@ -102,16 +92,18 @@ class prepare {
 		// pre-format markup to run any >> functions << ##
 		// runs early and might be used to return data to arguments ##
 		// willow\parse\php_functions::prepare( $args, $process );
+		$php_functions = new willow\parse\php_functions( $this->plugin );
+		$php_functions->match( $this->args, $this->process );
 
 		// pre-format markup to extract daa from willows ##
 		// willow\parse\willows::prepare( $args, $process );
-		$willows = new willow\parse\willows( $this->plugin, $this->args, $this->process );
-		$willows->match();
+		$willows = new willow\parse\willows( $this->plugin );
+		$willows->match( $this->args, $this->process );
 
 		// pre-format markup to extract loops ##
 		// willow\parse\loops::prepare( $args, $process );
-		$loops = new willow\parse\loops( $this->plugin, $this->args, $this->process );
-		// $loops->match();
+		$loops = new willow\parse\loops( $this->plugin );
+		// $loops->match( $this->args, $this->process );
 
 		// pre-format markup to extract comments and place in html ##
 		// willow\parse\comments::prepare( $args, $process ); // 
@@ -119,6 +111,8 @@ class prepare {
 		// pre-format markup to extract variable arguments - 
 		// goes last, as other tags might have added new variables to prepare ##
 		// willow\parse\variables::prepare( $args, $process );
+		$variables = new willow\parse\variables( $this->plugin );
+		$variables->match( $this->args, $this->process );
 
 
 
