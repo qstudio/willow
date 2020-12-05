@@ -1,16 +1,26 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
 // Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-// Q Theme ##
-// use willow\theme;
+class theme {
 
-class theme extends \willow\get {
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 		
 	/**
      * Get body classes
@@ -18,8 +28,7 @@ class theme extends \willow\get {
      * @since       1.0.2
      * @return      string   HTML
      */
-    public static function body_class( $args = array() ) 
-    {
+    public static function body_class( $args = array() ){
 
         // set-up new array ##
         $array = [];
@@ -70,17 +79,13 @@ class theme extends \willow\get {
 
 	}
 
-
-
-
     /**
     * Get installed theme data
     *
     * @return  Object
     * @since   0.3
     */
-    public static function data( $refresh = false )
-    {
+    public static function data( $refresh = false ){
 
        if ( $refresh ) {
 
@@ -110,21 +115,18 @@ class theme extends \willow\get {
 
            if ( $array ) {
 
-               core\method::add_update_option( 'q_theme_data', $array, '', 'yes' );
+               willow\core\method::add_update_option( 'q_theme_data', $array, '', 'yes' );
                #echo 'stored fresh theme data<br />';
 
            }
 
        }
 
-       return core\method::array_to_object( $array );
+       return willow\core\method::array_to_object( $array );
 
     }
 
-
-
-	public static function is_child()
-	{
+	public static function is_child(){
 
 		$theme = \wp_get_theme(); // gets the current theme
 		// h::log( $theme );
@@ -137,10 +139,7 @@ class theme extends \willow\get {
 
 	}
 
-
-
-	public static function is_parent()
-	{
+	public static function is_parent(){
 
 		$theme = \wp_get_theme(); // gets the current theme
 		

@@ -1,17 +1,27 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use q\core\helper as h;
-use q\get;
-use willow;
-use willow\context;
-use willow\render; 
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class media extends willow\context {
+class media {
 
+	private
+		$plugin = null // this 
+	;
 
-	public static function get( $args = null ){
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -45,11 +55,19 @@ class media extends willow\context {
 
 		// h::log( 'e:>Class method IS callable: q\get\media\\'.$method );
 
+		// new object ##
+		$media = new willow\get\media( $this->plugin );
+
+		// return post method to 
+		$return = $media->{$method}( $args );
+
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\media', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
 		// h::log( $return );

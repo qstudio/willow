@@ -1,21 +1,31 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-// Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
-use willow\strings;
+use Q\willow;
+use Q\willow\core\helper as h;
+use Q\willow\strings;
 
-class post extends \willow\get {
+class post {
+
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Method to clean up calling and checking for the global $post object
      * Allows $post to be passed
      *
      * @param       Mixed       $post       post ID or $post object
-     *
      * @since       1.0.7
      * @return      Object      WP_Post object
      */
@@ -90,9 +100,6 @@ class post extends \willow\get {
 
     }
 
-
-
-	
     /**
      * Get post object terms
      *
@@ -144,12 +151,9 @@ class post extends \willow\get {
 		// h::log( $array );
 		
 		// return
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
-	
-
 	
     /**
      * Generic H1 title tag
@@ -158,7 +162,7 @@ class post extends \willow\get {
      * @since       1.3.0
      * @return      String
      */
-    public static function title( $args = null ) {
+    public function title( $args = null ) {
 
 		// sanity ##
 		if (
@@ -254,20 +258,16 @@ class post extends \willow\get {
         }
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
-
-
-
 	
     /**
      * Get Post excerpt and return it in an HTML element with classes
      *
      * @since       1.0.7
      */
-    public static function excerpt( $args = null ){
+    public function excerpt( $args = null ){
 
 		// sanity ##
 		if (
@@ -300,7 +300,7 @@ class post extends \willow\get {
 
             $array['content'] =
                 \get_the_author_meta( 'description' ) ?
-                \willow\strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                willow\strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else if (
@@ -314,19 +314,19 @@ class post extends \willow\get {
 
             $array['content'] =
                 \category_description() ?
-                \willow\strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                willow\strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else {
 
             // h::log('Loading other excerpt');
 
-            $array['content'] = self::excerpt_from_id( get\post::object(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
+            $array['content'] = self::excerpt_from_id( willow\get\post::object(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
 		}
 		
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
@@ -379,15 +379,13 @@ class post extends \willow\get {
 
 	}
 
-
-
     /**
     * Return the_content with basic filters applied
     *
     * @since       1.0.1
     * @return      string       HTML
     */
-    public static function content( $args = null ){
+    public function content( $args = null ){
 
 		// h::log( 'e:>post->content hit..' );
 
@@ -409,23 +407,22 @@ class post extends \willow\get {
 		// h::log( \get_post_field( 'post_content', $args['config']['post'] ) );
 
 		// get the post_content with filters applied ##
-		$array['content'] = \apply_filters( 'the_content', \willow\strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
+		$array['content'] = \apply_filters( 'the_content', willow\strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
 
 		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-	 /**
-     * Get current Post object data to render
+	/**
+	 * Get current Post object data to render
      *
      * @since       1.6.2
      * @return      Array       
      */
-    public static function this( $args = null ){
+    public function this( $args = null ){
 
 		// sanity ##
 		if (
@@ -445,7 +442,7 @@ class post extends \willow\get {
 			|| ! ( $args['config']['post'] instanceof \WP_Post )
 		){
 
-			$post = get\post::object();
+			$post = willow\get\post::object();
 
 		} else {
 
@@ -469,7 +466,7 @@ class post extends \willow\get {
 	 * @return  string          The permalink of the page
 	 * @since   1.0
 	 */
-	public static function permalink_by_slug( $slug = null ){
+	public function permalink_by_slug( $slug = null ){
 
 		// sanity ##
 		if(

@@ -1,30 +1,16 @@
 <?php
 
-namespace willow;
+namespace Q\willow\parse;
 
-use willow;
-use willow\core;
-use willow\core\helper as h;
+use Q\willow;
 
-/*
-About Loops:
+class loops {
 
-- Loops can be embedded in "primary" or "secondary" Willows - so either direclty in the main template or within a .willow file - but we only process Loops on the secondary process cycle ( parse )
-- Loops must ALWAYS have a {: scope :} tag
-	==> validated when parsing markup
-- Loops contain {{ variables }} which can include [ flags ]
-	==> each scope is manimpuated to create a unique hash 
-- {: scopes :} can be re-used multiple times within the same {~ Willow ~}
-	--> meaning, the source markup will show the same {: scope :} ( as this is data connector ) - but Willow needs to manipulate the markup to create a new unique {: scope :} reference and store a map to connect the data correctly
-- {: scopes :} pull data from indexed arrays  - whose key matches the {: scope :} value	- returned via the Willow context lookup
-	--> meaning, we need to manipulate future data ( as Loops are pared before data is gathered ) - this can be controlled by the scope_map array
-- {{ variable }} data can be formatted differently within different {: scope :} loops, within the same {~ Willow ~}
-	--> meaning we need to create seperate filter reference for each variable per scope
-*/
+	private 
+		$plugin = false,
+		$args = false,
+		$process = false,
 
-class loops extends willow\parse {
-
-	private static 
 		$loop_hash, 
 		$loop,
 		$loop_match, // full string matched ##
@@ -37,25 +23,178 @@ class loops extends willow\parse {
 		$return
 	;
 
-	private static function reset(){
-		self::$loop_hash = false; 
-		self::$loop_scope = false;
-		self::$loop_scope_full = false;
-		self::$loop_markup = false;
-		self::$loop = false;
-		self::$config_string = false;
-		self::$return = false;
-		self::$loop_arguments = false;
-		self::$loop_variables = false;
+	private function reset(){
+		$this->loop_hash = false; 
+		$this->loop_scope = false;
+		$this->loop_scope_full = false;
+		$this->loop_markup = false;
+		$this->loop = false;
+		$this->config_string = false;
+		$this->return = false;
+		$this->loop_arguments = false;
+		$this->loop_variables = false;
 	}
 
+	public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+		$this->process = $process; // type can be "primary" or "secondary"
+		$this->args = $args;
+
+	}
+
+	/**
+	 * Scan for sections in markup and convert to variables and $fields
+	 * 
+	 * @since 4.1.0
+	*/
+	public function match(){
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+
+		// we do NOT need to parse Loops on the primary check
+		if( 'primary' == $this->process ){
+
+			return false;
+
+		}
+
+		// sanity -- method requires requires ##
+		if ( 
+			(
+				'secondary' == $this->process
+				&& (
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
+				)
+			)
+			||
+			(
+				'primary' == $process
+				&& (
+					! isset( self::$buffer_markup )
+				)
+			)
+		){
+
+			h::log( 'e:>Error in stored $markup' );
+
+			return false;
+
+		}
+
+		// find out which markup to affect ##
+		switch( $this->process ){
+
+			default : 
+			case "secondary" :
+
+				// get markup ##
+				$string = $_markup['template'];
+
+			break ;
+
+			case "primary" :
+
+				// get markup ##
+				$string = $_buffer_markup;
+
+			break ;
+
+		} 
+
+		// sanity ##
+		if (  
+			! $string
+			|| is_null( $string )
+		){
+
+			h::log( self::$args['task'].'~>e:>Error in $markup' );
+
+			return false;
+
+		}
+
+		// h::log( $args );
+		// h::log('d:>'.$string);
+
+		// get all sections, add markup to $markup->$field ##
+		// note, we trim() white space off tags, as this is handled by the regex ##
+		$loop_open = trim( $this->plugin->get( 'tags' )->g( 'loo_o' ) );
+		$loop_close = str_replace( '/', '\/', ( trim( $this->plugin->get( 'tags' )->g( 'loo_c' ) ) ) );
+
+		$regex_find = \apply_filters( 
+			'willow/render/markup/loop/regex/find', 
+			"/$loop_open\s+(.*?)\s+$loop_close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
+			// "/{{#(.*?)\/#}}/s" 
+		);
+
+		if ( 
+			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
+		){
+
+			// h::log( $matches );
+
+			// sanity ##
+			if ( 
+				! $matches
+				|| ! isset( $matches[1] ) 
+				|| ! $matches[1]
+			){
+
+				h::log( 'e:>Error in returned matches array' );
+
+				return false;
+
+			}
+
+			foreach( $matches[1] as $match => $value ) {
+
+				// position to add placeholder ##
+				if ( 
+					! is_array( $value )
+					|| ! isset( $value[0] ) 
+					|| ! isset( $value[1] ) 
+					|| ! isset( $matches[0][$match][1] )
+				) {
+
+					h::log( 'e:>Error in returned matches - no position' );
+
+					continue;
+
+				}
+
+				// get position from first ( whole string ) match ##
+				// $position = $matches[0][$match][1]; 
+
+				// take match ##
+				$match = $matches[0][$match][0];
+
+				// h::log( $match );
+
+				// h::log( 'd:>position: '.$position );
+				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
+
+				// pass match to function handler ##
+				$this->format( $match, $process, $args );
+
+			}
+
+		}
+
+	}
 
 	/**
 	 * Format single loop
 	 * 
 	 * @since 1.0.0
 	*/
-	public static function format( $match = null, $process = 'secondary', $args = null ){
+	public function format( $match = null, $process = 'secondary', $args = null ){
 
 		// sanity ##
 		if(
@@ -70,12 +209,12 @@ class loops extends willow\parse {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as variable whitespace is handled by the regex ##
-		$loop_open = trim( willow\tags::g( 'loo_o' ) );
-		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
+		$loop_open = trim( $this->plugin->get( 'tags' )->g( 'loo_o' ) );
+		$loop_close = str_replace( '/', '\/', ( trim( $this->plugin->get( 'tags' )->g( 'loo_c' ) ) ) );
 
 		// scope ## - self::$fields data key ##
-		$scope_open = trim( willow\tags::g( 'sco_o' ) );
-		$scope_close = trim( willow\tags::g( 'sco_c' ) );
+		$scope_open = trim( $this->plugin->get( 'tags' )->g( 'sco_o' ) );
+		$scope_close = trim( $this->plugin->get( 'tags' )->g( 'sco_c' ) );
 
 		// clear slate ##
 		self::reset();
@@ -129,8 +268,8 @@ class loops extends willow\parse {
 			foreach( self::$loop_variables as $key => $value ) {
 	
 				if(
-				 	strpos( $value, trim( willow\tags::g( 'arg_o' )) ) !== false // open ##
-				 	&& strrpos( $value, trim( willow\tags::g( 'arg_c' )) ) !== false // close ##
+				 	strpos( $value, trim( $this->plugin->get( 'tags' )->g( 'arg_o' )) ) !== false // open ##
+				 	&& strrpos( $value, trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) ) !== false // close ##
 				){
 
 					// get arguments ##
@@ -200,7 +339,7 @@ class loops extends willow\parse {
 
 		// now, we need to edit the markup in two places -- or just one ??
 		// create updated loop scope tag ##
-		$loop_scope_tag = willow\tags::g( 'sco_o' ).self::$loop_scope.willow\tags::g( 'sco_c' );
+		$loop_scope_tag = $this->plugin->get( 'tags' )->g( 'sco_o' ).self::$loop_scope.$this->plugin->get( 'tags' )->g( 'sco_c' );
 		// h::log( 'New loop scope tag: '.$loop_scope_tag );
 		// h::log( self::$loop_scope_full );
 
@@ -266,7 +405,7 @@ class loops extends willow\parse {
 	/**
 	 * Check if passed string includes a loop 
 	*/
-	public static function has( $string = null ){
+	public function has( $string = null ){
 
 		// sanity ##
 		if(
@@ -280,8 +419,8 @@ class loops extends willow\parse {
 		}
 
 		// get loop tags ##
-		$loo_o =  willow\tags::g( 'loo_o' );
-		$loo_c =  willow\tags::g( 'loo_c' );
+		$loo_o = $this->plugin->get( 'tags' )->g( 'loo_o' );
+		$loo_c = $this->plugin->get( 'tags' )->g( 'loo_c' );
 
 		// test string ##
 		// h::log( $string );
@@ -311,7 +450,7 @@ class loops extends willow\parse {
 		if(
 			// strpos( $string, trim( $loo_o ) ) !== false
 			// && strpos( $string, trim( $loo_c ) ) !== false
-			$loop_string = core\method::string_between( $string, trim( $loo_o ), trim( $loo_c ), true )
+			$loop_string = willow\core\method::string_between( $string, trim( $loo_o ), trim( $loo_c ), true )
 		){
 
 			// h::log( $loop_string );
@@ -332,7 +471,7 @@ class loops extends willow\parse {
 			*/
 
 			// grab loop {: scope :} ##
-			$scope = loops::scope( $loop_string );
+			$scope = $this->scope( $loop_string );
 
 			// h::log( 'scope: '.$scope );
 
@@ -369,7 +508,7 @@ class loops extends willow\parse {
 	 * @param 	$inclusive 	Boolean 	fallows to return whole scope string inside tags
 	 * 
 	*/
-	public static function scope( $string = null, $inclusive = false ){
+	public function scope( $string = null, $inclusive = false ){
 
 		// sanity ##
 		if(
@@ -386,27 +525,32 @@ class loops extends willow\parse {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( willow\tags::g( 'sco_o' )) ) !== false
-			&& strpos( $string, trim( willow\tags::g( 'sco_c' )) ) !== false
+			strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'sco_o' )) ) !== false
+			&& strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'sco_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			// $sco_o = strpos( $string, trim( willow\tags::g( 'sco_o' )) );
-			// $sco_c = strrpos( $string, trim( willow\tags::g( 'sco_c' )) );
+			// $sco_o = strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'sco_o' )) );
+			// $sco_c = strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'sco_c' )) );
 
 			// h::log( 'd:>Found opening sco_o & closing sco_c'  ); 
 
-			$scope = core\method::string_between( $string, trim( willow\tags::g( 'sco_o' )), trim( willow\tags::g( 'sco_c' )), $inclusive );
+			$scope = core\method::string_between( 
+				$string, 
+				trim( $this->plugin->get( 'tags' )->g( 'sco_o' )), 
+				trim( $this->plugin->get( 'tags' )->g( 'sco_c' )), 
+				$inclusive 
+			);
 			$scope = trim( $scope );
 
 			/*
 			// get string between opening and closing args ##
 			$scope = substr( 
 				$string, 
-				( $sco_o + strlen( trim( willow\tags::g( 'sco_o' ) ) ) ), 
-				( $sco_c - $sco_c - strlen( trim( willow\tags::g( 'sco_c' ) ) ) ) ); 
+				( $sco_o + strlen( trim( $this->plugin->get( 'tags' )->g( 'sco_o' ) ) ) ), 
+				( $sco_c - $sco_c - strlen( trim( $this->plugin->get( 'tags' )->g( 'sco_c' ) ) ) ) ); 
 
-			// $return_string = willow\tags::g( 'loo_o' ).$return_string.$loo_c;
+			// $return_string = $this->plugin->get( 'tags' )->g( 'loo_o' ).$return_string.$loo_c;
 			*/
 
 			// h::log( 'd:>$scope: "'.$scope.'"' );
@@ -426,154 +570,13 @@ class loops extends willow\parse {
 
 
 
-	/**
-	 * Scan for sections in markup and convert to variables and $fields
-	 * 
-	 * @since 4.1.0
-	*/
-	public static function prepare( $args = null, $process = 'secondary' ){
 
-		// we do NOT need to parse Loops on the primary check
-		if( 'primary' == $process ){
+	public function cleanup( $args = null, $process = 'secondary' ){
 
-			return false;
-
-		}
-
-		// sanity -- method requires requires ##
-		if ( 
-			(
-				'secondary' == $process
-				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
-				)
-			)
-			||
-			(
-				'primary' == $process
-				&& (
-					! isset( self::$buffer_markup )
-				)
-			)
-		){
-
-			h::log( 'e:>Error in stored $markup' );
-
-			return false;
-
-		}
-
-		// find out which markup to affect ##
-		switch( $process ){
-
-			default : 
-			case "secondary" :
-
-				// get markup ##
-				$string = self::$markup['template'];
-
-			break ;
-
-			case "primary" :
-
-				// get markup ##
-				$string = self::$buffer_markup;
-
-			break ;
-
-		} 
-
-		// sanity ##
-		if (  
-			! $string
-			|| is_null( $string )
-		){
-
-			h::log( self::$args['task'].'~>e:>Error in $markup' );
-
-			return false;
-
-		}
-
-		// h::log( $args );
-		// h::log('d:>'.$string);
-
-		// get all sections, add markup to $markup->$field ##
-		// note, we trim() white space off tags, as this is handled by the regex ##
-		$loop_open = trim( willow\tags::g( 'loo_o' ) );
-		$loop_close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
-
-		$regex_find = \apply_filters( 
-			'willow/render/markup/loop/regex/find', 
-			"/$loop_open\s+(.*?)\s+$loop_close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
-			// "/{{#(.*?)\/#}}/s" 
-		);
-
-		if ( 
-			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
-		){
-
-			// h::log( $matches );
-
-			// sanity ##
-			if ( 
-				! $matches
-				|| ! isset( $matches[1] ) 
-				|| ! $matches[1]
-			){
-
-				h::log( 'e:>Error in returned matches array' );
-
-				return false;
-
-			}
-
-			foreach( $matches[1] as $match => $value ) {
-
-				// position to add placeholder ##
-				if ( 
-					! is_array( $value )
-					|| ! isset( $value[0] ) 
-					|| ! isset( $value[1] ) 
-					|| ! isset( $matches[0][$match][1] )
-				) {
-
-					h::log( 'e:>Error in returned matches - no position' );
-
-					continue;
-
-				}
-
-				// get position from first ( whole string ) match ##
-				// $position = $matches[0][$match][1]; 
-
-				// take match ##
-				$match = $matches[0][$match][0];
-
-				// h::log( $match );
-
-				// h::log( 'd:>position: '.$position );
-				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
-
-				// pass match to function handler ##
-				self::format( $match, $process, $args );
-
-			}
-
-		}
-
-	}
-
-
-
-	public static function cleanup( $args = null, $process = 'secondary' ){
-
-		$open = trim( willow\tags::g( 'loo_o' ) );
+		$open = trim( $this->plugin->get( 'tags' )->g( 'loo_o' ) );
 		// $close = trim( tags::g( 'sec_c' ) );
 		// $end = trim( tags::g( 'sec_e' ) );
-		$close = str_replace( '/', '\/', ( trim( willow\tags::g( 'loo_c' ) ) ) );
+		$close = str_replace( '/', '\/', ( trim( $this->plugin->get( 'tags' )->g( 'loo_c' ) ) ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 

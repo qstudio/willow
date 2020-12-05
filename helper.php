@@ -1,10 +1,12 @@
 <?php
 
 // namespace ##
-namespace Q\willow\core;
+namespace Q\willow;
 
 // core ##
-use Q\willow;
+use Q\willow\plugin;
+use Q\willow\core;
+use Q\willow\log;
 
 /**
  * helper Class
@@ -63,7 +65,7 @@ class helper {
      * @since       4.1.0
      * @return      void
      */
-    public static function log( $args = null ){
+    public function hard_log( $args = null ){
 		
 		// error_log( $args );
 
@@ -99,18 +101,18 @@ class helper {
 		} 
 
 		// debugging is on in WP, so write to error_log ##
-        if ( true === \WP_DEBUG ) {
+        if ( true === WP_DEBUG ) {
 
 			// get caller ##
-			$backtrace = willow\core\method::backtrace();
+			$backtrace = core\method::backtrace();
 
             if ( is_array( $log ) || is_object( $log ) ) {
 
-				error_log( print_r( $log, true ).' -> '.$backtrace );
+				$this->log->error_log( print_r( $log, true ).' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
 				
             } else {
 
-				error_log( $log.' -> '.$backtrace );
+				$this->log->error_log( $log.' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
 				
             }
 
@@ -120,6 +122,9 @@ class helper {
 		return true;
 
     }
+
+
+
 
 	/**
     * check if a file exists with environmental fallback

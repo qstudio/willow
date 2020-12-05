@@ -1,17 +1,27 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use q\core\helper as h;
-// use q\ui;
-use q\get;
-use willow;
-use willow\context;
-use willow\render; 
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class navigation extends willow\context {
+class navigation {
 
-	public static function get( $args = null ){
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -41,15 +51,19 @@ class navigation extends willow\context {
 
 		}
 
-		// return \willow\get\post::$method;
+		// new object ##
+		$navigation = new willow\get\navigation( $this->plugin );
 
-		// h::log( 'e:>Class method IS callable: q\get\post\\'.$method );
+		// return callback ##
+		$return = $navigation->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\navigation', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
 		// h::log( $return );

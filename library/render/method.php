@@ -1,14 +1,11 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\render;
 
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
-use willow;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class method extends willow\render {
-
+class method {
 
 	/**
 	 * Prepare $array to be rendered
@@ -17,7 +14,7 @@ class method extends willow\render {
 	public static function prepare( $args = null, $array = null ) {
 
 		// get calling method for filters ##
-		$method = core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$method = willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
 
 		// sanity ##
 		if (
@@ -259,11 +256,15 @@ class method extends willow\render {
 
 	public static function get_context(){
 
+		// get current willow instance ##
+		$plugin = willow();
+
 		// sanity ##
 		if (
-			! isset( self::$args )
-			|| ! isset( self::$args['context'] )
-			|| ! isset( self::$args['task'] )
+			null === $plugin
+			|| null === $plugin->get( '_args' )
+			|| ! isset( $plugin->get( '_args' )['context'] )
+			|| ! isset( $plugin->get( '_args' )['task'] )
 		){
 
 			h::log( 'd:>No context / task available' );
@@ -272,7 +273,7 @@ class method extends willow\render {
 
 		}
 
-		return sprintf( 'Context: "%s" Task: "%s"', self::$args['context'], self::$args['task'] );
+		return sprintf( 'Context: "%s" Task: "%s"', $plugin->get( '_args' )['context'], $plugin->get( '_args' )['task'] );
 
 	}
 

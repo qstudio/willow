@@ -1,12 +1,25 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-use willow\render; 
+use Q\willow; 
+use Q\willow\core\helper as h;
 
-class group extends \willow\context {
+class group {
 
+	private
+		$plugin = null // this 
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Get group data via meta handler
@@ -16,7 +29,7 @@ class group extends \willow\context {
 	 * @uses		define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
 		$method = 'fields';
 
@@ -32,14 +45,21 @@ class group extends \willow\context {
 
 		}
 
+		// build object ##
+		$get_group = new willow\get\group( $this->plugin );
+
 		// method returns an array with 'data' and 'fields' ##
 		if ( 
-			$array = \willow\get\group::fields( $args )
+			// $array = \willow\get\group::fields( $args )
+			$array = $get_group->fields( $args )
 		){
 			// h::log( $array );
 			
 			// "args->fields" are used for type and callback lookups ##
-			self::$args['fields'] = $array['fields']; 
+			// self::$args['fields'] = $array['fields']; 
+			$_args = $this->plugin->get( '_args' );
+			$_args['fields'] = $array['fields']; 
+			$this->plugin->set( '_args', $_args );
 
 			// return ##
 			return $array['data'];

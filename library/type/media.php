@@ -1,22 +1,58 @@
 <?php
 
-namespace willow\render\type;
+namespace Q\willow\type;
 
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
-use willow\render;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class media extends render\type {
+class media {
 
-    /**
-     * Image type handler 
+	private 
+		$plugin = false,
+		$type_method = false
+	;
+
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+		// get types ##
+		$this->type_method = new willow\type\method( $this->plugin );
+
+	}
+
+	/**
+     * WP Post handler
+     *  
      * 
-	 * @wp_post		Object 
-     * @todo - placeholder fallback
-     * @todo - Add picture handler ##
      **/ 
-    public static function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): ?string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): string {
+
+		// check if type allowed ##
+		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
+
+			// h::log( 'e:>Value Type not allowed: '.__CLASS__ );
+
+			// log ##
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+
+			// return $args[0]->$args[1]; // WHY ??#
+			return false;
+
+		}
+
+		// $value needs to be a WP_Post object ##
+		if ( ! $wp_post instanceof \WP_Post ) {
+
+			// log ##
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+
+			return false;
+
+		}
 
 		// start empty ##
         $string = null;
@@ -25,7 +61,7 @@ class media extends render\type {
 		if (
 			is_null( $wp_post )
 			|| ! $wp_post instanceof \WP_Post
-			|| ! isset( self::$args )
+			|| is_null ( $this->plugin->get( '_args' ) )
 			|| ! isset( $type_field )
 			|| ! isset( $field )
 			|| ! isset( $context ) // can be WP_Post OR ... @todo
@@ -56,7 +92,9 @@ class media extends render\type {
 
 				// h::log( $args );
 
-				$array = get\media::src( $args );
+				$get_media = new willow\get\media( $this->plugin );
+				$get_media->src( $args );
+				// $array = willow\get\media::src( $args );
 
 				// h::log( $array );
 
@@ -71,7 +109,7 @@ class media extends render\type {
 		) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>get\media::thumbnail returned bad data');
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>get\media::thumbnail returned bad data');
 
 			return $string;
 
@@ -99,8 +137,8 @@ class media extends render\type {
 				if ( 
 					// set locally..
 					(
-						isset( self::$args['config']['srcset'] )
-						&& true == self::$args['config']['srcset'] 
+						isset( $this->plugin->get( '_args' )['config']['srcset'] )
+						&& true == $this->plugin->get( '_args' )['config']['srcset'] 
 					)
 					/*
 					||
@@ -139,7 +177,7 @@ class media extends render\type {
 			is_null( $string ) 
 		) {
 
-			h::log( self::$args['task'].'~>n:>String is empty.. so return null' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>String is empty.. so return null' );
 
 		}
 

@@ -1,14 +1,25 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-// use q\get;
-use willow;
-use willow\context;
-use willow\render; 
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class action extends willow\context {
+class action {
+
+	private
+		$plugin = null // this 
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Run WP action - buffer and return with matching field name

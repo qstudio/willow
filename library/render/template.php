@@ -1,18 +1,27 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\render;
 
+use Q\willow;
+use Q\willow\core\helper as h;
 
-// Q ##
-use willow\get;
-use willow\core\helper as h;
-use willow;
-use willow\core;
-use willow\render;
+class template {
 
-class template extends willow\render {
+	private
+		$plugin = null // this
+	;
 
-	public static function partial( $args = null ){
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function partial( $args = null ){
 
 		// sanity ##
 		if( 
@@ -53,12 +62,12 @@ class template extends willow\render {
 		// h::log( $args );
 
 		// get template ##
-		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		$config = $this->plugin->get( 'config' )->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 		// h::log( $config );
 
 		// filter ##
-		$config = core\filter::apply([ 
+		$config = $this->plugin->get( 'filter' )->apply([ 
 			'parameters'    => [ 'config' => $config ], // pass ( $template ) as single array ##
 			'filter'        => 'willow/render/template/config/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $config
@@ -70,7 +79,7 @@ class template extends willow\render {
 		// h::log( 'markup: '.$markup );
 
 		// filter ##
-		$markup = core\filter::apply([ 
+		$markup = $this->plugin->get( 'filter' )->apply([ 
 			'parameters'    => [ 'markup' => $markup ], // pass ( $template ) as single array ##
 			'filter'        => 'willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $markup
@@ -94,10 +103,10 @@ class template extends willow\render {
 		// h::log( $config['markup'][ $markup ] );
 
 		// markup string ##
-		$string = render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
+		$string = willow\render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
 
 		// filter ##
-		$string = core\filter::apply([ 
+		$string = $this->plugin->get( 'filter' )->apply([ 
 			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
 			'filter'        => 'willow/render/template/string/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $string

@@ -1,17 +1,10 @@
 <?php
 
-namespace willow\core;
+namespace Q\willow\core;
 
-use willow\core;
-use willow\core\helper as h;
-// use q\ui;
-// use q\plugin;
-// use q\get;
-// use q\view;
-// use q\asset;
+use Q\willow\core;
 
-class method extends \willow {
-
+class method {
     
     /**
      * Sanitize user input data using WordPress functions
@@ -23,8 +16,7 @@ class method extends \willow {
      * @link        http://wp.tutsplus.com/tutorials/creative-coding/data-sanitization-and-validation-with-wordpress/
      * @return      string      HTML output
      */
-    public static function sanitize( $value = null, $type = 'text' )
-    {
+    public static function sanitize( $value = null, $type = 'text' ){
         
         // check submitted data ##
         if ( is_null( $value ) ) {
@@ -110,8 +102,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function php_namespace( $key = null ) 
-    {
+    public static function php_namespace( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -133,8 +124,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function php_function( $key = null ) 
-    {
+    public static function php_function( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -156,8 +146,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function php_class( $key = null ) 
-    {
+    public static function php_class( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -179,8 +168,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function sanitize_key( $key = null ) 
-    {
+    public static function sanitize_key( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -200,8 +188,7 @@ class method extends \willow {
      * 
      * 
      */
-    public static function template() 
-    {
+    public static function template(){
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
@@ -228,8 +215,7 @@ class method extends \willow {
      * 
 	 * @since 4.1.0
      */
-    public static function template_format() 
-    {
+    public static function template_format(){
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
@@ -257,7 +243,7 @@ class method extends \willow {
 
 
 	
-	public static function file_extension( $string = null ) {
+	public static function file_extension( $string = null ){
 
 		// sanity ##
 		if( is_null( $string ) ){
@@ -276,8 +262,7 @@ class method extends \willow {
 
 
 	
-	public static function file_put_array( $path, $array )
-	{
+	public static function file_put_array( $path, $array ){
 
 		if ( is_array( $array ) ){
 
@@ -330,7 +315,7 @@ class method extends \willow {
 
 
 
-	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ) {
+	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ){
 
 		while (($t = mb_strpos($line,"\t")) !== FALSE) {
 			
@@ -391,7 +376,7 @@ class method extends \willow {
 	 * 
 	 * @link https://stackoverflow.com/questions/27078259/get-string-between-find-all-occurrences-php/27078384#27078384
 	*/
-	public static function strings_between( $str, $startDelimiter, $endDelimiter ) {
+	public static function strings_between( $str, $startDelimiter, $endDelimiter ){
 
 		$contents = array();
 		$startDelimiterLength = strlen($startDelimiter);
@@ -490,7 +475,7 @@ class method extends \willow {
      * 
      * @link    https://mekshq.com/recursive-wp-parse-args-wordpress-function/
      */
-    public static function parse_args( &$args, $defaults ) {
+    public static function parse_args( &$args, $defaults ){
 
 		// sanity ##
 		if(
@@ -526,7 +511,7 @@ class method extends \willow {
 	 * 
 	 * @link https://www.php.net/manual/en/function.parse-str.php
 	*/
-	public static function parse_str( $string = null ) {
+	public static function parse_str( $string = null ){
 
 		// sanity ##
 		if(
@@ -698,7 +683,7 @@ class method extends \willow {
 	/**
 	 * Regex Escape values 
 	*/
-	public static function regex_escape( $subject ) {
+	public static function regex_escape( $subject ){
 
 		return str_replace( array( '\\', '^', '-', ']' ), array( '\\\\', '\\^', '\\-', '\\]' ), $subject );
 	
@@ -709,8 +694,7 @@ class method extends \willow {
 	 * 
 	 * @link https://stackoverflow.com/questions/3264775/an-explode-function-that-ignores-characters-inside-quotes/13755505#13755505
 	*/
-	public static function quoted_explode( $subject, $delimiter = ',', $quotes = '\"' )
-	{
+	public static function quoted_explode( $subject, $delimiter = ',', $quotes = '\"' ){
 		$clauses[] = '[^'.self::regex_escape( $delimiter.$quotes ).']';
 
 		foreach( str_split( $quotes) as $quote ) {
@@ -736,7 +720,7 @@ class method extends \willow {
 	 * 
 	 * @since 	4.0.0
 	 */
-	public static function backtrace( $args = null ) {
+	public static function backtrace( $args = null ){
 
 		// default args ##
 		$level = isset( $args['level'] ) ? $args['level'] : 1 ; // direct caller ##
@@ -868,8 +852,7 @@ class method extends \willow {
 	 * 
 	 * @link	https://stackoverflow.com/questions/6284553/using-an-array-as-needles-in-strpos
 	 */
-	public static function strposa($haystack, $needle, $offset=0) 
-	{
+	public static function strposa( $haystack, $needle, $offset=0 ){
 		if( ! is_array( $needle ) ) {
 			
 			$needle = array($needle);
@@ -888,7 +871,7 @@ class method extends \willow {
 	}
 
 
-	public static function get_acronym( $string = null, $length = 10 ) {
+	public static function get_acronym( $string = null, $length = 10 ){
 
 		// sanity ##
 		if ( is_null( $string ) ) { return false; }

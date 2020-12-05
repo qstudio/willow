@@ -1,13 +1,25 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class plugin extends \willow\get {
+class plugin {
 
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 	
     /**
      * Check if a plugin is active
@@ -15,13 +27,11 @@ class plugin extends \willow\get {
      * @since       2.0.0
      * @return      Boolean
      */
-    public static function is_active( $plugin ) 
-    {
+    public static function is_active( $plugin ){
         
         return in_array( $plugin, (array) \get_site_option( 'active_plugins', [] ) );
     
     }
-
 	
     /**
     * Get Q Plugin data
@@ -46,15 +56,14 @@ class plugin extends \willow\get {
 
             if ( $array ) {
 
-                core\method::add_update_option( $option, $array, '', 'yes' );
+                willow\core\method::add_update_option( $option, $array, '', 'yes' );
 
             }
 
         }
 
-        return core\method::array_to_object( $array );
+        return willow\core\method::array_to_object( $array );
 
 	}
 	
-
 }	

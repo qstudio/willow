@@ -1,18 +1,38 @@
 <?php
 
-namespace willow\core;
+namespace Q\willow\core;
 
-use willow\core;
-use willow\core\helper as h;
+use Q\willow\core;
 
-class filter extends \willow {
+class filter {
+
+	/**
+     * Plugin Instance
+     *
+     * @var     Object      $plugin
+     */
+	protected 
+		$plugin
+	;
+
+	/**
+	 * CLass Constructer 
+	*/
+	function __construct( $plugin = null ){
+
+		// Log::write( $plugin );
+
+        // grab passed plugin object ## 
+		$this->plugin = $plugin;
+		
+	}
 
     /**
      * Filter items at set points to allow for manipulation
      * 
      * 
      */
-    public static function apply( Array $args = null ){
+    public function apply( Array $args = null ){
 
         // sanity ##
         if ( 
@@ -23,7 +43,7 @@ class filter extends \willow {
             || ! is_array( $args['parameters'] )
         ) {
 
-            h::log('Error in passed self::$args');
+            $this->plugin->log('Error in passed $args');
 
             return $args['return'];
 
@@ -34,7 +54,7 @@ class filter extends \willow {
             ! isset( $args['return'] )
         ) {
 
-            h::log('Error in passed self::$args - no $return specified');
+            $this->plugin->log('Error in passed $args - no $return specified');
 
             return 'Error';
 
@@ -44,7 +64,7 @@ class filter extends \willow {
 
 			if ( isset( $args['debug'] ) ) {
 
-				h::log( '
+				$this->plugin->log( '
 					Filter: '.$args['filter'].' - 
 					Parameters: '.implode( ',', array_keys( $args['parameters'] ) ).' - 
 					Return: '.gettype( $args['return'] ) 
@@ -58,13 +78,13 @@ class filter extends \willow {
 			if ( isset( $args['debug'] ) ) {
 
 				// check return ##
-				h::log( $return );
+				$this->plugin->log( $return );
 
 			}
 
         } else {
 
-            // h::log( 'No matching filter found: '.$args['filter'] );
+            // $this->plugin->log( 'No matching filter found: '.$args['filter'] );
             $return = $args['return']; 
 
         }

@@ -1,20 +1,28 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-// Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
-use willow\plugin;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class group extends \willow\get {
+class group {
 	
-	public static 
+	private
+		$plugin = null, // this 
 		$acf_fields = null, // fields grabbed by acf function ##
 		$data = null, // returned field data array ##
 		$fields = null // to return to self::$args['fields]
 	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Get group data via meta handler
@@ -24,7 +32,7 @@ class group extends \willow\get {
 	 * @uses		define
      * @return      Array
      */
-    public static function fields( $args = null ) {
+    public function fields( $args = null ) {
 
 		// h::log( $args );
 
@@ -44,14 +52,14 @@ class group extends \willow\get {
         }
 
         // Get all ACF field data for this post ##
-        if ( ! self::acf_fields( $args ) ) {
+        if ( ! $this->acf_fields( $args ) ) {
 
             return false;
 
         }
 
         // get all fields defined in this group -- pass to $args['fields'] ##
-        if ( ! self::group_fields( $args ) ) {
+        if ( ! $this->group_fields( $args ) ) {
 
             return false;
 
@@ -60,7 +68,7 @@ class group extends \willow\get {
         // h::log( $args[ 'fields' ] );
 
         // get field names from passed $args ##
-        $array = array_column( self::$data, 'name' );
+        $array = array_column( $this->data, 'name' );
 
 		// h::log( $array );
 
@@ -81,20 +89,20 @@ class group extends \willow\get {
         // h::log( $array );
 
         // assign class property ##
-        self::$data = $array;
+        $this->data = $array;
 		// h::log( self::$data );
 
         // remove skipped fields, if defined ##
-        self::skip( $args );
+        $this->skip( $args );
 
         // if group specified, get only fields from this group ##
-        self::group( $args );
+        $this->group( $args );
 
         // h::log( self::$data );
 
         // we should do a check if $fields is empty after all the filtering ##
         if ( 
-            0 == count( self::$data ) 
+            0 == count( $this->data ) 
         ) {
 
 			// log ##
@@ -110,18 +118,16 @@ class group extends \willow\get {
 
         // positive ##
         return [
-			'fields'	=> self::$fields,
-			'data' 		=> self::$data
+			'fields'	=> $this->plugin->get( '_fields' ), // self::$fields
+			'data' 		=> $this->data
 		];
 
     }
 
-	
-
     /**
      * Get ACF Fields
      */
-    public static function acf_fields( $args = null ){
+    public function acf_fields( $args = null ){
 
 		if ( ! function_exists( 'get_fields' ) ) {
 
@@ -157,22 +163,20 @@ class group extends \willow\get {
 
         // h::log( $array );
 
-        return self::$acf_fields = $array;
+        return $this->acf_fields = $array;
 
     }
-
-
 
 	/**
 	 * Get ACF Field Group from passed $group reference
 	 */
-    public static function group_fields( $args = null ){
+    public function group_fields( $args = null ){
 
         // assign variable ##
         $group = $args['task'];
 
         // try to get fields ##
-        $array = plugin\acf::get_field_group( $group );
+        $array = willow\plugin\acf::get_field_group( $group );
 
         // h::log( $array );
 
@@ -190,15 +194,16 @@ class group extends \willow\get {
         }
 
         // filter ##
-        $array = core\filter::apply([ 
+        $array = $this->plugin->get( 'filter' )->apply([ 
             'parameters'    => [ 'fields' => $array ], // pass ( $fields ) as single array ##
             'filter'        => 'willow/get/group/'.$group, // filter handle ##
             'return'        => $array
         ]); 
 
         // assign to class properties ##
-		self::$fields = $array; // capture all fields for type and callback lookups ##
-		self::$data = $array; // data to return to fields\define ##
+		// self::$fields = $array; // capture all fields for type and callback lookups ##
+		$this->plugin->set( '_fields', $array );
+		$this->data = $array; // data to return to fields\define ##
 
         // h::log( $array );
 
@@ -207,12 +212,10 @@ class group extends \willow\get {
 
     }
 
-
-
 	/**
 	 * Skip fields marked to avoid
 	 */
-    public static function skip( $args = null ){
+    public function skip( $args = null ){
 
         // sanity ##
         if ( 
@@ -234,25 +237,23 @@ class group extends \willow\get {
         ) {
 
             // h::log( $args['skip'] );
-            self::$data = array_diff( self::$data, $args['skip'] );
+            $this->data = array_diff($this->data, $args['skip'] );
 
         }
 
     }
 
-
-
 	/**
 	* Get the fields from the listed ACF group, removing fields returned form acf_fields()
 	*/
-    public static function group( $args = null ){
+    public function group( $args = null ){
 
         // sanity ##
         if ( 
             ! $args 
             || ! is_array( $args )
-            || ! self::$data
-            || ! is_array( self::$data )
+            || ! $this->data
+            || ! is_array( $this->data )
         ) {
 
 			// log ##
@@ -263,18 +264,18 @@ class group extends \willow\get {
 
 		}
 		
-		// h::log( self::$acf_fields );
+		// h::log( $this->acf_fields );
 
         if ( 
             isset( $args['task'] )
         ) {
 
-            // h::log( 'Removing fields from other groups... BEFORE: '.count( self::$data ) );
-            // h::log( self::$data );
+            // h::log( 'Removing fields from other groups... BEFORE: '.count( $this->data ) );
+            // h::log( $this->data );
 
-            self::$data = array_intersect_key( self::$acf_fields, array_flip( self::$data ) );
+            $this->data = array_intersect_key( $this->acf_fields, array_flip( $this->data ) );
 
-            // h::log( 'Removing fields from other groups... AFTER: '.count( self::$data ) );
+            // h::log( 'Removing fields from other groups... AFTER: '.count( $this->data ) );
 
         }
 

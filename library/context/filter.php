@@ -1,14 +1,25 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use q\core\helper as h;
-use q\get;
-use willow;
-use willow\context;
-use willow\render; 
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class filter extends willow\context {
+class filter {
+
+	private
+		$plugin = null // this 
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Run WP filter - buffer and return with matching field name
@@ -18,7 +29,7 @@ class filter extends willow\context {
 	 * @uses		define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
 		if ( \has_filter( $args['task'] ) ) {
 

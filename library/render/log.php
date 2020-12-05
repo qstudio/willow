@@ -1,18 +1,33 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\render;
 
-use willow\core\helper as h;
-use willow;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class log extends willow\render {
+class log {
 
+	private 
+		$plugin = false
+	;
+
+	/**
+	 * Scan for partials in markup and convert to variables and $fields
+	 * 
+	 * @since 4.1.0
+	*/
+	public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Logging function
      * 
      */
-    public static function set( Array $args = null ){
+    public function set( Array $args = null ){
 
 		// h::log( 'e:>'.$args['task'] );
 		// h::log( self::$args['config']['debug'] );

@@ -1,12 +1,25 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-use willow;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class module extends willow\context {
+class module {
 
+	private
+		$plugin = null
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Generic Getter - looks for properties in config matching context->task
@@ -17,13 +30,11 @@ class module extends willow\context {
 	 * @uses		render\fields::define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
 		// h::log( $args );
-		return \willow\core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return $this->plugin->get( 'config')->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 
-
-	
 }

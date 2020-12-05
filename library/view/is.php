@@ -1,19 +1,18 @@
 <?php
 
-namespace willow\view;
+namespace Q\willow\view;
 
-use willow\core;
-use willow\core\helper as h;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class is extends \willow {
+class is {
 
     /**
      * Get Q template name, if set - else return WP global
      * 
      * 
      */
-    public static function get() 
-    {
+    public static function get(){
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
@@ -59,7 +58,7 @@ class is extends \willow {
 		
 		// h::log( 'e:>Template: "'.$template.'"' );
 
-		$extension = core\method::file_extension( $template );
+		$extension = willow\core\method::file_extension( $template );
 
 		// h::log( 'e:>Extension: "'.$extension.'"' );
 

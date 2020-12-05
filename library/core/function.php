@@ -6,6 +6,59 @@
 // use willow\core;
 // use willow\core\helper as h;
 
+/** 
+ * Willow API 
+ *
+ * @todo 
+ */
+if ( ! function_exists( 'willow' ) ) {
+
+	function willow(){
+
+		// sanity ##
+		if(
+			! class_exists( '\Q\willow\plugin' )
+		){
+
+			error_log( 'e:>Willow is not available to '.__FUNCTION__ );
+
+			return false;
+
+		}
+
+		// cache ##
+		$willow = \Q\willow\plugin::get_instance();
+
+		// sanity - make sure willow instance returned ##
+		if( 
+			is_null( $willow )
+			|| ! ( $willow instanceof \Q\willow\plugin ) 
+		) {
+
+			// get stored willow instance from filter ##
+			$willow = \apply_filters( 'Q\willow/instance', NULL );
+
+			// sanity - make sure willow instance returned ##
+			if( 
+				is_null( $willow )
+				|| ! ( $willow instanceof \Q\willow\plugin ) 
+			) {
+
+				error_log( 'Error in object instance returned to '.__FUNCTION__ );
+
+				return false;
+
+			}
+
+		}
+
+		// return willow instance ## 
+		return $willow;
+
+	}
+
+}
+
 /**
  * Return first character of string 
  * 

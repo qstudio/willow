@@ -1,31 +1,42 @@
 <?php
 
-namespace willow\buffer;
+namespace Q\willow\buffer;
 
-use willow\core;
-use willow\core\helper as h;
-use willow;
-use willow\render;
-use willow\buffer;
+use Q\willow;
 
-class map extends willow\buffer {
+class map {
+
+	private 
+		$plugin = false
+	;
+
+	/**
+     * @todo
+     * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
 	 * Prepare output for Buffer
 	 * 
 	 * @since 4.1.0
 	*/
-    public static function prepare() {
+    public function prepare() {
 
 		// sanity ##
 		if ( 
-			is_null( self::$buffer_map )
-			|| ! is_array( self::$buffer_map )
-			// || is_null( self::$buffer_map['0'] )
+			is_null( $this->plugin->get( '_buffer_map') )
+			|| ! is_array( $this->plugin->get( '_buffer_map') )
+			// || is_null( $this->plugin->get( '_buffer_map' )['0'] )
 		){
 
 			// log ##
-			h::log( 'e:>$buffer_map is empty, so nothing to prepare.. stopping here.');
+			$this->plugin->log( 'e:>$buffer_map is empty, so nothing to prepare.. stopping here.');
 
 			// kick out ##
 			return false;
@@ -33,12 +44,12 @@ class map extends willow\buffer {
 		}
 
 		// get orignal markup string ##
-		$string = self::$markup_template;
+		$string = $this->plugin->get( '_markup_template');
 
-		// h::log( self::$buffer_map );
+		// $this->plugin->log( $this->plugin->get( '_buffer_map') );
 
 		// pre format child willows, moving output into parent rows ##
-		foreach( self::$buffer_map as $key => $value ){
+		foreach( $this->plugin->get( '_buffer_map') as $key => $value ){
 
 			if( 
 				// '0' == $key // skip first key, this contains the buffer markup ##
@@ -54,27 +65,31 @@ class map extends willow\buffer {
 			// if( $value['parent'] ){
 
 			if ( 
-				! $row = self::get_key_from_value( 'tag', $value['parent'] )
+				! $row = $this->get_key_from_value( 'tag', $value['parent'] )
 			){
 
 				continue;
 
 			}
 
-			// h::log( 'Row: '.$value['hash'].' is a child to: '.self::$buffer_map[ $row ]['hash'] );
+			// $this->plugin->log( 'Row: '.$value['hash'].' is a child to: '.$this->plugin->get( '_buffer_map' )[ $row ]['hash'] );
 
 			// str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key... ##
-			self::$buffer_map[ $row ]['output'] = str_replace( $value['tag'], $value['output'], self::$buffer_map[ $row ]['output'] );
+			$this->plugin->get( '_buffer_map' )[ $row ]['output'] = str_replace( 
+				$value['tag'], 
+				$value['output'], 
+				$this->plugin->get( '_buffer_map' )[ $row ]['output'] 
+			);
 
 		}
 
-		// h::log( self::$buffer_map );
-		// h::log( self::$buffer_log );
-		// h::log( $string );
+		// $this->plugin->log( $this->plugin->get( '_buffer_map' ) );
+		// $this->plugin->log( $this->plugin->get( '_buffer_log' ) );
+		// $this->plugin->log( $string );
 		// $return = '';
 
 		// now, search and replace tags in parent with tags from buffer_map ##
-		foreach( self::$buffer_map as $key => $value ){
+		foreach( $this->plugin->get( '_buffer_map' ) as $key => $value ){
 
 			// skip first row or rows which do not have a parent ##
 			if( 
@@ -93,7 +108,7 @@ class map extends willow\buffer {
 				strpos( $string, $value['tag'] ) === false
 			){
 
-				h::log( 'e:>'.$value['hash'].' -> Unable to locate: '.$value['tag'].' in buffer' );
+				$this->plugin->log( 'e:>'.$value['hash'].' -> Unable to locate: '.$value['tag'].' in buffer' );
 
 				continue;
 
@@ -104,7 +119,7 @@ class map extends willow\buffer {
 
 		}
 
-		// h::log( $string );
+		// $this->plugin->log( $string );
 
 		// kick back ##
 		return $string;
@@ -112,7 +127,7 @@ class map extends willow\buffer {
 	}
 
 
-	protected static function get_key_from_value( $key = null, $value = null ){
+	protected function get_key_from_value( $key = null, $value = null ){
 
 		// sanity ##
 		if( 
@@ -120,19 +135,19 @@ class map extends willow\buffer {
 			|| is_null( $value )
 		){
 
-			h::log( 'e:>Error in passed arguments' );
+			$this->plugin->log( 'e:>Error in passed arguments' );
 
 			return false;
 
 		}
 
-		// h::log( 'searching for: '. $value.' in row: '.$key );
+		// $this->plugin->log( 'searching for: '. $value.' in row: '.$key );
 
-		foreach( self::$buffer_map as $key_map => $value_map ){
+		foreach( $this->plugin->get( '_buffer_map' ) as $key_map => $value_map ){
 
 			if ( isset( $value_map[$key] ) && $value_map[$key] == $value ) {
 
-				// h::log( 'key '.$key.' found in row: '.$key_map );
+				// $this->plugin->log( 'key '.$key.' found in row: '.$key_map );
 
 				return $key_map;
 
@@ -144,22 +159,22 @@ class map extends willow\buffer {
 		return false;
 
 		/*
-		$result = array_search( $value, array_column( self::$buffer_map, $key ) );
-		$keys = array_keys(array_column( self::$buffer_map, $key ), $value );
-		h::log( $keys );
+		$result = array_search( $value, array_column( $this->plugin->get( '_buffer_map' ), $key ) );
+		$keys = array_keys(array_column( $this->plugin->get( '_buffer_map' ), $key ), $value );
+		$this->plugin->log( $keys );
 		*/
 		/*
 		if( 
-			! isset( self::$buffer_map[$result] )
+			! isset( $this->plugin->get( '_buffer_map' )[$result] )
 		){
 
-			h::log( 'e:>Error finding key: '.$result );
+			$this->plugin->log( 'e:>Error finding key: '.$result );
 
 			return false;
 
 		}
 
-		// h::log( 'key found in row: '.$result );
+		// $this->plugin->log( 'key found in row: '.$result );
 
 		return $result;
 		*/

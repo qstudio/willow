@@ -1,11 +1,10 @@
 <?php
 
-namespace willow\strings;
+namespace Q\willow\strings;
 
-use willow\core;
-use willow\core\helper as h;
+use Q\willow\core\helper as h;
 
-class method extends \willow\strings {
+class method {
 
 	/**
 	 * Make a string.. because, sometimes you need to
@@ -250,11 +249,14 @@ class method extends \willow\strings {
 
 		if (
 			class_exists( 'willow' )
+			|| class_exists( 'Q\willow\plugin' )
 		){
 
+			$plugin = willow();
+
 			// variable replacement -- regex way ##
-			$open = \willow\tags::g( 'var_o' );
-			$close = \willow\tags::g( 'var_c' );
+			$open = $plugin->get('tags')->g( 'var_o' );
+			$close = $plugin->get('tags')->g( 'var_c' );
 
 		} else {
 

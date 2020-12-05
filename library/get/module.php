@@ -1,14 +1,12 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-use willow\core;
-use willow\core\helper as h;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class module extends \willow\get {
-
+class module {
 
     // silence is strange ... 
-
 
 }

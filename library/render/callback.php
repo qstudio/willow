@@ -1,22 +1,38 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\render;
 
-use willow\core;
-use willow\core\helper as h;
+// use willow\core;
+use Q\willow\core\helper as h;
 // use q\view;
 // use q\get;
-use willow;
-use willow\render;
+use Q\willow;
+// use willow\render;
 
-class callback extends willow\render {
+class callback {
+
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Run defined callbacks on specific field ##
      * Return alters the static class property $args
      * 
      */
-    public static function field( String $field = null, $value = null ){
+    public function field( String $field = null, $value = null ){
+
+		$_args = $this->plugin->get( '_args' );
+		$_fields = $this->plugin->get( '_fields' );
 
         // sanity ##
         if ( is_null( $field ) ) {
@@ -24,7 +40,7 @@ class callback extends willow\render {
 			// self::$log['error'][] = 'No field value passed to method.';
 			
 			// log ##
-			h::log( self::$args['task'].'~>e:>No field value passed to method.');
+			h::log( $_args['task'].'~>e:>No field value passed to method.');
 
             return $value;
 
@@ -36,7 +52,7 @@ class callback extends willow\render {
 			// self::$log['error'][] = 'No value passed to method.';
 			
 			// log ##
-			h::log( self::$args['task'].'~>e:>No value passed to method.');
+			h::log( $_args['task'].'~>e:>No value passed to method.');
 
             return $value;
 
@@ -44,7 +60,7 @@ class callback extends willow\render {
 
         // Check if there are any allowed callbacks ##
         // Also runs filters to add custom callbacks ##
-        $callbacks = self::get_callbacks();
+        $callbacks = $this->get_callbacks();
 
         if ( 
             ! $callbacks
@@ -54,7 +70,7 @@ class callback extends willow\render {
 			// self::$log['error'][] = 'No callbacks allowed in plugin';
 			
 			// log ##
-			h::log( self::$args['task'].'~>e:>No callbacks allowed in plugin.');
+			h::log( $_args['task'].'~>e:>No callbacks allowed in plugin.');
 
             return $value;
 
@@ -62,7 +78,8 @@ class callback extends willow\render {
 
 		// h::log( 'Looking for callback for field: "'.$field.'" in self::$fields' );
 		
-        if ( ! $field_callback = render\fields::get_callback( $field ) ) {
+		$render_fields = new willow\render\fields( $this->plugin );
+        if ( ! $field_callback = $render_fields->get_callback( $field ) ) {
 
 			// self::$log['error'][] = 'No callbacks found for Field: "'.$field.'"';
 
@@ -74,7 +91,7 @@ class callback extends willow\render {
 
         // assign method to variable ##
         $method = $field_callback['method'];
-        $field_value = self::$fields[$field];
+        $field_value = $_fields[$field];
 
         // Check we have a real field value to work with ##
         if ( ! $field_value ) {
@@ -82,7 +99,7 @@ class callback extends willow\render {
 			// self::$log['notice'][] = 'No field value found, stopping callback';
 			
 			// log ##
-			h::log( self::$args['task'].'~>n:>No field value found, stopping callback: "'.$field.'"');
+			h::log( $_args['task'].'~>n:>No field value found, stopping callback: "'.$field.'"');
 
             return $value;
 
@@ -119,7 +136,7 @@ class callback extends willow\render {
 			// self::$log['notice'][] = 'Cannot find callback: "'.$method.'"';
 			
 			// log ##
-			h::log( self::$args['task'].'~>n:>Cannot find callback: "'.$method.'"');
+			h::log( $_args['task'].'~>n:>Cannot find callback: "'.$method.'"');
 
             return $value;
 
@@ -135,7 +152,7 @@ class callback extends willow\render {
 			// self::$log['notice'][] = 'Method is not callable: "'.$method.'"';
 			
 			// log ##
-			h::log( self::$args['task'].'~>n:>Method is not callable: "'.$method.'"');
+			h::log( $_args['task'].'~>n:>Method is not callable: "'.$method.'"');
 
             return $value;
 
@@ -148,8 +165,8 @@ class callback extends willow\render {
         // h::log( 'Filter: '.$filter );
 
         // filter field callback value ( $args ) before callback ##
-        $args = core\filter::apply([ 
-            'parameters'    => [ 'args' => $args, 'field' => $field, 'value' => $value, 'fields' => self::$fields ], // params ##
+        $args = $this->plugin->get( 'filter')->apply([ 
+            'parameters'    => [ 'args' => $args, 'field' => $field, 'value' => $value, 'fields' => $_fields ], // params ##
             'filter'        => 'willow/render/callback/field/before/'.$method.'/'.$field, // filter handle ##
             'return'        => $args
         ]); 
@@ -168,7 +185,7 @@ class callback extends willow\render {
 			// self::$log['notice'][] = 'Method returned bad data..';
 			
 			// log ##
-			h::log( self::$args['task'].'~>n:>Method return bad data...');
+			h::log( $_args['task'].'~>n:>Method return bad data...');
 
             return $value;
 
@@ -178,7 +195,8 @@ class callback extends willow\render {
         // h::log( $data );
 
         // now add new data to class property $fields ##
-        self::$fields[$field] = $data;
+		$_fields[$field] = $data;
+		$this->plugin->set( '_fields', $_fields );
 
         // done ##
         return $data;
@@ -190,10 +208,9 @@ class callback extends willow\render {
      * Run defined callbacks on fields ##
      * 
      */
-    public static function get_callbacks()
-    {
+    public function get_callbacks(){
 
-        return \apply_filters( 'willow/render/callbacks/get', self::$callbacks );
+        return \apply_filters( 'willow/render/callbacks/get', $this->plugin->get( '_callbacks') );
 
     }
 

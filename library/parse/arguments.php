@@ -1,34 +1,35 @@
 <?php
 
-namespace willow;
+namespace Q\willow\parse;
 
 // use q\core;
-use willow;
-use willow\core;
-use willow\core\helper as h;
-// use q\ui;
-// use q\render; // @TODO ##
+use Q\willow;
 
-class arguments extends willow\parse {
+class arguments {
 
-	private static 
+	private 
 
+		$plugin,
 		$string, 
 		$array
 
 	;
 
+	protected function reset(){
 
-	protected static function reset(){
-
-		self::$string = false; 
-		self::$flags_argument = false;
-		self::$array = false;
+		$this->string = false; 
+		$this->plugin->set( '_flags_argument', false );
+		$this->array = false;
 
 	}
 	
+	public function __construct( \Q\willow\plugin $plugin ){
 
-	
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
 	/*
 	Decode arguments passed in string
 
@@ -37,79 +38,85 @@ class arguments extends willow\parse {
 	( new = test & config = debug:true, run:true )
 	( config->debug = true & config->handle = sm:medium, lg:large )
 	*/
-	public static function decode( $string = null ){
+	public function decode( $string = null ){
 
-		// h::log( $string );
+		// $this->plugin->log( $string );
 
 		// sanity ##
 		if(
 			is_null( $string )
 		){
 
-			h::log( 'e:>Error in passed arguments' );
+			$this->plugin->log( 'e:>Error in passed arguments' );
 
 			return false;
 
 		}
 
 		// clear slate ##
-		self::reset();
+		$this->reset();
 		
 		// assign variables ##
-		self::$string = $string;
+		$this->string = $string;
 
 		// trim string ##
-		self::$string = trim( self::$string );
+		$this->string = trim( $this->string );
 
 		// flags check for [array]
-		self::$string = flags::get( self::$string, 'argument' );
-		// h::log( self::$flags_argument );
+		$parse_flags = new willow\parse\flags( $this->plugin );
+		$this->string = $parse_flags->get( $this->string, 'argument' );
+
+		// get flags locally ##
+		$_flags_argument = $this->plugin->get( '_flags_argument' );
+
+		$this->plugin->log( $_flags_argument );
+
 		if( 
-			! self::$flags_argument
-			|| ! isset( self::$flags_argument ) // not an array
-			|| ! is_array( self::$flags_argument )
+			! $_flags_argument
+			|| ! isset( $_flags_argument ) // not an array
+			|| ! is_array( $_flags_argument )
 		){
 
-			// h::log( 'd:>Argument string "'.self::$string.'" does not contains any flag, so returning' );
+			// $this->plugin->log( 'd:>Argument string "'.self::$string.'" does not contains any flag, so returning' );
 
 			// done here ##
 			return false;
 
 		}
 
-		// h::log( 'd:>string --> '.self::$string );
+		// $this->plugin->log( 'd:>string --> '.self::$string );
 
 		// replace " with ' .... hmm ##
 		// self::$string = str_replace( '"', "'", self::$string );
 
 		// strip white spaces from data that is not passed inside double quotes ( "data" ) ##
-		self::$string = preg_replace( '~"[^"]*"(*SKIP)(*F)|\s+~', "", self::$string );
+		$this->string = preg_replace( '~"[^"]*"(*SKIP)(*F)|\s+~', "", $this->string );
 
-		// h::log( 'd:>string --> '.self::$string );
-		// h::log( self::$flags_argument );
+		// $this->plugin->log( 'd:>string --> '.$this->string );
+		// $this->plugin->log( $_flags_argument );
 
 		// extract data array from string ##
-		self::$array = core\method::parse_str( self::$string );
+		$this->array = core\method::parse_str( $this->string );
 
-		// h::log( self::$array );
+		// $this->plugin->log( $this->array );
 
 		// trim leading and ending double quotes ("..") from each value in array ##
-		array_walk_recursive( self::$array, function( &$v ) { $v = trim( $v, '"' ); });
+		array_walk_recursive( $this->array, function( &$v ) { $v = trim( $v, '"' ); });
 
-		// h::log( self::$array );
+		// $this->plugin->log( $this->array );
 
 		// sanity ##
 		if ( 
 			// ! $config_string
-			! self::$array
-			|| ! is_array( self::$array )
-			|| empty( self::$array ) // added empty check ##
+			! $this->array
+			|| ! is_array( $this->array )
+			|| empty( $this->array ) // added empty check ##
 			// || ! isset( $matches[0] ) 
 			// || ! $matches[0]
 		){
 
-			h::log( self::$args['task'].'~>n:>No arguments found in string: '.self::$string ); // @todo -- add "loose" lookups, for white space '@s
-			// h::log( 'd:>No arguments found in string: '.self::$string ); // @todo -- add "loose" lookups, for white space '@s''
+			$this->plugin->log( $this->plugin-get( '_args')['task'].'~>n:>No arguments found in string: '.$this->string ); // @todo -- add "loose" lookups, for white space '@s
+			// $this->plugin->log( 'd:>No arguments found in string: '.$this->string ); // @todo -- add "loose" lookups, for white space '@s''
 
 			return false;
 
@@ -119,25 +126,21 @@ class arguments extends willow\parse {
 		// self::reset();
 
 		// kick back to function handler - it should validate if an array was returned and then deal with it ##
-		return self::$array;
+		return $this->array;
 
 	}
-
-
-
-
 
 	/**
 	 * Clean up left-over argument blocks
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function cleanup( $args = null, $process = 'secondary' ){
+	public function cleanup( $args = null, $process = 'secondary' ){
 
 		$open = trim( willow\tags::g( 'arg_o' ) );
 		$close = trim( willow\tags::g( 'arg_c' ) );
 
-		// h::log( self::$markup['template'] );
+		// $this->plugin->log( self::$markup['template'] );
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -165,7 +168,7 @@ class arguments extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup: '.$process );
+			$this->plugin->log( 'e:>Error in stored $markup: '.$process );
 
 			return false;
 
@@ -196,7 +199,7 @@ class arguments extends willow\parse {
 			$regex, 
 			function($matches) {
 				
-				// h::log( $matches );
+				// $this->plugin->log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -207,14 +210,14 @@ class arguments extends willow\parse {
 
 				}
 
-				// h::log( $matches );
+				// $this->plugin->log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' argument tags removed...' );
+					$this->plugin->log( $count .' argument tags removed...' );
 
 				}
 

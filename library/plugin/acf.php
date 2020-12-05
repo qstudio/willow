@@ -1,20 +1,18 @@
 <?php
 
-namespace willow\plugin;
+namespace Q\willow\plugin;
 
-use willow\core;
-use willow\core\helper as h;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class acf extends \willow {
-
+class acf {
 
     /**
     * Add ACF Fields
     *
     * @since    2.0.0
     */
-    public static function add_field_groups( Array $groups = null )
-    {
+    public static function add_field_groups( Array $groups = null ){
 
         // get all field groups ##
 		// $groups = self::get_fields();
@@ -55,8 +53,6 @@ class acf extends \willow {
 
     }
 
-
-
     /**
      * Get field group
      */
@@ -96,6 +92,5 @@ class acf extends \willow {
         return $array;
 
     }   
-
 
 }

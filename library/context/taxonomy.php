@@ -1,15 +1,27 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-use willow\get;
-use willow\context;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class taxonomy extends \willow\context {
+class taxonomy {
 
+	private
+		$plugin = null // this
+	;
 
-	public static function get( $args = null ){
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -43,11 +55,19 @@ class taxonomy extends \willow\context {
 
 		// h::log( 'e:>Class method IS callable: willow\get\taxonomy\\'.$method );
 
+		// new object ##
+		$taxonomy = new willow\get\taxonomy( $this->plugin );
+
+		// return post method to 
+		$return = $taxonomy->{$method}( $args );
+
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\taxonomy', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
 		// h::log( $return );

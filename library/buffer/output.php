@@ -1,23 +1,55 @@
 <?php
 
-namespace willow\buffer;
+namespace Q\willow\buffer;
 
-use willow\core;
-use willow\core\helper as h;
-use willow;
-use willow\render;
-use willow\buffer;
+use Q\willow;
 
-\willow\buffer\output::__run();
-
-class output extends willow\buffer {
-
-	// protected static $is_willow;
+class output {
 
 	/**
-	 * Check for view template and start OB, if correct
+     * Plugin Instance
+     *
+     * @var     Object      $plugin
+     */
+	protected 
+		$plugin
+		// $is_willow // @TODO
+	;
+
+	/**
+	 * CLass Constructer 
 	*/
-	public static function __run(){
+	function __construct( $plugin = null ){
+
+		// Log::write( $plugin );
+
+        // grab passed plugin object ## 
+		$this->plugin = $plugin;
+		
+	}
+
+	/**
+     * callback method for class instantiation
+	 * Check for view template and start OB, if correct
+     *
+     * @since   0.0.2
+     * @return  void
+     */
+	public function hooks() {
+
+		// sanity ##
+        if( 
+            is_null( $this->plugin )
+            || ! ( $this->plugin instanceof \Q\willow\plugin ) 
+        ) {
+
+            error_log( 'Error in object instance passed to '.__CLASS__ );
+
+            return false;
+        
+		}
+		
+		// $this->plugin->log( 'd:>Buffer hooks run..' );
 
 		// https://stackoverflow.com/questions/38693992/notice-ob-end-flush-failed-to-send-buffer-of-zlib-output-compression-1-in
 		\remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
@@ -25,14 +57,20 @@ class output extends willow\buffer {
 			while ( @ob_end_flush() );
 		} );
 
-		// start here ##
-		self::$filter = [];
+		// set _filter var to empty array ##
+		$this->plugin->set( '_filter', [] );
 
 		// not on admin ##
-		if ( \is_admin() ) return false;
+		if ( \is_admin() ) {
+
+			// $this->plugin->log( 'd:>Not running on admin' );
+			
+			return false;
+
+		}
 
 		// \add_action( 'get_header',  [ get_class(), 'ob_start' ], 0 ); // try -- template_redirect.. was init
-		\add_action( 'wp',  function(){  // was 'wp'
+		\add_action( 'wp',  function(){ 
 			
 			// if ( 'willow' == \q\view\is::format() ){
 
@@ -51,7 +89,7 @@ class output extends willow\buffer {
 
 		\add_action( 'shutdown', function() {
 
-			if ( 'willow' != core\method::template_format() ){
+			if ( 'willow' != willow\core\method::template_format() ){
 
 				// h::log( 'e:>No buffer.. so no go' );
 
@@ -80,17 +118,12 @@ class output extends willow\buffer {
 			// ob_flush();
 			if( ob_get_level() > 0 ) ob_flush();
 
-			// HTML <head> ##
-			// willow\context::ui__head();
-		
 			// Output is directly echoed, once it has been parsed ##
-			echo self::prepare( $string );
-
-			// Footer, basically just wp_footer() + closing </body> / </html> tags  ##
-			// willow\context::ui__footer();
+			echo $this->prepare( $string );
 
 			// reset all args ##
-			render\args::reset();
+			$args = new \Q\willow\render\args( $this->plugin );
+			$args->reset();
 
 		}, 0 );
 
@@ -102,7 +135,7 @@ class output extends willow\buffer {
 	 * 
 	 * @since 4.1.0
 	*/
-    public static function prepare( String $string = null ) {
+    public function prepare( String $string = null ) {
 
 		// sanity ##
 		if ( 
@@ -121,39 +154,44 @@ class output extends willow\buffer {
 		// h::log( $string );
 
 		// build required args ##
-		self::$buffer_args 		= [
+		$this->plugin->set( '_buffer_args', [
 			'config'			=> [
 				'return' 		=> 'return',
 				'debug'			=> false,
 			],
 			'context'			=> 'primary',
 			'task'				=> 'prepare',
-		];
+		] );
 
 		// take buffer output string as markup->template ##
-		self::$buffer_markup = $string; // used for parsers to reference buffer markup template ##
-		self::$markup_template = $string; // original markup reference
+		$this->plugin->set( '_buffer_markup', $string ); // used for parsers to reference buffer markup template ##
+		$this->plugin->set( '_markup_template', $string ); // original markup reference
 
 		// force methods to return for collection by output buffer ##
-		self::$args_default['config']['return'] = 'return';
+		$args_default = $this->plugin->get( '_args_default' );
+		$args_default['config']['return'] = 'return';
+		$this->plugin->set( '_args_default', $args_default );
 
-		// prepare .willow template markup -- affects self::$buffer_map ##
-		willow\parse::prepare( self::$buffer_args, 'primary' );
+		// prepare .willow template markup -- affects _buffer_map ##
+		$parse = new willow\parse\prepare( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
+		$parse->hooks();
 
 		// h::log( self::$buffer_map );
-		self::$buffer_markup = buffer\map::prepare();
+		$buffer_map = new willow\buffer\map( $this->plugin );
+		$this->plugin->set( '_buffer_markup', $buffer_map->prepare() );
 		// h::log( self::$buffer_markup );
 
 		// clean up left over tags ##
-		willow\parse::cleanup( self::$buffer_args, 'primary' );
+		// TODO - removed for testing ###
+		// new willow\parse\cleanup( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
 		
 		// reset properties ##
-		self::$buffer_map = [];
-		self::$buffer_args = null;
-		self::$filter = null;
+		$this->plugin->set( '_buffer_map', [] );
+		$this->plugin->set( '_buffer_args', null );
+		$this->plugin->set( '_filter', null );
 
 		// return to OB to render in template ##
-		return self::$buffer_markup;
+		return $this->plugin->get( '_buffer_markup' );
 
     }
 

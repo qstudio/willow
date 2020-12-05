@@ -1,21 +1,34 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-use willow\context;
+use Q\willow\core\helper as h;
+use Q\willow\context;
 
 // load it up ##
-\willow\context\extend::__run();
+// \Q\willow\context\extend::__run();
 
-class extend extends \willow\context {
+class extend {
 
-	protected static $filtered = [];
+	private 
+		$plugin = false,
+		$filtered = []
+	;
 
 	/**
-	 * Fire things up
-	*/
-	public static function __run(){
+     * Apply Markup changes to passed template
+     * find all placeholders in self::$markup and replace with matching values in self::$fields
+	 * most complex and most likely to clash go first, then simpler last ##
+     * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	function hooks(){
 
 		// allow for class extensions ##
 		\do_action( 'willow/context/extend/register', [ get_class(), 'register' ] );
@@ -28,12 +41,10 @@ class extend extends \willow\context {
 
 	}
 
-
-
 	/**
 	 * @todo
 	*/
-	public static function filter(){
+	public function filter(){
 
 		// filter extensions ##
 		$array = \apply_filters( 'willow/context/extend', [] );
@@ -53,7 +64,7 @@ class extend extends \willow\context {
 		}
 
 		// merge in - validate later ##
-		self::$filtered = array_merge( $array, self::$filtered );
+		$this->filtered = array_merge( $array, $this->filtered );
 
 		// h::log( self::$filtered );
 
@@ -79,8 +90,7 @@ class extend extends \willow\context {
 
 	}
 
-
-	public static function register( $args = null ){
+	public function register( $args = null ){
 
 		// test ##
 		// h::log( $args );
@@ -102,13 +112,11 @@ class extend extends \willow\context {
 		}
 
 		// store ##
-		self::set( $args );
+		$this->set( $args );
 
 	}
 
-
-	
-    public static function set( $args = null ) {
+    public function set( $args = null ) {
 
 		// sanity ###
 		if (
@@ -129,7 +137,6 @@ class extend extends \willow\context {
 		// reject invalid class objects ##
 		if( 
 			! class_exists( $args['class'] ) 
-			// ! is_call( $args['class'] ) 
 		){
 
 			h::log( 'Invalid class: '.$args['class'] );
@@ -183,6 +190,13 @@ class extend extends \willow\context {
 
 		}
 
+		// @todo - check if any methods found ...
+		if( empty( $methods ) ){
+
+			return false;
+
+		}
+
 		// remove quasi-private methods with __NAME ##
 		foreach ( $methods as $key ) {
 
@@ -217,21 +231,32 @@ class extend extends \willow\context {
 
 		// h::log( $methods );
 
-		return self::$extend[ $args['class'] ] = [
+		$_extend = $this->plugin->get( '_extend' );
+		$_extend[ $args['class'] ] = [
 			'context' 	=> $args['context'],
 			'class' 	=> $args['class'],
 			'methods' 	=> $methods,
 			'lookup' 	=> isset( $args['lookup'] ) ? $args['lookup'] : false
 		];
 
-	}
+		return $this->plugin->set( '_extend', $_extend );
 
+		/*
+		return self::$extend[ $args['class'] ] = [
+			'context' 	=> $args['context'],
+			'class' 	=> $args['class'],
+			'methods' 	=> $methods,
+			'lookup' 	=> isset( $args['lookup'] ) ? $args['lookup'] : false
+		];
+		*/
+
+	}
 
 	/**
 	 * Get stored extension by context+task
 	 *
 	 */
-	public static function get( $context = null, $task = null ) {
+	public function get( $context = null, $task = null ) {
 
 		// sanity ###
 		if (
@@ -245,13 +270,15 @@ class extend extends \willow\context {
 
 		}
 
+		$_extend = $this->plugin->get( '_extend' );
+
 		// check ##
 		// h::log( 'd:>Looking for extension: '.$context );
 		// h::log( self::$extend );
 
 		// is_array ##
 		if (
-			! is_array( self::$extend )
+			! is_array( $_extend )
 		){
 
 			h::log( 'e:>Error in stored $extend' );
@@ -260,7 +287,7 @@ class extend extends \willow\context {
 
 		}
 
-		foreach( self::$extend as $k => $v ){
+		foreach( $_extend as $k => $v ){
 
 			// h::log( 'checking class: '.$k.' for task: '.$task );
 
@@ -301,20 +328,18 @@ class extend extends \willow\context {
 
 	}
 
-
-
-
 	/**
 	 * Get all stored extensions
 	 *
 	 */
-	public static function get_all() {
+	public function get_all() {
 
 		// h::log( self::$extend );
+		$_extend = $this->plugin->get( '_extend' );
 
 		// is_array ##
 		if (
-			! is_array( self::$extend )
+			! is_array( $_extend )
 		){
 
 			h::log( 'e:>Error in stored $extend' );
@@ -323,7 +348,7 @@ class extend extends \willow\context {
 
 		}
 
-		return self::$extend;
+		return $_extend;
 
 	}
 

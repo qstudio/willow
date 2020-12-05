@@ -1,15 +1,27 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
 // Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class has extends \willow\get {
+class has {
 
-	
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
 	/**
      * Check if a page has children
      *
@@ -17,8 +29,7 @@ class has extends \willow\get {
      * @param       integer         $post_id
      * @return      boolean
      */
-    public static function children( $post_id = null )
-    {
+    public static function children( $post_id = null ){
 
         // nothing to do here ##
         if ( is_null ( $post_id ) ) { return false; }

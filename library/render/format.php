@@ -1,23 +1,40 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\render;
 
 // use q\core;
 use willow\core\helper as h;
-use q\view;
-use q\get;
-use willow;
-use willow\parse;
-use willow\render;
+// use q\view;
+// use q\get;
+use Q\willow;
+// use willow\parse;
+// use willow\render;
 
-class format extends willow\render {
+class format {
+
+	private 
+		$plugin = false,
+		$render_fields = false
+	;
+
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+		// build render_fields object ##
+		$this->render_fields = new willow\render\fields( $this->plugin );
+
+	}
 
     /**
      * Check allowed formats based on passed $value, format and return a string ready for markup  
      * 
      * @return      String
      */
-    public static function field( String $field = null, $value = null ) {
+    public function field( String $field = null, $value = null ) {
 		
 		// h::log( 'd:>Field: '.$field );
 		// h::log( $value );
@@ -26,7 +43,7 @@ class format extends willow\render {
         if ( is_null( $field ) ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>No field value passed to method.');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No field value passed to method.');
 			// h::log( 'd:>Field value: '.$value );
 
             return false;
@@ -37,7 +54,7 @@ class format extends willow\render {
         if ( is_null( $value ) ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>No value passed to method.');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No value passed to method.');
 			// h::log( 'd:>Field value: '.$value );
 
             return false;
@@ -46,7 +63,7 @@ class format extends willow\render {
 
         // Check if there are any allowed formats ##
         // Also runs filters to add custom formats ##
-        $formats = self::get_allowed();
+        $formats = $this->get_allowed();
 
         if ( 
             ! $formats
@@ -54,30 +71,28 @@ class format extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>No formats allowed in plugin or array corrupt.');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No formats allowed in plugin or array corrupt.');
 
             return false;
 
         }
 
         // Now check the format of $value - Array requires repeat check on each row ##
-        $format = self::get( $value, $field );
+        $format = $this->get( $value, $field );
 
         // now try to format value ##
-		$return = self::apply( $value, $field, $format );
+		$return = $this->apply( $value, $field, $format );
 		
         // self::$fields should all be String values by now, ready for markup ##
         return $return;
 
 	}
 	
-
-	
     /**
      * Get format of $field $value from defined list of allowed formats ##
      * 
      */
-    public static function get( $value = null, $field = null ){
+    public function get( $value = null, $field = null ){
 
         // sanity ##
         if ( 
@@ -86,14 +101,14 @@ class format extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>Error in parameters passed to check_format');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to check_format');
 
             return false;
 
         }
 
         // get formats ##
-        $formats = self::get_allowed();
+        $formats = $this->get_allowed();
         // h::log( $formats );
 
         // tracker, if we find a match ##
@@ -113,7 +128,7 @@ class format extends willow\render {
             if ( ! function_exists( $format_value['type'] ) ) {
 
 				// log ##
-				h::log( self::$args['task'].'~>n:>Function not found: "'.$format_value['type'].'"');
+				h::log( $this->plugin->get( '_args' )['task'].'~>n:>Function not found: "'.$format_value['type'].'"');
 
                 continue;
 
@@ -123,7 +138,8 @@ class format extends willow\render {
 
             // boolean check ## is_TYPE === true
             if ( 
-                TRUE === call_user_func_array( $format_value['type'], array( $value ) ) 
+				TRUE === call_user_func_array( $format_value['type'], array( $value ) ) 
+				// @TODO - use direct class call ##
             ) {
 
                 // log ##
@@ -143,26 +159,23 @@ class format extends willow\render {
         if ( false === $tracker ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>No valid value type found for field: "'.$field.'" so assigned: "'.$return.'"');
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>No valid value type found for field: "'.$field.'" so assigned: "'.$return.'"');
 
         }
 
         // final filter on field format type ##
-        $return = \apply_filters( 'willow/render/format/get/'.self::$args['task'].'/'.$field, $return );
+        $return = \apply_filters( 'willow/render/format/get/'.$this->plugin->get( '_args' )['task'].'/'.$field, $return );
 
         // kick back ##
         return $return;
 
     }
 
-
-
-
     /**
      * Allow text field to be filtered ##
      * 
      */
-    public static function apply( $value = null, String $field = null, String $format = null ){
+    public function apply( $value = null, String $field = null, String $format = null ){
 
         // sanity ##
         if ( 
@@ -172,10 +185,10 @@ class format extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
 
-            // this item needs to be removed from self::$fields
-            render\fields::remove( $field );
+			// this item needs to be removed from $_fields
+            $this->render_fields->remove( $field );
 
              // we do not return the $value either ##
             return false;
@@ -191,10 +204,10 @@ class format extends willow\render {
         ){
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
 
             // this item needs to be removed from self::$fields
-            render\fields::remove( $field );
+            $this->render_fields->remove( $field );
 
             // we do not return the $value either ##
             return false; 
@@ -231,33 +244,27 @@ class format extends willow\render {
 
     }
 
-
-
-
     /**
      * Format string - allow for external filtering ##
      * 
      */
-    public static function format_string( $value = null, $field = null ){
+    public function format_string( $value = null, $field = null ){
 
         // h::log( $value );
 
-        return \apply_filters( 'willow/render/format/text/'.self::$args['task'].'/'.$field, $value );
+        return \apply_filters( 'willow/render/format/text/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
 
     }
-
 
     /**
      * Allow integer field to be filtered ##
      * 
      */
-    public static function format_integer( $value = null, $field = null ){
+    public function format_integer( $value = null, $field = null ){
 
-        return \apply_filters( 'willow/render/format/integer/'.self::$args['task'].'/'.$field, $value );
+        return \apply_filters( 'willow/render/format/integer/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
 
     }
-
-
 
     /**
      * Format Array values
@@ -268,21 +275,21 @@ class format extends willow\render {
      * we need to update the template based on number of array items and defined markup with numbered values ##
      * 
      */
-    public static function format_array( $value = null, $field = null ){
+    public function format_array( $value = null, $field = null ){
 
         // allow filtering early ##
-		$value = \apply_filters( 'willow/render/format/array/'.self::$args['task'].'/'.$field, $value );
+		$value = \apply_filters( 'willow/render/format/array/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
 		
 		// h::log( $value );
 
         // array of arrays containing named indexes ( not WP_Post Objects ) needs to be be marked up as a block, like an Object ##
 
         // add check to see if array is a collection of array - as exported by repeater fields ##
-        if ( 'repeater' == render\fields::get_type( $field ) ) {
+        if ( 'repeater' == $this->render_fields->get_type( $field ) ) {
 
             // h::log( 'd:>Array is a repeater' );
 
-            self::format_array_repeater( $value, $field );
+            $this->format_array_repeater( $value, $field );
 
         } else {
 
@@ -304,16 +311,16 @@ class format extends willow\render {
 				WAS
 				$key_field = $field.'_'.$count;
 				*/
-                render\fields::set( $key_field, '' );
+                willow\render\fields::set( $key_field, '' );
 
                 // Format each field value based on type ( int, string, array, WP_Post Object ) ##
                 // each item is filtered as looped over -- q/render/format/GROUP/FIELD - ( $args, $fields ) ##
                 // results are saved back to the self::$fields array in String format ##
-                if ( self::field( $key_field, $key ) ) {
+                if ( $this->field( $key_field, $key ) ) {
 
                     // format ran ok ##
                     // h::log( 'd:>format ran ok.. so now we can update markup for field: '.$field );
-                    render\markup::set( $field, $count );
+                    willow\render\markup::set( $field, $count );
 
                 }
 
@@ -484,10 +491,10 @@ class format extends willow\render {
      * Currently, we only support Objects of type WP_Post - so validate with instance of ## 
      * @todo -- Extend this method a lot to deal with extra object types ##
      */
-    public static function format_object( $value = null, $field = null ){
+    public function format_object( $value = null, $field = null ){
 
         // allow filtering early ##
-        $value = \apply_filters( 'willow/render/format/object/'.self::$args['task'].'/'.$field, $value );
+        $value = \apply_filters( 'willow/render/format/object/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
 
         // WP_Post Object ##
         if ( $value instanceof \WP_Post ) {
@@ -506,7 +513,7 @@ class format extends willow\render {
         } else {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
 
             // this item needs to be removed from self::$fields
             render\fields::remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
@@ -529,7 +536,7 @@ class format extends willow\render {
     /**
      * Format WP_Post Objects
      */
-    public static function format_object_wp_post( \WP_Post $wp_post = null, $field = null ): bool {
+    public function format_object_wp_post( \WP_Post $wp_post = null, $field = null ): bool {
 
         // sanity ##
         if (
@@ -538,14 +545,20 @@ class format extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>No value or field passed to format_wp_post_object');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_post_object');
 
             return false;
 
 		}
 
+		// instatiate willow\type object ##
+		// $type_get = new willow\type\get( $this->plugin );
+
 		// define context ##
 		$context = 'WP_Post';
+
+		// render_fields object ##
+		// $render_fields = willow\render\fields( $this->plugin );
 
 		// h::log( $wp_post );
 
@@ -556,7 +569,7 @@ class format extends willow\render {
 		// h::log( 'Field: '.$field ); // whole object ##
 
         // now, we need to create some new $fields based on each value in self::$wp_post_fields ##
-        foreach( self::$wp_post_fields as $wp_post_field ) {
+        foreach( $this->plugin->get( '_wp_post_fields') as $wp_post_field ) {
 			
 			// h::log( 'Working: '.$wp_post_field.' context: '.$context );
 			// h::log( 't:>move to object.property - post.title - variable calls..' );
@@ -570,14 +583,18 @@ class format extends willow\render {
 				// case "ID" : // post special ##
 				case substr( $wp_post_field, 0, strlen( 'post_' ) ) === 'post_' :
 
-					$string = render\type::post( $wp_post, $wp_post_field, $field, $context );
+					$type_post = new willow\type\post( $this->plugin );
+
+					$string = $type_post->format( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
 				// author handlers ##	
 				case substr( $wp_post_field, 0, strlen( 'author_' ) ) === 'author_' :
 
-					$string = render\type::author( $wp_post, $wp_post_field, $field, $context );
+					$type_author = new willow\type\author( $this->plugin );
+
+					$string = $type_author->format( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
@@ -585,7 +602,9 @@ class format extends willow\render {
 				case substr( $wp_post_field, 0, strlen( 'category_' ) ) === 'category_' :
 				// case substr( $wp_post_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
 
-					$string = render\type::taxonomy( $wp_post, $wp_post_field, $field, $context );
+					$type_taxonomy = new willow\type\taxonomy( $this->plugin );
+
+					$string = $type_taxonomy->format( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
@@ -596,23 +615,28 @@ class format extends willow\render {
 	
 					// $attachment = \get_post( $attachment_id );
 
-					$string = render\type::media( $wp_post, $wp_post_field, $field, $context );
+					$type_media = new willow\type\media( $this->plugin );
+
+					$string = $type_media->format( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
 				case 'src' :
 		
-					// h::log( self::$args );
+					// h::log( $this->plugin->get( '_args' ) );
 
-					$string = render\type::media( $wp_post, $wp_post_field, $field, $context );
+					$type_media = new willow\type\media( $this->plugin );
+
+					$string = $type_media->format( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
 				case 'meta' :
 		
-					// h::log( self::$args );
+					// h::log( $this->plugin->get( '_args' ) );
+					$type_meta = new willow\type\meta( $this->plugin );
 
-					$string = render\type::meta( $wp_post, $wp_post_field, $field, $context );
+					$string = $type_meta->format( $wp_post, $wp_post_field, $field, $context );
 
 				break ;
 
@@ -632,15 +656,26 @@ class format extends willow\render {
 				// h::log( 'Field: '.$field.' / '.$wp_post_field.' returned an empty string' );
 
 				// log ##
-				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
+				h::log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
 
 				// next ... ##
 				continue;
 
 			}
 
+			// filter post fields -- global ##
+			$string = \apply_filters( 
+				'willow/render/type/'.$this->plugin->get( '_args')['context'], $string 
+			);
+
+			// filter group/field -- field specific ##
+			$string = \apply_filters( 
+				'willow/render/type/'.$this->plugin->get( '_args')['context'].'/'.$this->plugin->get( '_args')['task'], $string
+			);
+
 			// assign field and value ##
-			render\fields::set( $field.'.'.$wp_post_field, $string );
+			// willow\render\fields::set( $field.'.'.$wp_post_field, $string );
+			$this->render_fields->set( $field.'.'.$wp_post_field, $string );
 
 		}
 
@@ -685,7 +720,8 @@ class format extends willow\render {
 				}
 
 				// assign field and value ##
-				render\fields::set( $field.'.'.$key, $value );
+				// willow\render\fields::set( $field.'.'.$key, $value );
+				$this->render_fields->set( $field.'.'.$key, $value );
 
 			}
 
@@ -696,14 +732,10 @@ class format extends willow\render {
 
     }
 
-
-
-	
-
     /**
      * Format WP_Term Objects
      */
-    public static function format_object_wp_term( \WP_Term $wp_term = null, $field = null ) :bool {
+    public function format_object_wp_term( \WP_Term $wp_term = null, $field = null ) :bool {
 
         // sanity ##
         if (
@@ -712,7 +744,7 @@ class format extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>No value or field passed to format_wp_term_object');
+			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_term_object');
 
             return false;
 
@@ -728,7 +760,7 @@ class format extends willow\render {
 		// h::log( $field ); // whole object ##
 
         // now, we need to create some new $fields based on each value in self::$wp_term_fields ##
-        foreach( self::$wp_term_fields as $wp_term_field ) {
+        foreach( $this->plugin->get('_wp_term_fields') as $wp_term_field ) {
 			
 			// h::log( 'Working: '.$wp_term_field.' context: '.$context );
 			// h::log( 't:>move to object.property - post.title - variable calls..' );
@@ -817,7 +849,7 @@ class format extends willow\render {
 				h::log( 'Field: '.$field.' / '.$wp_term_field.' returned an empty string' );
 
 				// log ##
-				h::log( self::$args['task'].'~>e:Field: "'.$field.' / '.$wp_term_field.'" returned an empty string');
+				h::log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_term_field.'" returned an empty string');
 
 				// keep moving...
 				continue;
@@ -825,7 +857,8 @@ class format extends willow\render {
 			}
 
 			// assign field and value ##
-			render\fields::set( $field.'.'.$wp_term_field, $string );
+			// willow\render\fields::set( $field.'.'.$wp_term_field, $string );
+			$this->render_fields->set( $field.'.'.$wp_term_field, $string );
 
 		}
 
@@ -870,7 +903,8 @@ class format extends willow\render {
 				}
 
 				// assign field and value ##
-				render\fields::set( $field.'.'.$key, $value );
+				// willow\render\fields::set( $field.'.'.$key, $value );
+				$this->render_fields->set( $field.'.'.$key, $value );
 
 			}
 
@@ -881,16 +915,13 @@ class format extends willow\render {
 
     }
 
-
-
     /**
      * Get allowed fomats with filter ##
      * 
      */
-    public static function get_allowed()
-    {
+    public function get_allowed(){
 
-        return \apply_filters( 'willow/render/format/get_allowed', self::$format );
+        return \apply_filters( 'willow/render/format/get_allowed', $this->plugin->get( '_format') );
 
     }
 

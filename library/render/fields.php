@@ -1,31 +1,44 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\render;
 
-use willow\core;
-use willow\core\helper as h;
-use willow;
-use willow\parse;
-use willow\render;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class fields extends willow\render {
+class fields {
 
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Work passed field data into rendering format
      */
-    public static function prepare(){
+    public function prepare(){
+
+		// temp vars, updated when changed internally ##
+		$_args = $this->plugin->get( '_args' );
+		$_fields = $this->plugin->get( '_fields' );
 
         // check we have fields to loop over ##
         if ( 
-            ! self::$fields
-            || ! is_array( self::$fields ) 
+            ! $_fields
+            || ! is_array( $_fields ) 
         ) {
 
 			// h::log( self::$fields );
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>Error in $fields array' );
+			h::log( $_args['task'].'~>e:>Error in $fields array' );
 
 			// kick out ##
             return false;
@@ -35,28 +48,38 @@ class fields extends willow\render {
 		// h::log( self::$fields );
 
         // filter $args now that we have fields data from ACF ##
-        self::$args = core\filter::apply([ 
-            'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
-            'filter'        => 'willow/render/fields/prepare/before/args/'.self::$args['task'], // filter handle ##
-            'return'        => self::$args
-        ]); 
+        $_args = $this->plugin->get('filter')->apply([ 
+            'parameters'    => [ 'fields' => $_fields, 'args' => $_args ], // pass ( $fields, $args ) as single array ##
+            'filter'        => 'willow/render/fields/prepare/before/args/'.$_args['task'], // filter handle ##
+            'return'        => $_args
+		]); 
+		
+		// save ##
+		$this->plugin->set( '_args', $_args );
 
         // filter all fields before processing ##
-        self::$fields = core\filter::apply([ 
-            'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
-            'filter'        => 'willow/render/fields/prepare/before/fields/'.self::$args['task'], // filter handle ##
-            'return'        => self::$fields
-        ]); 
+        $_fields = $this->plugin->get('filter')->apply([ 
+            'parameters'    => [ 'fields' => $_fields, 'args' => $_args ], // pass ( $fields, $args ) as single array ##
+            'filter'        => 'willow/render/fields/prepare/before/fields/'.$_args['task'], // filter handle ##
+            'return'        => $_fields
+		]); 
+		
+		// save ##
+		$this->plugin->set( '_fields', $_fields );
 
-		// h::log( self::$fields );
+		// load again ##
+		$_args = $this->plugin->get( '_args' );
+		$_fields = $this->plugin->get( '_fields' );
+
+		// h::log( $_fields );
 		// h::log( self::$fields_map );
-		// h::log( 'hash: '.self::$args['config']['hash'] );
+		// h::log( 'hash: '.$_args['config']['hash'] );
 
 		// push in new duplicate fields from field_map, required for unique filters on variables ##
-		self::map();
+		$this->map();
 
         // start loop ##
-        foreach ( self::$fields as $field => $value ) {
+        foreach ( $_fields as $field => $value ) {
 
             // check field has a value ##
             if ( 
@@ -65,7 +88,7 @@ class fields extends willow\render {
             ) {
 
 				// log ##
-				h::log( self::$args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
+				h::log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
 
 				// h::log( 'Field empty: '.$field );
 
@@ -74,23 +97,24 @@ class fields extends willow\render {
             }
 
             // filter field before callback ##
-            $field = core\filter::apply([ 
-                'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => self::$args, 'fields' => self::$fields ], // params
-                'filter'        => 'willow/render/fields/prepare/before/callback/'.self::$args['task'].'/'.$field, // filter handle ##
+            $field = $this->plugin->get('filter')->apply([ 
+                'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => $_args, 'fields' => $_fields ], // params
+                'filter'        => 'willow/render/fields/prepare/before/callback/'.$_args['task'].'/'.$field, // filter handle ##
                 'return'        => $field
             ]); 
 
             // Callback methods on specified field ##
-            // Note - field includes a list of standard callbacks, which can be extended via the filter willow/render/callbacks/get ##
-            $value = render\callback::field( $field, $value );
+			// Note - field includes a list of standard callbacks, which can be extended via the filter willow/render/callbacks/get ##
+			$render_callback = new willow\render\callback( $this->plugin );
+            $value = $render_callback->field( $field, $value );
 
             // h::log( 'd:>After callback -- field: '.$field .' With Value:' );
             // h::log( $value );
 
             // filter field before format ##
-            $field = core\filter::apply([ 
-                'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => self::$args, 'fields' => self::$fields ], // params
-                'filter'        => 'willow/render/fields/prepare/before/format/'.self::$args['task'].'/'.$field, // filter handle ##
+            $field = $this->plugin->get('filter')->apply([ 
+                'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => $_args, 'fields' => $_fields ], // params
+                'filter'        => 'willow/render/fields/prepare/before/format/'.$_args['task'].'/'.$field, // filter handle ##
                 'return'        => $field
 			]); 
 			
@@ -99,21 +123,22 @@ class fields extends willow\render {
 
             // Format each field value based on type ( int, string, array, WP_Post Object ) ##
             // each item is filtered as looped over -- q/render/field/GROUP/FIELD - ( $args, $fields ) ##
-            // results are saved back to the self::$fields array in String format ##
-			render\format::field( $field, $value );
+			// results are saved back to the $_fields array in String format ##
+			$render_format = new willow\render\format( $this->plugin );
+			$render_format->field( $field, $value );
 
 		}
 		
         // filter all fields ##
-        self::$fields = core\filter::apply([ 
-            'parameters'    => [ 'fields' => self::$fields, 'args' => self::$args ], // pass ( $fields, $args ) as single array ##
-            'filter'        => 'willow/render/fields/prepare/after/fields/'.self::$args['task'], // filter handle ##
-            'return'        => self::$fields
+        $_fields = $this->plugin->get('filter')->apply([ 
+            'parameters'    => [ 'fields' => $_fields, 'args' => $_args ], // pass ( $fields, $args ) as single array ##
+            'filter'        => 'willow/render/fields/prepare/after/fields/'.$_args['task'], // filter handle ##
+            'return'        => $_fields
 		]); 
 
+		$this->plugin->set( '_fields', $_fields );
+
     }
-
-
 
 	/**
 	 * dupliate fields, for unique filters 
@@ -123,14 +148,18 @@ class fields extends willow\render {
 	 * @return 	void
 	 * 
 	*/
-	public static function map(){
+	public function map(){
 
 		// h::log( self::$scope_map );
-		// h::log( 'hash: '.self::$args['config']['hash'] );
+		// h::log( 'hash: '.$this->plugin->get( '_args' )['config']['hash'] );
+		
+		// local vars ##
+		$_scope_map = $this->plugin->get( '_scope_map' );
+		$_fields = $this->plugin->get( '_fields' );
 
 		if ( 
-			! self::$scope_map
-			|| ! is_array( self::$scope_map )
+			! $_scope_map
+			|| ! is_array( $_scope_map )
 		){
 
 			// no mapping required ##
@@ -138,7 +167,7 @@ class fields extends willow\render {
 
 		}
 
-		foreach( self::$fields as $field => $value ){
+		foreach( $_fields as $field => $value ){
 
 			// store
 			$field_matches = [];
@@ -152,7 +181,7 @@ class fields extends willow\render {
 
 				// h::log( 'scope map includes: '.$field_key[0] );
 
-				foreach( self::$scope_map[ $field_key[0] ] as $scope => $hash ){
+				foreach( $_scope_map[ $field_key[0] ] as $scope => $hash ){
 
 					// h::log( 'hash: '.$hash );
 
@@ -162,7 +191,8 @@ class fields extends willow\render {
 					// h::log( 'new_field_key: '.$new_field_key );
 
 					// add field ##
-					self::$fields[$new_field_key] = $value;
+					// self::$fields[$new_field_key] = $value;
+					$_fields[$new_field_key] = $value;
 
 				}
 
@@ -170,8 +200,10 @@ class fields extends willow\render {
 
 		}
 
-		// h::log( $field_matches );
+		// save fields ##
+		$this->plugin->set( '_fields', $_fields );
 
+		// h::log( $field_matches );
 
 		/*
 		// start loop -- this was first patch for field data.. perhaps we'll NOT need it ##
@@ -198,17 +230,17 @@ class fields extends willow\render {
 
 				// h::log( 'Found: '.$find_field.' in fields_map' );
 
-				if( ! is_array( self::$fields_map[ self::$args['config']['hash'] ][ $find_field ] ) ){
+				if( ! is_array( self::$fields_map[ $this->plugin->get( '_args' )['config']['hash'] ][ $find_field ] ) ){
 
 					// h::log( $find_field.' in fields_maps is not an array, so continuing...' );
 
 				} else {
 
-					foreach( self::$fields_map[ self::$args['config']['hash'] ][ $find_field ] as $map_key => $map_value ){
+					foreach( self::$fields_map[ $this->plugin->get( '_args' )['config']['hash'] ][ $find_field ] as $map_key => $map_value ){
 
 						// h::log( 'map_value: '.$map_value );
 						// h::log( '$find_field: '.$find_field );
-						// h::log( self::$args );
+						// h::log( $this->plugin->get( '_args' ) );
 
 						// prepare new key ##
 						$new_key = $field.str_replace( $find_field, '', $map_value );
@@ -230,30 +262,32 @@ class fields extends willow\render {
 		// h::log( self::$fields );
 		
 	}
-
-
 	
 	/**
 	 * Define $fields args for render methods
 	 * 
 	 * @since 1.0.0
 	*/
-	public static function define( $args = null ){
+	public function define( $args = null ){
 
 		// h::log( $args );
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_fields = $this->plugin->get( '_fields' );
 
 		// sanity ##
 		if (
 			! is_null( $args )
 			&& is_array( $args )
 			&& array_filter( $args ) // not an empty array ##
-			&& isset( self::$args )
-			&& is_array( self::$args )
-			&& isset( self::$args['context'] )
+			&& isset( $_args )
+			&& is_array( $_args )
+			&& isset( $_args['context'] )
 		){
 
 			// we cannot set default fields on buffer runs ##
-			if( 'primary' == self::$args['context'] ){
+			if( 'primary' == $_args['context'] ){
 
 				// h::log( 'NOT on buffer..' );
 
@@ -264,7 +298,7 @@ class fields extends willow\render {
 
 				reset( $args );
 				$first_key = key( $args );
-				self::$fields[$first_key] = $args[$first_key];
+				$_fields[$first_key] = $args[$first_key];
 				// h::log( $first_key );
 				// h::log( self::$fields );
 
@@ -280,17 +314,17 @@ class fields extends willow\render {
 			// $args = [];
 
 			if(
-				isset( self::$args['config']['default'] )
-				&& is_array( self::$args['config']['default'] )
+				isset( $_args['config']['default'] )
+				&& is_array( $_args['config']['default'] )
 			){
 
 				// h::log( 'config->default is defined' );
-				// h::log( self::$args['config']['default'] );
+				// h::log( $_args['config']['default'] );
 
 				// define args as config->default ##
 				
 				// REMOVED, default value is assigned in markup::prepare();
-				// $args = self::$args['config']['default'];
+				// $args = $_args['config']['default'];
 
 				// h::log( $args );
 
@@ -329,13 +363,18 @@ class fields extends willow\render {
 			// $value = self::escape( $key, $value );
 
 			// add to prop ##
-			self::$fields[$key] = $value;
+			// self::$fields[$key] = $value;
+			$_fields[$key] = $value;
 
 			// strip ##
 			// self::strip();
 
 		}
 
+		// save $_fields ##
+		$this->plugin->set( '_fields', $_fields );
+
+		// done ##
 		return true;
 
 	}	
@@ -345,7 +384,7 @@ class fields extends willow\render {
      * Add $field from self:$fields array
      * 
      */
-    public static function set( string $field = null, string $value = null ) {
+    public function set( string $field = null, string $value = null ) {
 
         // sanity ##
         if ( 
@@ -354,7 +393,7 @@ class fields extends willow\render {
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>No field or value passed to method.' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>No field or value passed to method.' );
 
             return false;
 
@@ -363,12 +402,15 @@ class fields extends willow\render {
 		// h::log( 'e:>Adding field: '.$field.' by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 		// h::log( $value );
 
-        // add field to array ##
-        self::$fields[$field] = $value;
+		// add field to array ##
+		// self::$fields[$field] = $value;
+		$_fields = $this->plugin->get( '_fields' );
+		$_fields[$field] = $value;
+		$this->plugin->set( '_fields', $_fields );
 
 		// log ##
-		h::log( self::$args['task'].'~>fields:>"'.$field.'"' );
-		// h::log( self::$args['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		h::log( $this->plugin->get( '_args' )['task'].'~>fields:>"'.$field.'"' );
+		// h::log( $this->plugin->get( '_args' )['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true;
@@ -381,23 +423,26 @@ class fields extends willow\render {
      * Remove $field from self:$fields array
      * 
      */
-    public static function remove( string $field = null ) {
+    public function remove( string $field = null ) {
 
         // sanity ##
         if ( is_null( $field ) ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>No field value passed to method.' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>No field value passed to method.' );
 
             return false;
 
         }
 
         // remove from array ##
-        unset( self::$fields[$field] );
+		// unset( self::$fields[$field] );
+		$_fields = $this->plugin->get( '_fields' );
+		unset( $_fields[$field] );
+		$this->plugin->set( '_fields', $_fields );
 
         // log ##
-		h::log( self::$args['task'].'~>fields_removed:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		h::log( $this->plugin->get( '_args' )['task'].'~>fields_removed:>"'.$field.'" by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true;
@@ -411,9 +456,12 @@ class fields extends willow\render {
      * 
      * @return  boolean
      */
-    public static function get_type( $field = null ){
+    public function get_type( $field = null ){
 
-		// h::log( self::$args );
+		// h::log( $this->plugin->get( '_args' ) );
+
+		$type_method = new willow\type\method( $this->plugin );
+		$_fields = $this->plugin->get( '_fields' );
 
 		// sanity ##
 		if(
@@ -421,51 +469,51 @@ class fields extends willow\render {
 		){
 
 			// get caller ##
-			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			h::log( self::$args['task'].'~>n:>'.$backtrace.' -> No $field passed' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> No $field passed' );
 
 			return false;
 
 		}
 
 		// h::log( 'd:>Checking Type of Field: "'.$field.'"' );
-		// h::log( self::$args );
+		// h::log( $this->plugin->get( '_args' ) );
 
 		// shortcut check for ui\method gather data ##
 		if ( 
-			isset( self::$args['config']['type'] ) 
-			&& array_key_exists( self::$args['config']['type'], render\type::get_allowed() )
+			isset( $this->plugin->get( '_args' )['config']['type'] ) 
+			&& array_key_exists( $this->plugin->get( '_args' )['config']['type'], $type_method->get_allowed() )
 		){
 
-			// h::log( 'd:>Shortcut to type passed in args: '.self::$args['config']['type'] );
+			// h::log( 'd:>Shortcut to type passed in args: '.$this->plugin->get( '_args' )['config']['type'] );
 
-			return self::$args['config']['type'];
+			return $this->plugin->get( '_args' )['config']['type'];
 
 		}
 
 		// sanity ##
 		if(
-			! isset( self::$fields ) // fields array is only set in "group" context
+			! isset( $_fields ) // fields array is only set in "group" context
 		){
 
 			// get caller ##
-			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			h::log( self::$args['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $fields empty' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $_fields empty' );
 
 			return false;
 
 		}
 
-		// h::log( self::$fields[$field] );
+		// h::log( $_fields[$field] );
 		// check if data is structured as an array of array ##
 		if ( 
-			isset( self::$fields[$field] )
-			&& render\method::is_array_of_arrays( self::$fields[$field] )
+			isset( $_fields )
+			&& willow\render\method::is_array_of_arrays( $_fields[$field] )
 		){
 
-			h::log( self::$args['task'].'~>n:>field: "'.$field.'" is an array of arrays, so set to repeater' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>field: "'.$field.'" is an array of arrays, so set to repeater' );
 
 			return 'repeater';
 
@@ -473,32 +521,32 @@ class fields extends willow\render {
 
 		// sanity ##
 		if(
-			! isset( self::$args['fields'] ) // fields array is only set in "group" context
+			! isset( $this->plugin->get( '_args' )['fields'] ) // fields array is only set in "group" context
 		){
 
 			// get caller ##
-			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			h::log( self::$args['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $args->fields empty' );
+			h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $args->fields empty' );
 
 			return false;
 
 		}
 
         if ( 
-			$key = core\method::array_search( 'key', 'field_'.$field, self::$args['fields'] )
+			$key = willow\core\method::array_search( 'key', 'field_'.$field, $this->plugin->get( '_args' )['fields'] )
         ){
 
-            // h::log( self::$args['fields'][$key] );
+            // h::log( $this->plugin->get( '_args' )['fields'][$key] );
 
             if ( 
-                isset( self::$args['fields'][$key]['type'] )
+                isset( $this->plugin->get( '_args' )['fields'][$key]['type'] )
             ) {
 
 				// log ##
-				h::log( self::$args['task'].'~>n:>Field: "'.$field.'" is Type: "'.self::$args['fields'][$key]['type'].'"' );
+				h::log( $this->plugin->get( '_args' )['task'].'~>n:>Field: "'.$field.'" is Type: "'.$this->plugin->get( '_args' )['fields'][$key]['type'].'"' );
 
-                return self::$args['fields'][$key]['type'];
+                return $this->plugin->get( '_args' )['fields'][$key]['type'];
 
             }
 
@@ -508,16 +556,13 @@ class fields extends willow\render {
         return false;
 
 	}
-	
-
-
 
     /**
      * Get callbacks registered for $field
      * 
      * @return  boolean
      */
-    public static function get_callback( $field = null ){
+    public function get_callback( $field = null ){
 
 		// sanity ##
 		if (
@@ -530,41 +575,44 @@ class fields extends willow\render {
 
 		}
 
+		// local var ##
+		$_args = $this->plugin->get( '_args' );
+
 		// helper::log( 'Checking Type of Field: "'.$field.'"' );
 		
 		// sanity ##
-		if ( ! isset( self::$args['fields'] ) ) {
+		if ( ! isset( $_args['fields'] ) ) {
 
 			// get caller ##
-			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>'.$backtrace.' -> "$args[fields]" is not defined' );
+			h::log( $_args['task'].'~>n:>'.$backtrace.' -> "$args[fields]" is not defined' );
 
 			return false;
 
 		}
 
-		// h::log( self::$args['fields'] );
+		// h::log( $_args['fields'] );
         if ( 
-            ! $key = core\method::array_search( 'key', 'field_'.$field, self::$args['fields'] )
+            ! $key = willow\core\method::array_search( 'key', 'field_'.$field, $_args['fields'] )
         ){
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>failed to find Field: "'.$field.'" data in $fields' );
+			h::log( $_args['task'].'~>n:>failed to find Field: "'.$field.'" data in $fields' );
 
             return false;
 
         }
 
-        // helper::log( self::$args['fields'][$key] );
+        // helper::log( $_args['fields'][$key] );
 
         if ( 
-            ! isset( self::$args['fields'][$key]['callback'] )
+            ! isset( $_args['fields'][$key]['callback'] )
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>Field: "'.$field.'" has no callback defined' );
+			h::log( $_args['task'].'~>n:>Field: "'.$field.'" has no callback defined' );
 
             return false;
 
@@ -574,12 +622,12 @@ class fields extends willow\render {
         // we need a "method" ##
         // "args" are optional.. I guess, but surely we'd send the field value to the passed method.. or perhaps not ##
         if ( 
-            ! is_array( self::$args['fields'][$key]['callback'] )
-            || ! isset( self::$args['fields'][$key]['callback']['method'] )
+            ! is_array( $_args['fields'][$key]['callback'] )
+            || ! isset( $_args['fields'][$key]['callback']['method'] )
         ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>Field: "'.$field.'" has a callback, but it is not correctly formatted - not an array or missing "method" key' );
+			h::log( $_args['task'].'~>n:>Field: "'.$field.'" has a callback, but it is not correctly formatted - not an array or missing "method" key' );
 
             return false;
 
@@ -588,22 +636,21 @@ class fields extends willow\render {
         // ok - we must be good now ##
 
         // assign to var ##
-        $callback = self::$args['fields'][$key]['callback'];
+        $callback = $_args['fields'][$key]['callback'];
 
 		// log ##
-		h::log( self::$args['task'].'~>n:>Field: "'.$field.'" has callback: "'.$callback['method'].'" sending back to caller' );
+		h::log( $_args['task'].'~>n:>Field: "'.$field.'" has callback: "'.$callback['method'].'" sending back to caller' );
 
         // filter ##
-        $callback = core\filter::apply([ 
-            'parameters'    => [ 'callback' => $callback, 'field' => $field, 'args' => self::$args, 'fiekds' => self::$fields ], // params ##
-            'filter'        => 'q/render/fields/get_callback/'.self::$args['task'].'/'.$field, // filter handle ##
+        $callback = $this->plugin->get('filter')->apply([ 
+            'parameters'    => [ 'callback' => $callback, 'field' => $field, 'args' => $_args, 'fiekds' => $this->plugin->get('_fields') ], // params ##
+            'filter'        => 'q/render/fields/get_callback/'.$_args['task'].'/'.$field, // filter handle ##
             'return'        => $callback
         ]); 
 
         // return ##
-        return self::$args['fields'][$key]['callback'];
+        return $_args['fields'][$key]['callback'];
 
     }
-
 
 }

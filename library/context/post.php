@@ -1,14 +1,26 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-use willow;
-use willow\context;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class post extends willow\context {
+class post {
 
-	public static function get( $args = null ){
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -38,15 +50,21 @@ class post extends willow\context {
 
 		}
 
-		// return \willow\get\post::$method;
+		h::log( 'e:>Class method IS callable: willow\get\post\\'.$method );
 
-		// h::log( 'e:>Class method IS callable: q\get\post\\'.$method );
+		// new object ##
+		$post = new willow\get\post( $this->plugin );
+
+		// return post method to 
+		$return = $post->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\post', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
 		// h::log( $return );
@@ -81,7 +99,7 @@ class post extends willow\context {
 		// @todo -- add filter to return value and avoid Q check and get routine ##
 
 		// Q needed to run get method ##
-		if ( ! class_exists( 'Q' ) ){ return false; }
+		// if ( ! class_exists( 'Q' ) ){ return false; }
 
 		// h::log( self::$markup );
 		// h::log( self::$args );

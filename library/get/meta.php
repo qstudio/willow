@@ -1,15 +1,25 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-// Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
-use willow\render;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class meta extends \willow\get {
+class meta {
 
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * link to parent, works for single WP Post or page objects
@@ -17,7 +27,7 @@ class meta extends \willow\get {
      * @since       1.0.1
      * @return      string   HTML
      */
-    public static function parent( $args = null ) {
+    public function parent( $args = null ) {
 
 		// h::log( 'here..' );
 		// h::log( $args );
@@ -57,7 +67,7 @@ class meta extends \willow\get {
 
 			// $args->ID = $the_post->post_parent;
 			if ( 
-				! $terms = get\post::object_terms([ 
+				! $terms = willow\get\post::object_terms([ 
 					'config' 		=> [ 
 						'post'		=> $args['config']['post']
 					],
@@ -99,7 +109,7 @@ class meta extends \willow\get {
 		// h::log( $array );
 
         // return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
@@ -111,8 +121,7 @@ class meta extends \willow\get {
      *
      * @since       4.1.0
      */
-    public static function field( $args = null )
-    {
+    public function field( $args = null ){
 
 		// sanity ##
 		if (
@@ -146,14 +155,12 @@ class meta extends \willow\get {
 
 	}
 
-	
-
 	/**
 	 * Get post author
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function author( $args = null ) {
+	public function author( $args = null ) {
 
 		// sanity ##
 		if (
@@ -202,13 +209,11 @@ class meta extends \willow\get {
 		// return $array;
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-
-	public static function comment( $args = null ){
+	public function comment( $args = null ){
 
 		// sanity ##
 		if (
@@ -227,7 +232,7 @@ class meta extends \willow\get {
 
 		// comments ##
 		if ( 
-			core\config::get([ 'context' => 'global', 'task' => 'config', 'property' => 'allow_comments' ])
+			$this->plugin->get( 'config' )->get([ 'context' => 'global', 'task' => 'config', 'property' => 'allow_comments' ])
 			&& 'open' == $post->comment_status // comments are open
 		) {
 			
@@ -262,7 +267,7 @@ class meta extends \willow\get {
 			// h::log( $array );
 
 			// return ##
-			return get\method::prepare_return( $args, $array );
+			return willow\get\method::prepare_return( $args, $array );
 
 		}
 
@@ -271,16 +276,13 @@ class meta extends \willow\get {
 
 	}
 
-
-
 	/**
     * Return the_date with specified format
     *
     * @since       1.0.1
     * @return      string       HTML
     */
-    public static function date( $args = null )
-    {
+    public function date( $args = null ){
 
 		// sanity ##
 		if (
@@ -302,7 +304,7 @@ class meta extends \willow\get {
 			\get_the_date( 
 				isset( $args['config']['date_format'] ) ? 
 				$args['date_format']['config'] : // take from value passed by caller ##
-					core\config::get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // take from global config ##
+					$this->plugin->get( 'config' )->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // take from global config ##
 					\apply_filters( 'q/format/date', 'F j, Y' ), // standard ##
 				$args['config']['post']->ID
 			);
@@ -310,11 +312,9 @@ class meta extends \willow\get {
 		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
-
 
 	/**
     * Return the_date with specified format
@@ -322,8 +322,7 @@ class meta extends \willow\get {
     * @since       1.0.1
     * @return      string       HTML
     */
-    public static function date_human( $args = null )
-    {
+    public function date_human( $args = null ){
 
 		// sanity ##
 		if (
@@ -349,20 +348,16 @@ class meta extends \willow\get {
 		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-
-	
     /**
     * The Post Data ( meta.. )
     *
     * @since       1.0.2
     */
-    public static function data( $args = null )
-    {
+    public static function data( $args = null ){
 
 		// sanity ##
 		if (
@@ -392,27 +387,25 @@ class meta extends \willow\get {
 		$array['date'] = self::date( $args );
 
 		// post author ##
-		$array = render\method::extract( get\meta::author( $args ), 'author_', $array );
+		$array = willow\render\method::extract( willow\get\meta::author( $args ), 'author_', $array );
 
 		// category will be an array, so create category_title, permalink and slug fields ##
-		$array = render\method::extract( get\taxonomy::category( $args ), 'category_', $array );
+		$array = willow\render\method::extract( willow\get\taxonomy::category( $args ), 'category_', $array );
 
 		// tag will be an array, so create tag_title, permalink and slug fields ##
-		$array = render\method::extract( get\taxonomy::tag( $args ), 'tag_', $array );
+		$array = willow\render\method::extract( willow\get\taxonomy::tag( $args ), 'tag_', $array );
 
 		// tags will be an array, we'll let the rendered deal with this via a section tag.. ##
-		$array['tags'] = get\taxonomy::tags( $args );
+		$array['tags'] = willow\get\taxonomy::tags( $args );
 
 		// comment will be an array, so create comment_count, link ##
-		$array = render\method::extract( get\meta::comment( $args ), 'comment_', $array );
+		$array = willow\render\method::extract( willow\get\meta::comment( $args ), 'comment_', $array );
 
 		// h::log( $array );
 
 		// return
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-	
-
 
 }

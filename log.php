@@ -1,9 +1,9 @@
 <?php
 
-namespace q\willow\core;
+namespace q\willow;
 
 use Q\willow\core;
-// use Q\willow\helper as h;
+use Q\willow\helper as h;
 
 class log {
 
@@ -26,7 +26,7 @@ class log {
 			't'				=> 'todo'
 		],
 		$key_array 			= [],
-		$on_run 			= true,
+		$on_run 			= false, // true
 		$on_shutdown 		= true,
 		$shutdown_key 		= [ 'error' ], // control log keys ##
 		$shutdown_key_debug = [ 'debug', 'todo' ] // control debug keys ##
@@ -51,7 +51,7 @@ class log {
 		$on_shutdown 		= \apply_filters( 'willow/core/log/on_shutdown', $this->on_shutdown );
 
 		// on_run set to true ##
-		if ( $on_run ) {
+		if ( true === $on_run ) {
 
 			// earliest possible action.. empty log ##
 			if( ! class_exists( 'Q' ) ) $this->empty();  

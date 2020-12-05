@@ -1,25 +1,32 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-// Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-// Q Theme ##
-use willow\theme;
+class query {
 
-class query extends \willow\get {
+	private
+		$plugin = null // this
+	;
 
-	
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Get Main Posts Loop
      *
      * @since       1.0.2
      */
-    public static function posts( $args = null ){
+    public function posts( $args = null ){
 
 		// sanity ##
 		if (
@@ -107,12 +114,9 @@ class query extends \willow\get {
 		// h::log( $array );
 
 		// filter and return array ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
     }
-
-
-
 
   	/**
      * Get Post object by post_meta query
@@ -120,10 +124,10 @@ class query extends \willow\get {
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function posts_by_meta( $args = array() ){
+    public function posts_by_meta( $args = array() ){
 
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
-        $args = ( object ) \wp_parse_args( $args, core\config::get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
+        $args = ( object ) \wp_parse_args( $args, $this->plugin->get( 'config' )->get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
 
         // grab page - polylang will take care of language selection ##
         $post_args = array(
@@ -159,17 +163,13 @@ class query extends \willow\get {
 
 	}
 
-
-
-
 	/**
      * Get Post object by post_meta query
      *
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function post_id_by_title( $args = null )
-    {
+    public static function post_id_by_title( $args = null ){
 
 		/*
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
@@ -220,16 +220,13 @@ class query extends \willow\get {
 
 	}
 
-
-
 	/**
      * Get Post object by post_meta query
      *
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function post_id_by_path( $args = null )
-    {
+    public static function post_id_by_path( $args = null ){
 
 		/*
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
@@ -279,9 +276,6 @@ class query extends \willow\get {
         return $post->ID;
 
 	}
-
-
-
 	
     /**
     * Get post with title %like% search term
@@ -293,8 +287,7 @@ class query extends \willow\get {
     * @since       0.3
     * @return      Mixed           Array || False
     */
-    public static function posts_with_title_like( $title = null, $method = 'get_col', $columns = array ( 'ID' ) )
-    {
+    public static function posts_with_title_like( $title = null, $method = 'get_col', $columns = array ( 'ID' ) ){
 
         // sanity check ##
         if ( ! $title ) { return false; }
@@ -330,9 +323,6 @@ class query extends \willow\get {
 
 	}
 	
-	
-
-
 	/**
      * Check if a page has children
      *
@@ -340,8 +330,7 @@ class query extends \willow\get {
      * @param       integer         $post_id
      * @return      boolean
      */
-    public static function has_children( $post_id = null )
-    {
+    public static function has_children( $post_id = null ){
 
         // nothing to do here ##
         if ( is_null ( $post_id ) ) { return false; }
@@ -395,6 +384,5 @@ class query extends \willow\get {
         }
 
     }
-
 
 }	

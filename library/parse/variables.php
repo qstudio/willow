@@ -1,12 +1,10 @@
 <?php
 
-namespace willow;
+namespace Q\willow\parse;
 
-use willow\core;
-use willow\core\helper as h;
-use willow;
+use Q\willow;
 
-class variables extends willow\parse {
+class variables {
 
 	private static 
 

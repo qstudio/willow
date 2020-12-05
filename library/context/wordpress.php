@@ -1,15 +1,25 @@
 <?php
 
-namespace willow\context;
+namespace Q\willow\context;
 
-use willow\core\helper as h;
-// use q\get;
-use willow;
-use willow\context;
-use willow\render; 
+use Q\willow\core\helper as h;
+use Q\willow;
 
-class wordpress extends willow\context {
+class wordpress {
 
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Get site option
@@ -35,7 +45,7 @@ class wordpress extends willow\context {
      */
     public static function enqueue_script( $args = null ) {
 
-		h::log( $args );
+		// h::log( $args );
 
 		// check if we have a valid script to enquque ##
 		// \wp_enqueue_script( $args[''] );

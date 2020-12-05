@@ -1,13 +1,11 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-use willow\core;
-use willow\core\helper as h;
-use willow\view;
-use willow\get;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class method extends \willow\get {
+class method {
 
 	/**
 	 * Prepare $array of data to be returned to render
@@ -16,7 +14,7 @@ class method extends \willow\get {
 	public static function prepare_return( $args = null, $array = null ) {
 
 		// get calling method for filters ##
-		$method = core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$method = willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
 
 		// sanity ##
 		if (
@@ -39,7 +37,7 @@ class method extends \willow\get {
 		$array = \apply_filters( 'willow/get/'.$method.'/array', $array, $args );
 
 		// run template specific filter on $array by $method ##
-		if ( $template = view\is::get() ) {
+		if ( $template = willow\view\is::get() ) {
 
 			// h::log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
 

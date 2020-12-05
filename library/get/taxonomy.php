@@ -1,23 +1,35 @@
 <?php
 
-namespace willow\get;
+namespace Q\willow\get;
 
-// Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\render;
-use willow\get;
+use Q\willow;
+use Q\willow\core\helper as h;
 
-class taxonomy extends \willow\get {
+class taxonomy {
 
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 	
 	/**
 	 * We need a generic get_taxonomy_terms method.. which distributes, based on post type and any passed tax / term ## 
 	 */
-	public static function terms( $args = null ){
+	public function terms( $args = null ){
+
+		$render_args = new willow\render\args( $this->plugin );
 
 		// global arg validator ##
-		if ( ! $args = render\args::prepare( $args ) ){ 
+		if ( ! $args = $render_args->prepare( $args ) ){ 
 	   
 			// h::log( 'Bailing..' ); 
 		
@@ -39,7 +51,7 @@ class taxonomy extends \willow\get {
 		// to highlight any active term, we get to know the first term->term_id of the current post ##
 		$active_term_id = '';
 		if ( 
-			$object_terms = get\post::object_terms([ 
+			$object_terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post']
 				],
@@ -106,16 +118,11 @@ class taxonomy extends \willow\get {
 		$array = [ 'terms' => $array ];
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-
-
-	
-
-	public static function category( $args = null ){
+	public function category( $args = null ){
 
 		// sanity ##
 		if (
@@ -131,7 +138,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -176,14 +183,12 @@ class taxonomy extends \willow\get {
 		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 	
-
-
 	
-	public static function categories( $args = null ){
+	public function categories( $args = null ){
 
 		// sanity ##
 		if (
@@ -199,7 +204,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -248,18 +253,14 @@ class taxonomy extends \willow\get {
 		}
 
 		// test ##
-		h::log( $array );
+		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-	
 
-
-	
-
-	public static function tag( $args = null ){
+	public function tag( $args = null ){
 
 		// sanity ##
 		if (
@@ -275,7 +276,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -320,13 +321,11 @@ class taxonomy extends \willow\get {
 		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-	
-	public static function tags( $args = null ){
+	public function tags( $args = null ){
 
 		// sanity ##
 		if (
@@ -342,7 +341,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -394,9 +393,8 @@ class taxonomy extends \willow\get {
 		// h::log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
 
 }
