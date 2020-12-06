@@ -13,29 +13,6 @@ class prepare {
 		$process = false
 	;
 	
-	/*
-	protected static
-		$regex = [
-			'clean'	=>"/[^A-Za-z0-9_]/" // clean up string to alphanumeric + _
-			// @todo.. move other regexes here ##
-
-		],
-
-		// per match flags ##
-		$flags_willow = false,
-		$flags_argument = false,
-		$flags_variable = false,
-		$flags_comment = false,
-		$flags_php_function = false,
-		$flags_php_variable = false,
-
-		// $parse_args = false,
-		$parse_context = false,
-		$parse_task = false
-
-	;
-	*/
-	
     /**
      * Apply Markup changes to passed template
      * find all placeholders in self::$markup and replace with matching values in self::$fields
@@ -60,8 +37,6 @@ class prepare {
 
 		// w__log( $this->args );
 		// w__log( 'process: '.$this->process );
-		// exit;
-		// store passed args - context/task ##
 
 		// used for assigning filters ##
 		if(
@@ -88,42 +63,37 @@ class prepare {
 
 		// pre-format markup to run any >> translatable strings << ##
 		// runs early and might be used to return data to arguments ##
-		// willow\parse\i18n::prepare( $args, $process );
+		$i18n = new willow\parse\i18n( $this->plugin );
+		$i18n->match( $this->args, $this->process );
 
 		// pre-format markup to run any >> php variables << ##
 		// runs early and might be used to return data to arguments ##
+		// __deprecated__ in 2.0.0
 		// willow\parse\php_variables::prepare( $args, $process );
 
 		// pre-format markup to run any >> functions << ##
 		// runs early and might be used to return data to arguments ##
-		// willow\parse\php_functions::prepare( $args, $process );
 		$php_functions = new willow\parse\php_functions( $this->plugin );
 		$php_functions->match( $this->args, $this->process );
 
 		// pre-format markup to extract daa from willows ##
-		// willow\parse\willows::prepare( $args, $process );
 		$willows = new willow\parse\willows( $this->plugin );
 		$willows->match( $this->args, $this->process );
 
 		// pre-format markup to extract loops ##
-		// willow\parse\loops::prepare( $args, $process );
 		$loops = new willow\parse\loops( $this->plugin );
-		// $loops->match( $this->args, $this->process );
+		$loops->match( $this->args, $this->process );
 
 		// pre-format markup to extract comments and place in html ##
-		// willow\parse\comments::prepare( $args, $process ); // 
+		$comments = new willow\parse\comments( $this->plugin );
+		$comments->match( $this->args, $this->process );
 
 		// pre-format markup to extract variable arguments - 
 		// goes last, as other tags might have added new variables to prepare ##
-		// willow\parse\variables::prepare( $args, $process );
 		$variables = new willow\parse\variables( $this->plugin );
 		$variables->match( $this->args, $this->process );
 
-
-
-
-
-		// w__log( 't:>THIS breaks many things, but is needed for filters to run and replace correctly.. TODO' );
+		// w__log( 't:>THIS is removed and does not seem required... TODO' );
 		// remove all flags before markup is parsed ##
 		####// flags::cleanup( $args, $process );
 

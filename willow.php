@@ -37,8 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // required bits to get set-up ##
-require_once __DIR__ . '/library/core/function.php';
-require_once __DIR__ . '/library/core/log.php';
+require_once __DIR__ . '/library/api/function.php';
 require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/plugin.php';
 

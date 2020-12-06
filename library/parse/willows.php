@@ -8,6 +8,7 @@ class willows {
 
 	private 
 		$plugin = false,
+		$parse_flags = false,
 
 		$willow_context,
 		$willow_task,
@@ -27,7 +28,8 @@ class willows {
 
 		$this->willow_context = false;
 		$this->willow_task = false;
-		$this->flags_willow = false;
+		// $this->flags_willow = false;
+		$this->plugin->set( '_flags_willow', false );
 		$this->willow_hash = false;
 		$this->willow = false;
 		$this->arguments = []; // NOTE, this is now an empty array ##
@@ -53,6 +55,9 @@ class willows {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
+
+		// flags ##
+		$this->parse_flags = new willow\parse\flags( $this->plugin );
 
 	}
 
@@ -242,7 +247,7 @@ class willows {
 
 		// look for Willow flags -- assigned to a filter for use late on, pre-rendering ##
 		$parse_flags = new willow\parse\flags( $this->plugin );
-		$this->willow = $parse_flags->get( $this->willow, 'willow' );
+		$this->willow = $this->parse_flags->get( $this->willow, 'willow' );
 		// w__log( $this->plugin->get( '_flags_willow' ) );
 
 		$parse_arguments = new willow\parse\arguments( $this->plugin );
@@ -557,8 +562,8 @@ class willows {
 		$render_args = new willow\render\args( $this->plugin );
 		$render_args->collect();
 		
-		// instantiate new class ##
-		$object = new willow\context( $this->plugin );
+		// instantiate new context loaded object ##
+		$context = new willow\context( $this->plugin );
 
 		// pass args, if set ##
 		if( $this->arguments ){
@@ -566,13 +571,13 @@ class willows {
 			w__log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'::'.$this->method );
 			// w__log( $this->arguments );
 			
-			$this->return = $object->{$this->willow}( $this->arguments );
+			$this->return = $context->{ $this->willow }( $this->arguments );
 
 		} else { 
 
 			w__log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'::'.$this->method );
 			// $this->return = call_user_func_array( $this->willow_array ); 
-			$this->return = $object->{$this->willow};
+			$this->return = $context->{ $this->willow };
 
 		}	
 

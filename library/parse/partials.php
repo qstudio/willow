@@ -30,6 +30,11 @@ class partials {
 	*/
 	function match( $args = null, $process = 'secondary' ){
 
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+
 		// global ##
 		$config = $this->plugin->get('config')->get([ 'context' => 'partial', 'task' => 'config' ]);
 		// w__log( $config );
@@ -50,16 +55,16 @@ class partials {
 			(
 				'secondary' == $process
 				&& (
-					null === ( $this->plugin->get('_markup') )
-					|| ! is_array( $this->plugin->get('_markup') )
-					|| ! isset( $this->plugin->get('_markup')['template'] )
+					null === ( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					null === $this->plugin->get('_buffer_markup' )
+					null === $_buffer_markup
 				)
 			)
 		){
@@ -77,14 +82,14 @@ class partials {
 			case "secondary" :
 
 				// get markup ##
-				$string = $this->plugin->get('_markup')['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = $this->plugin->get('_buffer_markup');
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -96,7 +101,7 @@ class partials {
 			|| is_null( $string )
 		){
 
-			w__log( $this->plugin->get('_args')['task'].'~>e:>Error in $string' );
+			w__log( $_args['task'].'~>e:>Error in $string' );
 
 			return false;
 
@@ -130,7 +135,7 @@ class partials {
 				|| ! $matches[1]
 			){
 
-				w__log( $this->plugin->get('_args')['task'].'~>e:>Error in returned matches array' );
+				w__log( $_args['task'].'~>e:>Error in returned matches array' );
 
 				return false;
 
@@ -146,7 +151,7 @@ class partials {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					w__log( $this->plugin->get('_args')['task'].'~>e:>Error in returned matches - no position' );
+					w__log( $_args['task'].'~>e:>Error in returned matches - no position' );
 
 					continue;
 
@@ -173,7 +178,7 @@ class partials {
 					// || ! isset( $markup ) 
 				){
 
-					w__log( $this->plugin->get('_args')['task'].'~>e:>Error in returned match function' );
+					w__log( $_args['task'].'~>e:>Error in returned match function' );
 
 					continue; 
 
@@ -187,7 +192,7 @@ class partials {
 
 				// test what we have ##
 				// w__log( 'd:>partial: "'.$partial.'"' );
-				// w__log( self::$args );
+				// w__log( $_args );
 
 				// perhaps better to hand this to a method, which can grab args ??
 				// $partial_data = core\config::get([ 'context' => $context, 'task' => $task ]);
@@ -199,7 +204,7 @@ class partials {
 					// || ! is_array( $partial_data )
 				){
 
-					w__log( $this->plugin->get('_args')['task'].'~>e:>Error in partial_data: "'.$partial.'"' );
+					w__log( $_args['task'].'~>e:>Error in partial_data: "'.$partial.'"' );
 					w__log( 'e:>Error loading config for partial: "'.$partial.'"' );
 
 					continue;
@@ -211,7 +216,7 @@ class partials {
 					is_string( $partial_data )
 				){
 
-					w__log( $this->plugin->get('_args')['task'].'~>d:>Partial: "'.$partial.'" only sent markup, so converting to array format' );
+					w__log( $_args['task'].'~>d:>Partial: "'.$partial.'" only sent markup, so converting to array format' );
 
 					$partial_data = [
 						'markup' => $partial_data
@@ -232,7 +237,7 @@ class partials {
 					&& false == $partial_data['config']['run']
 				){
 
-					// w__log( $this->plugin->get('_args')['task'].'~>n:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
+					// w__log( $_args['task'].'~>n:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
 					w__log( 'd:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
 
 					continue;
@@ -274,8 +279,13 @@ class partials {
 	}
 
 
-
+	/***/
 	public function cleanup( $args = null, $process = 'secondary' ){
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
 		$open = trim( willow\tags::g( 'par_o' ) );
 		$close = trim( willow\tags::g( 'par_c' ) );
@@ -291,16 +301,16 @@ class partials {
 			(
 				'secondary' == $process
 				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					! isset( self::$buffer_markup )
+					! isset( $_buffer_markup )
 				)
 			)
 		){
@@ -318,14 +328,14 @@ class partials {
 			case "secondary" :
 
 				// get markup ##
-				$string = self::$markup['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = self::$buffer_markup;
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -370,14 +380,16 @@ class partials {
 			case "secondary" :
 
 				// set markup ##
-				self::$markup['template'] = $string;
+				$_markup['template'] = $string;
+				$this->plugin->set( '_markup', $_markup );
 
 			break ;
 
 			case "primary" :
 
 				// set markup ##
-				self::$buffer_markup = $string;
+				$_buffer_markup = $string;
+				$this->plugin->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

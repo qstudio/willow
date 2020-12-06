@@ -1,40 +1,49 @@
 <?php
 
-namespace willow;
+namespace Q\willow\parse;
 
-use willow;
-use willow\core;
-use willow\core\helper as h;
-use willow\render;
+use Q\willow;
 
-class comments extends willow\parse {
+class comments {
 
-	private static 
+	private 
+		$plugin = false,
+		$parse_flags = false,
 
 		$comment_hash, 
 		$comment,
 		$comment_match
-	
 	;
 
-
-	private static function reset(){
-
-		self::$comment_hash = false; 
-		self::$comment = false;
-		self::$comment_match = false;
-		self::$flags_comment = false;
-
+	private function reset(){
+		$this->comment_hash = false; 
+		$this->comment = false;
+		$this->comment_match = false;
+		$this->flags_comment = false;
 	}
 
+	public function __construct( \Q\willow\plugin $plugin ){
 
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+		// flags ##
+		$this->parse_flags = new willow\parse\flags( $this->plugin );
+
+	}
 
 	/**
 	 * Scan for comments in markup and convert to variables and $fields and also to error log ##
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function prepare( $args = null, $process = 'secondary' ){
+	public function match( $args = null, $process = 'secondary' ){
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_map = $this->plugin->get( '_buffer_map' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
 		// sanity -- this requires ##
 		// sanity -- method requires requires ##
@@ -42,16 +51,16 @@ class comments extends willow\parse {
 			(
 				'secondary' == $process
 				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					! isset( self::$buffer_markup )
+					! isset( $_buffer_markup )
 				)
 			)
 		){
@@ -69,14 +78,14 @@ class comments extends willow\parse {
 			case "secondary" :
 
 				// get markup ##
-				$string = self::$markup['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = self::$buffer_markup;
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -88,7 +97,7 @@ class comments extends willow\parse {
 			|| is_null( $string )
 		){
 
-			w__log( self::$args['task'].'~>e:>Error in $markup' );
+			w__log( $_args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
@@ -98,8 +107,8 @@ class comments extends willow\parse {
 
 		// get all comments, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( willow\tags::g( 'com_o' ) );
-		$close = trim( willow\tags::g( 'com_c' ) );
+		$open = trim( $this->plugin->get( 'tags' )->g( 'com_o' ) );
+		$close = trim( $this->plugin->get( 'tags' )->g( 'com_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -131,7 +140,7 @@ class comments extends willow\parse {
 			foreach( $matches[1] as $match => $value ) {
 
 				// clear slate ##
-				self::reset();
+				$this->reset();
 
 				// position to add placeholder ##
 				if ( 
@@ -153,19 +162,20 @@ class comments extends willow\parse {
 				// w__log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 				
 				// get a single comment ##
-				self::$comment = core\method::string_between( $matches[0][$match][0], $open, $close );
+				$this->comment = core\method::string_between( $matches[0][$match][0], $open, $close );
 
 				// return entire function string, including tags for tag swap ##
-				self::$comment_match = core\method::string_between( $matches[0][$match][0], $open, $close, true );
+				$this->comment_match = core\method::string_between( $matches[0][$match][0], $open, $close, true );
 
 				// look for flags ##
 				// self::flags();
-				self::$comment = flags::get( self::$comment, 'comment' );
-				// w__log( self::$flags_comment );
+				$this->comment = $this->parse_flags->get( $this->comment, 'comment' );
+				$_flags_comment = $this->plugin->get( '_flags_comment' );
+				// w__log( $this->plugin->get( '_flags_comment') );
 
 				// sanity ##
 				if ( 
-					! isset( self::$comment ) 
+					! isset( $this->comment ) 
 				){
 
 					w__log( 'e:>Error in returned match function' );
@@ -175,55 +185,58 @@ class comments extends willow\parse {
 				}
 
 				// clean up ##
-				self::$comment = trim(self::$comment);
+				$this->comment = trim( $this->comment );
 
 				// test what we have ##
-				// w__log( 'd:>comment: "'.self::$comment.'"' );
+				// w__log( 'd:>comment: "'.$this->comment.'"' );
 
 				// hash ##
-				self::$comment_hash = 'comment__'.\rand();
+				$this->comment_hash = 'comment__'.\rand();
 
-				// w__log( 'd:>comment hash: "'.self::$comment_hash.'"' );
+				// w__log( 'd:>comment hash: "'.$this->comment_hash.'"' );
 
 				// html comments are rendered on the UI, so require to add a variable tag to the markup ##
 				if( 
-					// isset( self::$flags_comment['h'] )
-					self::$flags_comment
-					&& is_array( self::$flags_comment )
+					// isset( $_flags_comment['h'] )
+					$_flags_comment
+					&& is_array( $_flags_comment )
 					&& (
-						in_array( 'html', self::$flags_comment )
-						|| in_array( 'h', self::$flags_comment ) // shortcut to 'html' ##
+						in_array( 'html', $_flags_comment )
+						|| in_array( 'h', $_flags_comment ) // shortcut to 'html' ##
 					)
 				){
 
 					// add data to buffer map ##
-					self::$buffer_map[] = [
+					$_buffer_map[] = [
 						'hash'		=> self::$comment_hash,
 						'tag'		=> self::$comment_match,
 						'output'	=> '<!-- '.self::$comment.' -->',
 						'parent'	=> false
 					];
 
+					// re-save _buffer_map ##
+					$this->plugin->set( '_buffer_map', $_buffer_map ); 
+
 				}
 				
 				// PHP log ##
 				if ( 
-					// isset( self::$flags_comment['p'] )
-					self::$flags_comment
-					&& is_array( self::$flags_comment )
+					// isset( $_flags_comment['p'] )
+					$_flags_comment
+					&& is_array( $_flags_comment )
 					&& (
-						in_array( 'php', self::$flags_comment )
-						|| in_array( 'p', self::$flags_comment ) // shortcut to 'php' ##
+						in_array( 'php', $_flags_comment )
+						|| in_array( 'p', $_flags_comment ) // shortcut to 'php' ##
 					)
 				){
 
 					// also, add a log entry ##
-					w__log( 'd:>'.self::$comment );
+					w__log( 'd:>'.$this->comment );
 
 				}
 
 				// clear slate ##
-				self::reset();
+				$this->reset();
 
 			}
 
@@ -236,11 +249,16 @@ class comments extends willow\parse {
 	}
 
 
+	/***/
+	public function cleanup( $args = null, $process = 'secondary' ){
 
-	public static function cleanup( $args = null, $process = 'secondary' ){
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
-		$open = trim( willow\tags::g( 'com_o' ) );
-		$close = trim( willow\tags::g( 'com_c' ) );
+		$open = trim( $this->plugin->get( 'tags' )->g( 'com_o' ) );
+		$close = trim( $this->plugin->get( 'tags' )->g( 'com_c' ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -253,16 +271,16 @@ class comments extends willow\parse {
 			(
 				'secondary' == $process
 				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					! isset( self::$buffer_markup )
+					! isset( $_buffer_markup )
 				)
 			)
 		){
@@ -280,14 +298,14 @@ class comments extends willow\parse {
 			case "secondary" :
 
 				// get markup ##
-				$string = self::$markup['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = self::$buffer_markup;
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -334,22 +352,21 @@ class comments extends willow\parse {
 			case "secondary" :
 
 				// set markup ##
-				self::$markup['template'] = $string;
+				$_markup['template'] = $string;
+				$this->plugin->set( '_markup', $_markup );
 
 			break ;
 
 			case "primary" :
 
 				// set markup ##
-				self::$buffer_markup = $string;
+				$_buffer_markup = $string;
+				$this->plugin->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 
 		} 
 
 	}
-
-
-
 
 }

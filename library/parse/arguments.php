@@ -137,6 +137,11 @@ class arguments {
 	*/
 	public function cleanup( $args = null, $process = 'secondary' ){
 
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+
 		$open = trim( willow\tags::g( 'arg_o' ) );
 		$close = trim( willow\tags::g( 'arg_c' ) );
 
@@ -154,16 +159,16 @@ class arguments {
 			(
 				'secondary' == $process
 				&& (
-					! isset( self::$markup )
-					|| ! is_array( self::$markup )
-					|| ! isset( self::$markup['template'] )
+					! isset( $_markup )
+					|| ! is_array( $_markup )
+					|| ! isset( $_markup['template'] )
 				)
 			)
 			||
 			(
 				'primary' == $process
 				&& (
-					! isset( self::$buffer_markup )
+					! isset( $_buffer_markup )
 				)
 			)
 		){
@@ -181,14 +186,14 @@ class arguments {
 			case "secondary" :
 
 				// get markup ##
-				$string = self::$markup['template'];
+				$string = $_markup['template'];
 
 			break ;
 
 			case "primary" :
 
 				// get markup ##
-				$string = self::$buffer_markup;
+				$string = $_buffer_markup;
 
 			break ;
 
@@ -235,14 +240,16 @@ class arguments {
 			case "secondary" :
 
 				// set markup ##
-				self::$markup['template'] = $string;
+				$_markup['template'] = $string;
+				$this->plugin->set( '_markup', $_markup );
 
 			break ;
 
 			case "primary" :
 
 				// set markup ##
-				self::$buffer_markup = $string;
+				$_buffer_markup = $string;
+				$this->plugin->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

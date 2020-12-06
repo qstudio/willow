@@ -2,7 +2,6 @@
 
 namespace Q\willow\parse;
 
-// use Q\willow\core\helper as h;
 use Q\willow;
 
 class cleanup {
@@ -12,29 +11,6 @@ class cleanup {
 		$args = false,
 		$process = false
 	;
-
-	/*
-	protected 
-		$regex = [
-			'clean'	=>"/[^A-Za-z0-9_]/" // clean up string to alphanumeric + _
-			// @todo.. move other regexes here ##
-
-		],
-
-		// per match flags ##
-		$flags_willow = false,
-		$flags_argument = false,
-		$flags_variable = false,
-		$flags_comment = false,
-		$flags_php_function = false,
-		$flags_php_variable = false,
-
-		// $parse_args = false,
-		$parse_context = false,
-		$parse_task = false
-
-	;
-	*/
 
 	public function __construct( \Q\willow\plugin $plugin ){
 
@@ -64,30 +40,35 @@ class cleanup {
 		// arguments::cleanup( $args, $process ); // @todo -- if required ##
 
 		// remove left-over i18n strings
-		i18n::cleanup( $args, $process );
+		// i18n::cleanup( $args, $process );
+		$willows = new willow\parse\i18n( $this->plugin );
+		$i18n->cleanup( $this->args, $this->process );
 
 		// remove left-over php variables
-		php_variables::cleanup( $args, $process );
+		// __deprecated in 2.0.0
+		// php_variables::cleanup( $args, $process );
 
 		// clean up stray function tags ##
-		php_functions::cleanup( $args, $process );
+		$php_functions = new willow\parse\php_functions( $this->plugin );
+		$php_functions->cleanup( $this->args, $this->process );
 
 		// clean up stray willow tags ##
-		// willows::cleanup( $args, $process );
 		$willows = new willow\parse\willows( $this->plugin );
 		$willows->cleanup( $this->args, $this->process );
 
-		// clean up stray section tags ##
-		loops::cleanup( $args, $process );
+		// clean up stray loop tags ##
+		$loops = new willow\parse\loops( $this->plugin );
+		$loops->cleanup( $this->args, $this->process );
 
 		// clean up stray partial tags ##
-		partials::cleanup( $args, $process );
+		$partials = new willow\parse\partials( $this->plugin );
+		$partials->cleanup( $this->args, $this->process );
 
 		// clean up stray comment tags ##
-		comments::cleanup( $args, $process );
+		$comments = new willow\parse\comments( $this->plugin );
+		$comments->cleanup( $this->args, $this->process );
 
 		// remove all spare vars ##
-		// variables::cleanup( $args, $process );
 		$variables = new willow\parse\variables( $this->plugin );
 		$variables->cleanup( $this->args, $this->process );
 
