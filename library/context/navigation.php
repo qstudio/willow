@@ -31,7 +31,7 @@ class navigation {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -45,7 +45,7 @@ class navigation {
 			|| ! is_callable([ 'Q\willow\get\navigation', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\navigation\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\navigation\\'.$method );
 
 			return false;
 
@@ -66,7 +66,7 @@ class navigation {
 		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

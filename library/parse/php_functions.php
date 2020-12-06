@@ -80,7 +80,7 @@ class php_functions {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -112,20 +112,20 @@ class php_functions {
 			|| is_null( $string )
 		){
 
-			// @todo // log-->h::log( $_args['task'].'~>e:>Error in $markup' );
+			w__log( $_args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
 		}
 
-		// h::log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( $this->plugin->get( 'tags' )->g( 'php_fun_o' ) );
 		$close = trim( $this->plugin->get( 'tags' )->g( 'php_fun_c' ) );
 
-		// h::log( 'open: '.$open. ' - close: '.$close );
+		// w__log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
 			'willow/parse/php_functions/regex/find', 
@@ -133,7 +133,7 @@ class php_functions {
 			// "/{{#(.*?)\/#}}/s" 
 		);
 
-		// h::log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
+		// w__log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
 		if ( 
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
@@ -145,7 +145,7 @@ class php_functions {
 				|| ! $matches[1]
 			){
 
-				h::log( 'e:>Error in returned matches array' );
+				w__log( 'e:>Error in returned matches array' );
 
 				return false;
 
@@ -161,7 +161,7 @@ class php_functions {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					h::log( 'e:>Error in returned matches - no position' );
+					w__log( 'e:>Error in returned matches - no position' );
 
 					continue;
 
@@ -186,7 +186,7 @@ class php_functions {
 			is_null( $match )
 		){
 
-			h::log( 'e:>No function match passed to format method' );
+			w__log( 'e:>No function match passed to format method' );
 
 			return false;
 
@@ -202,19 +202,19 @@ class php_functions {
 		$this->function_match = willow\core\method::string_between( $match, $open, $close, true );
 		$this->function = willow\core\method::string_between( $match, $open, $close );
 
-		// h::log( '$function_match: '.$function_match );
+		// w__log( '$function_match: '.$function_match );
 
 		// look for flags ##
 		// $this->function = flags::get( $this->function, 'php_function' );
 		$parse_flags = new willow\parse\flags( $this->plugin );
 		$this->function = $parse_flags->get( $this->function, 'php_function' );
-		// h::log( $this->plugin->get( '_flags_php_function' ) );
-		// h::log( $this->function );
+		// w__log( $this->plugin->get( '_flags_php_function' ) );
+		// w__log( $this->function );
 
 		// clean up ##
 		$this->function = trim( $this->function );
 
-		// h::log( 'Function: '.$this->function );
+		// w__log( 'Function: '.$this->function );
 
 		// sanity ##
 		if ( 
@@ -222,7 +222,7 @@ class php_functions {
 			|| ! isset( $this->function ) 
 		){
 
-			h::log( 'e:>Error in returned match function' );
+			w__log( 'e:>Error in returned match function' );
 
 			return false; 
 
@@ -230,7 +230,7 @@ class php_functions {
 
 		// default args ##
 		$this->function_hash = $this->function; // set hash to entire function, in case this has no config and is not class_method format ##
-		// h::log( 'hash set to: '.$function_hash );
+		// w__log( 'hash set to: '.$function_hash );
 
 		// $config_string = core\method::string_between( $value, '[[', ']]' )
 		$this->config_string = willow\core\method::string_between( 
@@ -265,7 +265,7 @@ class php_functions {
 					false !== strpos( $this->config_string, ',' )
 				){
 
-					// h::log('d:>Args are in csv: '.$this->config_string );
+					// w__log('d:>Args are in csv: '.$this->config_string );
 
 					$config_explode = explode( ',', $this->config_string );
 					// $config_explode = array_map( trim, $config_explode );
@@ -274,12 +274,12 @@ class php_functions {
 						return trim( $item, ' ' ); // trim whitespace, single and double quote ## ' \'"'
 					}, $config_explode );
 
-					// h::log( $config_explode );
+					// w__log( $config_explode );
 					$this->arguments = $config_explode;
 
 				} else {
 
-					// h::log('d:>Args are not an array or csv, to taking the whole string');
+					// w__log('d:>Args are not an array or csv, to taking the whole string');
 
 					// remove wrapping " quotation marks ## -- 
 					// @todo, needs to be move elegant or based on if this was passed as a string argument from the template ##
@@ -308,20 +308,20 @@ class php_functions {
 			strpos( $this->function, '::' )
 		){
 
-			// h::log( 'function is class::method' );
+			// w__log( 'function is class::method' );
 			// break function into class::method parts ##
 			list( $this->class, $this->method ) = explode( '::', $this->function );
 
 			// update hash ##
 			$this->function_hash = $this->method; 
-			// h::log( 'hash updated again to: '.$this->function_hash );
+			// w__log( 'hash updated again to: '.$this->function_hash );
 
 			if ( 
 				! $this->class 
 				|| ! $this->method 
 			){
 
-				h::log( 'e:>Error in passed function name, stopping here' );
+				w__log( 'e:>Error in passed function name, stopping here' );
 
 				return false;
 
@@ -333,7 +333,7 @@ class php_functions {
 			// clean up method name --
 			$this->method = willow\core\method::sanitize( $this->method, 'php_function' );
 
-			// h::log( 'class::method -- '.$this->class.'::'.$this->method );
+			// w__log( 'class::method -- '.$this->class.'::'.$this->method );
 
 			if ( 
 				! class_exists( $this->class )
@@ -341,7 +341,7 @@ class php_functions {
 				|| ! is_callable( $this->class, $this->method )
 			){
 
-				h::log( 'e:>Cannot find PHP Function --> '.$this->class.'::'.$this->method );
+				w__log( 'e:>Cannot find PHP Function --> '.$this->class.'::'.$this->method );
 
 				return false;
 
@@ -359,7 +359,7 @@ class php_functions {
 			// try to locate function directly in global scope ##
 			if ( ! function_exists( $this->function ) ) {
 					
-				h::log( 'd:>Cannot find function: '.$this->function );
+				w__log( 'd:>Cannot find function: '.$this->function );
 
 				return false;
 
@@ -373,20 +373,20 @@ class php_functions {
 		// class and method set -- so call ## 
 		if ( $this->class && $this->method ) {
 
-			// h::log( 'd:>Calling class_method: '.$this->class.'::'.$this->method );
+			// w__log( 'd:>Calling class_method: '.$this->class.'::'.$this->method );
 
 			// pass args, if set ##
 			if( $this->arguments ){
 
-				// h::log( 'passing args array to: '.$this->class.'::'.$this->method );
-				// h::log( $this->arguments );
+				// w__log( 'passing args array to: '.$this->class.'::'.$this->method );
+				// w__log( $this->arguments );
 
 				// global function returns are pushed directly into buffer ##
 				$this->return = $this->class::{ $this->method }( $this->arguments );
 
 			} else { 
 
-				// h::log( 'NOT passing args array to: '.$this->class.'::'.$this->method );
+				// w__log( 'NOT passing args array to: '.$this->class.'::'.$this->method );
 
 				// global function returns are pushed directly into buffer ##
 				$this->return = $this->class::{ $this->method }();
@@ -395,20 +395,20 @@ class php_functions {
 
 		} else {
 
-			// h::log( 'd:>Calling function: '.$this->function );
+			// w__log( 'd:>Calling function: '.$this->function );
 
 			// pass args, if set ##
 			if( $this->arguments ){
 
-				// h::log( 'passing args array to: '.$this->function );
-				// h::log( $this->arguments );
+				// w__log( 'passing args array to: '.$this->function );
+				// w__log( $this->arguments );
 				// $this->return = call_user_func( $this->function, $this->arguments );
 				// if( ! is_array() )
 				$this->return = call_user_func_array( $this->function, ( array )$this->arguments );
 
 			} else {
 
-				// h::log( 'NOT passing args array to: '.$this->function );
+				// w__log( 'NOT passing args array to: '.$this->function );
 
 				// global functions skip internal processing and return their results directly to the buffer ##
 				$this->return = call_user_func( $this->function ); // NOTE that calling this function directly was failing silently ##
@@ -417,11 +417,11 @@ class php_functions {
 
 		}
 
-		// h::log( $this->return );
+		// w__log( $this->return );
 
 		if ( ! isset( $this->return ) ) {
 
-			h::log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
+			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
 			parse\markup::swap( $this->function_match, '', 'php_function', 'string', $process );
 
@@ -434,12 +434,12 @@ class php_functions {
 			is_array( $this->return )
 		){
 
-			// h::log( $this->return );
-			h::log( '"'.$open.' '.$this->function.' '.$close.'" returned an array, Willow will try to convert to a string' );
+			// w__log( $this->return );
+			w__log( '"'.$open.' '.$this->function.' '.$close.'" returned an array, Willow will try to convert to a string' );
 
 			$this->return = implode ( " ", array_values( $this->return ) );
 			$this->return = trim( $this->return );
-			// h::log( 'return: '.$this->return );
+			// w__log( 'return: '.$this->return );
 
 		}
 
@@ -449,8 +449,8 @@ class php_functions {
 			&& ! is_integer( $this->return )
 		){
 
-			h::log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
-			// h::log( $this->return );
+			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
+			// w__log( $this->return );
 
 			parse\markup::swap( $this->function_match, '', 'php_function', 'string', $process );
 
@@ -459,15 +459,15 @@ class php_functions {
 		}
 
 		// filter ##
-		// h::log( $this->flags_php_function );
+		// w__log( $this->flags_php_function );
 		$_flags_php_function = $this->plugin->get( '_flags_php_function' );
 		if( 
 			$_flags_php_function
 			&& is_array( $_flags_php_function )
 		){
 
-			// h::log( $_flags_php_function );
-			// h::log( $this->return );
+			// w__log( $_flags_php_function );
+			// w__log( $this->return );
 			// bounce to filter::apply() ##
 			$filter_method = new willow\filter\method( $this->plugin );
 			$filter_return = $filter_method->apply([ 
@@ -476,7 +476,7 @@ class php_functions {
 				'use' 		=> 'php_function', // for filters ##
 			]);
 
-			// h::log( $filter_return );
+			// w__log( $filter_return );
 
 			// check if filters changed value ##
 			if( 
@@ -485,7 +485,7 @@ class php_functions {
 				&& $filter_return != $this->return // value chaged ##
 			){
 
-				h::log( 'd:>php_function fitlers changed value: '.$filter_return );
+				w__log( 'd:>php_function fitlers changed value: '.$filter_return );
 
 				// update class property ##
 				$this->return = $filter_return;
@@ -501,16 +501,16 @@ class php_functions {
 		]);
 
 		// replace function tag with raw return value for willw parse ##
-		// h::log( $_flags_php_function );
+		// w__log( $_flags_php_function );
 		if( 
 			$_flags_php_function
 			&& is_array( $_flags_php_function )
 			&& in_array( 'return', $_flags_php_function )
 		){
 
-			// h::log( $_flags_php_function );
+			// w__log( $_flags_php_function );
 
-			// h::log( 'e:>Replacing function: "'.$this->function_match.'" with function return value: '.$this->return );
+			// w__log( 'e:>Replacing function: "'.$this->function_match.'" with function return value: '.$this->return );
 
 			$string = $this->return;
 
@@ -529,7 +529,7 @@ class php_functions {
 			if ( ( $filter_key = array_search( 'return', $_flags_php_function) ) !== false) {
 				unset( $_flags_php_function[ $filter_key ] );
 			}
-			h::log( $_flags_php_function );
+			w__log( $_flags_php_function );
 			*/
 
 		} else {
@@ -563,7 +563,7 @@ class php_functions {
 		// 	// "/{{#.*?\/#}}/ms"
 		);
 
-		// h::log( 'e:>Running Function Cleanup' );
+		// w__log( 'e:>Running Function Cleanup' );
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
 
@@ -586,7 +586,7 @@ class php_functions {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -623,14 +623,14 @@ class php_functions {
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					h::log( 'd:>'.$count .' php function tags removed...' );
+					w__log( 'd:>'.$count .' php function tags removed...' );
 
 				}
 

@@ -34,10 +34,10 @@ class media {
 		// check if type allowed ##
 		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
 
-			// h::log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +48,7 @@ class media {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -67,19 +67,19 @@ class media {
 			|| ! isset( $context ) // can be WP_Post OR ... @todo
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return $string;
 
 		}
 
 		// check ##
-		// h::log( 'Field: '.$field.' - Type: '.$type_field.' - Attachment ID: '.$wp_post->ID );
+		// w__log( 'Field: '.$field.' - Type: '.$type_field.' - Attachment ID: '.$wp_post->ID );
 
 		// prepare args ##
 		$args['post'] = $wp_post; // we have a post, so send it to control the loading ##
 		$args['field'] = $field; // send on post_field name ##
-		// h::log( '$field: '.$field );
+		// w__log( '$field: '.$field );
 
 		// get context ##
 		switch ( $context ) {
@@ -90,13 +90,13 @@ class media {
 				$args['attachment_id'] = \get_post_thumbnail_id( $wp_post );
 				// $att vachment = \get_post( $attachment_id );
 
-				// h::log( $args );
+				// w__log( $args );
 
 				$get_media = new willow\get\media( $this->plugin );
 				$get_media->src( $args );
 				// $array = willow\get\media::src( $args );
 
-				// h::log( $array );
+				// w__log( $array );
 
 			break ;
 
@@ -109,7 +109,7 @@ class media {
 		) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>get\media::thumbnail returned bad data');
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>get\media::thumbnail returned bad data');
 
 			return $string;
 
@@ -123,7 +123,7 @@ class media {
 				// esc src array ##
 				// $array = array_map( 'esc_attr', $array );
 
-				// h::log( $array );
+				// w__log( $array );
 
 				// let's do this nicely -- remember we're starting inside src="{{}}" ##
 				// $markup = \apply_filters( 'q/render/type/media/src', '" data-src="{{ src }}" srcset="{{ srcset }}" sizes="{{ sizes }}" alt="{{ alt }}' );
@@ -131,7 +131,7 @@ class media {
 				// $string = render\method::markup( $markup, $array );
 
 				// $string = $array['src'];
-				// h::log( self::$args );
+				// w__log( self::$args );
 
 				// conditional -- add img meta values ( sizes ) and srcset ##
 				if ( 
@@ -170,14 +170,14 @@ class media {
 
 		}
 
-		// h::log( $string );
+		// w__log( $string );
 
 		// check ##
 		if ( 
 			is_null( $string ) 
 		) {
 
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>String is empty.. so return null' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>String is empty.. so return null' );
 
 		}
 

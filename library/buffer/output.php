@@ -13,7 +13,8 @@ class output {
      * @var     Object      $plugin
      */
 	protected 
-		$plugin
+		$plugin = false,
+		$render_args = false
 		// $is_willow // @TODO
 	;
 
@@ -24,7 +25,9 @@ class output {
 
         // grab passed plugin object ## 
 		$this->plugin = $plugin;
-		
+
+		$this->render_args = new willow\render\args( $this->plugin );
+
 	}
 
 	/**
@@ -48,7 +51,7 @@ class output {
         
 		}
 		
-		// $this->plugin->log( 'd:>Buffer hooks run..' );
+		// w__log( 'd:>Buffer hooks run..' );
 
 		// https://stackoverflow.com/questions/38693992/notice-ob-end-flush-failed-to-send-buffer-of-zlib-output-compression-1-in
 		\remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
@@ -62,7 +65,7 @@ class output {
 		// not on admin ##
 		if ( \is_admin() ) {
 
-			// $this->plugin->log( 'd:>Not running on admin' );
+			// w__log( 'd:>Not running on admin' );
 			
 			return false;
 
@@ -70,16 +73,19 @@ class output {
 
 		// \add_action( 'get_header',  [ get_class(), 'ob_start' ], 0 ); // try -- template_redirect.. was init
 		\add_action( 'wp',  function(){ 
+
+			// hook up filters ##
+			new willow\filter\apply( $this->plugin );
 			
 			// if ( 'willow' == \q\view\is::format() ){
 
-				// h::log( 'e:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
-				// h::log( 't:>TODO -- find out why large template content breaks this...??' );
+				// w__log( 'e:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
+				// w__log( 't:>TODO -- find out why large template content breaks this...??' );
 				return ob_start();
 
 			// }
 
-			// h::log( 'e:>not a willow template, so no ob: "'.\q\view\is::format().'"' );
+			// w__log( 'e:>not a willow template, so no ob: "'.\q\view\is::format().'"' );
 
 			// return false; 
 
@@ -90,7 +96,7 @@ class output {
 
 			if ( 'willow' != willow\core\method::template_format() ){
 
-				// h::log( 'e:>No buffer.. so no go' );
+				// w__log( 'e:>No buffer.. so no go' );
 
 				// ob_flush();
 				if( ob_get_level() > 0 ) ob_flush();
@@ -99,20 +105,20 @@ class output {
 			
 			}
 
-			// h::log( 'e:>Doing shutdown buffer' );
+			// w__log( 'e:>Doing shutdown buffer' );
 
 			$string = '';
 		
 			// We'll need to get the number of ob levels we're in, so that we can iterate over each, collecting
 			// that buffer's output into the final output.
 			$levels = ob_get_level();
-			// h::log( $levels );
+			// w__log( $levels );
 		
 			for ($i = 0; $i < $levels; $i++) {
 				$string .= ob_get_clean();
 			}
 
-			// h::log( 'e:>String: '.$string );
+			// w__log( 'e:>String: '.$string );
 
 			// ob_flush();
 			if( ob_get_level() > 0 ) ob_flush();
@@ -121,8 +127,7 @@ class output {
 			echo $this->prepare( $string );
 
 			// reset all args ##
-			$args = new willow\render\args( $this->plugin );
-			$args->reset();
+			$this->render_args->reset();
 
 		}, 0 );
 
@@ -141,7 +146,7 @@ class output {
 		){
 
 			// log ##
-			h::log( 'e:>$buffer is empty, so nothing to render.. stopping here.');
+			w__log( 'e:>$buffer is empty, so nothing to render.. stopping here.');
 
 			// kick out ##
 			return false;
@@ -149,7 +154,7 @@ class output {
 		}
 
 		// we are passed an html string, captured from output buffering, which we need to parse for tags and process ##
-		// h::log( $string );
+		// w__log( $string );
 
 		// build required args ##
 		$this->plugin->set( '_buffer_args', [
@@ -171,17 +176,18 @@ class output {
 		$this->plugin->set( '_args_default', $_args_default );
 
 		// prepare .willow template markup -- affects _buffer_map ##
-		$parse_prepare = new willow\parse\prepare( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
-		$parse_prepare->hooks();
+		$parse_prepare = new willow\parse\prepare( $this->plugin );
+		$parse_prepare->hooks( $this->plugin->get( '_buffer_args' ), 'primary' );
 
-		// h::log( self::$buffer_map );
+		// w__log( self::$buffer_map );
 		$buffer_map = new willow\buffer\map( $this->plugin );
 		$_buffer_map = $buffer_map->prepare();
 		$this->plugin->set( '_buffer_markup', $_buffer_map );
-		// h::log( $this->plugin->get( '_buffer_markup' ) );
+		// w__log( $this->plugin->get( '_buffer_markup' ) );
 
 		// clean up left over tags ##
-		new willow\parse\cleanup( $this->plugin, $this->plugin->get( '_buffer_args' ), 'primary' );
+		new willow\parse\cleanup( $this->plugin );
+		$parse_prepare->hooks( $this->plugin->get( '_buffer_args' ), 'primary' );
 		
 		// reset properties ##
 		$this->plugin->set( '_buffer_map', [] );

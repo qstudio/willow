@@ -4,7 +4,7 @@
 // namespace willow\core;
 
 // use willow\core;
-// use willow\core\helper as h;
+use Q\willow\core\log;
 
 /** 
  * Willow API 
@@ -54,6 +54,101 @@ if ( ! function_exists( 'willow' ) ) {
 
 		// return willow instance ## 
 		return $willow;
+
+	}
+
+}
+
+if ( ! function_exists( 'w__log' ) ) {
+
+	/**
+     * Write to WP Error Log
+     *
+     * @since       1.5.0
+     * @return      void
+     */
+	function w__log( $args = null ){
+
+		// shift callback level, as we added another level.. ##
+		\add_filter( 
+			'willow/core/log/backtrace/function', function () {
+			return 4;
+		});
+		\add_filter( 
+			'willow/core/log/backtrace/file', function () {
+			return 3;
+		});
+
+		// pass to core\log::set();
+		return log::set( $args );
+
+	}
+
+}
+
+if ( ! function_exists( 'w__log_direct' ) ) {
+
+	/**
+     * Write to WP Error Log directly, not via core\log
+     *
+     * @since       4.1.0
+     * @return      void
+     */
+	function w__log_direct( $args = null ){
+
+		// error_log( $args );
+
+		// sanity ##
+		if ( is_null( $args ) ) { 
+			
+			// error_log( 'Nothing passed to log(), so bailing..' );
+
+			return false; 
+		
+		}
+
+		// $args can be a string or an array - so fund out ##
+		if (  
+			is_string( $args )
+		) {
+
+			// default ##
+			$log = $args;
+
+		} elseif ( 
+			is_array( $args ) 
+			&& isset( $args['log_string'] )	
+		) {
+
+			// error_log( 'log_string => from $args..' );
+			$log = $args['string'];
+
+		} else {
+			
+			$log = $args;
+
+		} 
+
+		// debugging is on in WP, so write to error_log ##
+        if ( true === WP_DEBUG ) {
+
+			// get caller ##
+			$backtrace = Q\willow\core\method::backtrace();
+
+            if ( is_array( $log ) || is_object( $log ) ) {
+
+				log::error_log( print_r( $log, true ).' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
+				
+            } else {
+
+				log::error_log( $log.' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
+				
+            }
+
+		}
+		
+		// done ##
+		return true;
 
 	}
 

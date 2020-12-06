@@ -27,7 +27,7 @@ class media {
      */
     public function thumbnail( $args = null ){
 
-		// h::log( \willow::$args );
+		// w__log( \willow::$args );
 
 		// sanity ##
 		if (
@@ -37,7 +37,7 @@ class media {
 			// || ! $args['post'] instanceof \WP_Post
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -66,12 +66,12 @@ class media {
 		}
 
         // test incoming args ##
-        // h::log( $args );
+        // w__log( $args );
 
 		// check for post thumbnail ##
         if ( ! \has_post_thumbnail( $args['post']->ID ) ) { 
 			
-			// h::log( 'd:>'.$args['post']->post_type.' "'.$args['post']->post_title.'" does not have a thumbnail' );
+			// w__log( 'd:>'.$args['post']->post_type.' "'.$args['post']->post_title.'" does not have a thumbnail' );
 
 			return false; 
 		
@@ -82,13 +82,13 @@ class media {
 			! $args['attachment_id'] = \get_post_thumbnail_id( $args['post']->ID ) 
 		){
 
-			h::log('d:>get_post_thumbnail_id() for '.$args['post']->post_type.' "'.$args['post']->post_title.'" returned false' );
+			w__log('d:>get_post_thumbnail_id() for '.$args['post']->post_type.' "'.$args['post']->post_title.'" returned false' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 		
 		// bounce on to get src attrs ##
 		$array = $this->src( $args );
@@ -97,7 +97,7 @@ class media {
 		// if ( ! $array['src'] ) { return false; }
 		
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
         // kick back array ##
 		// return $array;
@@ -115,7 +115,7 @@ class media {
      */
     public function gallery( $args = null ){
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if (
@@ -123,7 +123,7 @@ class media {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -139,7 +139,7 @@ class media {
 		}
 
         // test incoming args ##
-        // h::log( $args );
+        // w__log( $args );
 
 		// check for post thumbnail ##
         if ( 
@@ -147,14 +147,14 @@ class media {
 			|| ! is_array( \get_field( 'media_gallery', $args['post']->ID ) )
 		) { 
 			
-			h::log( 'd:>Post does not have gallery images' );
+			w__log( 'd:>Post does not have gallery images' );
 
 			return false; 
 		
 		}
 
 		$get_field = \get_field( 'media_gallery', $args['post']->ID );
-		// h::log( $get_field );
+		// w__log( $get_field );
 
 		// gallery returns an array of IDs, so let's loop over each getting src_large and src_small from passed handles
 		$return = []; // new array ##
@@ -205,7 +205,7 @@ class media {
 		// if ( ! $array['src'] ) { return false; }
 		
 		// test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, [ 'gallery' => $return ] );
@@ -224,15 +224,15 @@ class media {
 			|| ! isset( $args['attachment_id'] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
 		}
 
 		// check and assign ##
-		// h::log( \willow::$args );
-		// h::log( $args );
+		// w__log( \willow::$args );
+		// w__log( $args );
 		// handle could be assigned in a few ways -- so, let's check them all in specific to generic order ##
 		// from passed args ##
 		if ( 
@@ -240,7 +240,7 @@ class media {
 		){
 
 			// nothing to do ##
-			// h::log( 'e:> Handle passed $args->handle: '.$args['handle'] );
+			// w__log( 'e:> Handle passed $args->handle: '.$args['handle'] );
 
 		// handle filtered into config by markup pre-processor at field level ##
 		} else if ( 
@@ -254,7 +254,7 @@ class media {
 
 			$args['handle'] = $this->plugin->get( '_args' )[ $args['field'] ]['config']['handle'];
 
-			// h::log( 'e:> Handle grabbed from field specific... config->handle: '.$args['handle'] );
+			// w__log( 'e:> Handle grabbed from field specific... config->handle: '.$args['handle'] );
 
 		// handle filtered into config by markup pre-processor at global level ##
 		} else if ( 
@@ -268,14 +268,14 @@ class media {
 
 			$args['handle'] = $this->plugin->get( '_args' )['config']['handle'];
 
-			// h::log( 'e:> Handle grabbed from global args... config->handle: '.$args['handle'] );
+			// w__log( 'e:> Handle grabbed from global args... config->handle: '.$args['handle'] );
 
 		// filterable default ##
 		} else {
 
 			$args['handle'] = \apply_filters( 'q/get/media/src/handle', 'medium' );
 
-			// h::log( 'e:> Handle set by filterable default: '.$args['handle'] );
+			// w__log( 'e:> Handle set by filterable default: '.$args['handle'] );
 
 		}
 
@@ -285,18 +285,18 @@ class media {
         //     \apply_filters( 'q/render/type/src/handle', 'medium' ); // filterable default ##
 
 		// Testing feedback ##
-		// h::log( 'e:>Handle: '.$args['handle'] );
-		// h::log( \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) );
+		// w__log( 'e:>Handle: '.$args['handle'] );
+		// w__log( \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) );
 		/*
-		h::log( \get_intermediate_image_sizes() );
+		w__log( \get_intermediate_image_sizes() );
 		global $_wp_additional_image_sizes;
 		if ( isset( $_wp_additional_image_sizes[ $args['handle'] ] ) ) {
-			h::log( $_wp_additional_image_sizes[ $args['handle'] ] ); 
+			w__log( $_wp_additional_image_sizes[ $args['handle'] ] ); 
 		}
 		*/
 
         // test incoming args ##
-        // h::log( \willow::$args[ $args['field'] ] );
+        // w__log( \willow::$args[ $args['field'] ] );
 
         // set-up a new array ##
         $array = [];
@@ -304,13 +304,13 @@ class media {
         // self::log( 'Handle: '.$args['handle'] );
 		if ( ! $src = \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) ){
 
-			h::log( $this->plugin->get( '_args' ).'~>n wp_get_attachment_image_src did not return data' );
+			w__log( $this->plugin->get( '_args' ).'~>n wp_get_attachment_image_src did not return data' );
 
 			return false;
 
 		}
 
-		// h::log( $src );
+		// w__log( $src );
 		
 		// take array items ##
 		$array['src'] = $src[0];
@@ -325,7 +325,7 @@ class media {
 		// image found ? ##
 		if ( ! $array['src'] ) { 
 		
-			h::log( 'd:>array->src missing, so cannot continue...' );
+			w__log( 'd:>array->src missing, so cannot continue...' );
 
 			return false; 
 		
@@ -352,7 +352,7 @@ class media {
 			*/
 		) {
 
-			// h::log( 'd:>Adding media meta' );
+			// w__log( 'd:>Adding media meta' );
 
 			// add caption values ##
 			$array = array_merge( 
@@ -362,7 +362,7 @@ class media {
 		
 		}
 
-		// h::log( 't:>global / local logic is wrong, as global always overrules local... look into that..' );
+		// w__log( 't:>global / local logic is wrong, as global always overrules local... look into that..' );
 		// conditional -- add img meta values ( sizes ) and srcset ##
         if ( 
 			// set locally..
@@ -384,7 +384,7 @@ class media {
 			*/
         ) {
 
-			// h::log( 'd:>Adding srcset' );
+			// w__log( 'd:>Adding srcset' );
 
 			// add srcset values ##
 			$array = array_merge( 
@@ -397,7 +397,7 @@ class media {
         // image found ? ##
 		// if ( ! $array['src'] ) { return false; }
 		
-		// h::log( $array );
+		// w__log( $array );
 
         // kick back array ##
         return $array;
@@ -422,7 +422,7 @@ class media {
 			|| ! isset( $args['handle'] )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return [];
 
@@ -460,7 +460,7 @@ class media {
 			// || ! is_int( $args['attachment_id'] )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return [];
 
@@ -482,8 +482,8 @@ class media {
 		$metadata = \wp_get_attachment_metadata( $args['attachment_id'] );
 		if ( $metadata ) {
 
-			h::log( 'd:>Adding metadata from: '.$args['attachment_id'] );
-			h::log( $metadata );
+			w__log( 'd:>Adding metadata from: '.$args['attachment_id'] );
+			w__log( $metadata );
 			
 			$array['caption'] = $metadata['image_meta']['caption'];
 			$array['credit'] = $metadata['image_meta']['credit'];
@@ -509,7 +509,7 @@ class media {
      */
     public function avatar( $args = array() ){
 
-		h::log( 't:>@todo..' );
+		w__log( 't:>@todo..' );
 		return false;
 
         // get the_post ##

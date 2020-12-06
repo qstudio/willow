@@ -59,7 +59,7 @@ class i18n extends willow\parse {
 			is_null( $string )
 		){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -74,7 +74,7 @@ class i18n extends willow\parse {
 			// $loo_o = strpos( $string, trim( willow\tags::g( 'i18n_o' )) );
 			// $loo_c = strrpos( $string, trim( willow\tags::g( 'i18n_c' )) );
 
-			// // h::log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			// // w__log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// // get string between opening and closing args ##
 			// $return_string = substr( 
@@ -84,7 +84,7 @@ class i18n extends willow\parse {
 
 			// $return_string = willow\tags::g( 'loo_o' ).$return_string.willow\tags::g( 'loo_c' );
 
-			// h::log( 'e:>$string: "'.$return_string.'"' );
+			// w__log( 'e:>$string: "'.$return_string.'"' );
 
 			return true;
 
@@ -103,7 +103,7 @@ class i18n extends willow\parse {
 			is_null( $match )
 		){
 
-			h::log( 'e:>No i18n match passed to format method' );
+			w__log( 'e:>No i18n match passed to format method' );
 
 			return false;
 
@@ -119,18 +119,18 @@ class i18n extends willow\parse {
 		$i18n_match = core\method::string_between( $match, $open, $close, true );
 		$i18n = core\method::string_between( $match, $open, $close );
 
-		// h::log( '$i18n_match: '.$i18n_match );
+		// w__log( '$i18n_match: '.$i18n_match );
 
 		// look for flags ##
 		// $i18n = flags::get( self::$function, 'i18n' );
 		// $i18n = flags::get( $i18n, 'function' );
-		// h::log( self::$flags_i18n );
-		// h::log( $i18n );
+		// w__log( self::$flags_i18n );
+		// w__log( $i18n );
 
 		// clean up ##
 		$i18n = trim( $i18n );
 
-		// h::log( 'e:>i18n: '.$i18n );
+		// w__log( 'e:>i18n: '.$i18n );
 
 		// sanity ##
 		if ( 
@@ -138,7 +138,7 @@ class i18n extends willow\parse {
 			|| ! isset( $i18n ) 
 		){
 
-			h::log( 'e:>Error in returned match i18n' );
+			w__log( 'e:>Error in returned match i18n' );
 
 			return false; 
 
@@ -148,7 +148,7 @@ class i18n extends willow\parse {
 		// $return_open = willow\tags::g( 'php_fun_o' );
 		// $return_close = willow\tags::g( 'php_fun_c' );
 
-		// h::log( 'e:>$i18n: '.$i18n );
+		// w__log( 'e:>$i18n: '.$i18n );
 
 		// concat return string ##
 		// $return = $return_open." [return] \__{+ ".$i18n." +}".$return_close;
@@ -159,7 +159,7 @@ class i18n extends willow\parse {
 		// run string via i18n callback ##
 		$return = \__( $i18n, 'willow' ); // self::textdomain()
 
-		// h::log( 'e:>'.$return );
+		// w__log( 'e:>'.$return );
 
 		// function returns which update the template also need to update the buffer_map, for later find/replace ##
 		// Seems like a potential pain-point ##
@@ -202,7 +202,7 @@ class i18n extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -234,20 +234,20 @@ class i18n extends willow\parse {
 			|| is_null( $string )
 		){
 
-			h::log( self::$args['task'].'~>e:>Error in $markup' );
+			w__log( self::$args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
 		}
 
-		// h::log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( willow\tags::g( 'i18n_o' ) );
 		$close = trim( willow\tags::g( 'i18n_c' ) );
 
-		// h::log( 'open: '.$open. ' - close: '.$close );
+		// w__log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
 			'willow/parse/i18n/regex/find', 
@@ -266,7 +266,7 @@ class i18n extends willow\parse {
 				|| ! $matches[1]
 			){
 
-				h::log( 'e:>Error in returned matches array' );
+				w__log( 'e:>Error in returned matches array' );
 
 				return false;
 
@@ -282,13 +282,13 @@ class i18n extends willow\parse {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					h::log( 'e:>Error in returned matches - no position' );
+					w__log( 'e:>Error in returned matches - no position' );
 
 					continue;
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// take match ##
 				$match = $matches[0][$match][0];
@@ -300,7 +300,7 @@ class i18n extends willow\parse {
 
 		} else {
 
-			// h::log( 'e:>No translation strings found' );
+			// w__log( 'e:>No translation strings found' );
 
 		}
 
@@ -321,7 +321,7 @@ class i18n extends willow\parse {
 		// 	// "/{{#.*?\/#}}/ms"
 		);
 
-		// h::log( 'e:>Running Function Cleanup' );
+		// w__log( 'e:>Running Function Cleanup' );
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
 
@@ -344,7 +344,7 @@ class i18n extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -381,14 +381,14 @@ class i18n extends willow\parse {
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					h::log( 'd:>'.$count .' i18n tags removed...' );
+					w__log( 'd:>'.$count .' i18n tags removed...' );
 
 				}
 

@@ -34,7 +34,7 @@ class meta {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -48,7 +48,7 @@ class meta {
 			|| ! is_callable([ 'Q\willow\get\meta', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\meta\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\meta\\'.$method );
 
 			return false;
 
@@ -56,7 +56,7 @@ class meta {
 
 		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: willow\get\meta\\'.$method );
+		// w__log( 'e:>Class method IS callable: willow\get\meta\\'.$method );
 
 		// return callback ##
 		$return = $this->get->{$method}( $args );
@@ -70,7 +70,7 @@ class meta {
 		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

@@ -37,10 +37,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // required bits to get set-up ##
+require_once __DIR__ . '/library/core/function.php';
+require_once __DIR__ . '/library/core/log.php';
 require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/plugin.php';
-require_once __DIR__ . '/library/core/function.php';
-require_once __DIR__ . '/library/context/_load.php';
 
 // plugin activation hook to store current application and plugin state ##
 \register_activation_hook( __FILE__, [ '\\Q\\willow\\plugin', 'activation_hook' ] );
@@ -62,7 +62,37 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 }
 
 // fire hooks - build log, helper and config objects and translations ## 
-\add_action( 'init', [ $plugin, 'hooks' ], 0 );
+// \add_action( 'init', [ $plugin, 'hooks' ], 0 );
+\add_action( 'init', function() use( $plugin ){
+
+	// build helper object ##
+	$plugin->set( 'helper', new willow\core\helper( $plugin ) );
+
+	// kick off config and store object ##
+	$config = new willow\core\config( $plugin );
+	$config->hooks();
+	$plugin->set( 'config', $config );
+
+	// kick off filter and store object ##
+	$plugin->set( 'filter', new willow\core\filter( $plugin ) );
+	// $this->filter->hooks();
+
+	// kick off tags and store object ##
+	$plugin->set( 'tags', new willow\core\tags( $plugin ) );
+	// $this->tags->hooks();
+
+	// kick off config and store object ##
+	$extend = new willow\context\extend( $plugin );
+	$extend->hooks();
+	$plugin->set( 'extend', $extend );
+
+	// set text domain on init hook ##
+	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );
+	
+	// check debug settings ##
+	\add_action( 'plugins_loaded', [ $plugin, 'debug' ], 11 );
+
+});
 
 // build output buffer ##
 \add_action( 'init', [ new willow\buffer\output( $plugin ), 'hooks' ], 1 );

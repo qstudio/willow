@@ -444,92 +444,12 @@ final class plugin {
 
         }
 
-        // Log::write( 'prop->set: '.$key.' -> '.$value );
+        // w__log( 'prop->set: '.$key.' -> '.$value );
 
         // set new value ##
-		// $this->props[ $key ] = $value;
 		return $this->{$key} = $value;
 
     }
-	
-	/**
-     * callback method for class instantiation
-     *
-     * @since   0.0.2
-     * @return  void
-     */
-	public function hooks() {
-
-		// get the single plugin instance ##
-		$plugin = self::get_instance();
-
-		// build helper object ##
-		$this->helper = new willow\core\helper( $plugin );
-		// $this->helper->hooks();
-
-		// kick off log ##
-		$this->log = new willow\core\log( $plugin );
-		$this->log->hooks();
-
-		// $this->log->set( 'loading libs..' );
-
-		// kick off config and store object ##
-		$this->config = new willow\core\config( $plugin );
-		$this->config->hooks();
-
-		// kick off filter and store object ##
-		$this->filter = new willow\core\filter( $plugin );
-		// $this->filter->hooks();
-
-		// kick off tags and store object ##
-		$this->tags = new willow\core\tags( $plugin );
-		// $this->tags->hooks();
-
-		// kick off config and store object ##
-		$this->extend = new willow\context\extend( $plugin );
-		$this->extend->hooks();
-
-		// kick off get and store object ##
-		// $this->get = new willow\get( $plugin );
-		// $this->get->hooks();
-
-		// test
-		// $this->log->set( 'Working from plugin class...' );
-
-        // set text domain on init hook ##
-		\add_action( 'init', [ $this, 'load_plugin_textdomain' ], 1 );
-		
-		// check debug settings ##
-		\add_action( 'plugins_loaded', [ $this, 'debug' ], 11 );
-
-	}
-	
-	/**
-     * Write to WP Error Log
-     *
-	 * @param		$args		Mixed		Data to log
-     * @since       1.5.0
-     * @return      void
-     */
-    public function log( $args = null ){
-		
-		// shift callback level, as we added another level.. ##
-		// @todo - we only need to this be set once ##
-		\add_filter( 
-			'willow/core/log/backtrace/function', function () {
-			return 4;
-		});
-		\add_filter( 
-			'willow/core/log/backtrace/file', function () {
-			return 3;
-		});
-
-		// error_log( 'Helper Log function..' );
-		
-		// pass to core\log::set();
-		return $this->log->set( $args );
-
-	}
 
     /**
      * Load Text Domain for translations
@@ -654,9 +574,9 @@ final class plugin {
 			$this->$debug;
 
 		// test ##
-		// helper::log( 'Q exists: '.json_encode( class_exists( 'Q' ) ) );
-		// helper::log( 'Q debug: '.json_encode( \Q::$debug ) );
-		// helper::log( json_encode( self::$debug ) );
+		// w__log( 'Q exists: '.json_encode( class_exists( 'Q' ) ) );
+		// w__log( 'Q debug: '.json_encode( \Q::$debug ) );
+		// w__log( json_encode( self::$debug ) );
 
 		return $this->$debug;
 

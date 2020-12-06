@@ -29,7 +29,7 @@ class args {
 	 */ 
 	public function reset(){
 
-		// $this->plugin->log( 'd:>reset args for: '.self::$args['task'] );
+		// w__log( 'd:>reset args for: '.self::$args['task'] );
 
 		// passed args ##
         $this->plugin->set( '_args', [ 'fields'	=> [] ] ); // default args array ##
@@ -47,13 +47,13 @@ class args {
 	 */ 
 	public function collect(){
 
-		// $this->plugin->log( 'd:>collect all args'); ##
+		// w__log( 'd:>collect all args'); ##
 
-		$this->collect['args'] = $this->plugin->get( '_args' );
-		$this->collect['output'] = $this->plugin->get( '_output' );
-		$this->collect['fields'] = $this->plugin->get( '_fields' );
-		$this->collect['markup'] = $this->plugin->get( '_markup' );
-		$this->collect['hash'] = $this->plugin->get( '_hash' );
+		$this->collect['_args'] = $this->plugin->get( '_args' );
+		$this->collect['_output'] = $this->plugin->get( '_output' );
+		$this->collect['_fields'] = $this->plugin->get( '_fields' );
+		$this->collect['_markup'] = $this->plugin->get( '_markup' );
+		$this->collect['_hash'] = $this->plugin->get( '_hash' );
 
 	}
 
@@ -64,35 +64,39 @@ class args {
 	 */ 
 	public function restore(){
 
-		// $this->plugin->log( 'd:>set all args'); ##
+		// w__log( 'd:>set all args'); ##
 
-		$this->plugin->set( '_args', $this->collect['args'] );
-		$this->plugin->set( '_output', $this->collect['output'] );
-		$this->plugin->set( '_fields', $this->collect['fields'] );
-		$this->plugin->set( '_markup', $this->collect['markup'] );
-		$this->plugin->set( '_hash', $this->collect['hash'] );
+		$this->plugin->set( '_args', $this->collect['_args'] );
+		$this->plugin->set( '_output', $this->collect['_output'] );
+		$this->plugin->set( '_fields', $this->collect['_fields'] );
+		$this->plugin->set( '_markup', $this->collect['_markup'] );
+		$this->plugin->set( '_hash', $this->collect['_hash'] );
 
 	}
 
     public function validate( $args = null ) {
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
 		// pre-format args to extract markup -- if only one string is passed, this will empty the args ##
 		// $args = render\markup::pre_config( $args );
 
 		// get stored config via lookup, fallback 
 		// pulls from Q, but available to filter via willow/config/load ##
-		$config = $this->plugin->get('config')->get( $args );
+		$config = $this->plugin->get( 'config' )->get( $args );
 
 		// test ##
-		// $this->plugin->log( $config );
+		// w__log( $config );
 
 		// Parse incoming $args into an array and merge it with $config defaults ##
 		// allows specific calling methods to alter passed $args ##
-		if ( $config ) $args = willow\core\method::parse_args( $args, $config );
+		if ( $config ) {
+		
+			$args = willow\core\method::parse_args( $args, $config );
+		
+		}
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
         // checks on required fields in $args array ##
         if (
@@ -102,15 +106,15 @@ class args {
         ){
 
 			// log ##
-			$this->plugin->log( $this->plugin->get('_args')['task'].'~>e:>Missing required args, so stopping here' );
+			w__log( $this->plugin->get('_args')['task'].'~>e:>Missing required args, so stopping here' );
 			
-			// $this->plugin->log( 'd:>Kicked here...' );
+			// w__log( 'd:>Kicked here...' );
 
             return false;
 
 		}
 
-		// $this->plugin->log( $args['config']['post'] );
+		// w__log( $args['config']['post'] );
 
 		// If posts is passed as an int, then get a matching post Object, as we can use the data later ## 
 		// validate passed post ##
@@ -123,7 +127,7 @@ class args {
 			// get new post, if corrupt ##
 			$args['config']['post'] = willow\get\post::object( $args['config'] );
 
-			// $this->plugin->log( 'Post set, but not an Object.. so getting again..: '.$args['config']['post']->ID );
+			// w__log( 'Post set, but not an Object.. so getting again..: '.$args['config']['post']->ID );
 
 		}
 
@@ -132,14 +136,14 @@ class args {
 
 			$args['config']['post'] = willow\get\post::object();
 
-			// $this->plugin->log( 'No post set, so getting: '.$args['config']['post']->ID );
+			// w__log( 'No post set, so getting: '.$args['config']['post']->ID );
 
 		}
 
 		// last check ##
 		if ( ! isset( $args['config']['post'] ) ) {
 
-			// $this->plugin->log( 'Error with post object, validate - returned as null.' );
+			// w__log( 'Error with post object, validate - returned as null.' );
 
 			$args['config']['post'] = null;
 
@@ -147,12 +151,12 @@ class args {
 
 		}
 
-		// $this->plugin->log( $args['config']['post']->ID );
+		// w__log( $args['config']['post']->ID );
 
         // assign properties with initial filters ##
 		$args = $this->assign( $args );
 		
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
         // // check if module asked to run $args['config']['run']
         // if ( 
@@ -162,7 +166,7 @@ class args {
         // ){
 
 		// 	// log ##
-		// 	$this->plugin->log( self::$args['task'].'~>n:>config->run defined as false for: '.$args['task'].', so stopping here.. ' );
+		// 	w__log( self::$args['task'].'~>n:>config->run defined as false for: '.$args['task'].', so stopping here.. ' );
 
         //     return false;
 
@@ -176,11 +180,11 @@ class args {
             && false === $args['config']['run']
         ){
 
-			// $this->plugin->log( $args );
+			// w__log( $args );
 
 			// log ##
-			$this->plugin->log( $args['task'].'~>n:>config->run defined as false for: '.$args['task'].', so stopping here.. ' );
-			// $this->plugin->log( 'd:>config run defined as false for: '.$args['task'].', so stopping here..' );
+			w__log( $args['task'].'~>n:>config->run defined as false for: '.$args['task'].', so stopping here.. ' );
+			// w__log( 'd:>config run defined as false for: '.$args['task'].', so stopping here..' );
 
             return false;
 
@@ -196,7 +200,8 @@ class args {
      */
     public function assign( Array $args = null ) {
 
-		$filter = new willow\core\filter( $this->plugin );
+		// get filter object ##
+		$filter = $this->plugin->get( 'filter' );
 
         // apply global filter to $args - specific calls should be controlled by parameters included directly ##
         $args = $filter->apply([
@@ -212,30 +217,30 @@ class args {
 			'return'        => $args
         ]);
 
-		// $this->plugin->log( core\config::$config );
+		// w__log( core\config::$config );
 			
 		// merge CONTEXT->global settings - this allows to pass config per context ##
 		if ( $config = $this->plugin->get('config')->get([ 'context' => $args['context'], 'task' => 'config' ]) ){
 
-			// $this->plugin->log( 'd:>Merging settings from: '.$args['context'].'->config' );
+			// w__log( 'd:>Merging settings from: '.$args['context'].'->config' );
 			$context_config = [ 'config' => $config ];
-			// $this->plugin->log( $context_config );
+			// w__log( $context_config );
 
-			// $this->plugin->log( $args );
+			// w__log( $args );
 
 			// merge in global__CONTEXT settings ##
-			// $this->plugin->log( 't:>NOTE, swapped order of merge here to try to give preference to task args over global args... keep an eye' );
+			// w__log( 't:>NOTE, swapped order of merge here to try to give preference to task args over global args... keep an eye' );
 			$args = willow\core\method::parse_args( $args, $context_config );
 			// $args = core\method::parse_args( $context_config, $args );
 
-			// $this->plugin->log( $args );
+			// w__log( $args );
 
 		}
 
 		// grab all passed args and merge with defaults -- this ensures we have config->run, config->debug etc.. ##
 		$args = willow\core\method::parse_args( $args, $this->plugin->get( '_args_default' ) );
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
 		// assign class property ##
 		// self::$args = $args;
@@ -259,7 +264,7 @@ class args {
 	*/
 	public function post_config(){
 
-		// $this->plugin->log( self::$args['markup'] );
+		// w__log( self::$args['markup'] );
 
 		// post-format markup to extract markup keys collected by config ##
 		$markup = new willow\render\markup( $this->plugin );
@@ -280,19 +285,19 @@ class args {
 			|| ! is_array( $array )
 		){
 
-			$this->plugin->log( 'Error in passed default parameter' );
+			w__log( 'Error in passed default parameter' );
 
 			return false;
 
 		}
 
-		$args = $this->plugin->get( '_args' );
-		$args['config']['default'] = $array;
-		$this->plugin->set( '_args' , $args );
+		$_args = $this->plugin->get( '_args' );
+		$_args['config']['default'] = $array;
+		$this->plugin->set( '_args' , $_args );
 
 		// self::$args['config']['default'] = $array;
 
-		$this->plugin->log( 'd:>Default value set to: '.var_export( $array, true ) );
+		w__log( 'd:>Default value set to: '.var_export( $array, true ) );
 
 		return true;
 
@@ -304,7 +309,7 @@ class args {
 	 */
 	public function prepare( $args = null ) {
 
-		// $this->plugin->log( 't:>merge with args::validate, just need to get config right..' );
+		// w__log( 't:>merge with args::validate, just need to get config right..' );
 
 		// sanity ##
 		if (
@@ -312,7 +317,7 @@ class args {
 		 	|| ! is_array( $args )
 		){
 
-		 	$this->plugin->log( 'e:>Error in passed args' );
+		 	w__log( 'e:>Error in passed args' );
 
 		 	return false;
 
@@ -331,22 +336,24 @@ class args {
 			$args['task'] = $task;
 		}
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
 		// get stored config via lookup, fallback 
 		// pulls from Q, but available to filter via willow/config/load ##
-		$config = $this->plugin->get('config')->get( $args );
+		$config = $this->plugin->get( 'config' )->get( $args );
 
 		// test ##
-		// $this->plugin->log( $config );
+		// w__log( $config );
 
 		// Parse incoming $args into an array and merge it with $config defaults ##
 		// allows specific calling methods to alter passed $args ##
 		if ( $config ) {
+
 			$args = willow\core\method::parse_args( $args, $config );
+
 		}
 
-		// $this->plugin->log( $config );
+		// w__log( $config );
 
         // checks on required fields in $args array ##
         if (
@@ -356,9 +363,9 @@ class args {
         ){
 
 			// log ##
-			$this->plugin->log( self::$args['task'].'~>e:>Missing required args, so stopping here' );
+			w__log( 'e:>Missing required args, so stopping here' );
 			
-			// $this->plugin->log( 'Kicked here...' );
+			// w__log( 'Kicked here...' );
 
             return false;
 
@@ -374,14 +381,14 @@ class args {
 		// 	core\config::get( $method ) ;
 
 		// // test ##
-		// // $this->plugin->log( $config );
+		// // w__log( $config );
 
 		// // Parse incoming $args into an array and merge it with $config defaults ##
 		// // allows specific calling methods to alter passed $args ##
 		// if ( $config ) $args = \wp_parse_args( $args, $config );
 
-		// $this->plugin->log( $config );
-		// $this->plugin->log( $args );
+		// w__log( $config );
+		// w__log( $args );
 
 		// merge any default args with any pass args ##
 		// if (
@@ -389,7 +396,7 @@ class args {
 		// 	|| ! is_array( $args )
 		// ) {
 
-		// 	$this->plugin->log( 'Error in passed $args' );
+		// 	w__log( 'Error in passed $args' );
 
 		// 	return false;
 
@@ -416,7 +423,7 @@ class args {
 		// last check ##
 		if ( ! $args['config']['post'] ) {
 
-			$this->plugin->log( 'Error with post object, validate - returned as null.' );
+			w__log( 'Error with post object, validate - returned as null.' );
 
 			$args['config']['post'] = null;
 
@@ -442,7 +449,7 @@ class args {
         ) {
 
 			// log ##
-			$this->plugin->log( $_args['task'].'~>e:>Error in passed $_args');
+			w__log( $_args['task'].'~>e:>Error in passed $_args');
 
             return false;
 
@@ -455,11 +462,11 @@ class args {
         // we also take one guess at the field name -- if it's not passed in config ##
         if ( 
             ! isset( $_args['enable'] )
-            && ! isset( self::$fields[$_args['task'].'_enable'] )
+            && ! isset( $_fields[$_args['task'].'_enable'] )
         ) {
 
 			// log ##
-			$this->plugin->log( $_args['task'].'~>n:>No enable defined in $args NOR enable field found for task: "'.$_args['task'].'"');
+			w__log( $_args['task'].'~>n:>No enable defined in $args NOR enable field found for task: "'.$_args['task'].'"');
 
             return true;
 
@@ -477,14 +484,14 @@ class args {
         ) {
 
 			// log ##
-			$this->plugin->log( $_args['task'].'~>n:>Field task: "'.$_args['task'].'" Enabled, continue');
+			w__log( $_args['task'].'~>n:>Field task: "'.$_args['task'].'" Enabled, continue');
 
             return true;
 
         }
 
 		// log ##
-		$this->plugin->log( $_args['task'].'~>n:>Field Group: "'.$_args['task'].'" NOT Enabled, stopping.');
+		w__log( $_args['task'].'~>n:>Field Group: "'.$_args['task'].'" NOT Enabled, stopping.');
 
         // negative ##
         return false;

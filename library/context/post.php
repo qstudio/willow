@@ -30,7 +30,7 @@ class post {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -44,13 +44,13 @@ class post {
 			|| ! is_callable([ 'Q\willow\get\post', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: Q\willow\get\post\\'.$method );
+			w__log( 'e:>Class method is not callable: Q\willow\get\post\\'.$method );
 
 			return false;
 
 		}
 
-		// h::log( 'e:>Class method IS callable: Q\willow\get\post\\'.$method );
+		// w__log( 'e:>Class method IS callable: Q\willow\get\post\\'.$method );
 
 		// new object ##
 		$post = new willow\get\post( $this->plugin );
@@ -67,7 +67,7 @@ class post {
 		*/
 
 		// // test ##
-		h::log( $return );
+		w__log( $return );
 
 		// kick back ##
 		return $return;
@@ -101,8 +101,8 @@ class post {
 		// Q needed to run get method ##
 		// if ( ! class_exists( 'Q' ) ){ return false; }
 
-		// h::log( self::$markup );
-		// h::log( self::$args );
+		// w__log( self::$markup );
+		// w__log( self::$args );
 
 		// build fields array with default values ##
 		$return = ([
@@ -116,7 +116,7 @@ class post {
 		if ( ! $array = \willow\get\query::posts( $args ) ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:query::posts did not return any data');
+			w__log( self::$args['task'].'~>n:query::posts did not return any data');
 
 		}
 
@@ -127,10 +127,10 @@ class post {
 			// || ! isset( $array['query']->posts ) 
 		){
 
-			// h::log( 'Error in data returned from query::posts' );
+			// w__log( 'Error in data returned from query::posts' );
 
 			// log ##
-			h::log( self::$args['task'].'~>n:Error in data returned from query::posts');
+			w__log( self::$args['task'].'~>n:Error in data returned from query::posts');
 
 		}
 		
@@ -140,8 +140,8 @@ class post {
 			|| 0 == count( $array['query']->posts )
 		){
 
-			// h::log( 'No results returned from the_posts' );
-			h::log( self::$args['task'].'~>n:No results returned from query::posts');
+			// w__log( 'No results returned from the_posts' );
+			w__log( self::$args['task'].'~>n:No results returned from query::posts');
 
 		// we have posts, so let's add some charm ##
 		} else {
@@ -149,7 +149,7 @@ class post {
 			// merge array into args ##
 			$args = \q\core\method::parse_args( $array, $args );
 
-			// h::log( $array['query']->found_posts );
+			// w__log( $array['query']->found_posts );
 
 			// define all required fields for markup ##
 			// self::$fields = [

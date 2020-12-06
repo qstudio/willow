@@ -35,17 +35,17 @@ class fields {
             || ! is_array( $_fields ) 
         ) {
 
-			// h::log( self::$fields );
+			// w__log( self::$fields );
 
 			// log ##
-			// @todo // log-->h::log( $_args['task'].'~>e:>Error in $fields array' );
+			w__log( $_args['task'].'~>e:>Error in $fields array' );
 
 			// kick out ##
             return false;
 
 		}
 		
-		// h::log( self::$fields );
+		// w__log( self::$fields );
 
         // filter $args now that we have fields data from ACF ##
         $_args = $this->plugin->get('filter')->apply([ 
@@ -71,9 +71,9 @@ class fields {
 		$_args = $this->plugin->get( '_args' );
 		$_fields = $this->plugin->get( '_fields' );
 
-		// h::log( $_fields );
-		// h::log( self::$fields_map );
-		// h::log( 'hash: '.$_args['config']['hash'] );
+		// w__log( $_fields );
+		// w__log( self::$fields_map );
+		// w__log( 'hash: '.$_args['config']['hash'] );
 
 		// push in new duplicate fields from field_map, required for unique filters on variables ##
 		$this->map();
@@ -88,9 +88,9 @@ class fields {
             ) {
 
 				// log ##
-				// @todo // log-->h::log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
+				w__log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
 
-				// h::log( 'Field empty: '.$field );
+				// w__log( 'Field empty: '.$field );
 
                 continue;
 
@@ -108,8 +108,8 @@ class fields {
 			$render_callback = new willow\render\callback( $this->plugin );
             $value = $render_callback->field( $field, $value );
 
-            // h::log( 'd:>After callback -- field: '.$field .' With Value:' );
-            // h::log( $value );
+            // w__log( 'd:>After callback -- field: '.$field .' With Value:' );
+            // w__log( $value );
 
             // filter field before format ##
             $field = $this->plugin->get('filter')->apply([ 
@@ -118,8 +118,8 @@ class fields {
                 'return'        => $field
 			]); 
 			
-			// h::log( 'd:>Field value: '.$value );
-			// h::log( $value );
+			// w__log( 'd:>Field value: '.$value );
+			// w__log( $value );
 
             // Format each field value based on type ( int, string, array, WP_Post Object ) ##
             // each item is filtered as looped over -- q/render/field/GROUP/FIELD - ( $args, $fields ) ##
@@ -150,8 +150,8 @@ class fields {
 	*/
 	public function map(){
 
-		// h::log( self::$scope_map );
-		// h::log( 'hash: '.$this->plugin->get( '_args' )['config']['hash'] );
+		// w__log( self::$scope_map );
+		// w__log( 'hash: '.$this->plugin->get( '_args' )['config']['hash'] );
 		
 		// local vars ##
 		$_scope_map = $this->plugin->get( '_scope_map' );
@@ -175,20 +175,20 @@ class fields {
 			// get first part of field key name  - before first dot ##
 			$field_key = explode( '.', $field );
 
-			// h::log( 'field: '.$field_key[0] );
+			// w__log( 'field: '.$field_key[0] );
 
 			if( array_key_exists( $field_key[0], self::$scope_map ) ){
 
-				// h::log( 'scope map includes: '.$field_key[0] );
+				// w__log( 'scope map includes: '.$field_key[0] );
 
 				foreach( $_scope_map[ $field_key[0] ] as $scope => $hash ){
 
-					// h::log( 'hash: '.$hash );
+					// w__log( 'hash: '.$hash );
 
 					// create new field key value ##
 					$new_field_key = $field_key[0].'__'.$hash.str_replace( $field_key[0], '', $field );
 
-					// h::log( 'new_field_key: '.$new_field_key );
+					// w__log( 'new_field_key: '.$new_field_key );
 
 					// add field ##
 					// self::$fields[$new_field_key] = $value;
@@ -203,7 +203,7 @@ class fields {
 		// save fields ##
 		$this->plugin->set( '_fields', $_fields );
 
-		// h::log( $field_matches );
+		// w__log( $field_matches );
 
 		/*
 		// start loop -- this was first patch for field data.. perhaps we'll NOT need it ##
@@ -220,7 +220,7 @@ class fields {
 
 			}
 			
-			// h::log( 'Search for: '.$field.' in fields_map' );
+			// w__log( 'Search for: '.$field.' in fields_map' );
 
 			if( 
 				self::$fields_map
@@ -228,24 +228,24 @@ class fields {
 				&& core\method::array_key_exists( self::$fields_map, $find_field )
 			){
 
-				// h::log( 'Found: '.$find_field.' in fields_map' );
+				// w__log( 'Found: '.$find_field.' in fields_map' );
 
 				if( ! is_array( self::$fields_map[ $this->plugin->get( '_args' )['config']['hash'] ][ $find_field ] ) ){
 
-					// h::log( $find_field.' in fields_maps is not an array, so continuing...' );
+					// w__log( $find_field.' in fields_maps is not an array, so continuing...' );
 
 				} else {
 
 					foreach( self::$fields_map[ $this->plugin->get( '_args' )['config']['hash'] ][ $find_field ] as $map_key => $map_value ){
 
-						// h::log( 'map_value: '.$map_value );
-						// h::log( '$find_field: '.$find_field );
-						// h::log( $this->plugin->get( '_args' ) );
+						// w__log( 'map_value: '.$map_value );
+						// w__log( '$find_field: '.$find_field );
+						// w__log( $this->plugin->get( '_args' ) );
 
 						// prepare new key ##
 						$new_key = $field.str_replace( $find_field, '', $map_value );
 
-						// h::log( 'New Key: '.$new_key );
+						// w__log( 'New Key: '.$new_key );
 
 						// assign existing key value to new key ##
 						self::$fields[$new_key] = $value;
@@ -259,7 +259,7 @@ class fields {
 		}
 		*/
 
-		// h::log( self::$fields );
+		// w__log( self::$fields );
 		
 	}
 	
@@ -270,7 +270,7 @@ class fields {
 	*/
 	public function define( $args = null ){
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// local vars ##
 		$_args = $this->plugin->get( '_args' );
@@ -289,26 +289,26 @@ class fields {
 			// we cannot set default fields on buffer runs ##
 			if( 'primary' == $_args['context'] ){
 
-				// h::log( 'NOT on buffer..' );
+				// w__log( 'NOT on buffer..' );
 
 			} else {
 
 				// collect entire array for array.X.property access ##
-				// h::log( $args );
+				// w__log( $args );
 
 				reset( $args );
 				$first_key = key( $args );
 				$_fields[$first_key] = $args[$first_key];
-				// h::log( $first_key );
-				// h::log( self::$fields );
+				// w__log( $first_key );
+				// w__log( self::$fields );
 
 			}
 
 		} else {
 
-			// h::log( $args );
+			// w__log( $args );
 
-			// h::log( 'e:>Error in $args ( empty or not an array ) by "'.core\method::backtrace([ 'level' => 4, 'return' => 'class_function' ]).'"' );
+			// w__log( 'e:>Error in $args ( empty or not an array ) by "'.core\method::backtrace([ 'level' => 4, 'return' => 'class_function' ]).'"' );
 
 			// return false;
 			// $args = [];
@@ -318,19 +318,19 @@ class fields {
 				&& is_array( $_args['config']['default'] )
 			){
 
-				// h::log( 'config->default is defined' );
-				// h::log( $_args['config']['default'] );
+				// w__log( 'config->default is defined' );
+				// w__log( $_args['config']['default'] );
 
 				// define args as config->default ##
 				
 				// REMOVED, default value is assigned in markup::prepare();
 				// $args = $_args['config']['default'];
 
-				// h::log( $args );
+				// w__log( $args );
 
 			} else {
 
-				// h::log( 'config->default NOT defined, so ending here.' );
+				// w__log( 'config->default NOT defined, so ending here.' );
 
 				// nothing cooking ##
 				return false;
@@ -339,12 +339,12 @@ class fields {
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 		// loop over array - saving key + value to self::$fields ##
 		foreach( $args as $key => $value ) {
 
-			// h::log( 'd:>add field key: '.$key );
-			// h::log( $value );
+			// w__log( 'd:>add field key: '.$key );
+			// w__log( $value );
 
 			// @TODO ##
 			// if ( is_string( $value ) ){
@@ -354,8 +354,8 @@ class fields {
 
 				// $value = render\markup::escape( $value );
 
-				// h::log( 'd:>add field key: '.$key );
-				// h::log( 'd:> ESCAPED: '.$value );
+				// w__log( 'd:>add field key: '.$key );
+				// w__log( 'd:> ESCAPED: '.$value );
 
 			// }
 
@@ -393,14 +393,14 @@ class fields {
         ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>No field or value passed to method.' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>No field or value passed to method.' );
 
             return false;
 
 		}
 		
-		// h::log( 'e:>Adding field: '.$field.' by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
-		// h::log( $value );
+		// w__log( 'e:>Adding field: '.$field.' by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( $value );
 
 		// add field to array ##
 		// self::$fields[$field] = $value;
@@ -409,8 +409,8 @@ class fields {
 		$this->plugin->set( '_fields', $_fields );
 
 		// log ##
-		// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>fields:>"'.$field.'"' );
-		// h::log( $this->plugin->get( '_args' )['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		w__log( $this->plugin->get( '_args' )['task'].'~>fields:>"'.$field.'"' );
+		// w__log( $this->plugin->get( '_args' )['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true;
@@ -429,7 +429,7 @@ class fields {
         if ( is_null( $field ) ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>No field value passed to method.' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>No field value passed to method.' );
 
             return false;
 
@@ -442,7 +442,7 @@ class fields {
 		$this->plugin->set( '_fields', $_fields );
 
         // log ##
-		// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>fields_removed:>"'.$field.'" by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		w__log( $this->plugin->get( '_args' )['task'].'~>fields_removed:>"'.$field.'" by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true;
@@ -458,7 +458,7 @@ class fields {
      */
     public function get_type( $field = null ){
 
-		// h::log( $this->plugin->get( '_args' ) );
+		// w__log( $this->plugin->get( '_args' ) );
 
 		$type_method = new willow\type\method( $this->plugin );
 		$_fields = $this->plugin->get( '_fields' );
@@ -471,14 +471,14 @@ class fields {
 			// get caller ##
 			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> No $field passed' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> No $field passed' );
 
 			return false;
 
 		}
 
-		// h::log( 'd:>Checking Type of Field: "'.$field.'"' );
-		// h::log( $this->plugin->get( '_args' ) );
+		// w__log( 'd:>Checking Type of Field: "'.$field.'"' );
+		// w__log( $this->plugin->get( '_args' ) );
 
 		// shortcut check for ui\method gather data ##
 		if ( 
@@ -486,7 +486,7 @@ class fields {
 			&& array_key_exists( $this->plugin->get( '_args' )['config']['type'], $type_method->get_allowed() )
 		){
 
-			// h::log( 'd:>Shortcut to type passed in args: '.$this->plugin->get( '_args' )['config']['type'] );
+			// w__log( 'd:>Shortcut to type passed in args: '.$this->plugin->get( '_args' )['config']['type'] );
 
 			return $this->plugin->get( '_args' )['config']['type'];
 
@@ -500,20 +500,20 @@ class fields {
 			// get caller ##
 			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $_fields empty' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $_fields empty' );
 
 			return false;
 
 		}
 
-		// h::log( $_fields[$field] );
+		// w__log( $_fields[$field] );
 		// check if data is structured as an array of array ##
 		if ( 
 			isset( $_fields )
 			&& willow\render\method::is_array_of_arrays( $_fields[$field] )
 		){
 
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>field: "'.$field.'" is an array of arrays, so set to repeater' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>field: "'.$field.'" is an array of arrays, so set to repeater' );
 
 			return 'repeater';
 
@@ -527,7 +527,7 @@ class fields {
 			// get caller ##
 			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
-			// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $args->fields empty' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>'.$backtrace.' -> Field: "'.$field.'" $args->fields empty' );
 
 			return false;
 
@@ -537,14 +537,14 @@ class fields {
 			$key = willow\core\method::array_search( 'key', 'field_'.$field, $this->plugin->get( '_args' )['fields'] )
         ){
 
-            // h::log( $this->plugin->get( '_args' )['fields'][$key] );
+            // w__log( $this->plugin->get( '_args' )['fields'][$key] );
 
             if ( 
                 isset( $this->plugin->get( '_args' )['fields'][$key]['type'] )
             ) {
 
 				// log ##
-				h::log( $this->plugin->get( '_args' )['task'].'~>n:>Field: "'.$field.'" is Type: "'.$this->plugin->get( '_args' )['fields'][$key]['type'].'"' );
+				w__log( $this->plugin->get( '_args' )['task'].'~>n:>Field: "'.$field.'" is Type: "'.$this->plugin->get( '_args' )['fields'][$key]['type'].'"' );
 
                 return $this->plugin->get( '_args' )['fields'][$key]['type'];
 
@@ -569,7 +569,7 @@ class fields {
 			is_null( $field )
 		){
 
-			h::log( 'e:>Error, no $field passed' );
+			w__log( 'e:>Error, no $field passed' );
 
 			return false;
 
@@ -587,19 +587,19 @@ class fields {
 			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// log ##
-			// @todo // log-->h::log( $_args['task'].'~>n:>'.$backtrace.' -> "$args[fields]" is not defined' );
+			w__log( $_args['task'].'~>n:>'.$backtrace.' -> "$args[fields]" is not defined' );
 
 			return false;
 
 		}
 
-		// h::log( $_args['fields'] );
+		// w__log( $_args['fields'] );
         if ( 
             ! $key = willow\core\method::array_search( 'key', 'field_'.$field, $_args['fields'] )
         ){
 
 			// log ##
-			h::log( $_args['task'].'~>n:>failed to find Field: "'.$field.'" data in $fields' );
+			w__log( $_args['task'].'~>n:>failed to find Field: "'.$field.'" data in $fields' );
 
             return false;
 
@@ -612,7 +612,7 @@ class fields {
         ) {
 
 			// log ##
-			h::log( $_args['task'].'~>n:>Field: "'.$field.'" has no callback defined' );
+			w__log( $_args['task'].'~>n:>Field: "'.$field.'" has no callback defined' );
 
             return false;
 
@@ -627,7 +627,7 @@ class fields {
         ) {
 
 			// log ##
-			h::log( $_args['task'].'~>n:>Field: "'.$field.'" has a callback, but it is not correctly formatted - not an array or missing "method" key' );
+			w__log( $_args['task'].'~>n:>Field: "'.$field.'" has a callback, but it is not correctly formatted - not an array or missing "method" key' );
 
             return false;
 
@@ -639,7 +639,7 @@ class fields {
         $callback = $_args['fields'][$key]['callback'];
 
 		// log ##
-		h::log( $_args['task'].'~>n:>Field: "'.$field.'" has callback: "'.$callback['method'].'" sending back to caller' );
+		w__log( $_args['task'].'~>n:>Field: "'.$field.'" has callback: "'.$callback['method'].'" sending back to caller' );
 
         // filter ##
         $callback = $this->plugin->get('filter')->apply([ 

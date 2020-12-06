@@ -43,7 +43,7 @@ class filter {
             || ! is_array( $args['parameters'] )
         ) {
 
-            $this->plugin->log('Error in passed $args');
+            w__log('Error in passed $args');
 
             return $args['return'];
 
@@ -54,7 +54,7 @@ class filter {
             ! isset( $args['return'] )
         ) {
 
-            $this->plugin->log('Error in passed $args - no $return specified');
+            w__log('Error in passed $args - no $return specified');
 
             return 'Error';
 
@@ -64,7 +64,7 @@ class filter {
 
 			if ( isset( $args['debug'] ) ) {
 
-				$this->plugin->log( '
+				w__log( '
 					Filter: '.$args['filter'].' - 
 					Parameters: '.implode( ',', array_keys( $args['parameters'] ) ).' - 
 					Return: '.gettype( $args['return'] ) 
@@ -78,13 +78,13 @@ class filter {
 			if ( isset( $args['debug'] ) ) {
 
 				// check return ##
-				$this->plugin->log( $return );
+				w__log( $return );
 
 			}
 
         } else {
 
-            // $this->plugin->log( 'No matching filter found: '.$args['filter'] );
+            // w__log( 'No matching filter found: '.$args['filter'] );
             $return = $args['return']; 
 
         }

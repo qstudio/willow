@@ -34,10 +34,10 @@ class post {
 		// check if type allowed ##
 		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
 
-			// h::log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +48,7 @@ class post {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -96,7 +96,7 @@ class post {
 						$wp_post->ID
 					);
 
-				// h::log( 'post_date: '.$string );
+				// w__log( 'post_date: '.$string );
 				
 			break ;
 
@@ -145,7 +145,7 @@ class post {
 			) 
 		) {
 
-			// h::log( 'Field: "'.$field.'" value magically set to: '.render\method::chop( $wp_post->$type_field, 50 ) );
+			// w__log( 'Field: "'.$field.'" value magically set to: '.render\method::chop( $wp_post->$type_field, 50 ) );
 
 			$string = $wp_post->$type_field;
 

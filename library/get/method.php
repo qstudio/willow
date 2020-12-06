@@ -24,14 +24,14 @@ class method {
 			|| ! is_array( $array )
 		) {
 
-			h::log( 'e~>'.$method.':>Error in passed $args or $array' );
+			w__log( 'e~>'.$method.':>Error in passed $args or $array' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
-		// h::log( $array );
+		// w__log( $args );
+		// w__log( $array );
 
 		// run global filter on $array by $method ##
 		$array = \apply_filters( 'willow/get/'.$method.'/array', $array, $args );
@@ -39,7 +39,7 @@ class method {
 		// run template specific filter on $array by $method ##
 		if ( $template = willow\view\is::get() ) {
 
-			// h::log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
+			// w__log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
 
 			$array = \apply_filters( 'willow/get/'.$method.'/array/'.$template, $array, $args );
 
@@ -51,13 +51,13 @@ class method {
 			|| ! is_array( $array )
 		) {
 
-			h::log( 'e~>'.$method.':>Error in returned $array' );
+			w__log( 'e~>'.$method.':>Error in returned $array' );
 
 			return false;
 
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return all arrays ##
 		return $array ;

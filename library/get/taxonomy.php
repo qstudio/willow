@@ -31,7 +31,7 @@ class taxonomy {
 		// global arg validator ##
 		if ( ! $args = $render_args->prepare( $args ) ){ 
 	   
-			// h::log( 'Bailing..' ); 
+			// w__log( 'Bailing..' ); 
 		
 			return false; 
 		
@@ -42,7 +42,7 @@ class taxonomy {
 			! $terms = \get_terms( $args['query_args'] )
 		){
 	
-			h::log( 'd:>No terms found for taxonomy: '.$args['args']->taxonomy );
+			w__log( 'd:>No terms found for taxonomy: '.$args['args']->taxonomy );
 	
 			return false;
 	
@@ -63,7 +63,7 @@ class taxonomy {
 				
 		){
 
-			// h::log( 'e:>Returned terms good' );
+			// w__log( 'e:>Returned terms good' );
 
 			// we expect an array of WP_Term objects - validate ##
 			if (
@@ -73,7 +73,7 @@ class taxonomy {
 				&& $object_terms[0] instanceof \WP_Term
 			){
 
-				// h::log( 'e:>Term object good, getting ID' );
+				// w__log( 'e:>Term object good, getting ID' );
 
 				$active_term_id = $object_terms[0]->term_id; 
 
@@ -81,7 +81,7 @@ class taxonomy {
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// prepare return array ##
 		$array = [];
@@ -94,7 +94,7 @@ class taxonomy {
 				|| ! $term instanceof \WP_Term
 			) {
 
-				h::log( 'e:>Error in returned term' );
+				w__log( 'e:>Error in returned term' );
 
 				continue;
 
@@ -114,7 +114,7 @@ class taxonomy {
 
 		}	
 
-		// h::log( $array );
+		// w__log( $array );
 		$array = [ 'terms' => $array ];
 
 		// return ##
@@ -130,7 +130,7 @@ class taxonomy {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -150,13 +150,13 @@ class taxonomy {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -165,7 +165,7 @@ class taxonomy {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -180,7 +180,7 @@ class taxonomy {
 		$array['title'] = $terms[0]->name;
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -196,7 +196,7 @@ class taxonomy {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -216,13 +216,13 @@ class taxonomy {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -231,7 +231,7 @@ class taxonomy {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -253,7 +253,7 @@ class taxonomy {
 		}
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -268,7 +268,7 @@ class taxonomy {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -288,13 +288,13 @@ class taxonomy {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -303,7 +303,7 @@ class taxonomy {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -318,7 +318,7 @@ class taxonomy {
 		$array['title'] = $terms[0]->name;
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -333,7 +333,7 @@ class taxonomy {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -353,13 +353,13 @@ class taxonomy {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -368,7 +368,7 @@ class taxonomy {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -390,7 +390,7 @@ class taxonomy {
 		}
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, $array );

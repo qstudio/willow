@@ -39,7 +39,7 @@ class group {
 			|| ! is_callable([ 'Q\willow\get\group', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\group\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\group\\'.$method );
 
 			return false;
 
@@ -53,7 +53,7 @@ class group {
 			// $array = \willow\get\group::fields( $args )
 			$array = $get_group->fields( $args )
 		){
-			// h::log( $array );
+			// w__log( $array );
 			
 			// "args->fields" are used for type and callback lookups ##
 			// self::$args['fields'] = $array['fields']; 

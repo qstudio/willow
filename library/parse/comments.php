@@ -56,7 +56,7 @@ class comments extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -88,32 +88,32 @@ class comments extends willow\parse {
 			|| is_null( $string )
 		){
 
-			h::log( self::$args['task'].'~>e:>Error in $markup' );
+			w__log( self::$args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
 		}
 
-		// h::log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all comments, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( willow\tags::g( 'com_o' ) );
 		$close = trim( willow\tags::g( 'com_c' ) );
 
-		// h::log( 'open: '.$open. ' - close: '.$close );
+		// w__log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
 			'willow/parse/comments/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 		);
 
-		// h::log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
+		// w__log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
 		if ( 
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
 
-			// h::log( $matches[1] );
+			// w__log( $matches[1] );
 
 			// sanity ##
 			if ( 
@@ -122,7 +122,7 @@ class comments extends willow\parse {
 				|| ! $matches[1]
 			){
 
-				h::log( 'e:>Error in returned matches array' );
+				w__log( 'e:>Error in returned matches array' );
 
 				return false;
 
@@ -141,16 +141,16 @@ class comments extends willow\parse {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					h::log( 'e:>Error in returned matches - no position' );
+					w__log( 'e:>Error in returned matches - no position' );
 
 					continue;
 
 				}
 
-				// h::log( 'd:>Searching for comments data...' );
+				// w__log( 'd:>Searching for comments data...' );
 				// self::$position = $matches[0][$match][1]; // take from first array ##
-				// h::log( 'd:>position: '.$position );
-				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
+				// w__log( 'd:>position: '.$position );
+				// w__log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 				
 				// get a single comment ##
 				self::$comment = core\method::string_between( $matches[0][$match][0], $open, $close );
@@ -161,14 +161,14 @@ class comments extends willow\parse {
 				// look for flags ##
 				// self::flags();
 				self::$comment = flags::get( self::$comment, 'comment' );
-				// h::log( self::$flags_comment );
+				// w__log( self::$flags_comment );
 
 				// sanity ##
 				if ( 
 					! isset( self::$comment ) 
 				){
 
-					h::log( 'e:>Error in returned match function' );
+					w__log( 'e:>Error in returned match function' );
 
 					continue; 
 
@@ -178,12 +178,12 @@ class comments extends willow\parse {
 				self::$comment = trim(self::$comment);
 
 				// test what we have ##
-				// h::log( 'd:>comment: "'.self::$comment.'"' );
+				// w__log( 'd:>comment: "'.self::$comment.'"' );
 
 				// hash ##
 				self::$comment_hash = 'comment__'.\rand();
 
-				// h::log( 'd:>comment hash: "'.self::$comment_hash.'"' );
+				// w__log( 'd:>comment hash: "'.self::$comment_hash.'"' );
 
 				// html comments are rendered on the UI, so require to add a variable tag to the markup ##
 				if( 
@@ -218,7 +218,7 @@ class comments extends willow\parse {
 				){
 
 					// also, add a log entry ##
-					h::log( 'd:>'.self::$comment );
+					w__log( 'd:>'.self::$comment );
 
 				}
 
@@ -230,7 +230,7 @@ class comments extends willow\parse {
 		}
 
 		// clean up all tags ##
-		// h::log( 't:>MOVED cleanup to after lookup, check if this does not trash other markups and apply to all parse lookups..' );
+		// w__log( 't:>MOVED cleanup to after lookup, check if this does not trash other markups and apply to all parse lookups..' );
 		// self::cleanup();
 
 	}
@@ -267,7 +267,7 @@ class comments extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup: '.$process );
+			w__log( 'e:>Error in stored $markup: '.$process );
 
 			return false;
 
@@ -298,7 +298,7 @@ class comments extends willow\parse {
 			$regex, 
 			function($matches) {
 				
-				// h::log( $matches );
+				// w__log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -309,14 +309,14 @@ class comments extends willow\parse {
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' comment tags removed...' );
+					w__log( $count .' comment tags removed...' );
 
 				}
 

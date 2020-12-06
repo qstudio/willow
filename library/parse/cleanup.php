@@ -36,12 +36,10 @@ class cleanup {
 	;
 	*/
 
-	public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+	public function __construct( \Q\willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-		$this->process = $process;
-		$this->args = $args;
 
 	}
 
@@ -51,18 +49,19 @@ class cleanup {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public function hooks(){
+    public function hooks( $args = null, $process = 'secondary' ){
 
-		// h::log( self::$args['markup'] );
+		// assign ##
+		$this->process = $process;
+		$this->args = $args;
+
+		// w__log( self::$args['markup'] );
 
 		// remove all flags ##
 		// flags::cleanup( $args, $process ); // @todo -- if required ##
 
 		// remove all spare args... ##
 		// arguments::cleanup( $args, $process ); // @todo -- if required ##
-
-
-
 
 		// remove left-over i18n strings
 		i18n::cleanup( $args, $process );

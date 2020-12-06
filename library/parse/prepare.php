@@ -42,19 +42,24 @@ class prepare {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public function __construct( \Q\willow\plugin $plugin, $args = null, $process = 'secondary' ){
+    public function __construct( \Q\willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-		$this->process = $process;
-		$this->args = $args;
 
 	}
 	
-	public function hooks(){
+	public function hooks( $args = null, $process = 'secondary' ){
 
-		// h::log( $this->args );
-		// h::log( 'process: '.$this->process );
+		// add __MAGIC__ context loader ##
+		require_once $this->plugin->get_plugin_path( '/library/context/_load.php' ); 
+
+		// assign ##
+		$this->process = $process;
+		$this->args = $args;
+
+		// w__log( $this->args );
+		// w__log( 'process: '.$this->process );
 		// exit;
 		// store passed args - context/task ##
 
@@ -72,7 +77,7 @@ class prepare {
 
 		}
 
-		// h::log( self::$args['markup'] );
+		// w__log( self::$args['markup'] );
 
 		// prepare arguments object ##
 		$arguments = new willow\parse\arguments( $this->plugin );
@@ -118,7 +123,7 @@ class prepare {
 
 
 
-		// h::log( 't:>THIS breaks many things, but is needed for filters to run and replace correctly.. TODO' );
+		// w__log( 't:>THIS breaks many things, but is needed for filters to run and replace correctly.. TODO' );
 		// remove all flags before markup is parsed ##
 		####// flags::cleanup( $args, $process );
 

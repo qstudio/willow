@@ -29,7 +29,7 @@ class template {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Missing or corrupt arguments' );
+			w__log( 'e:>Missing or corrupt arguments' );
 
 			return false;
 
@@ -41,7 +41,7 @@ class template {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Both context and task as required to render a template.' );
+			w__log( 'e:>Both context and task as required to render a template.' );
 
 			return false;
 
@@ -53,18 +53,18 @@ class template {
 			|| ! is_array( $args['data'] )
 		){
 
-			h::log( 'e:>A valid array of data is required to markup the template from "'.$args['context'].'~'.$args['task'].'"' );
+			w__log( 'e:>A valid array of data is required to markup the template from "'.$args['context'].'~'.$args['task'].'"' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// get template ##
 		$config = $this->plugin->get( 'config' )->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
-		// h::log( $config );
+		// w__log( $config );
 
 		// filter ##
 		$config = $this->plugin->get( 'filter' )->apply([ 
@@ -76,7 +76,7 @@ class template {
 		// args->template - if not set, define to task ##
 		$markup = isset( $args['markup'] ) ? $args['markup'] : $args['task'] ;
 
-		// h::log( 'markup: '.$markup );
+		// w__log( 'markup: '.$markup );
 
 		// filter ##
 		$markup = $this->plugin->get( 'filter' )->apply([ 
@@ -94,13 +94,13 @@ class template {
 			|| ! isset( $config['markup'][ $markup ] )
 		){
 
-			h::log( 'e:>Missing or corrupt config settings' );
+			w__log( 'e:>Missing or corrupt config settings' );
 
 			return false;
 
 		}
 
-		// h::log( $config['markup'][ $markup ] );
+		// w__log( $config['markup'][ $markup ] );
 
 		// markup string ##
 		$string = willow\render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
@@ -112,7 +112,7 @@ class template {
 			'return'        => $string
 	   	]); 
 
-		// h::log( $string );
+		// w__log( $string );
 
 		// validate we have a string ##
 		if(
@@ -120,7 +120,7 @@ class template {
 			|| ! is_string( $string )
 		){
 
-			h::log( 'e:>Error in string returned from markup' );
+			w__log( 'e:>Error in string returned from markup' );
 
 			return false;
 

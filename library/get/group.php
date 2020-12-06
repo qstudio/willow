@@ -34,7 +34,7 @@ class group {
      */
     public function fields( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
         // sanity ##
         if ( 
@@ -44,8 +44,8 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error in passed parameter $args');
-			// h::log( 'e:>Error in passed parameter $args');
+			w__log( $args['task'].'~>e:Error in passed parameter $args');
+			// w__log( 'e:>Error in passed parameter $args');
 
             return false;
 
@@ -65,12 +65,12 @@ class group {
 
         }
 
-        // h::log( $args[ 'fields' ] );
+        // w__log( $args[ 'fields' ] );
 
         // get field names from passed $args ##
         $array = array_column( $this->data, 'name' );
 
-		// h::log( $array );
+		// w__log( $array );
 
         // sanity ##
         if ( 
@@ -79,18 +79,18 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error extracting field list from passed data');
-			// h::log( 'e:>Error extracting field list from passed data');
+			w__log( $args['task'].'~>e:Error extracting field list from passed data');
+			// w__log( 'e:>Error extracting field list from passed data');
 
             return false;
 
         }
 
-        // h::log( $array );
+        // w__log( $array );
 
         // assign class property ##
         $this->data = $array;
-		// h::log( self::$data );
+		// w__log( self::$data );
 
         // remove skipped fields, if defined ##
         $this->skip( $args );
@@ -98,7 +98,7 @@ class group {
         // if group specified, get only fields from this group ##
         $this->group( $args );
 
-        // h::log( self::$data );
+        // w__log( self::$data );
 
         // we should do a check if $fields is empty after all the filtering ##
         if ( 
@@ -106,15 +106,15 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>n:Fields array is empty, so nothing to process...');
-			// h::log( 'e:>:Fields array is empty, so nothing to process...');
+			w__log( $args['task'].'~>n:Fields array is empty, so nothing to process...');
+			// w__log( 'e:>:Fields array is empty, so nothing to process...');
 
             return false;
 
 		}
 		
-		// h::log( self::$data );
-		// h::log( self::$fields );
+		// w__log( self::$data );
+		// w__log( self::$fields );
 
         // positive ##
         return [
@@ -131,7 +131,7 @@ class group {
 
 		if ( ! function_exists( 'get_fields' ) ) {
 
-			h::log( 'e:>ACF Plugin missing' );
+			w__log( 'e:>ACF Plugin missing' );
 
 			return false;
 
@@ -145,7 +145,7 @@ class group {
 				false 
 			);
 		
-		// h::log( $array );
+		// w__log( $array );
 
         // sanity ##
         if ( 
@@ -154,14 +154,14 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>n:Post has no ACF field data or corrupt data returned');
-			// h::log( 'd:>Post has no ACF field data or corrupt data returned');
+			w__log( $args['task'].'~>n:Post has no ACF field data or corrupt data returned');
+			// w__log( 'd:>Post has no ACF field data or corrupt data returned');
 
             return false;
 
         }
 
-        // h::log( $array );
+        // w__log( $array );
 
         return $this->acf_fields = $array;
 
@@ -178,7 +178,7 @@ class group {
         // try to get fields ##
         $array = willow\plugin\acf::get_field_group( $group );
 
-        // h::log( $array );
+        // w__log( $array );
 
         if ( 
             ! $array
@@ -186,8 +186,8 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:No valid ACF field group returned for Group: "'.$group.'"');
-			// h::log( 'd:>:No valid ACF field group returned for Group: "'.$group.'"');
+			w__log( $args['task'].'~>e:No valid ACF field group returned for Group: "'.$group.'"');
+			// w__log( 'd:>:No valid ACF field group returned for Group: "'.$group.'"');
 
             return false;
 
@@ -205,7 +205,7 @@ class group {
 		$this->plugin->set( '_fields', $array );
 		$this->data = $array; // data to return to fields\define ##
 
-        // h::log( $array );
+        // w__log( $array );
 
         // return
         return true;
@@ -224,8 +224,8 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error in passed $args');
-			// h::log( 'e:>Error in passed $args');
+			w__log( $args['task'].'~>e:Error in passed $args');
+			// w__log( 'e:>Error in passed $args');
 
             return false;
 
@@ -236,7 +236,7 @@ class group {
             && is_array( $args['skip'] )
         ) {
 
-            // h::log( $args['skip'] );
+            // w__log( $args['skip'] );
             $this->data = array_diff($this->data, $args['skip'] );
 
         }
@@ -257,25 +257,25 @@ class group {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error in passed $args or $fields');
-			// h::log( 'e:>Error in passed $args or $fields');
+			w__log( $args['task'].'~>e:Error in passed $args or $fields');
+			// w__log( 'e:>Error in passed $args or $fields');
 
             return false;
 
 		}
 		
-		// h::log( $this->acf_fields );
+		// w__log( $this->acf_fields );
 
         if ( 
             isset( $args['task'] )
         ) {
 
-            // h::log( 'Removing fields from other groups... BEFORE: '.count( $this->data ) );
-            // h::log( $this->data );
+            // w__log( 'Removing fields from other groups... BEFORE: '.count( $this->data ) );
+            // w__log( $this->data );
 
             $this->data = array_intersect_key( $this->acf_fields, array_flip( $this->data ) );
 
-            // h::log( 'Removing fields from other groups... AFTER: '.count( $this->data ) );
+            // w__log( 'Removing fields from other groups... AFTER: '.count( $this->data ) );
 
         }
 

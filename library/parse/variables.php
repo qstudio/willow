@@ -83,7 +83,7 @@ class variables {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -116,16 +116,16 @@ class variables {
 			|| ! is_string( $string )
 		){
 
-			// h::log( $_args['task'].'~>e:>Error in $markup' );
-			// h::log( 'd:>Error in $markup' );
+			// w__log( $_args['task'].'~>e:>Error in $markup' );
+			// w__log( 'd:>Error in $markup' );
 
-			// h::log( $string );
+			// w__log( $string );
 
 			return false;
 
 		}
 
-		// h::log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all {{ variables }} from markup string ##
 		$parse_markup = new willow\parse\markup( $this->plugin );
@@ -133,18 +133,18 @@ class variables {
             ! $variables = $parse_markup->get( $string, 'variable' ) 
         ) {
 
-			// h::log( self::$args['task'].'~>d:>No variables found in $markup');
-			// h::log( 'd:>No variables found in $markup: '.self::$args['task']);
+			// w__log( self::$args['task'].'~>d:>No variables found in $markup');
+			// w__log( 'd:>No variables found in $markup: '.self::$args['task']);
 
 			return false;
 
 		}
 
 		// log ##
-		// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
-		// h::log( 'd:>"'.count( $variables ) .'" variables found in string');
+		// w__log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
+		// w__log( 'd:>"'.count( $variables ) .'" variables found in string');
 
-		// h::log( $variables );
+		// w__log( $variables );
 
 		// remove any leftover variables in string ##
 		foreach( $variables as $key => $value ) {
@@ -172,7 +172,7 @@ class variables {
 			is_null( $string )
 		){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -203,7 +203,7 @@ class variables {
 			|| ! isset( $args['variable'] )
 		){
 
-			h::log( 'e:>Error in $args passed to flags method' );
+			w__log( 'e:>Error in $args passed to flags method' );
 
 			return false ;
 
@@ -213,38 +213,38 @@ class variables {
 		$variable = str_replace( [ $this->plugin->get( 'tags' )->g( 'var_o' ), $this->plugin->get( 'tags' )->g( 'var_c' ) ], '', $args['variable'] );
 		$variable = trim( $variable );
 		$variable_original = $variable;
-		// h::log( '$variable: '.$variable );
+		// w__log( '$variable: '.$variable );
 
 		$this->flags_variable = false;
 
 		// look for flags ##
 		// $variable = flags::get( $variable, 'variable' );
 		// $variable = trim( $variable );
-		// h::log( '$variable, after flags: '.$variable );
-		// h::log( self::$flags_variable );
+		// w__log( '$variable, after flags: '.$variable );
+		// w__log( self::$flags_variable );
 
 		// $variable = flags::get( $variable, 'variable' );
 		$parse_flags = new willow\parse\flags( $this->plugin );
 		$variable = $parse_flags->get( $variable, 'variable' );
-		// h::log( '$variable: '.trim( $variable ) );
-		// h::log( 'whole variable: '.$args['variable'] );
+		// w__log( '$variable: '.trim( $variable ) );
+		// w__log( 'whole variable: '.$args['variable'] );
 
 		if(
 			$this->flags_variable
 		){
 
-			// h::log( self::$flags_variable );
+			// w__log( self::$flags_variable );
 
 			// clean up variable ##
 			// $variable = trim( $variable );
 
 			// if we do find flags, we need to create a unique variable reference key, to avoid duplicate filters on re-used variables ##
 			// but, at this point, we have no data -- so, we need to set a future-flag for use when filters are applied late on ##
-			// h::log( self::$fields );
+			// w__log( self::$fields );
 			// $variable_hash = $variable.'_'.core\method::hash();
-			// h::log( 'Original: '.$variable_original.' --> $args: '.$args['variable'].' --> variable_hash: '.$variable_hash );
+			// w__log( 'Original: '.$variable_original.' --> $args: '.$args['variable'].' --> variable_hash: '.$variable_hash );
 
-			// h::log( 'Willow Hash: '.$args['hash'] );
+			// w__log( 'Willow Hash: '.$args['hash'] );
 
 			// store variable flags ##
 			// if( ! isset( self::$filter[ $args['context'] ][ $args['task']][ $variable_hash ] ) ) {
@@ -267,26 +267,26 @@ class variables {
 			// }
 			// self::$fields_map[ $args['hash'] ][ $variable ][] = $variable_hash; // add new variable hash as array value ##
 
-			// h::log( self::$fields_map );
+			// w__log( self::$fields_map );
 
 			// update self::$willow_match ##
 			// $tag = $args['tag'];
 			// alter willow_match ##
 			// $variable_hash_replace = str_replace( $variable, $variable_hash, $args['variable'] ); 
 			// $args['tag'] = str_replace( $args['variable'], $variable_hash_replace, $args['tag'] );
-			// h::log( $args['tag'] );
+			// w__log( $args['tag'] );
 
 			// variable replacement string ##
 			// $variable_replace = str_replace( $variable, $variable_hash, $args['variable'] );
-			// h::log( '$variable_replace: '.$variable_replace );			
+			// w__log( '$variable_replace: '.$variable_replace );			
 
 			// alter buffer_map ##
 			// self::$markup_template = str_replace( $args['variable'], $variable_replace, self::$markup_template );
 
-			// h::log( 'MARKUP->> '.self::$markup['template'] );
-			// h::log( self::$markup_template );
-			// h::log( $args['tag'] );
-			// h::log(  );
+			// w__log( 'MARKUP->> '.self::$markup['template'] );
+			// w__log( self::$markup_template );
+			// w__log( $args['tag'] );
+			// w__log(  );
 			// $args['tag'] = 'hello';
 
 			// force markup->template update ##
@@ -313,13 +313,13 @@ class variables {
 			is_null( $match )
 		){
 
-			h::log( 'e:>No variable match passed to format method' );
+			w__log( 'e:>No variable match passed to format method' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// clear slate ##
 		$this->reset();
@@ -330,7 +330,7 @@ class variables {
 		// clean up ##
 		$this->variable = trim( $this->variable );
 
-		// h::log( 'd:>$variable: '.$this->variable );
+		// w__log( 'd:>$variable: '.$this->variable );
 
 		// sanity ##
 		if ( 
@@ -338,7 +338,7 @@ class variables {
 			|| ! isset( $this->variable ) 
 		){
 
-			h::log( 'e:>Error in returned match function' );
+			w__log( 'e:>Error in returned match function' );
 
 			return false; 
 
@@ -359,17 +359,17 @@ class variables {
 			// store variable ##
 			// self::$variable = $value;
 
-			// h::log( $matches[0] );
+			// w__log( $matches[0] );
 
 			// get field ##
-			// h::log( 'value: '.$value );
+			// w__log( 'value: '.$value );
 			
 			$this->field = str_replace( $this->variable_config, '', $this->variable );
 
 			// clean up field data ## -- @TODO, move to core\method::sanitize();
 			$this->field = preg_replace( "/[^A-Za-z0-9._]/", '', $this->field );
 
-			// h::log( 'd:>field: '.$this->field );
+			// w__log( 'd:>field: '.$this->field );
 
 			// check if field is sub field i.e: "field_name.src" ##
 			if ( strpos( $this->field, '.' ) !== false ) {
@@ -392,7 +392,7 @@ class variables {
 				|| ! $this->field_type
 			){
 
-				h::log( $this->plugin->get( '_args' )['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.$this->variable );
+				w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.$this->variable );
 
 				return false;
 
@@ -402,10 +402,10 @@ class variables {
 			$this->new_variable = $this->plugin->get( 'tags' )->wrap([ 'open' => 'var_o', 'value' => $this->field, 'close' => 'var_c' ]);
 
 			// test what we have ##
-			// h::log( 'd:>variable: "'.$this->variable.'"' );
-			// h::log( 'd:>new_variable: "'.$this->new_variable.'"' );
-			// h::log( 'd:>field_name: "'.$this->field_name.'"' );
-			// h::log( 'd:>field_type: "'.$this->field_type.'"' );
+			// w__log( 'd:>variable: "'.$this->variable.'"' );
+			// w__log( 'd:>new_variable: "'.$this->new_variable.'"' );
+			// w__log( 'd:>field_name: "'.$this->field_name.'"' );
+			// w__log( 'd:>field_type: "'.$this->field_type.'"' );
 
 			// pass to argument handler -- returned value ##
 			$parse_arguments = new willow\parse\arguments( $this->plugin );
@@ -433,7 +433,7 @@ class variables {
 
 			}
 
-			// h::log( self::$args[$field_name] );
+			// w__log( self::$args[$field_name] );
 
 			// now, edit the variable, to remove the config ##
 			$parse_markup = new willow\parse\markup( $this->plugin );
@@ -489,7 +489,7 @@ class variables {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -520,7 +520,7 @@ class variables {
 			$regex, 
 			function($matches) {
 				
-				// h::log( $matches );
+				// w__log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -531,14 +531,14 @@ class variables {
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					// h::log( $count .' variable tags removed...' );
+					// w__log( $count .' variable tags removed...' );
 
 				}
 
@@ -549,7 +549,7 @@ class variables {
 			$string
 		);
 
-		// h::log( $_markup['template'] );
+		// w__log( $_markup['template'] );
 				
 		// find out which markup to affect ##
 		switch( $process ){

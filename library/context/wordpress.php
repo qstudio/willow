@@ -45,7 +45,7 @@ class wordpress {
      */
     public static function enqueue_script( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// check if we have a valid script to enquque ##
 		// \wp_enqueue_script( $args[''] );

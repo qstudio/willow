@@ -1,16 +1,19 @@
 <?php
 
-namespace q\willow\core;
+namespace Q\willow\core;
 
-use Q\willow\core;
-// use Q\willow\helper as h;
+use Q\willow;
+
+// run ##
+willow\core\log::__run();
 
 class log {
 
 	// track who called what ##
-	protected
-		$plugin				= null, // plugin object ##
+	public static 
+		$log				= false, // @TODO< validate this worked internally ##
 		$file				= \WP_CONTENT_DIR."/debug.log",
+		// $file_wp			= \WP_CONTENT_DIR."/debug.log",
 		$empty 				= false, // track emptied ##
 		$backtrace 			= false,
 		$backtrace_key 		= false,
@@ -32,29 +35,18 @@ class log {
 		$shutdown_key_debug = [ 'debug', 'todo' ] // control debug keys ##
 	;
 
-	/**
-	 * CLass Constructer 
-	*/
-	function __construct( $plugin = null ){
 
-		// Log::write( $plugin );
-
-        // grab passed plugin object ## 
-        $this->plugin = $plugin;
-
-	}
-
-	public function hooks(){
+	public static function __run(){
 
 		// filter pre-defined actions ##
-		$on_run 			= \apply_filters( 'willow/core/log/on_run', $this->on_run );
-		$on_shutdown 		= \apply_filters( 'willow/core/log/on_shutdown', $this->on_shutdown );
+		$on_run 			= \apply_filters( 'willow/core/log/on_run', self::$on_run );
+		$on_shutdown 		= \apply_filters( 'willow/core/log/on_shutdown', self::$on_shutdown );
 
 		// on_run set to true ##
 		if ( $on_run ) {
 
 			// earliest possible action.. empty log ##
-			if( ! class_exists( 'Q' ) ) $this->empty();  
+			if( ! class_exists( 'Q' ) ) self::empty();  
 
 			// also, pre-ajax ##
 			if( 
@@ -62,8 +54,8 @@ class log {
 				&& DOING_AJAX
 			) {
 
-				// h::hard_log( 'DOING AJAX...' );
-				if( ! class_exists( 'Q' ) ) $this->empty();
+				// w__log_direct( 'DOING AJAX...' );
+				if( ! class_exists( 'Q' ) ) self::empty();
 
 			}
 
@@ -72,21 +64,19 @@ class log {
 		if ( $on_shutdown ) {
 
 			// latest possible action, write to error_log ##
-			register_shutdown_function( [ $this, 'shutdown' ] );
+			register_shutdown_function( [ get_class(), 'shutdown' ] );
 
 		}
 
 	}
 
+	private static function get_backtrace( $args = null ){
 
-
-	private function get_backtrace( $args = null ){
-
-		// called directly, else called from h::log() ##
+		// called directly, else called from w__log() ##
 		// $level_function = apply_filters( 'willow/core/log/backtrace/function', 3 );
 		// $level_file = apply_filters( 'willow/core/log/backtrace/file', 2 );
 
-		$backtrace_1 = core\method::backtrace([ 
+		$backtrace_1 = willow\core\method::backtrace([ 
 			'level' 	=> \apply_filters( 'willow/core/log/backtrace/function', 3 ), 
 			'return' 	=> 'class_function' 
 		]);
@@ -94,32 +84,30 @@ class log {
 		// format for key usage ##
 		$backtrace_1 = strtolower( str_replace( [ '()' ], [ '' ], $backtrace_1 ) );
 			
-		$backtrace_2 = core\method::backtrace([ 
+		$backtrace_2 = willow\core\method::backtrace([ 
 			'level' 	=> \apply_filters( 'willow/core/log/backtrace/file', 2 ), 
 			'return' 	=> 'file_line' 
 		]);
 
-		// $this->backtrace = ' -> '.$backtrace_1.' - '.$backtrace_2;
-		$this->backtrace = ' -> '.$backtrace_2;
-		$this->backtrace_key = $backtrace_1;
-		// h::hard_log( $backtrace );
+		// self::$backtrace = ' -> '.$backtrace_1.' - '.$backtrace_2;
+		self::$backtrace = ' -> '.$backtrace_2;
+		self::$backtrace_key = $backtrace_1;
+		// w__log_direct( $backtrace );
 		// $log = $log.' - '.$backtrace;
 
 	}
-
-
 
 	/**
      * Store logs, to render at end of process
      * 
      */
-    public function set( $args = null ){
+    public static function set( $args = null ){
 
 		// test ##
-		// h::hard_log( $args );
+		// w__log_direct( $args );
 
 		// add info about calling function ##
-		$this->get_backtrace( $args );
+		self::get_backtrace( $args );
 		
 		// sanity ##
 		if (
@@ -128,8 +116,8 @@ class log {
 			// || ! isset( $args['log'] )
 		){
 
-			// h::hard_log( 'd:>Problem with passed args' );
-			// h::hard_log( $args );
+			// w__log_direct( 'd:>Problem with passed args' );
+			// w__log_direct( $args );
 
 			return false;
 
@@ -138,11 +126,11 @@ class log {
 		// translate passed log
 		// check we have what we need to set a new log point ##
 		if ( 
-			! $log = $this->translate( $args )
+			! $log = self::translate( $args )
 		){
 
-			// h::hard_log( 'Error in passed log data..' );
-			// h::hard_log( $args );
+			// w__log_direct( 'Error in passed log data..' );
+			// w__log_direct( $args );
 
 			return false;
 
@@ -158,10 +146,10 @@ class log {
 	/**
 	 * Hardcore way to directly set a log key and value.. no safety here..
 	*/
-	public function set_to( $key = null, $value = null ){
+	public static function set_to( $key = null, $value = null ){
 
 		// sanity @todo ##
-		$this->log[$key] = $value;
+		self::$log[$key] = $value;
 
 	}
 	
@@ -179,7 +167,7 @@ class log {
 	 * - $group[] = value - "group:>hello"
 	 * - $key[$key][$key] = value - "n~>group~>-problem:>this is a string"
      */
-    private function translate( $args = null ){
+    private static function translate( $args = null ){
 
 		// arrays and objects are dumped directly ##
 		if ( 
@@ -187,8 +175,8 @@ class log {
 			|| is_numeric( $args )
 		){
 
-			// h::hard_log( 'is_int OR is_numeric' );
-			$return = $this->push( 'debug', print_r( $args, true ).$this->backtrace, $this->backtrace_key );
+			// w__log_direct( 'is_int OR is_numeric' );
+			$return = self::push( 'debug', print_r( $args, true ).self::$backtrace, self::$backtrace_key );
 			
 			// var_dump( $return );
 
@@ -202,9 +190,9 @@ class log {
 			|| is_object( $args )
 		){
 
-			// h::hard_log( 'is_array OR is_object' );
-			$this->push( 'debug', ( is_object( $args ) ? 'Object' : 'Array' ).' below from'.$this->backtrace, $this->backtrace_key );
-			$return = $this->push( 'debug', print_r( $args, true ), $this->backtrace_key );
+			// w__log_direct( 'is_array OR is_object' );
+			self::push( 'debug', ( is_object( $args ) ? 'Object' : 'Array' ).' below from'.self::$backtrace, self::$backtrace_key );
+			$return = self::push( 'debug', print_r( $args, true ), self::$backtrace_key );
 			
 			// var_dump( $return );
 
@@ -217,8 +205,8 @@ class log {
 			is_bool( $args )
 		){
 
-			// h::hard_log( 'is_bool' );
-			$return =  $this->push( 'debug', ( true === $args ? 'boolean:true' : 'boolean:false' ).$this->backtrace, $this->backtrace_key );
+			// w__log_direct( 'is_bool' );
+			$return =  self::push( 'debug', ( true === $args ? 'boolean:true' : 'boolean:false' ).self::$backtrace, self::$backtrace_key );
 
 			// var_dump( $return );
 
@@ -227,22 +215,22 @@ class log {
 		}
 
 		// filter delimters ##
-		$this->delimiters = \apply_filters( 'willow/core/log/delimiters', $this->delimiters );
+		self::$delimiters = \apply_filters( 'willow/core/log/delimiters', self::$delimiters );
 
 		// string ##
 		if ( 
 			is_string( $args ) 
 		) {
 
-			// h::hard_log( 'is_string' );
+			// w__log_direct( 'is_string' );
 
 			// string might be a normal string, or contain markdown to represent an array of data ##
 
 			// no fixed pattern ##
-			if ( ! core\method::strposa( $args, $this->delimiters ) ) {
+			if ( ! willow\core\method::strposa( $args, self::$delimiters ) ) {
 
-				// h::hard_log( 'string has no known delimiters, so treat as log:>value' );
-				$return = $this->push( 'debug', $args.$this->backtrace, $this->backtrace_key );
+				// w__log_direct( 'string has no known delimiters, so treat as log:>value' );
+				$return = self::push( 'debug', $args.self::$backtrace, self::$backtrace_key );
 
 				// var_dump( $return );
 
@@ -252,23 +240,23 @@ class log {
 
 			// string ##
 			if ( 
-				false === strpos( $args, $this->delimiters['array'] ) 
-				&& false !== strpos( $args, $this->delimiters['value'] ) 
+				false === strpos( $args, self::$delimiters['array'] ) 
+				&& false !== strpos( $args, self::$delimiters['value'] ) 
 			) {
 			
-				// h::hard_log( 'only key:value delimiters found..' );
+				// w__log_direct( 'only key:value delimiters found..' );
 
 				// get some ##
-				$key_value = explode( $this->delimiters['value'], $args );
-				// h::hard_log( $key_value );
+				$key_value = explode( self::$delimiters['value'], $args );
+				// w__log_direct( $key_value );
 
 				$key = $key_value[0];
 				$value = $key_value[1];
 
-				// h::hard_log( "d:>key: $key + value: $value" );
+				// w__log_direct( "d:>key: $key + value: $value" );
 
 				// return with special key replacement check ##
-				$return = $this->push( $this->key_replace( $key ), $value.$this->backtrace, $this->backtrace_key );
+				$return = self::push( self::key_replace( $key ), $value.self::$backtrace, self::$backtrace_key );
 
 				// var_dump( $return );
 
@@ -278,25 +266,25 @@ class log {
 
 			// array ##
 			if ( 
-				false !== strpos( $args, $this->delimiters['array'] ) 
-				&& false !== strpos( $args, $this->delimiters['value'] ) 
+				false !== strpos( $args, self::$delimiters['array'] ) 
+				&& false !== strpos( $args, self::$delimiters['value'] ) 
 			) {
 			
-				// h::hard_log( 'both array and value delimiters found..' );
+				// w__log_direct( 'both array and value delimiters found..' );
 
 				// get some ##
-				$array_key_value = explode( $this->delimiters['value'], $args );
-				// h::hard_log( $array_key_value );
+				$array_key_value = explode( self::$delimiters['value'], $args );
+				// w__log_direct( $array_key_value );
 
 				$value_keys = $array_key_value[0];
 				$value = $array_key_value[1];
 
-				$keys = explode( $this->delimiters['array'], $value_keys );
+				$keys = explode( self::$delimiters['array'], $value_keys );
 				
-				// h::hard_log( $keys );
-				// h::hard_log( "l:>$value" );
+				// w__log_direct( $keys );
+				// w__log_direct( "l:>$value" );
 
-				$return = $this->push( $keys, $value.$this->backtrace, $this->backtrace_key );
+				$return = self::push( $keys, $value.self::$backtrace, self::$backtrace_key );
 
 				// var_dump( $return );
 
@@ -315,15 +303,15 @@ class log {
 	/**
 	 * Push item into the array, checking if selected key already exists 
 	 */
-	private function push( $key = null, $value = null, $new_key = '' ){
+	private static function push( $key = null, $value = null, $new_key = '' ){
 
 		// @todo - sanity ##
 
-		// h::hard_log( '$value: '.$value );
-		// h::hard_log( \willow::$log );
+		// w__log_direct( '$value: '.$value );
+		// w__log_direct( \willow::$log );
 
-		// grab reference of $this->log ##
-		$log = $this->plugin->get( '_log' );
+		// grab reference of self::$log ##
+		$log = self::$log;
 
 		// check if $key already exists ##
 		if ( 
@@ -337,33 +325,33 @@ class log {
 			// take first array value, if array, else key.. ##
 			$key = is_array( $key ) ? $key[0] : $key ;
 
-			// h::hard_log( $log );
+			// w__log_direct( $log );
 
 			if ( 
 				! isset( $log[$key] )
 			){
 
 				$log[$key] = [];
-				// h::hard_log( 'd:> create new empty array for "'.$key.'"' );
+				// w__log_direct( 'd:> create new empty array for "'.$key.'"' );
 
 			}
 
 			// new key is based on the class_method called when the log was set ##
 			// this key might already exist, if so, add as a new array key + value ##
-			$new_key = isset( $new_key ) ? $new_key : core\method::get_acronym( $value ) ;
+			$new_key = isset( $new_key ) ? $new_key : willow\core\method::get_acronym( $value ) ;
 
 			// make new key safe ??
 			// $new_key = str_replace( [ '\\','::' ], '_', $new_key );
 
 			// new key ??
-			// h::hard_log( 'd:>new_key: "'.$new_key.'"' );
+			// w__log_direct( 'd:>new_key: "'.$new_key.'"' );
 
 			// key already exists ##
 			if ( 
 				! isset( $log[$key][$new_key] ) 
 			){
 
-				// h::hard_log( 'd:>create new empty array in: "'.$key.'->'.$new_key.'"' );
+				// w__log_direct( 'd:>create new empty array in: "'.$key.'->'.$new_key.'"' );
 
 				// create new key as empty array ##
 				$log[$key][$new_key] = [];
@@ -373,13 +361,13 @@ class log {
 			// check if the value has been added already ##
 			if ( in_array( $value, $log[$key][$new_key], true ) ) {
 
-				// h::hard_log( 'd:> "'.$key.'->'.$new_key.'" value already exists, so skip' );
+				// w__log_direct( 'd:> "'.$key.'->'.$new_key.'" value already exists, so skip' );
 
 				return false;
 
 			}
 
-			// h::hard_log( 'd:> add value to: '.$key.'->'.$new_key.'"' );
+			// w__log_direct( 'd:> add value to: '.$key.'->'.$new_key.'"' );
 
 			// add value to array ##
 			$log[$key][$new_key][] = $value;
@@ -387,7 +375,7 @@ class log {
 			// var_dump( $log ); echo '<br/><br/>';
 
 			// kick back ##
-			return $this->log = $log;
+			return self::$log = $log;
 
 		}
 
@@ -402,25 +390,25 @@ class log {
 			if (
 				isset( $key[2] )
 			){
-				if ( ! isset( $this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ][ $this->key_replace($key[2]) ] ) ) {
+				if ( ! isset( self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ][ self::key_replace($key[2]) ] ) ) {
 					
-					// h::hard_log( 'create: '.$this->key_replace($key[0]).'->'.$this->key_replace($key[1]).'->'.$this->key_replace($key[2]) );
-					$this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ][ $this->key_replace($key[2]) ] = [];
+					// w__log_direct( 'create: '.self::key_replace($key[0]).'->'.self::key_replace($key[1]).'->'.self::key_replace($key[2]) );
+					self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ][ self::key_replace($key[2]) ] = [];
 				
 				}
 
 				// value exists ##
 				if ( 
-					in_array( $value, $this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ][ $this->key_replace($key[2]) ], true ) 
+					in_array( $value, self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ][ self::key_replace($key[2]) ], true ) 
 				){ 
-					// h::hard_log( 'value exists: '.$this->key_replace($key[0]).'->'.$this->key_replace($key[1]).'->'.$this->key_replace($key[2]).'->'.$value );
+					// w__log_direct( 'value exists: '.self::key_replace($key[0]).'->'.self::key_replace($key[1]).'->'.self::key_replace($key[2]).'->'.$value );
 					return false;
 				};
 
-				// h::hard_log( 'add: '.$this->key_replace($key[0]).'->'.$this->key_replace($key[1]).'->'.$this->key_replace($key[2]).'->'.$value );
+				// w__log_direct( 'add: '.self::key_replace($key[0]).'->'.self::key_replace($key[1]).'->'.self::key_replace($key[2]).'->'.$value );
 
 				// add value and return ##
-				return $this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ][ $this->key_replace($key[2]) ][] = $value;
+				return self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ][ self::key_replace($key[2]) ][] = $value;
 
 			}
 
@@ -428,50 +416,50 @@ class log {
 				isset( $key[1] )
 			){
 
-				if ( ! isset( $this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ] ) ) {
+				if ( ! isset( self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ] ) ) {
 
-					// h::hard_log( 'create: '.$this->key_replace($key[0]).'->'.$this->key_replace($key[1]) );
-					$this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ] = [];
+					// w__log_direct( 'create: '.self::key_replace($key[0]).'->'.self::key_replace($key[1]) );
+					self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ] = [];
 
 				}
 
 				// value exists ##
 				if ( 
-					in_array( $value, $this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ], true ) 
+					in_array( $value, self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ], true ) 
 				){ 
-					// h::hard_log( 'value exists: '.$this->key_replace($key[0]).'->'.$this->key_replace($key[1]).'->'.$value );
+					// w__log_direct( 'value exists: '.self::key_replace($key[0]).'->'.self::key_replace($key[1]).'->'.$value );
 					return false;
 				};
 
-				// h::hard_log( 'add: '.$this->key_replace($key[0]).'->'.$this->key_replace($key[1]).'->'.$value );
+				// w__log_direct( 'add: '.self::key_replace($key[0]).'->'.self::key_replace($key[1]).'->'.$value );
 
 				// add value and return ##
-				return $this->log[ $this->key_replace($key[0]) ][ $this->key_replace($key[1]) ][] = $value;
+				return self::$log[ self::key_replace($key[0]) ][ self::key_replace($key[1]) ][] = $value;
 
 			}
 
 			if (
 				isset( $key[0] )
 			){
-				if ( ! isset( $this->log[ $this->key_replace($key[0])] ) ) {
+				if ( ! isset( self::$log[self::key_replace($key[0])] ) ) {
 
-					// h::hard_log( 'create: '.$this->key_replace($key[0]) );
-					$this->log[ $this->key_replace($key[0]) ] = [];
+					// w__log_direct( 'create: '.self::key_replace($key[0]) );
+					self::$log[ self::key_replace($key[0]) ] = [];
 
 				}
 
 				// value exists ##
 				if ( 
-					in_array( $value, $this->log[ $this->key_replace($key[0]) ], true ) 
+					in_array( $value, self::$log[ self::key_replace($key[0]) ], true ) 
 				){ 
-					// h::hard_log( 'value exists: '.$this->key_replace($key[0]).'->'.$value );
+					// w__log_direct( 'value exists: '.self::key_replace($key[0]).'->'.$value );
 					return false;
 				};
 
-				// h::hard_log( 'add: '.$this->key_replace($key[0]).'->'.$value );
+				// w__log_direct( 'add: '.self::key_replace($key[0]).'->'.$value );
 
 				// add value and return ##
-				return $this->log[ $this->key_replace($key[0]) ][] = $value;
+				return self::$log[ self::key_replace($key[0]) ][] = $value;
 
 			}
 			
@@ -485,7 +473,7 @@ class log {
 
 
 
-	public function in_multidimensional_array( $needle, $haystack ) {
+	public static function in_multidimensional_array( $needle, $haystack ) {
 
 		foreach( $haystack as $key => $value ) {
 
@@ -495,7 +483,7 @@ class log {
 			   $needle === $value 
 			   || ( 
 				   is_array( $value ) 
-				   && $this->in_multidimensional_array( $needle, $value ) !== false 
+				   && self::in_multidimensional_array( $needle, $value ) !== false 
 				)
 			) {
 
@@ -515,7 +503,7 @@ class log {
 	 * 
 	 * @link 	https://eval.in/828697 
 	 */
-	public function create_multidimensional_array( $array = [], $keys, $value ){    
+	public static function create_multidimensional_array( $array = [], $keys, $value ){    
 
 		$tmp_array = &$array;
 
@@ -528,7 +516,7 @@ class log {
 				$tmp_array = [];
 
 			}
-			$tmp_array = &$tmp_array[$this->key_replace( $k )];
+			$tmp_array = &$tmp_array[self::key_replace( $k )];
 
 		}
 
@@ -547,24 +535,24 @@ class log {
 	 * - n = notice
 	 * - l = log ( default ) 
 	 */
-	private function key_replace( $key = null ){
+	private static function key_replace( $key = null ){
 		
 		// @todo -- sanity ##
 
 		// filter special keys ##
-		$this->special_keys = \apply_filters( 'willow/core/log/special_keys', $this->special_keys );
+		self::$special_keys = \apply_filters( 'willow/core/log/special_keys', self::$special_keys );
 
 		// lookfor key
 		if ( 
-			isset( $this->special_keys[$key] )
+			isset( self::$special_keys[$key] )
 		){
 
-			// h::hard_log( "key is special: $key" );
-			return $this->special_keys[$key];
+			// w__log_direct( "key is special: $key" );
+			return self::$special_keys[$key];
 
 		}
 
-		// h::hard_log( "key is NOT special: $key" );
+		// w__log_direct( "key is NOT special: $key" );
 		return $key;
 
 	}
@@ -575,19 +563,19 @@ class log {
      * Logging function
      * 
      */
-    protected function write( $key = null ){
+    protected static function write( $key = null ){
 
 		// test ##
-		// $this->set( 'write: '.$key );
-		// h::hard_log( $this->log );
+		// self::set( 'write: '.$key );
+		// w__log_direct( self::$log );
 
 		// if key set, check if exists, else bale ##
 		if ( 
 			! is_null( $key )
-			&& ! isset( $this->log[ $key ] ) 
+			&& ! isset( self::$log[ $key ] ) 
 		) {
 
-			h::hard_log( '"'.$key.'" Log is empty.' );
+			w__log_direct( '"'.$key.'" Log is empty.' );
 
 			return false;
 
@@ -595,12 +583,12 @@ class log {
 
 		// if key set, check if exists, else bale ##
 		if ( 
-			// array_filter( $this->log[$key] )
+			// array_filter( self::$log[$key] )
 			// || 
-			empty( $this->log[$key] )
+			empty( self::$log[$key] )
 		) {
 
-			// $this->set( '"'.$key.'" Log is empty.' );
+			// self::set( '"'.$key.'" Log is empty.' );
 
 			return false;
 
@@ -609,18 +597,18 @@ class log {
 		// option to debug only specific key ##
 		if ( isset( $key ) ) {
 			
-			$return = $this->log[ $key ];  // key group ##
+			$return = self::$log[ $key ];  // key group ##
 
 			// empty log key ##
-			unset( $this->log[ $key ] );
+			unset( self::$log[ $key ] );
 
         } else {
 
-			$return = $this->log ; // all
+			$return = self::$log ; // all
 
 			// empty log ##
-			// unset( $this->log );
-			$this->log = [];
+			// unset( self::$log );
+			self::$log = [];
 
 		}
 			
@@ -631,7 +619,7 @@ class log {
 		if ( is_array( $return ) ) { $return = array_reverse( $return ); }
 
 		// clean up ##
-		// $return = $this->array_unique_multidimensional( $return );
+		// $return = self::array_unique_multidimensional( $return );
 
 		// take first key, skip one level ##
 		// $first_key = array_key_first( $return );
@@ -645,11 +633,11 @@ class log {
 				|| is_object( $return ) 
 			) {
 				// error_log( print_r( $return, true ) );
-				$this->error_log( print_r( $return, true ), $this->file );
+				self::error_log( print_r( $return, true ), self::$file );
             } else {
 				// error_log( $return );
 				// trigger_error( $return );
-				$this->error_log( $return, $this->file );
+				self::error_log( $return, self::$file );
             }
 
 		}
@@ -666,7 +654,7 @@ class log {
 	 * 
 	 * @since 4.1.0
 	 */ 
-	public function error_log( $log = null, $file = null )
+	public static function error_log( $log = null, $file = null )
 	{
 
 		// sanity ##
@@ -675,7 +663,7 @@ class log {
 		){
 
 			return false;
-			// $this->error_log( 'EMPTY...' );
+			// self::error_log( 'EMPTY...' );
 
 		} else {
 
@@ -719,10 +707,10 @@ class log {
      * Clear Temp Log
      * 
      */
-    private function clear( $args = null ){
+    private static function clear( $args = null ){
 
 		// test ##
-        // h::hard_log( $args );
+        // w__log_direct( $args );
 
 		// sanity ##
 		// ...
@@ -730,31 +718,31 @@ class log {
 		// if key set, check if exists, else bale ##
 		if ( 
 			isset( $args['key'] )
-			&& ! isset( $this->log[ $args['key'] ] ) 
+			&& ! isset( self::$log[ $args['key'] ] ) 
 		) {
 
-			h::hard_log( 'Log key empty: "'.$args['key'].'"' );
+			w__log_direct( 'Log key empty: "'.$args['key'].'"' );
 
 			return false;
 
 		}
 
-		// h::hard_log( $this->log );
+		// w__log_direct( self::$log );
 
         // option to debug only specific fields ##
         if ( isset( $args['key'] ) ) {
 
-			unset( $this->log[ $args['key'] ] );
+			unset( self::$log[ $args['key'] ] );
 
-			h::hard_log( 'n>Emptied log key: "'.$args['key'].'"' );
+			w__log_direct( 'n>Emptied log key: "'.$args['key'].'"' );
 
 			return true;
 
 		}
 
-		unset( $this->log );
+		unset( self::$log );
 
-		h::hard_log( 'n>Emptied all log keys' );
+		w__log_direct( 'n>Emptied all log keys' );
 		
 		return true;
 
@@ -766,7 +754,7 @@ class log {
      * Empty Log
      * 
      */
-    private function empty( $args = null ){
+    private static function empty( $args = null ){
 
 		// do not save file from admin, as it will be incomplete ##
 		if( 
@@ -774,27 +762,27 @@ class log {
 			|| \wp_doing_ajax()
 		){ 
 		
-			// h::hard_log( 'd:>Attempt to empty log from admin blocked' );
+			// w__log_direct( 'd:>Attempt to empty log from admin blocked' );
 
 			return false; 
 		
 		}
 
 		// empty once -- commented out.. ##
-		if( $this->empty ) { return false; }
+		if( self::$empty ) { return false; }
 
 		// empty dedicated log file ##
-		$f = @fopen( $this->file, "r+" );
+		$f = @fopen( self::$file, "r+" );
 		if ( $f !== false ) {
 			
 			ftruncate($f, 0);
 			fclose($f);
 
 			// log to log ##
-			// h::hard_log( 'Log Emptied: '.date('l jS \of F Y h:i:s A') );
+			// w__log_direct( 'Log Emptied: '.date('l jS \of F Y h:i:s A') );
 
 			// track ##
-			$this->empty == true;
+			self::$empty == true;
 
 		}
 
@@ -807,14 +795,14 @@ class log {
      * Shutdown method
      * 
      */
-    public function shutdown(){
+    public static function shutdown(){
 
 		// check what's in the log ##
-		// var_dump( $this->log );
+		// var_dump( self::$log );
 
 		// filter what to write to log - defaults to "error" key ##
-		$key = \apply_filters( 'willow/core/log/default', $this->shutdown_key );
-		$key_debug = \apply_filters( 'willow/core/log/debug', $this->shutdown_key_debug );
+		$key = \apply_filters( 'willow/core/log/default', self::$shutdown_key );
+		$key_debug = \apply_filters( 'willow/core/log/debug', self::$shutdown_key_debug );
 
 		// var_dump( $key ); echo '<br/><br/>';
 		// var_dump( $key_debug ); echo '<br/><br/>';
@@ -824,13 +812,13 @@ class log {
 			! $key 
 			|| is_null( $key ) 
 			|| empty( $key ) 
-			// || ! isset( $this->log[ $key ] )
+			// || ! isset( self::$log[ $key ] )
 		){
 
-			h::hard_log( 'd:>shutdown -- no key, so write all..' );
+			w__log_direct( 'd:>shutdown -- no key, so write all..' );
 
 			// log all ##
-			return $this->write();
+			return self::write();
 
 		}
 
@@ -842,11 +830,11 @@ class log {
 			// h::debug( 'd:>key is: '.$v );
 			
 			// skip missing keys ##
-			if ( ! isset( $this->log[$v] ) ) { continue; }
+			if ( ! isset( self::$log[$v] ) ) { continue; }
 
 			// log specific key ##
-			// $this->write( $v );
-			$log[$v] = $this->log[$v];
+			// self::write( $v );
+			$log[$v] = self::$log[$v];
 
 		}
 
@@ -861,23 +849,23 @@ class log {
 				if ( is_array( $key ) && array_key_exists( $v, $key ) ) { continue; }
 
 				// skip missing keys ##
-				if ( ! isset( $this->log[$v] ) ) { continue; }
+				if ( ! isset( self::$log[$v] ) ) { continue; }
 
 				// h::debug( 'd:>debug key is: '.$v );
 
 				// log specific key ##
-				// $this->write( $v );
-				$log[$v] = $this->log[$v];
+				// self::write( $v );
+				$log[$v] = self::$log[$v];
 
 			}
 
 		}
 
 		// assign to new key ##
-		$this->log['willow'] = $log;
+		self::$log['willow'] = $log;
 
 		// write new key to log ##
-		$this->write( 'willow' );
+		self::write( 'willow' );
 
 		// done ##
 		return true;

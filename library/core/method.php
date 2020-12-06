@@ -192,7 +192,7 @@ class method {
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
-            // h::log( 'e:>Page template empty' );
+            // w__log( 'e:>Page template empty' );
             
 			// return false;
 			
@@ -201,7 +201,7 @@ class method {
 
         } else {
 
-            // h::log( 'Page template: '.$GLOBALS['q_template'] );
+            // w__log( 'Page template: '.$GLOBALS['q_template'] );
 
             return str_replace( [ '.php', '.willow' ], '', $GLOBALS['q_template'] );        
 
@@ -224,17 +224,17 @@ class method {
 
         } else {
 
-            // h::log( 'Page template: '.$GLOBALS['q_template'] );
+            // w__log( 'Page template: '.$GLOBALS['q_template'] );
 
             $template = $GLOBALS['q_template'];        
 
 		}
 		
-		// h::log( 'e:>Template: "'.$template.'"' );
+		// w__log( 'e:>Template: "'.$template.'"' );
 
 		$extension = self::file_extension( $template );
 
-		// h::log( 'e:>Extension: "'.$extension.'"' );
+		// w__log( 'e:>Extension: "'.$extension.'"' );
 
 		// kick back ##
 		return $extension;
@@ -248,7 +248,7 @@ class method {
 		// sanity ##
 		if( is_null( $string ) ){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -272,7 +272,7 @@ class method {
 			// stripslashes ## .. hmmm ##
 			$contents = str_replace( '\\', '', $contents );
 
-			// h::log( 'd:>Array data good, saving to file' );
+			// w__log( 'd:>Array data good, saving to file' );
 
 			// save in php as an array, ready to return ##
 			file_put_contents( $path, "<?php\n return {$contents};\n") ;
@@ -282,7 +282,7 @@ class method {
 
 		}
 
-		h::log( 'e:>Error with data format, config file NOT saved' );
+		w__log( 'e:>Error with data format, config file NOT saved' );
 		
 		// failed ##
 		return false;
@@ -363,7 +363,7 @@ class method {
 		// trim white spaces ##
 		$string = trim( $string );
 
-		// h::log( 'string: '.$string );
+		// w__log( 'string: '.$string );
 
 		// kick back ##
 		return $string;
@@ -416,7 +416,7 @@ class method {
 			|| is_null( $needle )
 		){
 			
-			h::log('e:>Error in passed params');
+			w__log('e:>Error in passed params');
 
 			return false;
 
@@ -446,7 +446,7 @@ class method {
 			|| is_null( $needle )
 		){
 			
-			h::log('e:>Error in passed params');
+			w__log('e:>Error in passed params');
 
 			return false;
 
@@ -482,7 +482,7 @@ class method {
 			! $defaults
 		){
 
-			// h::log( 'e:>No $defaults passed to method' );
+			// w__log( 'e:>No $defaults passed to method' );
 
 			return $args; // ?? TODO, is this good ? 
 
@@ -519,13 +519,13 @@ class method {
 			|| ! is_string( $string )
 		){
 			
-			h::log( 'e:>Passed string empty or bad format' );
+			w__log( 'e:>Passed string empty or bad format' );
 
 			return false;
 
 		}
 
-		// h::log($string);
+		// w__log($string);
 
 		// delimiters ##
 		$operator_assign = '=';
@@ -537,7 +537,7 @@ class method {
 		// check for "=" delimiter ##
 		if( false === strpos( $string, $operator_assign ) ){
 
-			h::log( 'e:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
+			w__log( 'e:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
 
 			return false;
 
@@ -549,7 +549,7 @@ class method {
 		# split on outer delimiter
 		$pairs = explode( $delimiter_and_key, $string );
 
-		// h::log( $pairs );
+		// w__log( $pairs );
 	  
 		# loop through each pair
 		foreach ( $pairs as $i ) {
@@ -560,7 +560,7 @@ class method {
 				// || true !== strpos( $i, $operator_assign ) 
 			){
 			
-				h::log( '$i is empty ~~ "'.$i.'"' );
+				w__log( '$i is empty ~~ "'.$i.'"' );
 
 				continue;
 			
@@ -572,7 +572,7 @@ class method {
 				false === strpos( $i, $operator_assign ) 
 			){
 			
-				h::log( '$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
+				w__log( '$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
 
 				continue;
 			
@@ -589,19 +589,19 @@ class method {
 				$value_array = [];	
 
 				// preg_match_all( "~\'[^\"]++\"|[^,]++~", $value, $result );
-				// h::log( $result );
+				// w__log( $result );
 				$value_pairs = self::quoted_explode( $value, $delimiter_and_property, '"' );
-				// h::log( $value_pairs );
+				// w__log( $value_pairs );
 
 				// split value into an array at "," ##
 				// $value_pairs = explode( $delimiter_and_property, $value );
 
-				// h::log( $value_pairs );
+				// w__log( $value_pairs );
 
 				# loop through each pair
 				foreach ( $value_pairs as $v_pair ) {
 
-					// h::log( 'e:>'.$v_pair ); // 'sm:medium'
+					// w__log( 'e:>'.$v_pair ); // 'sm:medium'
 
 					# split into name and value
 					list( $value_key, $value_value ) = explode( $delimiter_key, $v_pair, 2 );
@@ -672,7 +672,7 @@ class method {
 			}
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 	  
 		# return result array
 		return $array;
@@ -825,7 +825,7 @@ class method {
 			|| ! is_array( $array )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return false;
 

@@ -35,7 +35,7 @@ class ui {
      */
     public function get( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
 		return $this->plugin->get('config')->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 

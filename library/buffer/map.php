@@ -29,28 +29,27 @@ class map {
 	*/
     public function prepare() {
 
+		// get orignal markup string ##
+		$string = $this->plugin->get( '_markup_template' );
+
+		// get buffer map ##
+		$_buffer_map = $this->plugin->get( '_buffer_map' );
+		// w__log( $_buffer_map );
+
 		// sanity ##
 		if ( 
-			is_null( $this->plugin->get( '_buffer_map') )
-			|| ! is_array( $this->plugin->get( '_buffer_map') )
+			is_null( $_buffer_map )
+			|| ! is_array( $_buffer_map )
 			// || is_null( $this->plugin->get( '_buffer_map' )['0'] )
 		){
 
 			// log ##
-			$this->plugin->log( 'e:>$_buffer_map is empty, so nothing to prepare.. stopping here.');
+			w__log( 'e:>$_buffer_map is empty, so nothing to prepare.. stopping here.');
 
 			// kick out ##
 			return false;
 
 		}
-
-		// get orignal markup string ##
-		$string = $this->plugin->get( '_markup_template' );
-
-		// $this->plugin->log( $this->plugin->get( '_buffer_map') );
-
-		// get buffer map ##
-		$_buffer_map = $this->plugin->get( '_buffer_map' );
 
 		// pre format child willows, moving output into parent rows ##
 		foreach( $_buffer_map as $key => $value ){
@@ -76,7 +75,7 @@ class map {
 
 			}
 
-			// $this->plugin->log( 'Row: '.$value['hash'].' is a child to: '.$this->plugin->get( '_buffer_map' )[ $row ]['hash'] );
+			// w__log( 'Row: '.$value['hash'].' is a child to: '.$this->plugin->get( '_buffer_map' )[ $row ]['hash'] );
 
 			// str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key... ##
 			// self::$buffer_map[ $row ]['output'] = str_replace( $value['tag'], $value['output'], self::$buffer_map[ $row ]['output'] );
@@ -84,14 +83,14 @@ class map {
 			$_buffer_map[ $row ]['output'] = str_replace( 
 				$value['tag'], 
 				$value['output'], 
-				$this->plugin->get( '_buffer_map' )[ $row ]['output'] 
+				$_buffer_map[ $row ]['output'] // $this->plugin->get( '_buffer_map' )[ $row ]['output'] 
 			);
 
 		}
 
-		// $this->plugin->log( $this->plugin->get( '_buffer_map' ) );
-		// $this->plugin->log( $this->plugin->get( '_buffer_log' ) );
-		// $this->plugin->log( $string );
+		// w__log( $this->plugin->get( '_buffer_map' ) );
+		// w__log( $this->plugin->get( '_buffer_log' ) );
+		// w__log( $string );
 		// $return = '';
 
 		// now, search and replace tags in parent with tags from buffer_map ##
@@ -114,7 +113,7 @@ class map {
 				strpos( $string, $value['tag'] ) === false
 			){
 
-				$this->plugin->log( 'e:>'.$value['hash'].' -> Unable to locate: '.$value['tag'].' in buffer' );
+				w__log( 'e:>'.$value['hash'].' -> Unable to locate: '.$value['tag'].' in buffer' );
 
 				continue;
 
@@ -126,8 +125,8 @@ class map {
 		}
 
 		// check ##
-		// h::log( $string );
-		// $this->plugin->log( $string );
+		// w__log( $string );
+		// w__log( $string );
 
 		// save buffer map ##
 		$this->plugin->set( '_buffer_map', $_buffer_map );
@@ -146,19 +145,19 @@ class map {
 			|| is_null( $value )
 		){
 
-			$this->plugin->log( 'e:>Error in passed arguments' );
+			w__log( 'e:>Error in passed arguments' );
 
 			return false;
 
 		}
 
-		// $this->plugin->log( 'searching for: '. $value.' in row: '.$key );
+		// w__log( 'searching for: '. $value.' in row: '.$key );
 
 		foreach( $this->plugin->get( '_buffer_map' ) as $key_map => $value_map ){
 
 			if ( isset( $value_map[$key] ) && $value_map[$key] == $value ) {
 
-				// $this->plugin->log( 'key '.$key.' found in row: '.$key_map );
+				// w__log( 'key '.$key.' found in row: '.$key_map );
 
 				return $key_map;
 
@@ -172,20 +171,20 @@ class map {
 		/*
 		$result = array_search( $value, array_column( $this->plugin->get( '_buffer_map' ), $key ) );
 		$keys = array_keys(array_column( $this->plugin->get( '_buffer_map' ), $key ), $value );
-		$this->plugin->log( $keys );
+		w__log( $keys );
 		*/
 		/*
 		if( 
 			! isset( $this->plugin->get( '_buffer_map' )[$result] )
 		){
 
-			$this->plugin->log( 'e:>Error finding key: '.$result );
+			w__log( 'e:>Error finding key: '.$result );
 
 			return false;
 
 		}
 
-		// $this->plugin->log( 'key found in row: '.$result );
+		// w__log( 'key found in row: '.$result );
 
 		return $result;
 		*/

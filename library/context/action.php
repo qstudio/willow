@@ -31,13 +31,13 @@ class action {
      */
     public function get( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
 		if ( \has_action( $args['task'] ) ) {
 
 			// @todo - filter to pass additional args to action / filter ##
 
-			// h::log( 'e:>has_action: '.$args['task'] );
+			// w__log( 'e:>has_action: '.$args['task'] );
 
 			// buffer action ##
 			ob_start();
@@ -46,9 +46,13 @@ class action {
 			
 			$string = ob_get_clean();
 
-			// h::log( $string );
+			// prepare return array ##
+			$array = [ $args['task'] => $string ];
 
-			return [ $args['task'] => $string ];
+			// w__log( $string );
+			// w__log( $array );
+
+			return $array;
 
 		}
 

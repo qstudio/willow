@@ -35,7 +35,7 @@ class markup {
         ) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>No string or type value passed to method' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:>No string or type value passed to method' );
 
             return false;
 
@@ -50,7 +50,7 @@ class markup {
 				$open = trim( $this->plugin->get('tags')->g( 'var_o' ) );
 				$close = trim( $this->plugin->get('tags')->g( 'var_c' ) );
 
-				// $this->plugin->log( 'open: '.$open );
+				// w__log( 'open: '.$open );
 
 				$regex_find = \apply_filters( 
 					'willow/parse/variable/get', 
@@ -66,17 +66,17 @@ class markup {
         if ( ! preg_match_all( $regex_find, $string, $matches ) ) {
 
 			// log ##
-			// $this->plugin->log( 't:>TODO - if no self::$args - set to buffer' );
-			// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>n:>No variables found in string.' );
-			// $this->plugin->log( 'd:>No variables found in string.' );
-			// $this->plugin->log( '$string: "'.$string.'"' );
+			// w__log( 't:>TODO - if no self::$args - set to buffer' );
+			// w__log( $this->plugin->get( '_args')['task'].'~>n:>No variables found in string.' );
+			// w__log( 'd:>No variables found in string.' );
+			// w__log( '$string: "'.$string.'"' );
 
             return false;
 
         }
 
         // test ##
-        // $this->plugin->log( $matches[0] );
+        // w__log( $matches[0] );
 
         // kick back variable array ##
         return $matches[0];
@@ -117,7 +117,7 @@ class markup {
      */
     public function set( string $tag = null, $position = null, $type = 'variable', $process = 'secondary' ) { // , $markup = null
 
-		// $this->plugin->log( 't:>Position based replacement seems shaky, perhaps move to swap method...' );
+		// w__log( 't:>Position based replacement seems shaky, perhaps move to swap method...' );
 
         // sanity ##
         if (
@@ -127,7 +127,7 @@ class markup {
 		) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
 
             return false;
 
@@ -153,14 +153,14 @@ class markup {
         ) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
 
             return false;
 
 		}
 		
-		// $this->plugin->log( 'd:>Setting tag: "'.$tag.'"' );
-		// $this->plugin->log( 'Position: '.$position );
+		// w__log( 'd:>Setting tag: "'.$tag.'"' );
+		// w__log( 'Position: '.$position );
 
 		// find out which markup to affect ##
 		switch( $process ){
@@ -168,13 +168,13 @@ class markup {
 			default : 
 			case "secondary" :
 
-				// $this->plugin->log( 'd:>Swapping markup in $this->plugin->get( '_markup')' );
+				// w__log( 'd:>Swapping markup in $this->plugin->get( '_markup')' );
 
 				// add new variable to $template as defined position - don't replace {{ variable }} yet... ##
 				$new_template = substr_replace( $this->plugin->get( '_markup')['template'], $tag, $position, 0 );
 
 				// test ##
-				// $this->plugin->log( 'd:>'.$new_template );
+				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
 				$this->plugin->get( '_markup')['template'] = $new_template; // ."\r\n"
@@ -183,13 +183,13 @@ class markup {
 
 			case "primary" :
 
-				// $this->plugin->log( 'd:>Swapping markup in self::$buffer_markup' );
+				// w__log( 'd:>Swapping markup in self::$buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = substr_replace( $this->plugin->get('_buffer_markup'), $tag, $position, 0 );
 
 				// test ##
-				// $this->plugin->log( 'd:>'.$new_template );
+				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
 				$this->plugin->set('_buffer_markup', $new_template ); // ."\r\n"
@@ -198,10 +198,10 @@ class markup {
 
 		} 
 		
-		// $this->plugin->log( 'd:>'.$new_template );
+		// w__log( 'd:>'.$new_template );
 
 		// log ##
-		// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( $this->plugin->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true; 
@@ -218,7 +218,7 @@ class markup {
      */
     public function add( string $tag = null, $before = null, $type = 'variable', $process = 'secondary' ) { // , $markup = null
 
-		$this->plugin->log( 't:>TOOO, __deprecate in 1.5.0' );
+		w__log( 't:>TOOO, __deprecate in 1.5.0' );
 
         // sanity ##
         if (
@@ -228,7 +228,7 @@ class markup {
 		) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
 
             return false;
 
@@ -242,10 +242,10 @@ class markup {
 		){
 
 			// log ##
-			// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
+			// w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
 
 			// log ##
-			$this->plugin->log( 'e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
+			w__log( 'e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
 
             return false;
 
@@ -280,7 +280,7 @@ class markup {
         ) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
 
             return false;
 
@@ -300,7 +300,7 @@ class markup {
 					$position = false === strpos( $markup['template'], $before )
 				){
 
-					$this->plugin->log( 'e:>Cannot locate "'.$before.'" in internal $markup' );
+					w__log( 'e:>Cannot locate "'.$before.'" in internal $markup' );
 
 				}
 
@@ -314,10 +314,10 @@ class markup {
 				$this->plugin->set( '_markup', $markup );
 
 				// log ##
-				// $this->plugin->log( 'd:>Adding tag: "'.$tag.'" @ Position: '.$position.' in internal markup' );
+				// w__log( 'd:>Adding tag: "'.$tag.'" @ Position: '.$position.' in internal markup' );
 
 				// test ##
-				$this->plugin->log( 'd:>'.$new_template );
+				w__log( 'd:>'.$new_template );
 
 			break ;
 
@@ -330,36 +330,36 @@ class markup {
 					$position = false === strpos( $buffer_markup, $before )
 				){
 
-					$this->plugin->log( 'e:>Cannot locate "'.$before.'" in buffer $markup: '.$buffer_markup );
+					w__log( 'e:>Cannot locate "'.$before.'" in buffer $markup: '.$buffer_markup );
 
 				}
 
-				// $this->plugin->log( 'd:>Swapping markup in $buffer_markup' );
+				// w__log( 'd:>Swapping markup in $buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = substr_replace( $buffer_markup, $tag, $position );
 
 				// test ##
-				// $this->plugin->log( 'd:>'.$new_template );
+				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
 				$this->plugin->set( '_buffer_markup', $new_template."\r\n" );
 
 				// log ##
-				// $this->plugin->log( 'd:>Adding tag: "'.$tag.'" @ Position: '.$position.' in buffer markup' );
+				// w__log( 'd:>Adding tag: "'.$tag.'" @ Position: '.$position.' in buffer markup' );
 
 				// test ##
-				$this->plugin->log( 'd:>'.$new_template );
+				w__log( 'd:>'.$new_template );
 
 
 			break ;
 
 		} 
 		
-		// $this->plugin->log( 'd:>'.$new_template );
+		// w__log( 'd:>'.$new_template );
 
 		// log ##
-		// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( $this->plugin->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true; #$markup['template'];
@@ -384,14 +384,14 @@ class markup {
 		) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
 
             return false;
 
 		}
 
-		// $this->plugin->log('d:>from: "'.$from.'"');
-		// $this->plugin->log('d:>to: "'.$to.'"');
+		// w__log('d:>from: "'.$from.'"');
+		// w__log('d:>to: "'.$to.'"');
 		
 		// validate to type ##
 		switch ( $to_type ) {
@@ -471,10 +471,10 @@ class markup {
 		){
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
 
 			// log ##
-			$this->plugin->log( 'e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
+			w__log( 'e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
 
             return false;
 
@@ -496,10 +496,10 @@ class markup {
         ) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
 			// log ##
-			$this->plugin->log( 'e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+			w__log( 'e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
             return false;
 
@@ -603,20 +603,20 @@ class markup {
         ) {
 
 			// log ##
-			// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+			// w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
 			// log ##
-			$this->plugin->log( 'e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' -> missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+			w__log( 'e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' -> missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
             return false;
 
 		}
 		
-		// $this->plugin->log( 'd:>swapping from: "'.$from.'" to: "'.$to.'"' );
+		// w__log( 'd:>swapping from: "'.$from.'" to: "'.$to.'"' );
 
 		// use strpos to get location of {{ variable }} ##
 		// $position = strpos( $this->plugin->get( '_markup'), $to );
-		// $this->plugin->log( 'Position: '.$position );
+		// w__log( 'Position: '.$position );
 
 		// find out which markup to affect ##
 		switch( $process ){
@@ -626,14 +626,14 @@ class markup {
 
 				$markup = $this->plugin->get( '_markup');
 
-				// $this->plugin->log( 'd:>Swapping markup in $this->plugin->get( '_markup')' );
+				// w__log( 'd:>Swapping markup in $this->plugin->get( '_markup')' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				// $new_template = str_replace( $from, $to, $this->plugin->get( '_markup')['template'] );
 				$new_template = willow\render\method::str_replace_first( $from, $to, $markup['template'] ); // only replaces first occurance ##
 
 				// test ##
-				// $this->plugin->log( 'd:>'.$new_template );
+				// w__log( 'd:>'.$new_template );
 				$markup['template'] = $new_template;
 
 				// push back into main stored markup ##
@@ -643,13 +643,13 @@ class markup {
 
 			case "primary" :
 
-				// $this->plugin->log( 'd:>Swapping markup in self::$buffer_markup' );
+				// w__log( 'd:>Swapping markup in self::$buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = str_replace( $from, $to, $this->plugin->get('_buffer_markup') );
 
 				// test ##
-				// $this->plugin->log( 'd:>'.$new_template );
+				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
 				$this->plugin->set( '_buffer_markup', $new_template );
@@ -679,13 +679,13 @@ class markup {
 		) {
 
 			// log ##
-			$this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>No variable or markkup value passed to method' );
+			w__log( $this->plugin->get( '_args')['task'].'~>e:>No variable or markkup value passed to method' );
 
             return false;
 
 		}
 		
-		// $this->plugin->log( 'remove: '.$variable );
+		// w__log( 'remove: '.$variable );
 
         // check if variable is correctly formatted --> {{ STRING }} ##
 
@@ -717,14 +717,14 @@ class markup {
         ) {
 
 			// log ##
-			// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
-			$this->plugin->log( 'e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
+			// w__log( $this->plugin->get( '_args')['task'].'~>e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
+			w__log( 'e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
 
             return false;
 
 		}
 		
-		// $this->plugin->log( 'Removing variable: "'.$variable.'"' );
+		// w__log( 'Removing variable: "'.$variable.'"' );
 		// return $markup;
 
         // remove variable from markup ##
@@ -735,12 +735,12 @@ class markup {
             	$markup
 			);
 		
-		// $this->plugin->log( 'd:>'.$markup );
+		// w__log( 'd:>'.$markup );
 
 		// log ##
-		// $this->plugin->log( $this->plugin->get( '_args')['task'].'~>variable_removed:>"'.$variable.'" by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( $this->plugin->get( '_args')['task'].'~>variable_removed:>"'.$variable.'" by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
-		// $this->plugin->log( 'd~>variable_removed:>"'.$variable.'" by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( 'd~>variable_removed:>"'.$variable.'" by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return $markup;

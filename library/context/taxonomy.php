@@ -31,7 +31,7 @@ class taxonomy {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -45,7 +45,7 @@ class taxonomy {
 			|| ! is_callable([ 'Q\willow\get\taxonomy', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\taxonomy\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\taxonomy\\'.$method );
 
 			return false;
 
@@ -53,7 +53,7 @@ class taxonomy {
 
 		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: willow\get\taxonomy\\'.$method );
+		// w__log( 'e:>Class method IS callable: willow\get\taxonomy\\'.$method );
 
 		// new object ##
 		$taxonomy = new willow\get\taxonomy( $this->plugin );
@@ -70,7 +70,7 @@ class taxonomy {
 		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

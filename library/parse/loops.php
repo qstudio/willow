@@ -80,7 +80,7 @@ class loops {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -112,14 +112,14 @@ class loops {
 			|| is_null( $string )
 		){
 
-			h::log( self::$args['task'].'~>e:>Error in $markup' );
+			w__log( self::$args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
-		// h::log('d:>'.$string);
+		// w__log( $args );
+		// w__log('d:>'.$string);
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
@@ -136,7 +136,7 @@ class loops {
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
 
-			// h::log( $matches );
+			// w__log( $matches );
 
 			// sanity ##
 			if ( 
@@ -145,7 +145,7 @@ class loops {
 				|| ! $matches[1]
 			){
 
-				h::log( 'e:>Error in returned matches array' );
+				w__log( 'e:>Error in returned matches array' );
 
 				return false;
 
@@ -161,7 +161,7 @@ class loops {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					h::log( 'e:>Error in returned matches - no position' );
+					w__log( 'e:>Error in returned matches - no position' );
 
 					continue;
 
@@ -173,10 +173,10 @@ class loops {
 				// take match ##
 				$match = $matches[0][$match][0];
 
-				// h::log( $match );
+				// w__log( $match );
 
-				// h::log( 'd:>position: '.$position );
-				// h::log( 'd:>position from 1: '.$matches[0][$match][1] ); 
+				// w__log( 'd:>position: '.$position );
+				// w__log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
 				// pass match to function handler ##
 				$this->format( $match, $process, $args );
@@ -199,7 +199,7 @@ class loops {
 			is_null( $match )
 		){
 
-			h::log( 'e:>No function match or postion passed to format method' );
+			w__log( 'e:>No function match or postion passed to format method' );
 
 			return false;
 
@@ -227,11 +227,11 @@ class loops {
 		// get scope ##
 		self::$loop_scope = self::scope( self::$loop_match );
 		self::$loop_scope_full = self::scope( self::$loop_match, true );
-		// h::log( 'tagless scope: '.self::$loop_scope );
-		// h::log( 'full scope: '.self::$loop_scope_full );
+		// w__log( 'tagless scope: '.self::$loop_scope );
+		// w__log( 'full scope: '.self::$loop_scope_full );
 
-		// h::log( $args['context'] );
-		// h::log( $args['context'].' - '.self::$loop_scope.'<br />'.$match );
+		// w__log( $args['context'] );
+		// w__log( $args['context'].' - '.self::$loop_scope.'<br />'.$match );
 
 		// sanity ##
 		if ( 
@@ -239,7 +239,7 @@ class loops {
 			|| ! isset( self::$loop_markup ) 
 		){
 
-			h::log( 'e:>Error in returned match key or value' );
+			w__log( 'e:>Error in returned match key or value' );
 
 			return false; 
 
@@ -249,7 +249,7 @@ class loops {
 		self::$loop_scope = trim(self::$loop_scope);
 		self::$loop_markup = trim(self::$loop_markup);
 
-		// h::log( self::$loop_markup );
+		// w__log( self::$loop_markup );
 
 		// look for {{ variables }} inside loop markup string ##
 		if ( 
@@ -257,10 +257,10 @@ class loops {
 		) {
 	
 			// log ##
-			// h::log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
-			// h::log( 'd:>"'.count( self::$loop_variables ) .'" variables found in string');
+			// w__log( self::$args['task'].'~>d:>"'.count( $variables ) .'" variables found in string');
+			// w__log( 'd:>"'.count( self::$loop_variables ) .'" variables found in string');
 	
-			// h::log( $variables );
+			// w__log( $variables );
 	
 			// remove any leftover variables in string ##
 			foreach( self::$loop_variables as $key => $value ) {
@@ -282,10 +282,10 @@ class loops {
 					) {
 
 						// test array ##
-						// h::log( $arguments_array );
+						// w__log( $arguments_array );
 
 						// debug ##
-						// h::log( 'variable "'.$value.'" has arguments: '.$arguments );
+						// w__log( 'variable "'.$value.'" has arguments: '.$arguments );
 
 						// get fill arguments string - with tags ##
 						$arguments_tag = core\method::string_between( $value, trim( tags::g( 'arg_o' )), trim( tags::g( 'arg_c' )), true );
@@ -296,7 +296,7 @@ class loops {
 							$arguments_array
 						);
 
-						// h::log( self::$args );
+						// w__log( self::$args );
 
 						// remove args from variable ##
 						self::$loop_markup = str_replace( $arguments_tag, '', self::$loop_markup );
@@ -333,53 +333,53 @@ class loops {
 		// update "{: scope :}" to  "{: scope__$hash :}" ##
 		self::$loop_scope = self::$loop_scope.'__'.self::$loop_hash;
 
-		// h::log( self::$loop_markup ); 
+		// w__log( self::$loop_markup ); 
 
 		// now, we need to edit the markup in two places -- or just one ??
 		// create updated loop scope tag ##
 		$loop_scope_tag = $this->plugin->get( 'tags' )->g( 'sco_o' ).self::$loop_scope.$this->plugin->get( 'tags' )->g( 'sco_c' );
-		// h::log( 'New loop scope tag: '.$loop_scope_tag );
-		// h::log( self::$loop_scope_full );
+		// w__log( 'New loop scope tag: '.$loop_scope_tag );
+		// w__log( self::$loop_scope_full );
 
-		// h::log( self::$markup_template );
+		// w__log( self::$markup_template );
 
 		// replace markup in principle markup template ##
 		// self::$markup_template = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
 		self::$markup_template = render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
 
-		// h::log( self::$markup_template );
+		// w__log( self::$markup_template );
 
-		// h::log( \willow::$hash );
+		// w__log( \willow::$hash );
 
 		// replace stored tag in parent Willow $hash ##
 		// \willow::$hash['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
 		\willow::$hash['tag'] = render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
 
-		// h::log( \willow::$hash );
+		// w__log( \willow::$hash );
 
 		#*/
 
 		// test what we have ##
-		// h::log( self::$markup );
-		// h::log( 'process: '.$process );
-		// h::log( 'loop_markup: '.self::$loop_markup );
-		// h::log( 'loop_scope: '.self::$loop_scope );
-		// h::log( 'scope_count: '.self::$scope_count );
-		// h::log( \willow::$hash['tag'] );
-		// h::log( self::$args );
-		// h::log( self::$willow_match );
-		// h::log( self::$markup_template );
-		// h::log( self::$scope_map );
-		// h::log( 'd:>field: "'.self::$loop_scope.'"' );
-		// h::log( 'd:>markup: "'.self::$loop_markup.'"' );
-		// h::log( 'd:>match: "'.self::$loop_match.'"' );
-		// h::log( 'd:>hash: "'.self::$loop_hash.'"' );
-		// h::log( 'd:>position: "'.self::$position.'"' );
+		// w__log( self::$markup );
+		// w__log( 'process: '.$process );
+		// w__log( 'loop_markup: '.self::$loop_markup );
+		// w__log( 'loop_scope: '.self::$loop_scope );
+		// w__log( 'scope_count: '.self::$scope_count );
+		// w__log( \willow::$hash['tag'] );
+		// w__log( self::$args );
+		// w__log( self::$willow_match );
+		// w__log( self::$markup_template );
+		// w__log( self::$scope_map );
+		// w__log( 'd:>field: "'.self::$loop_scope.'"' );
+		// w__log( 'd:>markup: "'.self::$loop_markup.'"' );
+		// w__log( 'd:>match: "'.self::$loop_match.'"' );
+		// w__log( 'd:>hash: "'.self::$loop_hash.'"' );
+		// w__log( 'd:>position: "'.self::$position.'"' );
 
 		// so, we can add a new field value to $args array based on the loop scope ( including unique hash ) - with the loop_markup as value ##
 		self::$markup[self::$loop_scope] = self::$loop_markup;
 
-		// h::log( self::$markup );
+		// w__log( self::$markup );
 
 		// generate a variable {{ $loop_scope }} ##
 		$variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => self::$loop_scope, 'close' => 'var_c' ]);
@@ -388,7 +388,7 @@ class loops {
 		// swap the entire {@ loop_match @} string for a single {{ variable }} matching the passed {: scope__$hash :} ##
 		parse\markup::swap( self::$loop_match, $variable, 'loop', 'variable', $process ); 
 
-		// h::log( 'd:>variable: "'.$variable.'"' );
+		// w__log( 'd:>variable: "'.$variable.'"' );
 
 		// iterate scope count ##
 		// self::$scope_count ++ ;
@@ -410,7 +410,7 @@ class loops {
 			is_null( $string )
 		){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -421,14 +421,14 @@ class loops {
 		$loo_c = $this->plugin->get( 'tags' )->g( 'loo_c' );
 
 		// test string ##
-		// h::log( $string );
+		// w__log( $string );
 
 		// the passed $string comes from a single Willow and might include one or multiple loops ##
 		$loop_count_open = substr_count( $string, trim( $loo_o ) ); // loop openers ##
 		$loop_count_close = substr_count( $string, trim( $loo_c ) ); // loop closers ##
 
 		// check ##
-		// h::log( 'Count Open: '.$loop_count_open.' ~ Count Close: '.$loop_count_close ); 
+		// w__log( 'Count Open: '.$loop_count_open.' ~ Count Close: '.$loop_count_close ); 
 
 		// no loops, return false;
 		if( 
@@ -436,7 +436,7 @@ class loops {
 			|| 0 === $loop_count_close
 		){
 
-			// h::log( 'd:>No loops in passed string, returning false.' );
+			// w__log( 'd:>No loops in passed string, returning false.' );
 
 			return false;
 
@@ -451,13 +451,13 @@ class loops {
 			$loop_string = willow\core\method::string_between( $string, trim( $loo_o ), trim( $loo_c ), true )
 		){
 
-			// h::log( $loop_string );
+			// w__log( $loop_string );
 
 			/*
 			$loo_o = strpos( $string, trim( $loo_o ) );
 			$loo_c = strpos( $string, trim( $loo_c ) );
 
-			h::log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			w__log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
@@ -471,14 +471,14 @@ class loops {
 			// grab loop {: scope :} ##
 			$scope = $this->scope( $loop_string );
 
-			// h::log( 'scope: '.$scope );
+			// w__log( 'scope: '.$scope );
 
 			// add scope count ##
 			// $scope = $scope.'_'.self::$loop_scope_count;
 
-			// h::log( 'scope: '.$scope );
+			// w__log( 'scope: '.$scope );
 
-			// h::log( 'e:>$string: "'.$loop_string.'"' );
+			// w__log( 'e:>$string: "'.$loop_string.'"' );
 
 			// iterate loop count ##
 			// self::$loop_scope_count ++ ;
@@ -513,13 +513,13 @@ class loops {
 			is_null( $string )
 		){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
 		}
 
-		// h::log( '$string: '.$string  );
+		// w__log( '$string: '.$string  );
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
@@ -531,7 +531,7 @@ class loops {
 			// $sco_o = strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'sco_o' )) );
 			// $sco_c = strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'sco_c' )) );
 
-			// h::log( 'd:>Found opening sco_o & closing sco_c'  ); 
+			// w__log( 'd:>Found opening sco_o & closing sco_c'  ); 
 
 			$scope = core\method::string_between( 
 				$string, 
@@ -551,7 +551,7 @@ class loops {
 			// $return_string = $this->plugin->get( 'tags' )->g( 'loo_o' ).$return_string.$loo_c;
 			*/
 
-			// h::log( 'd:>$scope: "'.$scope.'"' );
+			// w__log( 'd:>$scope: "'.$scope.'"' );
 
 			// kick back ##
 			return $scope;
@@ -604,7 +604,7 @@ class loops {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -635,7 +635,7 @@ class loops {
 			$regex, 
 			function($matches) {
 				
-				// h::log( $matches );
+				// w__log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -651,7 +651,7 @@ class loops {
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' loop tags removed...' );
+					w__log( $count .' loop tags removed...' );
 
 				}
 

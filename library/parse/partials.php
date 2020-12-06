@@ -32,14 +32,14 @@ class partials {
 
 		// global ##
 		$config = $this->plugin->get('config')->get([ 'context' => 'partial', 'task' => 'config' ]);
-		// $this->plugin->log( $config );
+		// w__log( $config );
 
 		if ( 
 			isset( $config['run'] )
 			&& false === $config['run']
 		){
 
-			$this->plugin->log( 'Partial config->run defined as false, so stopping here...' );
+			w__log( 'Partial config->run defined as false, so stopping here...' );
 
 			return false;
 
@@ -64,7 +64,7 @@ class partials {
 			)
 		){
 
-			$this->plugin->log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -96,32 +96,32 @@ class partials {
 			|| is_null( $string )
 		){
 
-			$this->plugin->log( $this->plugin->get('_args')['task'].'~>e:>Error in $string' );
+			w__log( $this->plugin->get('_args')['task'].'~>e:>Error in $string' );
 
 			return false;
 
 		}
 
-		// $this->plugin->log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( $this->plugin->get('tags')->g( 'par_o' ) );
 		$close = trim( $this->plugin->get('tags')->g( 'par_c' ) );
 
-		// $this->plugin->log( 'open: '.$open. ' - close: '.$close );
+		// w__log( 'open: '.$open. ' - close: '.$close );
 
 		$regex = \apply_filters( 
 			'willow/render/parse/partials/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
 		);
 
-		// $this->plugin->log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
+		// w__log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
 		if ( 
 			preg_match_all( $regex, $string, $matches, PREG_OFFSET_CAPTURE ) 
 		){
 
-			// $this->plugin->log( $matches[1] );
+			// w__log( $matches[1] );
 
 			// sanity ##
 			if ( 
@@ -130,7 +130,7 @@ class partials {
 				|| ! $matches[1]
 			){
 
-				$this->plugin->log( $this->plugin->get('_args')['task'].'~>e:>Error in returned matches array' );
+				w__log( $this->plugin->get('_args')['task'].'~>e:>Error in returned matches array' );
 
 				return false;
 
@@ -146,17 +146,17 @@ class partials {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					$this->plugin->log( $this->plugin->get('_args')['task'].'~>e:>Error in returned matches - no position' );
+					w__log( $this->plugin->get('_args')['task'].'~>e:>Error in returned matches - no position' );
 
 					continue;
 
 				}
 
-				// $this->plugin->log( 'd:>Searching for partials in  markup...' );
+				// w__log( 'd:>Searching for partials in  markup...' );
 
 				// $position = $matches[0][$match][1]; // take from first array ##
-				// $this->plugin->log( 'd:>position: '.$position );
-				// $this->plugin->log( 'd:>position from 1: '.$matches[0][$match][1] ); 
+				// w__log( 'd:>position: '.$position );
+				// w__log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
 				// get partial data ##
 				$partial = willow\core\method::string_between( $matches[0][$match][0], $open, $close );
@@ -164,7 +164,7 @@ class partials {
 
 				// return entire partial string, including tags for tag swap ##
 				$partial_match = willow\core\method::string_between( $matches[0][$match][0], $open, $close, true );
-				// $this->plugin->log( '$partial_match: '.$partial_match );
+				// w__log( '$partial_match: '.$partial_match );
 
 				// sanity ##
 				if ( 
@@ -173,7 +173,7 @@ class partials {
 					// || ! isset( $markup ) 
 				){
 
-					$this->plugin->log( $this->plugin->get('_args')['task'].'~>e:>Error in returned match function' );
+					w__log( $this->plugin->get('_args')['task'].'~>e:>Error in returned match function' );
 
 					continue; 
 
@@ -186,8 +186,8 @@ class partials {
 				// list( $context, $task ) = explode( '__', $partial );
 
 				// test what we have ##
-				// $this->plugin->log( 'd:>partial: "'.$partial.'"' );
-				// $this->plugin->log( self::$args );
+				// w__log( 'd:>partial: "'.$partial.'"' );
+				// w__log( self::$args );
 
 				// perhaps better to hand this to a method, which can grab args ??
 				// $partial_data = core\config::get([ 'context' => $context, 'task' => $task ]);
@@ -199,8 +199,8 @@ class partials {
 					// || ! is_array( $partial_data )
 				){
 
-					$this->plugin->log( $this->plugin->get('_args')['task'].'~>e:>Error in partial_data: "'.$partial.'"' );
-					$this->plugin->log( 'e:>Error loading config for partial: "'.$partial.'"' );
+					w__log( $this->plugin->get('_args')['task'].'~>e:>Error in partial_data: "'.$partial.'"' );
+					w__log( 'e:>Error loading config for partial: "'.$partial.'"' );
 
 					continue;
 
@@ -211,7 +211,7 @@ class partials {
 					is_string( $partial_data )
 				){
 
-					$this->plugin->log( $this->plugin->get('_args')['task'].'~>d:>Partial: "'.$partial.'" only sent markup, so converting to array format' );
+					w__log( $this->plugin->get('_args')['task'].'~>d:>Partial: "'.$partial.'" only sent markup, so converting to array format' );
 
 					$partial_data = [
 						'markup' => $partial_data
@@ -222,9 +222,9 @@ class partials {
 				// merge local partial data, with partial->config ##
 				$partial_data = willow\core\method::parse_args( $partial_data, $config );
 
-				// $this->plugin->log( 'd:>context: "'.$context.'"' );
-				// $this->plugin->log( 'd:>task: "'.$task.'"' );
-				// $this->plugin->log( $partial_data );
+				// w__log( 'd:>context: "'.$context.'"' );
+				// w__log( 'd:>task: "'.$task.'"' );
+				// w__log( $partial_data );
 
 				// we should check local config for this partial, to see if they should run ##
 				if( 
@@ -232,8 +232,8 @@ class partials {
 					&& false == $partial_data['config']['run']
 				){
 
-					// $this->plugin->log( $this->plugin->get('_args')['task'].'~>n:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
-					$this->plugin->log( 'd:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
+					// w__log( $this->plugin->get('_args')['task'].'~>n:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
+					w__log( 'd:>Partial "'.$partial.'" config->run defined as false, so stopping here...' );
 
 					continue;
 
@@ -242,7 +242,7 @@ class partials {
 				// hash way ##
 				/*
 				$hash = 'partial__'.$task.'__'.rand();
-				// $this->plugin->log( 'd:>partial hash: '.$hash );
+				// w__log( 'd:>partial hash: '.$hash );
 
 				// add data to buffer map ##
 				self::$buffer_map[] = [
@@ -305,7 +305,7 @@ class partials {
 			)
 		){
 
-			$this->plugin->log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -336,7 +336,7 @@ class partials {
 			$regex, 
 			function($matches) {
 				
-				// $this->plugin->log( $matches );
+				// w__log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -352,7 +352,7 @@ class partials {
 
 				if ( $count > 0 ) {
 
-					$this->plugin->log( $count .' partial tags removed...' );
+					w__log( $count .' partial tags removed...' );
 
 				}
 

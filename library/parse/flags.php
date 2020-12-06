@@ -31,7 +31,7 @@ class flags {
 			is_null( $string )
 		){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -47,7 +47,7 @@ class flags {
 			// $fla_o = strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'fla_o' )) );
 			// $fla_c = strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'fla_c' )) );
 			/*
-			h::log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			w__log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
@@ -57,12 +57,12 @@ class flags {
 
 			$return_string = $this->plugin->get( 'tags' )->g( 'loo_o' ).$return_string.$this->plugin->get( 'tags' )->g( 'loo_c' );
 
-			// h::log( 'e:>$string: "'.$return_string.'"' );
+			// w__log( 'e:>$string: "'.$return_string.'"' );
 
 			return $return_string;
 			*/
 
-			// h::log( 'd:>Found opening fla_o @ "'.$fla_o.'" and closing fla_c @ "'.$fla_c.'"'  ); 
+			// w__log( 'd:>Found opening fla_o @ "'.$fla_o.'" and closing fla_c @ "'.$fla_c.'"'  ); 
 
 			return true;
 
@@ -88,11 +88,11 @@ class flags {
 			is_null( $string )
 		){
 
-			h::log( 'e:>Error in passed arguments.' );
+			w__log( 'e:>Error in passed arguments.' );
 
 		}
 
-		// h::log( $string );
+		// w__log( $string );
 
 		// sanity ##
 		if(
@@ -118,8 +118,8 @@ class flags {
 			// prepare flags / filters ##
 			$flags_array = $this->filter_method->prepare([ 'filters' => $flags, 'use' => $use ] );
 			
-			// h::log( $flags_array );
-			// h::log( 'use: '.$use );
+			// w__log( $flags_array );
+			// w__log( 'use: '.$use );
 
 			// assign filters based on use-case ##
 			switch( $use ) {
@@ -207,7 +207,7 @@ class flags {
 		$open = trim( $this->plugin->get( 'tags' )->g( 'fla_o' ) );
 		$close = trim( $this->plugin->get( 'tags' )->g( 'fla_c' ) );
 
-		// h::log( self::$markup['template'] );
+		// w__log( self::$markup['template'] );
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -234,7 +234,7 @@ class flags {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup: '.$process );
+			w__log( 'e:>Error in stored $markup: '.$process );
 
 			return false;
 
@@ -265,7 +265,7 @@ class flags {
 			$regex, 
 			function($matches) {
 				
-				// h::log( $matches );
+				// w__log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -276,14 +276,14 @@ class flags {
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					h::log( $count .' flags removed...' );
+					w__log( $count .' flags removed...' );
 
 				}
 

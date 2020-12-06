@@ -31,7 +31,7 @@ class plugin {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -45,7 +45,7 @@ class plugin {
 			|| ! is_callable([ 'Q\willow\get\plugin', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );
 
 			return false;
 
@@ -53,7 +53,7 @@ class plugin {
 
 		// return \willow\get\post::$method;
 
-		h::log( 'e:>Class method IS callable: willow\get\plugin\\'.$method );
+		w__log( 'e:>Class method IS callable: willow\get\plugin\\'.$method );
 
 		// new object ##
 		$plugin = new willow\get\plugin( $this->plugin );
@@ -70,7 +70,7 @@ class plugin {
 		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

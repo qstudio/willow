@@ -87,7 +87,7 @@ class willows {
 			)
 		){
 
-			$this->plugin->log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -114,8 +114,8 @@ class willows {
 		} 
 
 		// get markup ##
-		// $string = self::$markup['template'];
-		// $this->plugin->log( $string );
+		// $string = $this->markup['template'];
+		// w__log( $string );
 
 		// sanity ##
 		if (  
@@ -123,30 +123,30 @@ class willows {
 			|| is_null( $string )
 		){
 
-			$this->plugin->log( $_args['task'].'~>e:>Error in $markup' );
+			w__log( $_args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
 		}
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
-		// $this->plugin->log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all willows, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( $this->plugin->get( 'tags')->g( 'wil_o' ) );
 		$close = trim( $this->plugin->get( 'tags')->g( 'wil_c' ) );
 
-		// $this->plugin->log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
+		// w__log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
 
 		$regex_find = \apply_filters( 
 			'willow/parse/willows/regex/find', 
 			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces ##
 		);
 
-		// $this->plugin->log( $args );
-		// $this->plugin->log( self::$parse_args );
+		// w__log( $args );
+		// w__log( $this->parse_args );
 
 		if ( 
 			preg_match_all( $regex_find, $string, $matches, PREG_OFFSET_CAPTURE ) 
@@ -159,7 +159,7 @@ class willows {
 				|| ! $matches[1]
 			){
 
-				$this->plugin->log( 'e:>Error in returned matches array' );
+				w__log( 'e:>Error in returned matches array' );
 
 				return false;
 
@@ -175,14 +175,14 @@ class willows {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					$this->plugin->log( 'e:>Error in returned matches - no position' );
+					w__log( 'e:>Error in returned matches - no position' );
 
 					continue;
 
 				}
 
 				// take position ##
-				// $this->plugin->log( 'position: '.$matches[0][$match][1] );
+				// w__log( 'position: '.$matches[0][$match][1] );
 				$position = $matches[0][$match][1];
 
 				// take match ##
@@ -191,9 +191,9 @@ class willows {
 				// store matches ##
 				$this->willow_matches = $match;
 
-				// $this->plugin->log( $match );
+				// w__log( $match );
 
-				// $this->plugin->log( $args );
+				// w__log( $args );
 
 				// pass match to function handler ##
 				$this->format( $match, $args, $process, $position );
@@ -216,13 +216,13 @@ class willows {
 			is_null( $match )
 		){
 
-			$this->plugin->log( 'e:>No function match passed to format method' );
+			w__log( 'e:>No function match passed to format method' );
 
 			return false;
 
 		}
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
 		// get Willow tags ##
 		$open = trim( $this->plugin->get( 'tags' )->g( 'wil_o' ) );
@@ -233,17 +233,17 @@ class willows {
 
 		// return entire function string, including tags for tag swap ##
 		$this->willow_match = willow\core\method::string_between( $match, $open, $close, true );
-		// $this->plugin->log( $this->willow_match );
+		// w__log( $this->willow_match );
 
 		// get Willow, without tags ##
 		$this->willow = willow\core\method::string_between( $match, $open, $close );
 
-		// $this->plugin->log( $this->willow );
+		// w__log( $this->willow );
 
 		// look for Willow flags -- assigned to a filter for use late on, pre-rendering ##
 		$parse_flags = new willow\parse\flags( $this->plugin );
 		$this->willow = $parse_flags->get( $this->willow, 'willow' );
-		// $this->plugin->log( self::$flags_willow );
+		// w__log( $this->plugin->get( '_flags_willow' ) );
 
 		$parse_arguments = new willow\parse\arguments( $this->plugin );
 
@@ -256,7 +256,7 @@ class willows {
 			|| ! isset( $this->willow ) 
 		){
 
-			$this->plugin->log( 'e:>Error in returned match function' );
+			w__log( 'e:>Error in returned match function' );
 
 			return false; 
 
@@ -267,7 +267,7 @@ class willows {
 			false === strpos( $this->willow, '~' ) 
 		){
 
-			$this->plugin->log( 'e:>Error: All Willows must be in "context~task" format' );
+			w__log( 'e:>Error: All Willows must be in "context~task" format' );
 
 			return false; 
 
@@ -277,9 +277,9 @@ class willows {
 		$this->willow_context = explode( '~', $this->willow, 2 )[0];
 		$this->willow_task = explode( '~', $this->willow, 2 )[1];
 
-		// $this->plugin->log( 'Willow Context: '.$this->willow_context.' // Task: '.$this->willow_task );
+		// w__log( 'Willow Context: '.$this->willow_context.' // Task: '.$this->willow_task );
 
-		// $this->plugin->log( $args );
+		// w__log( $args );
 
 		// get position of first arg_o and position of last arg_c ( in case the string includes additional args )
 		if(
@@ -290,7 +290,7 @@ class willows {
 			$arg_o = strpos( $this->willow, trim( $this->plugin->get( 'tags' )->g( 'arg_o' )) );
 			$arg_c = strrpos( $this->willow, trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) );
 
-			// $this->plugin->log( 'e:>Found opening arg_o @ "'.$arg_o.'" and closing arg_c @ "'.$arg_c.'" for willow: '.$this->willow  ); 
+			// w__log( 'e:>Found opening arg_o @ "'.$arg_o.'" and closing arg_c @ "'.$arg_c.'" for willow: '.$this->willow  ); 
 
 			// get string between opening and closing args ##
 			$this->argument_string = substr( 
@@ -301,7 +301,7 @@ class willows {
 
 		}
 
-		// $this->plugin->log( $this->argument_string  );
+		// w__log( $this->argument_string  );
 
 		// argument_string looks ok, so go with it ##
 		if ( 
@@ -312,13 +312,13 @@ class willows {
 			$parse_loops = new willow\parse\loops( $this->plugin );
 			if( $loops = $parse_loops->has( $this->argument_string ) ){
 
-				// $this->plugin->log( $this->willow_task.'~>n:>HAS a loop so taking part of config string as markup' );
-				// $this->plugin->log( 'd:>HAS a loop so taking part of config string as markup' );
+				// w__log( $this->willow_task.'~>n:>HAS a loop so taking part of config string as markup' );
+				// w__log( 'd:>HAS a loop so taking part of config string as markup' );
 
 				// we need the entire markup, without the flags ##
 				$decode_flags = $parse_arguments->decode( $this->argument_string );
-				// $this->plugin->log( $decode_flags );
-				// $this->plugin->log( willow\arguments::decode( $this->argument_string ) );
+				// w__log( $decode_flags );
+				// w__log( willow\arguments::decode( $this->argument_string ) );
 
 				// check if string contains any [ flags ] -- technically filters -- ##
 				if( 
@@ -327,9 +327,9 @@ class willows {
 					&& isset( $decode_flags['markup']['template'] )
 				) {
 
-					// $this->plugin->log( 'template -> '.$decode_flags['markup']['template'] );
-					// $this->plugin->log( $this->willow_task.'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
-					// $this->plugin->log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
+					// w__log( 'template -> '.$decode_flags['markup']['template'] );
+					// w__log( $this->willow_task.'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
+					// w__log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
 
 					$this->arguments = core\method::parse_args( 
 						$this->arguments, 
@@ -341,8 +341,8 @@ class willows {
 
 				} else {
 
-					// $this->plugin->log( $this->willow_task.'~>n:>NO flags, so take whole string: '.$this->argument_string );
-					// $this->plugin->log( 'd:>No Flags, so take whole string: '.$this->argument_string );
+					// w__log( $this->willow_task.'~>n:>NO flags, so take whole string: '.$this->argument_string );
+					// w__log( 'd:>No Flags, so take whole string: '.$this->argument_string );
 
 					$this->arguments = core\method::parse_args( 
 						$this->arguments, 
@@ -367,7 +367,7 @@ class willows {
 				$parse_arguments->decode( $this->argument_string )
 			);
 
-			// $this->plugin->log( $this->arguments );
+			// w__log( $this->arguments );
 
 			// take the first part of the passed string, before the arg_o tag as the {~ Willow ~} ##
 			$willow_explode = explode( trim( $this->plugin->get( 'tags')->g( 'arg_o' )), $this->willow );
@@ -379,8 +379,8 @@ class willows {
 				|| ! is_array( $this->arguments ) 
 			) {
 
-				$this->plugin->log( $this->willow_task.'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
-				// $this->plugin->log( $args['task'].'~>d:>'.$this->argument_string );
+				w__log( $this->willow_task.'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
+				// w__log( $args['task'].'~>d:>'.$this->argument_string );
 
 				// check for variable filters ##
 				$this->argument_string = $parse_flags->get( $this->argument_string, 'variable' );	
@@ -409,7 +409,7 @@ class willows {
 
 		// create hash ##
 		$this->willow_hash = $this->willow.'.'.willow\core\method::hash(); 
-		// $this->plugin->log( 'willow_hash: '.$this->willow_hash );
+		// w__log( 'willow_hash: '.$this->willow_hash );
 		
 		// add escaped Willow namespace --- Q\willow\context:: ##
 		// $this->willow = '\\Q\\willow\\context::'.$this->willow;
@@ -429,7 +429,7 @@ class willows {
 			|| ! $this->method 
 		){
 
-			$this->plugin->log( 'e:>Error in passed function name, stopping here' );
+			w__log( 'e:>Error in passed function name, stopping here' );
 
 			return false;
 
@@ -441,7 +441,7 @@ class willows {
 		// clean up method name ##
 		$this->method = willow\core\method::sanitize( $this->method, 'php_function' );
 
-		// $this->plugin->log( 'class->method -- '.$this->class.'::'.$this->method );
+		// w__log( 'class->method -- '.$this->class.'->'.$this->method );
 
 		if ( 
 			! class_exists( $this->class )
@@ -449,7 +449,7 @@ class willows {
 			|| ! is_callable( $this->class, $this->method )
 		){
 
-			$this->plugin->log( 'e:>Cannot find - class: '.$this->class.' - method: '.$this->method );
+			w__log( 'e:>Cannot find - class: '.$this->class.' - method: '.$this->method );
 
 			return false;
 
@@ -469,12 +469,12 @@ class willows {
 			$argument_variables = $parse_markup->get( $this->argument_string, 'variable' )
 		){
 
-			// $this->plugin->log( $argument_variables );
+			// w__log( $argument_variables );
 
 			// loop each variable ##
 			foreach( $argument_variables as $arg_var_k => $arg_var_v ){
 
-				// $this->plugin->log( 'variable: '.$arg_var_v );
+				// w__log( 'variable: '.$arg_var_v );
 
 				// check for variable filters ( formally flags  )##
 				$parse_variables->flags([
@@ -489,7 +489,7 @@ class willows {
 
 		}
 
-		// $this->plugin->log( $this->willow_match );
+		// w__log( $this->willow_match );
 
 		// add hash, process, tag + parent values to arguments array ##
 		$this->arguments = willow\core\method::parse_args( 
@@ -506,6 +506,7 @@ class willows {
 
 		// get willow flags ##
 		$_flags_willow = $this->plugin->get( '_flags_willow' );
+		// w__log( $_flags_willow );
 
 		// Does the willow have flags / filters ##
 		if( $_flags_willow ) {
@@ -524,8 +525,8 @@ class willows {
 			&& in_array( 'buffer', $_flags_willow ) // output buffer defined ##
 		) {
 
-			self::$arguments = core\method::parse_args( 
-				self::$arguments, 
+			$this->arguments = willow\core\method::parse_args( 
+				$this->arguments, 
 				[ 
 					'config' => [ 
 						'buffer' => true 
@@ -541,8 +542,8 @@ class willows {
 			&& in_array( 'debug', $_flags_willow ) // debug defined ##
 		) {
 
-			self::$arguments = core\method::parse_args( 
-				self::$arguments, 
+			$this->arguments = willow\core\method::parse_args( 
+				$this->arguments, 
 				[ 
 					'config' => [ 
 						'debug' => true 
@@ -557,27 +558,26 @@ class willows {
 		$render_args->collect();
 		
 		// instantiate new class ##
-		$object = new \Q\willow\context( $this->plugin );
+		$object = new willow\context( $this->plugin );
 
 		// pass args, if set ##
 		if( $this->arguments ){
 
-			$this->plugin->log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'::'.$this->method );
-
-			// $this->plugin->log( $this->arguments );
+			w__log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'::'.$this->method );
+			// w__log( $this->arguments );
 			
 			$this->return = $object->{$this->willow}( $this->arguments );
 
 		} else { 
 
-			$this->plugin->log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'::'.$this->method );
+			w__log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'::'.$this->method );
 			// $this->return = call_user_func_array( $this->willow_array ); 
 			$this->return = $object->{$this->willow};
 
 		}	
 
 		// check return ##
-		// $this->plugin->log( $this->return );
+		// w__log( $this->return );
 
 		if ( 
 			! isset( $this->return ) 
@@ -588,7 +588,7 @@ class willows {
 
 			$task = isset( $args['task'] ) ? $args['task'] : $args['task'];
 
-			$this->plugin->log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
+			w__log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
 
 		}
 
@@ -611,7 +611,7 @@ class willows {
 			is_null( $string )
 		){
 
-			$this->plugin->log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -622,14 +622,14 @@ class willows {
 		$wil_c =  $this->plugin->get( 'tags' )->g( 'wil_c' );
 
 		// test string ##
-		// $this->plugin->log( $string );
+		// w__log( $string );
 
 		// the passed $string comes from a single Willow and might include one or multiple wilps ##
 		$willow_count_open = substr_count( $string, trim( $wil_o ) ); // willow openers ##
 		$willow_count_close = substr_count( $string, trim( $wil_c ) ); // willow closers ##
 
 		// check ##
-		$this->plugin->log( 'Count Open: '.$willow_count_open.' ~ Count Close: '.$willow_count_close ); 
+		w__log( 'Count Open: '.$willow_count_open.' ~ Count Close: '.$willow_count_close ); 
 
 		// no loops, return false;
 		if( 
@@ -637,7 +637,7 @@ class willows {
 			|| 0 === $willow_count_close
 		){
 
-			$this->plugin->log( 'd:>No Willows in passed string, returning false.' );
+			w__log( 'd:>No Willows in passed string, returning false.' );
 
 			return false;
 
@@ -659,7 +659,7 @@ class willows {
 			|| ! is_string( $string )
 		){
 
-			$this->plugin->log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -675,7 +675,7 @@ class willows {
 			$loo_o = strpos( $string, trim( $this->plugin->get( 'tags')->g( 'loo_o' )) );
 			$loo_c = strrpos( $string, trim( $this->plugin->get( 'tags')->g( 'loo_c' )) );
 
-			$this->plugin->log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
+			w__log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
@@ -683,7 +683,7 @@ class willows {
 				( $loo_o + strlen( trim( $this->plugin->get( 'tags')->g( 'loo_o' ) ) ) ), 
 				( $loo_c - $loo_o - strlen( trim( $this->plugin->get( 'tags')->g( 'loo_c' ) ) ) ) ); 
 
-			$this->plugin->log( 'e:>$string: "'.$return_string .'"' );
+			w__log( 'e:>$string: "'.$return_string .'"' );
 
 			return $return_string;
 			*/
@@ -732,7 +732,7 @@ class willows {
 			)
 		){
 
-			$this->plugin->log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -769,14 +769,14 @@ class willows {
 
 				}
 
-				// $this->plugin->log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					$this->plugin->log( $count .' willow tags removed...' );
+					w__log( $count .' willow tags removed...' );
 
 				}
 

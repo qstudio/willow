@@ -26,7 +26,7 @@ class method {
 		) {
 
 			// log ##
-			h::log( 'e~>'.$method.':>Error in passed $args or $array' );
+			w__log( 'e~>'.$method.':>Error in passed $args or $array' );
 
 			return false;
 
@@ -38,15 +38,15 @@ class method {
 		) {
 
 			// log ##
-			h::log( 'e~>'.$method.':>Returned $array is empty' );
+			w__log( 'e~>'.$method.':>Returned $array is empty' );
 
 			return false;
 
 		}
 
-		// h::log( 'd:>$method: '.$method );
-		// h::log( $args );
-		// h::log( $array );
+		// w__log( 'd:>$method: '.$method );
+		// w__log( $args );
+		// w__log( $array );
 
 		// if no markup sent.. ##
 		if ( 
@@ -75,7 +75,7 @@ class method {
 		// no markup passed ##
 		if ( ! isset( $args['markup'] ) ) {
 
-			h::log( 'e~>'.$method.':Missing "markup", returning false.' );
+			w__log( 'e~>'.$method.':Missing "markup", returning false.' );
 
 			return false;
 
@@ -93,13 +93,13 @@ class method {
 		// filter $array by method/template ##
 		if ( $template = core\method::template() ) {
 
-			// h::log( 'Filter: "q/theme/get/string/'.$method.'/'.$template.'"' );
+			// w__log( 'Filter: "q/theme/get/string/'.$method.'/'.$template.'"' );
 			$string = \apply_filters( 'willow/render/prepare/'.$method.'/string/'.$template, $string, $args );
 
 		}
 
 		// test ##
-		// h::log( $string );
+		// w__log( $string );
 
 		// all render methods echo ##
 		echo $string ;
@@ -125,7 +125,7 @@ class method {
 			|| ! isset( $args['string'] )
 		) {
 
-			h::log( 'Error in passed params' );
+			w__log( 'Error in passed params' );
 
 			return false;
 
@@ -136,7 +136,7 @@ class method {
 
 		// get search term ##
 		$search = \get_search_query();
-		// h::log( $search );
+		// w__log( $search );
 
         // $string = $args['string']; #\get_the_content();
         $keys = implode( '|', explode( ' ', $search ) );
@@ -148,11 +148,11 @@ class method {
 		// get first occurance of search string ##
 		$position = strpos($string, $search );
 
-		// h::log( 'string pos: '.$position );
+		// w__log( 'string pos: '.$position );
 
 		if ( ( $length / 2 ) > $position ) {
 
-			// h::log( 'first search term is less than 100 chars in, so return first 200 chars..' );
+			// w__log( 'first search term is less than 100 chars in, so return first 200 chars..' );
 
 			$string = ( strlen( $string ) > 200 ) ? substr( $string,0,200 ).'...' : $string;
 
@@ -185,7 +185,7 @@ class method {
 			|| is_null( $prefix )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return false;
 
@@ -223,7 +223,7 @@ class method {
 	*/
 	public static function is_array_of_arrays( $array = null ) {
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// sanity ##
 		if(
@@ -231,7 +231,7 @@ class method {
 			|| ! is_array( $array )
 		){
 
-			h::log( 'e:>Error in passed args or not array' );
+			w__log( 'e:>Error in passed args or not array' );
 
 			return false;
 
@@ -242,7 +242,7 @@ class method {
 			&& is_array( $array[0] )
 		){
 
-			// h::log( 'd:>is_array' );
+			// w__log( 'd:>is_array' );
 
 			return true;
 
@@ -267,7 +267,7 @@ class method {
 			|| ! isset( $plugin->get( '_args' )['task'] )
 		){
 
-			h::log( 'd:>No context / task available' );
+			w__log( 'd:>No context / task available' );
 
 			return false;
 
@@ -301,7 +301,7 @@ class method {
             )
         ) {
 
-            h::log( 'e:>missing parameters' );
+            w__log( 'e:>missing parameters' );
 
             return false;
 
@@ -317,7 +317,7 @@ class method {
 
 		} else {
 
-			h::log( 'e:>Q Willow Library Missing, using presumed variable tags {{ xxx }}' );
+			w__log( 'e:>Q Willow Library Missing, using presumed variable tags {{ xxx }}' );
 
 			$open = '{{ ';
 			$close = ' }}';
@@ -327,10 +327,10 @@ class method {
 		// capture missing placeholders ##
 		// $capture = [];
 
-        // // h::log( $data );
-		// h::log( $markup );
-		// h::log( $data );
-		// h::log( 't:>replace {{ with tag::var_o' );
+        // // w__log( $data );
+		// w__log( $markup );
+		// w__log( $data );
+		// w__log( 't:>replace {{ with tag::var_o' );
 
 		// empty ##
 		$return = '';
@@ -343,7 +343,7 @@ class method {
 			){
 
 				// check on the value ##
-				// h::log( 'd:>key: '.$key.' is array - going deeper..' );
+				// w__log( 'd:>key: '.$key.' is array - going deeper..' );
 
 				$return_inner = $markup;
 
@@ -352,12 +352,12 @@ class method {
 					// $string_inner = $markup;
 
 					// check on the value ##
-					// h::log( 'd:>key: '.$k.' / value: '.$v );
+					// w__log( 'd:>key: '.$k.' / value: '.$v );
 
 					// only replace keys found in markup ##
 					if ( false === strpos( $return_inner, $open.$k.$close ) ) {
 
-						// h::log( 'd:>skipping '.$k );
+						// w__log( 'd:>skipping '.$k );
 		
 						continue ;
 		
@@ -378,12 +378,12 @@ class method {
 			$return .= $markup;
 
 			// check on the value ##
-			// h::log( 'd:>key: '.$key.' / value: '.$value );
+			// w__log( 'd:>key: '.$key.' / value: '.$value );
 
             // only replace keys found in markup ##
             if ( false === strpos( $return, $open.$key.$close ) ) {
 
-                // h::log( 'd:>skipping '.$key );
+                // w__log( 'd:>skipping '.$key );
 
                 continue ;
 
@@ -394,19 +394,19 @@ class method {
 
 		}
 
-		// h::log( $return );
+		// w__log( $return );
 
 		// wrap string in defined string ?? ##
 		if ( isset( $args['wrap'] ) ) {
 
-			// h::log( 'd:>wrapping string before return: '.$args['wrap'] );
+			// w__log( 'd:>wrapping string before return: '.$args['wrap'] );
 
 			// template replacement ##
 			$return = str_replace( $open.'template'.$close, $return, $args['wrap'] );
 
 		}
 
-        // h::log( $return );
+        // w__log( $return );
 
         // return markup ##
         return $return;

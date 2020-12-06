@@ -34,10 +34,10 @@ class taxonomy {
 		// check if type allowed ##
 		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
 
-			// h::log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +48,7 @@ class taxonomy {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -59,7 +59,7 @@ class taxonomy {
 
 		// get category ##
 		$category = \get_the_category( $wp_post->ID );
-		// h::log( $category );
+		// w__log( $category );
 
 		// get category ##
 		if ( 
@@ -68,16 +68,16 @@ class taxonomy {
 			|| ! isset( $category[0] )
 		) {
 
-			// h::log( 'No category or corrupt data returned' );
+			// w__log( 'No category or corrupt data returned' );
 
 			// log ##
-			h::log( self::$args['task'].'~>n:No category or corrupt data returned');
+			w__log( self::$args['task'].'~>n:No category or corrupt data returned');
 
 			return $string;
 
 		}
 
-		// h::log( 'Working: '.$field );
+		// w__log( 'Working: '.$field );
 
 		switch( $type_field ) {
 
@@ -101,14 +101,14 @@ class taxonomy {
 		// check ##
 		if ( is_null( $string ) ) {
 
-			h::log( 'String is empty.. so return null' );
+			w__log( 'String is empty.. so return null' );
 
 			$string = null;
 
 		}
 
 		// check ##
-		// h::log( '$string: '.$string );
+		// w__log( '$string: '.$string );
 
         // kick back ##
         return $string;

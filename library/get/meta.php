@@ -29,8 +29,8 @@ class meta {
      */
     public function parent( $args = null ) {
 
-		// h::log( 'here..' );
-		// h::log( $args );
+		// w__log( 'here..' );
+		// w__log( $args );
 
 		// sanity ##
 		if (
@@ -38,7 +38,7 @@ class meta {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -63,7 +63,7 @@ class meta {
 		// is singular post ##
 		} elseif ( \is_single( $args['config']['post'] ) ) {
 
-			// h::log( 'd:>Get category title..' );
+			// w__log( 'd:>Get category title..' );
 
 			// $args->ID = $the_post->post_parent;
 			if ( 
@@ -79,13 +79,13 @@ class meta {
 					
 			){
 
-				h::log( 'e:>Returned terms empty' );
+				w__log( 'e:>Returned terms empty' );
 
 				return false;
 
 			}
 
-			// h::log( $terms );
+			// w__log( $terms );
 
 			// we expect an array with 1 key [0] of WP_Term object - validate ##
 			if (
@@ -94,7 +94,7 @@ class meta {
 			 	|| ! $terms[0] instanceof \WP_Term
 			){
 
-			 	h::log( 'e:>Error in returned terms data' );
+			 	w__log( 'e:>Error in returned terms data' );
 
 			 	return false;
 
@@ -106,7 +106,7 @@ class meta {
 
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 
         // return ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -130,7 +130,7 @@ class meta {
 			// || ! isset( $args['field'] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -142,13 +142,13 @@ class meta {
 		// get field ##
 		if ( $value = \get_field( $args['task'], $post_id ) ) {
 
-			// h::log( $value );
+			// w__log( $value );
 
 			return $value;
 
 		}
 
-		h::log( 'e:>get_field retuned no data - field: "'.$args['task'].'"');
+		w__log( 'e:>get_field retuned no data - field: "'.$args['task'].'"');
 		
 		// return ##
 		return false;
@@ -168,7 +168,7 @@ class meta {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -186,7 +186,7 @@ class meta {
 			! $authordata
 		) {
 
-			h::log( 'd:>Error in returned author data' );
+			w__log( 'd:>Error in returned author data' );
 
 			return false;
 
@@ -203,7 +203,7 @@ class meta {
 		$array['slug'] = $authordata->user_login;
 		$array['title'] = $author_name;
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return array ##
 		// return $array;
@@ -221,7 +221,7 @@ class meta {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -264,7 +264,7 @@ class meta {
 
 			}
 
-			// h::log( $array );
+			// w__log( $array );
 
 			// return ##
 			return willow\get\method::prepare_return( $args, $array );
@@ -290,7 +290,7 @@ class meta {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'Error in passed args' );
+			w__log( 'Error in passed args' );
 
 			return false;
 
@@ -309,7 +309,7 @@ class meta {
 				$args['config']['post']->ID
 			);
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -330,7 +330,7 @@ class meta {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'Error in passed args' );
+			w__log( 'Error in passed args' );
 
 			return false;
 
@@ -345,7 +345,7 @@ class meta {
 		// post time in @since format ##
 		$array['date_human'] = \human_time_diff( \get_the_date( 'U', $post->ID ), \current_time('timestamp') );
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -365,7 +365,7 @@ class meta {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'Error in passed args' );
+			w__log( 'Error in passed args' );
 
 			return false;
 
@@ -375,7 +375,7 @@ class meta {
 		$post = $args['config']['post'];
 
         // test ID ##
-        #h::log( $post->ID );
+        #w__log( $post->ID );
 
 		// starts with an empty array ##
 		$array = [];
@@ -401,7 +401,7 @@ class meta {
 		// comment will be an array, so create comment_count, link ##
 		$array = willow\render\method::extract( willow\get\meta::comment( $args ), 'comment_', $array );
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return
 		return willow\get\method::prepare_return( $args, $array );

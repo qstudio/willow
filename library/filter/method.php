@@ -55,13 +55,13 @@ class method {
 			// || ! isset( $args['use'] )
 		){
 
-			$this->plugin->log( 'e:>Error. Missing required args' );
+			w__log( 'e:>Error. Missing required args' );
 
 			return false;
 
 		}
 
-		// $this->plugin->log( 'Filters: '.$args['filters'] );
+		// w__log( 'Filters: '.$args['filters'] );
 
 		// explode at "," comma, into array of key:values ##
 		$array = explode( ',', $args['filters'] );
@@ -72,7 +72,7 @@ class method {
 		// clean up array ##
 		$array = array_filter( $array );
 
-		// $this->plugin->log( $array );
+		// w__log( $array );
 
 		// kick back ##
 		return $array;
@@ -90,7 +90,7 @@ class method {
 	*/
 	public function apply( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -102,7 +102,7 @@ class method {
 			|| ! isset( $args['string'] ) // string to apply filter to ##
 		){
 
-			$this->plugin->log( 'e:>Missing required args' );
+			w__log( 'e:>Missing required args' );
 
 			return $args['string'];
 
@@ -114,8 +114,8 @@ class method {
 			filter_var( $args['string'], FILTER_VALIDATE_INT) !== false
 		){
 
-			$this->plugin->log( 'e:>Passed $string is actually an integer: "'.$args['string'].'" Willow will cast it to a string value' );
-			// $this->plugin->log( $args['string'] );
+			w__log( 'e:>Passed $string is actually an integer: "'.$args['string'].'" Willow will cast it to a string value' );
+			// w__log( $args['string'] );
 
 			$args['string'] = (string) $args['string'];
 
@@ -128,20 +128,20 @@ class method {
 			&& filter_var( $args['string'], FILTER_VALIDATE_INT) === false // && not an integer
 		){
 
-			$this->plugin->log( 'e:>Passed $string is not in a valid string or integer format' );
-			$this->plugin->log( $args['string'] );
+			w__log( 'e:>Passed $string is not in a valid string or integer format' );
+			w__log( $args['string'] );
 
 			return $args['string'];
 
 		}
 
-		// $this->plugin->log( $args['string'] );
+		// w__log( $args['string'] );
 
 		/*
 		// now, we need to prepare the flags, if any, from the passed string ##
 		$filters = core\method::string_between( $args['string'], trim( willow\tags::g( 'fla_o' )), trim( willow\tags::g( 'fla_c' )) );
 
-		$this->plugin->log( $filters );
+		w__log( $filters );
 
 		$args['filters'] = self::prepare([ 'filters' => $filters ]);
 
@@ -152,15 +152,15 @@ class method {
 			|| empty( $args['filters'] )
 		){
 
-			$this->plugin->log( 'd:>There are no flags in the string, returning.' );
-			$this->plugin->log( $args['string'] );
+			w__log( 'd:>There are no flags in the string, returning.' );
+			w__log( $args['string'] );
 
 			return $args['string'];
 
 		}
 		*/
 
-		// $this->plugin->log( $args['filters'] );
+		// w__log( $args['filters'] );
 			
 		// load all stored filters, if filters_loaded is empty ##
 		if( null === $this->plugin->get( '_filters_filtered' ) ){
@@ -197,12 +197,12 @@ class method {
 		)
 		*/
 
-		// $this->plugin->log( self::$filters );
+		// w__log( self::$filters );
 
 		// now, loop over each filter, allow it to be altered ( via apply_filters ) validate it exists and run it
 		foreach( $args['filters'] as $function ) {
 
-			// $this->plugin->log( 'e:>Filter Function: '.$function );
+			// w__log( 'e:>Filter Function: '.$function );
 
 			// check that requested function is in the allowed list - which has now passed by the load filter ##
 			if (
@@ -214,9 +214,9 @@ class method {
 					! in_array( $function, $this->plugin->get( '_flags' ) )
 				) {
 
-					// $this->plugin->log( self::$flags );
+					// w__log( self::$flags );
 
-					$this->plugin->log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
+					w__log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
 
 				}
 
@@ -226,16 +226,16 @@ class method {
 			}
 
 			// get function value from $filters matching request ##
-			// $this->plugin->log( '$function: '.$function );
+			// w__log( '$function: '.$function );
 
 			// filter function - allows for replacement by use-case ( tag OR variable ) ##
 			$function = \apply_filters( 'willow/filter/apply/'.$function.'/'.$args['use'], $function );
 
 			// sanitize function name -- in case something funky was returned by filters or altered in the default list ##
-			$function = core\method::sanitize( $function, 'php_function' );
+			$function = willow\core\method::sanitize( $function, 'php_function' );
 
 			// check clean function name ##
-			// $this->plugin->log( '$function: '.$function );
+			// w__log( '$function: '.$function );
 
 			// check if function exists ##
 			if ( 
@@ -243,7 +243,7 @@ class method {
 				|| ! is_callable( $function ) 
 			) {
 
-				$this->plugin->log( 'e:>Function "'.$function.'" does not exist or is not callable' );
+				w__log( 'e:>Function "'.$function.'" does not exist or is not callable' );
 
 				continue;
 
@@ -253,7 +253,7 @@ class method {
 			// note that functions run in passed sequence, updating the current variable state ##
 			$return = $function( $return );
 
-			// $this->plugin->log( '$return: '.$return );
+			// w__log( '$return: '.$return );
 
 		}
 

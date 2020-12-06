@@ -25,6 +25,8 @@ class output {
 		// local var ##
 		$_output = $this->plugin->get( '_output' );
 
+		// w__log( 'e:>'.$_output );
+
 		// sanity ##
 		if ( 
 			! isset( $_output )
@@ -32,7 +34,8 @@ class output {
 		){
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>$output is empty, so nothing to render.. stopping here.');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>$_output is empty, so nothing to render.. stopping here.');
+			// w__log( 'e:>$_output is empty, so nothing to render.. stopping here.');
 
 			// kick out ##
 			return false;
@@ -56,7 +59,7 @@ class output {
 		// get args object ##
 		$render_args = new willow\render\args( $this->plugin );
 		
-        // h::log( self::$output );
+        // w__log( self::$output );
 
         // either return or echo ##
         if ( 
@@ -64,7 +67,7 @@ class output {
 			&& 'echo' === $this->plugin->get( '_args' )['config']['return'] 
 		) {
 
-			// h::log( self::$output );
+			// w__log( self::$output );
 
 			// echo ##
 			echo $_output;
@@ -87,7 +90,7 @@ class output {
 				'parent'	=> $_hash['parent'],
 			];
 
-			// h::log( $return );
+			// w__log( $return );
 
 			$_buffer_map = $this->plugin->get( '_buffer_map' );
 
@@ -95,7 +98,7 @@ class output {
 			$_buffer_map[] = [
 				'hash'		=> $_hash['hash'],
 				'tag'		=> $_hash['tag'],
-				'output'	=> $return['output'],
+				'output'	=> $_output, // $return['output'],
 				'parent'	=> $_hash['parent'],
 			];
 

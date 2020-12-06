@@ -32,7 +32,7 @@ class tags {
 			is_null( $tag )
 		){
 
-			$this->plugin->log( 'e:>No tag passed to map');
+			w__log( 'e:>No tag passed to map');
 
 			return false;
 
@@ -46,7 +46,7 @@ class tags {
 			null === $this->filtered_tags
 		){
 
-			$this->plugin->log( 'e:>filtered_tags are not loaded..');
+			w__log( 'e:>filtered_tags are not loaded..');
 
 			return false;
 
@@ -137,7 +137,7 @@ class tags {
 			|| ! isset( $args['close'] )
 		){
 
-			$this->plugin->log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -149,7 +149,7 @@ class tags {
 			|| ! $this->map( $args['close'] )
 		){
 
-			$this->plugin->log( 'e:>Error collecting open or close tags' );
+			w__log( 'e:>Error collecting open or close tags' );
 
 			return false;
 
@@ -169,15 +169,15 @@ class tags {
 			$array[] = rtrim($this->map( $args['open'] )).$args['value'].$this->map( $args['close'] ); // trim right on open ##
 			$array[] = $this->map( $args['open'] ).$args['value'].ltrim($this->map( $args['close'] )); // trim left on close ##
 
-			// $this->plugin->log( $array );
-			// $this->plugin->log( 'value: "'.$args['value'].'"' );
+			// w__log( $array );
+			// w__log( 'value: "'.$args['value'].'"' );
 
 			return $array;
 
 		}
 
 		// test ##
-		// $this->plugin->log( 'd:>'.$string );
+		// w__log( 'd:>'.$string );
 
 		// return ##
 		return $string;
@@ -212,7 +212,7 @@ class tags {
 			|| ! isset( $args['method'] )
 		){
 
-			$this->plugin->log('e:> No args passed to method');
+			w__log('e:> No args passed to method');
 
 			return false;
 
@@ -223,7 +223,7 @@ class tags {
 			! $this->cache()
 		){
 
-			$this->plugin->log('e:>Error in stored $tags');
+			w__log('e:>Error in stored $tags');
 
 			return false;
 
@@ -233,13 +233,13 @@ class tags {
 			! isset( $this->filtered_tags[ $args['tag'] ][ $args['method'] ] )
 		){
 
-			$this->plugin->log('e:>Cannot find tag: '.$args['tag'].'->'.$args['method'] );
+			w__log('e:>Cannot find tag: '.$args['tag'].'->'.$args['method'] );
 
 			return false;
 
 		}
 
-		// $this->plugin->log( $this->cache() );
+		// w__log( $this->cache() );
 
 		// // get tags, with filter ##
 		// $tags = $this->cache();
@@ -263,7 +263,7 @@ class tags {
 			is_null( $args )
 		){
 
-			$this->plugin->log( 'e:> No args passed to method' );
+			w__log( 'e:> No args passed to method' );
 
 			return false;
 
@@ -275,7 +275,7 @@ class tags {
 			|| ! is_array( $this->plugin->get( '_tags' ) )
 		){
 
-			$this->plugin->log( 'e:>Error in stored $tags' );
+			w__log( 'e:>Error in stored $tags' );
 
 			return false;
 

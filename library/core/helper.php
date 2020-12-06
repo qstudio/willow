@@ -147,11 +147,11 @@ class helper {
         
         #if ( ! defined( 'TEMPLATEPATH' ) ) {
 
-        #    h::log( 'MISSING for: '.$include.' - AJAX = '.( \wp_doing_ajax() ? 'true' : 'false' ) );
+        #    w__log( 'MISSING for: '.$include.' - AJAX = '.( \wp_doing_ajax() ? 'true' : 'false' ) );
 
 		#}
 		
-		// h::log( 'd:>h::get class/include: '.$class.'/'.$include );
+		// w__log( 'd:>h::get class/include: '.$class.'/'.$include );
 
         // perhaps this is a child theme ##
         if ( 
@@ -194,7 +194,7 @@ class helper {
             // file_exists( self::get_plugin_path( $path.$include ) )
         ) {
 
-            // h::log( 'd:>h::get class: '.$class );
+            // w__log( 'd:>h::get class: '.$class );
 
             // $template = self::get_plugin_url( $path.$include ); // plugin URL ##
             $template = call_user_func( array( $class, 'get_plugin_url' ), $path.$include );
@@ -206,7 +206,7 @@ class helper {
                 
             } 
 
-            // h::log( 'extended plugin: '.$template );
+            // w__log( 'extended plugin: '.$template );
 
         }
 
@@ -235,19 +235,19 @@ class helper {
             // echo or return string ##
             if ( 'return' === $return ) {
 
-                #if ( self::$debug ) h::log( 'returned' );
+                #if ( self::$debug ) w__log( 'returned' );
 
                 return $template;
 
             } elseif ( 'require' === $return ) {
 
-                #if ( self::$debug ) h::log( 'required' );
+                #if ( self::$debug ) w__log( 'required' );
 
                 return require_once( $template );
 
             } else {
 
-                #if ( self::$debug ) h::log( 'echoed..' );
+                #if ( self::$debug ) w__log( 'echoed..' );
 
                 echo $template;
 

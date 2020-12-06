@@ -34,10 +34,10 @@ class meta {
 		// check if type allowed ##
 		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
 
-			// h::log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +48,7 @@ class meta {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -57,20 +57,20 @@ class meta {
 		// build render_fields object ##
 		$render_fields = new willow\render\fields( $this->plugin );
 
-		// h::log( \get_post_meta( $wp_post->ID ) );
+		// w__log( \get_post_meta( $wp_post->ID ) );
 
 		// get all post meta in single query, this was already cached from WP_Query ##
 		$post_meta = \get_post_meta( $wp_post->ID );
 
-		// h::log( $post_meta );
+		// w__log( $post_meta );
 
 		foreach( $post_meta as $key => $value ){
 
-			// h::log( $value );
+			// w__log( $value );
 
 			if ( "_" == $key[0] ){
 
-				// h::log( 'd:>Skipping Key, as pseudo private: '.$key );
+				// w__log( 'd:>Skipping Key, as pseudo private: '.$key );
 
 				continue;
 
@@ -92,7 +92,7 @@ class meta {
 						|| is_serialized( $sub_value )
 					){
 
-						// h::log( 'd:>Skipping, as value is not a string: '.$sub_key );
+						// w__log( 'd:>Skipping, as value is not a string: '.$sub_key );
 		
 						continue;
 		
@@ -107,7 +107,7 @@ class meta {
 
 		}
 
-		// h::log( self::$fields );
+		// w__log( self::$fields );
 
         // kick back --> nothing, as fields added to object props ##
         return '';

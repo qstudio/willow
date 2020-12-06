@@ -35,15 +35,15 @@ class format {
      */
     public function field( String $field = null, $value = null ) {
 		
-		// h::log( 'd:>Field: '.$field );
-		// h::log( $value );
+		// w__log( 'd:>Field: '.$field );
+		// w__log( $value );
 		
 		// sanity ##
         if ( is_null( $field ) ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No field value passed to method.');
-			// h::log( 'd:>Field value: '.$value );
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No field value passed to method.');
+			// w__log( 'd:>Field value: '.$value );
 
             return false;
 
@@ -53,8 +53,8 @@ class format {
         if ( is_null( $value ) ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No value passed to method.');
-			// h::log( 'd:>Field value: '.$value );
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No value passed to method.');
+			// w__log( 'd:>Field value: '.$value );
 
             return false;
 
@@ -70,7 +70,7 @@ class format {
         ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No formats allowed in plugin or array corrupt.');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No formats allowed in plugin or array corrupt.');
 
             return false;
 
@@ -100,7 +100,7 @@ class format {
         ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to check_format');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to check_format');
 
             return false;
 
@@ -108,7 +108,7 @@ class format {
 
         // get formats ##
         $formats = $this->get_allowed();
-        // h::log( $formats );
+        // w__log( $formats );
 
         // tracker, if we find a match ##
         $tracker = false;
@@ -117,23 +117,23 @@ class format {
         // this is alterable via a filter ##
         $return = \apply_filters( 'willow/render/format/default', 'format_string' ); 
 
-        // h::log( 'Default method is: '.$return );
+        // w__log( 'Default method is: '.$return );
 
         // loop over formats and search for a match ##
         foreach ( $formats as $format => $format_value ){
 
-            // h::log( 'Checking type: '.$format_value['type'] );
+            // w__log( 'Checking type: '.$format_value['type'] );
 
             if ( ! function_exists( $format_value['type'] ) ) {
 
 				// log ##
-				h::log( $this->plugin->get( '_args' )['task'].'~>n:>Function not found: "'.$format_value['type'].'"');
+				w__log( $this->plugin->get( '_args' )['task'].'~>n:>Function not found: "'.$format_value['type'].'"');
 
                 continue;
 
             }
 
-            // h::log( 'function exists: '.$format_value['type'] );
+            // w__log( 'function exists: '.$format_value['type'] );
 
             // boolean check ## is_TYPE === true
             if ( 
@@ -142,7 +142,7 @@ class format {
             ) {
 
                 // log ##
-                // h::log( 'Field value: '.$field.' is Type: '.$format_value['type'].' Format with: '.$format_value['method'] );
+                // w__log( 'Field value: '.$field.' is Type: '.$format_value['type'].' Format with: '.$format_value['method'] );
 
                 // update tracker ##
                 $tracker = true;
@@ -158,7 +158,7 @@ class format {
         if ( false === $tracker ) {
 
 			// log ##
-			// @todo // log-->h::log( $this->plugin->get( '_args' )['task'].'~>n:>No valid value type found for field: "'.$field.'" so assigned: "'.$return.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>No valid value type found for field: "'.$field.'" so assigned: "'.$return.'"');
 
         }
 
@@ -184,7 +184,7 @@ class format {
         ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
 
 			// this item needs to be removed from $_fields
             $this->render_fields->remove( $field );
@@ -194,7 +194,7 @@ class format {
 
         }
 
-        // h::log( 'd:>Checking Format for - Field: "'.$field.'" with method: "'.$format.'"' );
+        // w__log( 'd:>Checking Format for - Field: "'.$field.'" with method: "'.$format.'"' );
 
         // we can now distribute the $value to the relevant format method ##
         if (
@@ -203,7 +203,7 @@ class format {
         ){
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
 
             // this item needs to be removed from self::$fields
             $this->render_fields->remove( $field );
@@ -221,20 +221,20 @@ class format {
 
         if ( ! $value ) {
 
-            // h::log( 'Handler method returned bad OR empty data for Field: '.$field );
+            // w__log( 'Handler method returned bad OR empty data for Field: '.$field );
 
             // this item needs to be removed from self::$fields
 			// self::remove_field( $field, 'Removed by "apply" due to bad or empty data' );
 			
-			// h::log( 'Field value bad: '.$field );
+			// w__log( 'Field value bad: '.$field );
 
             return false; // we do not return the $value either ##
 
         }
 
         // test returned data ##
-		// h::log( self::$fields );
-		// h::log( 'Field value now: '.$value );
+		// w__log( self::$fields );
+		// w__log( 'Field value now: '.$value );
 
         // fields are filtered and saved by each type handler, as new fields might be added or removed internally ##
 
@@ -249,7 +249,7 @@ class format {
      */
     public function format_string( $value = null, $field = null ){
 
-        // h::log( $value );
+        // w__log( $value );
 
         return \apply_filters( 'willow/render/format/text/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
 
@@ -279,21 +279,21 @@ class format {
         // allow filtering early ##
 		$value = \apply_filters( 'willow/render/format/array/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
 		
-		// h::log( $value );
+		// w__log( $value );
 
         // array of arrays containing named indexes ( not WP_Post Objects ) needs to be be marked up as a block, like an Object ##
 
         // add check to see if array is a collection of array - as exported by repeater fields ##
         if ( 'repeater' == $this->render_fields->get_type( $field ) ) {
 
-            // h::log( 'd:>Array is a repeater' );
+            // w__log( 'd:>Array is a repeater' );
 
             $this->format_array_repeater( $value, $field );
 
         } else {
 
-			// h::log( 'd:>Array is an Array..' );
-			// h::log( $value );
+			// w__log( 'd:>Array is an Array..' );
+			// w__log( $value );
 
             // check how many items are in array and format ##
             $count = 0;
@@ -302,7 +302,7 @@ class format {
             // Formats that are not registered in self::$formats will be removed ## 
             foreach( $value as $key ) {
 
-                // h::log( $key );
+                // w__log( $key );
 
                 // create a new, named and numbered field based on field_COUNT -- empty value ##
 				$key_field = $field.'.'.$count;
@@ -318,7 +318,7 @@ class format {
                 if ( $this->field( $key_field, $key ) ) {
 
                     // format ran ok ##
-                    // h::log( 'd:>format ran ok.. so now we can update markup for field: '.$field );
+                    // w__log( 'd:>format ran ok.. so now we can update markup for field: '.$field );
                     $this->render_markup->set( $field, $count );
 
                 }
@@ -349,10 +349,10 @@ class format {
         $this->render_fields->remove( $field, 'Removed by format_array after working' );
 
         // checkout markup ##
-		// h::log( self::$markup['template'] );
+		// w__log( self::$markup['template'] );
 		
-		// h::log( self::$fields );
-		// h::log( self::$markup);
+		// w__log( self::$fields );
+		// w__log( self::$markup);
 
         // returning false will delete the original passed field ##
         return true;
@@ -376,8 +376,8 @@ class format {
 
     public function format_array_repeater( $value = null, $field = null ){
 
-        // h::log( 'Formatting repeater array for field: '.$field );
-        // h::hard_log( $value );
+        // w__log( 'Formatting repeater array for field: '.$field );
+        // w__log_direct( $value );
 
         // check how many items are in array and format ##
 		$count = 0;
@@ -390,14 +390,14 @@ class format {
 
             foreach( $v1 as $r2 => $v2 ) {
 
-				// h::log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
-				// h::hard_log( $r2 ); // 'space'
-				// h::hard_log( $v2 ); // WP_Post
+				// w__log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
+				// w__log_direct( $r2 ); // 'space'
+				// w__log_direct( $v2 ); // WP_Post
 
 				// WP_Post Object ##
 				if ( $v2 instanceof \WP_Post ) {
 
-					// h::log( 'WP Post Object...' );
+					// w__log( 'WP Post Object...' );
 
 					// pass to WP formatter and capture returned array ##
 					$this->format_object_wp_post( $v2, $field.'.'.$count );
@@ -410,7 +410,7 @@ class format {
 
 				} else {
 
-					// h::log( 'format: '.$v2 );
+					// w__log( 'format: '.$v2 );
 
 					// create a new, named and numbered field based on field__COUNT.row_key ##
 					// $key_field = $field.'__'.$count.'__'.$r2;
@@ -432,7 +432,7 @@ class format {
 		// if ( ! empty( $array ) ) {
 
 			// we need to assign the correct key ##
-			// h::log( [ $field => $array ] );
+			// w__log( [ $field => $array ] );
 
 			// store array ##
 			// self::$fields[$field] = $array;
@@ -442,7 +442,7 @@ class format {
 		// ALSO -- if array only has one row - add key.property fields ##
 		if ( 1 === count( $value ) ){
 
-			// h::log( 'e:>'.$field.' is a Single ROW array..' );
+			// w__log( 'e:>'.$field.' is a Single ROW array..' );
 
 			// loop over array of arrays, work inner keys and values ## 
 			foreach( $value as $r1 => $v1 ) {
@@ -452,7 +452,7 @@ class format {
 					// WP_Post Object ##
 					if ( $v2 instanceof \WP_Post ) {
 
-						// h::hard_log( 'WP Post Object...' );
+						// w__log_direct( 'WP Post Object...' );
 
 						// pass to WP formatter ##
 						$this->format_object_wp_post( $v2, $field );
@@ -465,7 +465,7 @@ class format {
 
 					} else {
 	
-						// h::log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
+						// w__log( 'e:>Working "'.$r2.'" Key value: "'.$v2.'"' );
 		
 						// create a new, named and numbered field based on field__COUNT.row_key ##
 						// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
@@ -485,8 +485,8 @@ class format {
 
 		}
 
-		// h::log( self::$fields );
-		// h::log( self::$markup);
+		// w__log( self::$fields );
+		// w__log( self::$markup);
 
         return true;
 
@@ -519,7 +519,7 @@ class format {
         } else {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
 
             // this item needs to be removed from self::$fields
             $this->render_fields->remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
@@ -551,7 +551,7 @@ class format {
         ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_post_object');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_post_object');
 
             return false;
 
@@ -566,19 +566,19 @@ class format {
 		// render_fields object ##
 		// $render_fields = willow\render\fields( $this->plugin );
 
-		// h::log( $wp_post );
+		// w__log( $wp_post );
 
 		// return array of fields ##
 		// $array = [];
 		
-		// h::log( 'Formatting WP Post Object: '.$wp_post->post_title );
-		// h::log( 'Field: '.$field ); // whole object ##
+		// w__log( 'Formatting WP Post Object: '.$wp_post->post_title );
+		// w__log( 'Field: '.$field ); // whole object ##
 
         // now, we need to create some new $fields based on each value in self::$wp_post_fields ##
         foreach( $this->plugin->get( '_wp_post_fields') as $wp_post_field ) {
 			
-			// h::log( 'Working: '.$wp_post_field.' context: '.$context );
-			// h::log( 't:>move to object.property - post.title - variable calls..' );
+			// w__log( 'Working: '.$wp_post_field.' context: '.$context );
+			// w__log( 't:>move to object.property - post.title - variable calls..' );
 
 			// start empty ##
 			$string = null;
@@ -629,7 +629,7 @@ class format {
 
 				case 'src' :
 		
-					// h::log( $this->plugin->get( '_args' ) );
+					// w__log( $this->plugin->get( '_args' ) );
 
 					$type_media = new willow\type\media( $this->plugin );
 
@@ -639,7 +639,7 @@ class format {
 
 				case 'meta' :
 		
-					// h::log( $this->plugin->get( '_args' ) );
+					// w__log( $this->plugin->get( '_args' ) );
 					$type_meta = new willow\type\meta( $this->plugin );
 
 					$string = $type_meta->format( $wp_post, $wp_post_field, $field, $context );
@@ -649,7 +649,7 @@ class format {
 				// keep this as a string ##
 				case 'highlight' :
 		
-					// h::log( '$wp_post->highlight: '.$wp_post->highlight );
+					// w__log( '$wp_post->highlight: '.$wp_post->highlight );
 
 					$string = $wp_post->highlight ?? '';
 
@@ -659,10 +659,10 @@ class format {
 
 			if ( is_null( $string ) ) {
 
-				// h::log( 'Field: '.$field.' / '.$wp_post_field.' returned an empty string' );
+				// w__log( 'Field: '.$field.' / '.$wp_post_field.' returned an empty string' );
 
 				// log ##
-				h::log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
+				w__log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
 
 				// next ... ##
 				continue;
@@ -704,22 +704,22 @@ class format {
 				|| ! is_array( $array )
 			){
 
-				h::log( 'd:>Filter did not return a usable array' );
+				w__log( 'd:>Filter did not return a usable array' );
 
 				return false;
 
 			}
 
-			// h::log( $array );
+			// w__log( $array );
 			// loo over array values ##
 			foreach( $array as $key => $value ) {
 
-				// h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
+				// w__log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
 
 				// validate $value is a string ##
 				if( ! is_string( $value ) ){
 
-					h::log( 'e:>"'.$key.'" value is not a string' );
+					w__log( 'e:>"'.$key.'" value is not a string' );
 
 					continue;
 
@@ -750,7 +750,7 @@ class format {
         ) {
 
 			// log ##
-			h::log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_term_object');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_term_object');
 
             return false;
 
@@ -760,16 +760,16 @@ class format {
 		$context = 'WP_Term';
 		// $taxonomy = $wp_term->taxonomy ?? 'category'; // default to category ##
 		
-		// h::log( $wp_term );
-		// h::log( '$taxonomy: '.$taxonomy );
-		// h::log( 'Formatting WP Term Object: '.$wp_term->name );
-		// h::log( $field ); // whole object ##
+		// w__log( $wp_term );
+		// w__log( '$taxonomy: '.$taxonomy );
+		// w__log( 'Formatting WP Term Object: '.$wp_term->name );
+		// w__log( $field ); // whole object ##
 
         // now, we need to create some new $fields based on each value in self::$wp_term_fields ##
         foreach( $this->plugin->get('_wp_term_fields') as $wp_term_field ) {
 			
-			// h::log( 'Working: '.$wp_term_field.' context: '.$context );
-			// h::log( 't:>move to object.property - post.title - variable calls..' );
+			// w__log( 'Working: '.$wp_term_field.' context: '.$context );
+			// w__log( 't:>move to object.property - post.title - variable calls..' );
 
 			// start empty ##
 			$string = null;
@@ -852,10 +852,10 @@ class format {
 
 			if ( is_null( $string ) ) {
 
-				h::log( 'Field: '.$field.' / '.$wp_term_field.' returned an empty string' );
+				w__log( 'Field: '.$field.' / '.$wp_term_field.' returned an empty string' );
 
 				// log ##
-				h::log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_term_field.'" returned an empty string');
+				w__log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_term_field.'" returned an empty string');
 
 				// keep moving...
 				continue;
@@ -887,22 +887,22 @@ class format {
 				|| ! is_array( $array )
 			){
 
-				// h::log( 'd:>Filter did not return a usable array' );
+				// w__log( 'd:>Filter did not return a usable array' );
 
 				return false;
 
 			}
 
-			// h::log( $array );
+			// w__log( $array );
 			// loo over array values ##
 			foreach( $array as $key => $value ) {
 
-				// h::log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
+				// w__log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
 
 				// validate $value is a string ##
 				if( ! is_string( $value ) ){
 
-					h::log( 'e:>"'.$key.'" value is not a string' );
+					w__log( 'e:>"'.$key.'" value is not a string' );
 
 					continue;
 

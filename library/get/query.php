@@ -34,13 +34,13 @@ class query {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'Error in passed args' );
+			w__log( 'Error in passed args' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// add hardcoded query args ##
 		$wp_query_args['paged'] = \get_query_var( 'paged' ) ? \get_query_var( 'paged' ) : 1 ;
@@ -68,14 +68,14 @@ class query {
             // merge all args together ##
             $wp_query_args = array_merge( $wp_query->query_vars, $wp_query_args );
 
-			// h::log('e:>added query vars');
+			// w__log('e:>added query vars');
 
 		}
 		
 		// filter posts_args ##
 		$wp_query_args = \apply_filters( 'willow/get/query/posts/wp_query_args', $wp_query_args );
 
-		// h::log( $wp_query_args );
+		// w__log( $wp_query_args );
 		
 		// set-up new array to hold returned post objects ##
 		$array = [];
@@ -91,16 +91,16 @@ class query {
 			&& count( $q_query->posts ) > $wp_query_args['posts_per_page'] 
 		){
 
-			// h::log( 'e:>Sticky mess...' );
+			// w__log( 'e:>Sticky mess...' );
 			
-			// h::log( $q_query->posts );
+			// w__log( $q_query->posts );
 
-			h::log( 'Old count: '.count( $q_query->posts ) );
+			w__log( 'Old count: '.count( $q_query->posts ) );
 
 			// slice ##
 			$sliced_array = array_slice( $q_query->posts, 0, $wp_query_args['posts_per_page'] );
 
-			h::log( 'New count: '.count( $sliced_array ) );
+			w__log( 'New count: '.count( $sliced_array ) );
 
 			// re-assign ##
 			$q_query->posts = $sliced_array;
@@ -111,7 +111,7 @@ class query {
 		// put results in the array key 'query' ##
 		$array['query'] = $q_query ;
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// filter and return array ##
 		return willow\get\method::prepare_return( $args, $array );
@@ -191,7 +191,7 @@ class query {
 		*/
 
 		// test ##
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -200,7 +200,7 @@ class query {
 			// || ! isset( $args[0] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -213,7 +213,7 @@ class query {
         if ( ! $post || \is_wp_error( $post ) ) return false;
 
         // test it ##
-        // h::log( $post );
+        // w__log( $post );
 
         // kick back result->ID ##
         return $post->ID;
@@ -248,7 +248,7 @@ class query {
 		*/
 
 		// test ##
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -257,7 +257,7 @@ class query {
 			// || ! isset( $args[0] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -270,7 +270,7 @@ class query {
         if ( ! $post || \is_wp_error( $post ) ) return false;
 
         // test it ##
-        // h::log( $post );
+        // w__log( $post );
 
         // kick back result->ID ##
         return $post->ID;

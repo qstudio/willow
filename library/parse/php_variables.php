@@ -46,7 +46,7 @@ class php_variables extends willow\parse {
 			is_null( $match )
 		){
 
-			h::log( 'e:>No php variable match passed to format method' );
+			w__log( 'e:>No php variable match passed to format method' );
 
 			return false;
 
@@ -62,18 +62,18 @@ class php_variables extends willow\parse {
 		$php_var_match = core\method::string_between( $match, $open, $close, true );
 		$php_var = core\method::string_between( $match, $open, $close );
 
-		// h::log( '$php_var_match: '.$php_var_match );
+		// w__log( '$php_var_match: '.$php_var_match );
 
 		// look for flags ##
 		$php_var = flags::get( self::$function, 'php_variable' );
 		// $php_var = flags::get( $php_var, 'function' );
-		// h::log( self::$flags_php_variable );
-		// h::log( $php_var );
+		// w__log( self::$flags_php_variable );
+		// w__log( $php_var );
 
 		// clean up ##
 		$php_var = trim( $php_var );
 
-		// h::log( 'e:>PHP Var: '.$php_var );
+		// w__log( 'e:>PHP Var: '.$php_var );
 
 		// sanity ##
 		if ( 
@@ -81,19 +81,19 @@ class php_variables extends willow\parse {
 			|| ! isset( $php_var ) 
 		){
 
-			h::log( 'e:>Error in returned match php variable' );
+			w__log( 'e:>Error in returned match php variable' );
 
 			return false; 
 
 		}
 
 		// $php_var_hash = $php_var; 
-		// h::log( 'e:>VAR: '.$_GET['test'] );
+		// w__log( 'e:>VAR: '.$_GET['test'] );
 
 		// $_GET ##
 		if( false !== strpos( $php_var, '$_GET' ) ){
 
-			// h::log( 'e:>IS a getter..' );
+			// w__log( 'e:>IS a getter..' );
 
 			if( 
 				$argument = 
@@ -102,19 +102,19 @@ class php_variables extends willow\parse {
 					core\method::string_between( $php_var, "\'", "\'" )
 			){
 
-				// h::log( 'Get argument: '.$argument );
+				// w__log( 'Get argument: '.$argument );
 
 				// sanitize ##
 				$argument = core\method::sanitize( $argument );
 
-				// h::log( 'Clean argument: '.$argument );
+				// w__log( 'Clean argument: '.$argument );
 
 				if( $return = isset( $_GET[$argument] ) ? $_GET[$argument] : false  ){
 
 					// sanitize ##
 					$return = core\method::sanitize( $return );
 
-					// h::log( 'RETURN: '.$return );
+					// w__log( 'RETURN: '.$return );
 
 				}
 
@@ -123,26 +123,26 @@ class php_variables extends willow\parse {
 		// $_POST ##
 		} elseif( false !== strpos( $php_var, '$_POST' ) ){
 
-			h::log( 'e:>Willow does not return $_POST data to templates, use a PHP controller instead.' );
+			w__log( 'e:>Willow does not return $_POST data to templates, use a PHP controller instead.' );
 
 		// $_REQUEST ?? needed? ##
 		} elseif( false !== strpos( $php_var, '$_REQUEST' ) ){
 
-			h::log( 'e:>Willow does not return $_REQUEST data to templates, use a PHP controller instead.' );
+			w__log( 'e:>Willow does not return $_REQUEST data to templates, use a PHP controller instead.' );
 
 		}
 
 		if( $return ) {
 
 			// filter ##
-			// h::log( self::$flags_php_variable );
+			// w__log( self::$flags_php_variable );
 			if( 
 				self::$flags_php_variable
 				&& is_array( self::$flags_php_variable )
 			){
 
-				// h::log( self::$flags_php_variable );
-				// h::log( self::$return );
+				// w__log( self::$flags_php_variable );
+				// w__log( self::$return );
 				// bounce to filter::apply() ##
 				$filter_return = filter\method::apply([ 
 					'filters' 	=> self::$flags_php_variable, 
@@ -150,7 +150,7 @@ class php_variables extends willow\parse {
 					'use' 		=> 'php_function', // for filters ##
 				]);
 
-				// h::log( $filter_return );
+				// w__log( $filter_return );
 
 				// check if filters changed value ##
 				if( 
@@ -159,7 +159,7 @@ class php_variables extends willow\parse {
 					&& $filter_return != self::$return // value chaged ##
 				){
 
-					h::log( 'd:>php_function fitlers changed value: '.$filter_return );
+					w__log( 'd:>php_function fitlers changed value: '.$filter_return );
 
 					// update class property ##
 					self::$return = $filter_return;
@@ -168,9 +168,9 @@ class php_variables extends willow\parse {
 
 			}
 
-			// h::log( 'hash set to: '.$php_var_hash );
+			// w__log( 'hash set to: '.$php_var_hash );
 
-			// h::log( 'e:>Replacing PHP variable: "'.$php_var_match.'" with value: '.$return );
+			// w__log( 'e:>Replacing PHP variable: "'.$php_var_match.'" with value: '.$return );
 
 			// $string = $return;
 
@@ -217,7 +217,7 @@ class php_variables extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -249,20 +249,20 @@ class php_variables extends willow\parse {
 			|| is_null( $string )
 		){
 
-			h::log( self::$args['task'].'~>e:>Error in $markup' );
+			w__log( self::$args['task'].'~>e:>Error in $markup' );
 
 			return false;
 
 		}
 
-		// h::log('d:>'.$string);
+		// w__log('d:>'.$string);
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
 		$open = trim( willow\tags::g( 'php_var_o' ) );
 		$close = trim( willow\tags::g( 'php_var_c' ) );
 
-		// h::log( 'open: '.$open. ' - close: '.$close );
+		// w__log( 'open: '.$open. ' - close: '.$close );
 
 		$regex_find = \apply_filters( 
 			'willow/parse/php_variables/regex/find', 
@@ -281,7 +281,7 @@ class php_variables extends willow\parse {
 				|| ! $matches[1]
 			){
 
-				h::log( 'e:>Error in returned matches array' );
+				w__log( 'e:>Error in returned matches array' );
 
 				return false;
 
@@ -297,13 +297,13 @@ class php_variables extends willow\parse {
 					|| ! isset( $matches[0][$match][1] )
 				) {
 
-					h::log( 'e:>Error in returned matches - no position' );
+					w__log( 'e:>Error in returned matches - no position' );
 
 					continue;
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// take match ##
 				$match = $matches[0][$match][0];
@@ -315,7 +315,7 @@ class php_variables extends willow\parse {
 
 		} else {
 
-			// h::log( 'e:>No PHP Vars found' );
+			// w__log( 'e:>No PHP Vars found' );
 
 		}
 
@@ -336,7 +336,7 @@ class php_variables extends willow\parse {
 		// 	// "/{{#.*?\/#}}/ms"
 		);
 
-		// h::log( 'e:>Running Function Cleanup' );
+		// w__log( 'e:>Running Function Cleanup' );
 		
 		// self::$markup['template'] = preg_replace( $regex, "", self::$markup['template'] ); 
 
@@ -359,7 +359,7 @@ class php_variables extends willow\parse {
 			)
 		){
 
-			h::log( 'e:>Error in stored $markup' );
+			w__log( 'e:>Error in stored $markup' );
 
 			return false;
 
@@ -396,14 +396,14 @@ class php_variables extends willow\parse {
 
 				}
 
-				// h::log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					h::log( 'd:>'.$count .' php variable tags removed...' );
+					w__log( 'd:>'.$count .' php variable tags removed...' );
 
 				}
 

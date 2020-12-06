@@ -35,12 +35,12 @@ class method {
     public static function date( $array = null ){
 
         // test ##
-        #h::log( $array );
+        #w__log( $array );
 
         // did we pass anything ##
         if ( ! $array ) {
 
-            #h::log( 'kicked 1' );
+            #w__log( 'kicked 1' );
 
             return false;
 
@@ -51,12 +51,12 @@ class method {
         // loop over array of date options ##
         foreach( $array as $key => $value ) {
 
-            #h::log( $value );
+            #w__log( $value );
 
             // nothing happening ? ##
             if ( false === $value['date'] ) {
 
-                #h::log( 'kicked 2' );
+                #w__log( 'kicked 2' );
 
                 continue;
 
@@ -64,7 +64,7 @@ class method {
 
             if ( 'end' == $key ) {
 
-                // h::log( 'Formatting end date: '.$value['date'] );
+                // w__log( 'Formatting end date: '.$value['date'] );
 
                 // if start date and end date are the same, we need to just return the start date and start - end times ##
                 if (
@@ -72,14 +72,14 @@ class method {
                     date( $value['format'], strtotime( $array['start']['date'] ) ) == date( $value['format'], strtotime( $array['end']['date'] ) )
                 ) {
 
-                    // h::log( 'Start and end dates match, return time' );
+                    // w__log( 'Start and end dates match, return time' );
 
                     // use end date ##
                     $date = ' '.date( 'g:i:a', strtotime( $array['start']['date'] ) ) .' - '. date( 'g:i:a', strtotime( $array['end']['date'] ) );
 
                 } else {
 
-                    // h::log( 'Start and end dates do not match..' );
+                    // w__log( 'Start and end dates do not match..' );
 
                     // use end date ##
                     $date = ' - '.date( $value['format'], strtotime( $value['date'] ) );
@@ -88,7 +88,7 @@ class method {
 
             } else {
 
-                // h::log( 'Formatting start date' );
+                // w__log( 'Formatting start date' );
 
                 $date = date( $value['format'], strtotime( $value['date'] ) );
 
@@ -241,7 +241,7 @@ class method {
             )
         ) {
 
-            h::log( 'e:>missing parameters' );
+            w__log( 'e:>missing parameters' );
 
             return false;
 
@@ -260,7 +260,7 @@ class method {
 
 		} else {
 
-			h::log( 'e:>Q Willow Library Missing, using presumed variable tags {{ xxx }}' );
+			w__log( 'e:>Q Willow Library Missing, using presumed variable tags {{ xxx }}' );
 
 			$open = '{{ ';
 			$close = ' }}';
@@ -270,10 +270,10 @@ class method {
 		// capture missing placeholders ##
 		// $capture = [];
 
-        // // h::log( $data );
-		// h::log( $markup );
-		// h::log( $data );
-		// h::log( 't:>replace {{ with tag::var_o' );
+        // // w__log( $data );
+		// w__log( $markup );
+		// w__log( $data );
+		// w__log( 't:>replace {{ with tag::var_o' );
 
 		// empty ##
 		$return = '';
@@ -286,7 +286,7 @@ class method {
 			){
 
 				// check on the value ##
-				// h::log( 'd:>key: '.$key.' is array - going deeper..' );
+				// w__log( 'd:>key: '.$key.' is array - going deeper..' );
 
 				$return_inner = $markup;
 
@@ -295,12 +295,12 @@ class method {
 					// $string_inner = $markup;
 
 					// check on the value ##
-					// h::log( 'd:>key: '.$k.' / value: '.$v );
+					// w__log( 'd:>key: '.$k.' / value: '.$v );
 
 					// only replace keys found in markup ##
 					if ( false === strpos( $return_inner, $open.$k.$close ) ) {
 
-						// h::log( 'd:>skipping '.$k );
+						// w__log( 'd:>skipping '.$k );
 		
 						continue ;
 		
@@ -321,12 +321,12 @@ class method {
 			$return .= $markup;
 
 			// check on the value ##
-			// h::log( 'd:>key: '.$key.' / value: '.$value );
+			// w__log( 'd:>key: '.$key.' / value: '.$value );
 
             // only replace keys found in markup ##
             if ( false === strpos( $return, $open.$key.$close ) ) {
 
-                // h::log( 'd:>skipping '.$key );
+                // w__log( 'd:>skipping '.$key );
 
                 continue ;
 
@@ -337,19 +337,19 @@ class method {
 
 		}
 
-		// h::log( $return );
+		// w__log( $return );
 
 		// wrap string in defined string ?? ##
 		if ( isset( $args['wrap'] ) ) {
 
-			// h::log( 'd:>wrapping string before return: '.$args['wrap'] );
+			// w__log( 'd:>wrapping string before return: '.$args['wrap'] );
 
 			// template replacement ##
 			$return = str_replace( $open.'template'.$close, $return, $args['wrap'] );
 
 		}
 
-        // h::log( $return );
+        // w__log( $return );
 
         // return markup ##
         return $return;

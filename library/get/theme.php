@@ -53,7 +53,7 @@ class theme {
         // added passed element, if ! is_null ##
         if ( isset ( $args['class'] ) ) {
 
-            // h::log( 'Adding passed class..' );
+            // w__log( 'Adding passed class..' );
 
             if ( is_array( $args['class'] ) ) {
                 
@@ -66,7 +66,7 @@ class theme {
 
         }
 
-		// h::log( $array );
+		// w__log( $array );
 		
         // check if we've got an array - if so filter and implode it ##
         $string =
@@ -129,7 +129,7 @@ class theme {
 	public static function is_child(){
 
 		$theme = \wp_get_theme(); // gets the current theme
-		// h::log( $theme );
+		// w__log( $theme );
 
 		if ( $theme->template ) {
 			return true;

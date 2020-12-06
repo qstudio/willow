@@ -40,14 +40,14 @@ class arguments {
 	*/
 	public function decode( $string = null ){
 
-		// $this->plugin->log( $string );
+		// w__log( $string );
 
 		// sanity ##
 		if(
 			is_null( $string )
 		){
 
-			$this->plugin->log( 'e:>Error in passed arguments' );
+			w__log( 'e:>Error in passed arguments' );
 
 			return false;
 
@@ -69,7 +69,7 @@ class arguments {
 		// get flags locally ##
 		$_flags_argument = $this->plugin->get( '_flags_argument' );
 
-		$this->plugin->log( $_flags_argument );
+		// w__log( $_flags_argument );
 
 		if( 
 			! $_flags_argument
@@ -77,14 +77,14 @@ class arguments {
 			|| ! is_array( $_flags_argument )
 		){
 
-			// $this->plugin->log( 'd:>Argument string "'.self::$string.'" does not contains any flag, so returning' );
+			// w__log( 'd:>Argument string "'.self::$string.'" does not contains any flag, so returning' );
 
 			// done here ##
 			return false;
 
 		}
 
-		// $this->plugin->log( 'd:>string --> '.self::$string );
+		// w__log( 'd:>string --> '.self::$string );
 
 		// replace " with ' .... hmm ##
 		// self::$string = str_replace( '"', "'", self::$string );
@@ -92,18 +92,18 @@ class arguments {
 		// strip white spaces from data that is not passed inside double quotes ( "data" ) ##
 		$this->string = preg_replace( '~"[^"]*"(*SKIP)(*F)|\s+~', "", $this->string );
 
-		// $this->plugin->log( 'd:>string --> '.$this->string );
-		// $this->plugin->log( $_flags_argument );
+		// w__log( 'd:>string --> '.$this->string );
+		// w__log( $_flags_argument );
 
 		// extract data array from string ##
 		$this->array = core\method::parse_str( $this->string );
 
-		// $this->plugin->log( $this->array );
+		// w__log( $this->array );
 
 		// trim leading and ending double quotes ("..") from each value in array ##
 		array_walk_recursive( $this->array, function( &$v ) { $v = trim( $v, '"' ); });
 
-		// $this->plugin->log( $this->array );
+		// w__log( $this->array );
 
 		// sanity ##
 		if ( 
@@ -115,8 +115,8 @@ class arguments {
 			// || ! $matches[0]
 		){
 
-			$this->plugin->log( $this->plugin-get( '_args')['task'].'~>n:>No arguments found in string: '.$this->string ); // @todo -- add "loose" lookups, for white space '@s
-			// $this->plugin->log( 'd:>No arguments found in string: '.$this->string ); // @todo -- add "loose" lookups, for white space '@s''
+			w__log( $this->plugin-get( '_args')['task'].'~>n:>No arguments found in string: '.$this->string ); // @todo -- add "loose" lookups, for white space '@s
+			// w__log( 'd:>No arguments found in string: '.$this->string ); // @todo -- add "loose" lookups, for white space '@s''
 
 			return false;
 
@@ -140,7 +140,7 @@ class arguments {
 		$open = trim( willow\tags::g( 'arg_o' ) );
 		$close = trim( willow\tags::g( 'arg_c' ) );
 
-		// $this->plugin->log( self::$markup['template'] );
+		// w__log( self::$markup['template'] );
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -168,7 +168,7 @@ class arguments {
 			)
 		){
 
-			$this->plugin->log( 'e:>Error in stored $markup: '.$process );
+			w__log( 'e:>Error in stored $markup: '.$process );
 
 			return false;
 
@@ -199,7 +199,7 @@ class arguments {
 			$regex, 
 			function($matches) {
 				
-				// $this->plugin->log( $matches );
+				// w__log( $matches );
 				if ( 
 					! $matches 
 					|| ! is_array( $matches )
@@ -210,14 +210,14 @@ class arguments {
 
 				}
 
-				// $this->plugin->log( $matches );
+				// w__log( $matches );
 
 				// get count ##
 				$count = strlen($matches[1]);
 
 				if ( $count > 0 ) {
 
-					$this->plugin->log( $count .' argument tags removed...' );
+					w__log( $count .' argument tags removed...' );
 
 				}
 

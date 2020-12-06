@@ -31,7 +31,7 @@ class media {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -45,7 +45,7 @@ class media {
 			|| ! is_callable([ 'Q\willow\get\media', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\media\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\media\\'.$method );
 
 			return false;
 
@@ -53,7 +53,7 @@ class media {
 
 		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: q\get\media\\'.$method );
+		// w__log( 'e:>Class method IS callable: q\get\media\\'.$method );
 
 		// new object ##
 		$media = new willow\get\media( $this->plugin );
@@ -70,7 +70,7 @@ class media {
 		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

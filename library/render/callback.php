@@ -40,7 +40,7 @@ class callback {
 			// self::$log['error'][] = 'No field value passed to method.';
 			
 			// log ##
-			h::log( $_args['task'].'~>e:>No field value passed to method.');
+			w__log( $_args['task'].'~>e:>No field value passed to method.');
 
             return $value;
 
@@ -52,7 +52,7 @@ class callback {
 			// self::$log['error'][] = 'No value passed to method.';
 			
 			// log ##
-			h::log( $_args['task'].'~>e:>No value passed to method.');
+			w__log( $_args['task'].'~>e:>No value passed to method.');
 
             return $value;
 
@@ -70,13 +70,13 @@ class callback {
 			// self::$log['error'][] = 'No callbacks allowed in plugin';
 			
 			// log ##
-			h::log( $_args['task'].'~>e:>No callbacks allowed in plugin.');
+			w__log( $_args['task'].'~>e:>No callbacks allowed in plugin.');
 
             return $value;
 
         }
 
-		// h::log( 'Looking for callback for field: "'.$field.'" in self::$fields' );
+		// w__log( 'Looking for callback for field: "'.$field.'" in self::$fields' );
 		
 		$render_fields = new willow\render\fields( $this->plugin );
         if ( ! $field_callback = $render_fields->get_callback( $field ) ) {
@@ -87,7 +87,7 @@ class callback {
 
         }
 
-        // h::log( $field_callback );
+        // w__log( $field_callback );
 
         // assign method to variable ##
         $method = $field_callback['method'];
@@ -99,7 +99,7 @@ class callback {
 			// self::$log['notice'][] = 'No field value found, stopping callback';
 			
 			// log ##
-			h::log( $_args['task'].'~>n:>No field value found, stopping callback: "'.$field.'"');
+			w__log( $_args['task'].'~>n:>No field value found, stopping callback: "'.$field.'"');
 
             return $value;
 
@@ -113,7 +113,7 @@ class callback {
             isset( $field_callback['args'] ) 
         ) {
 
-			// h::log( 't:>TODO - check if this callback {{ value }} reference is out of date' );
+			// w__log( 't:>TODO - check if this callback {{ value }} reference is out of date' );
 
             // Clean up args, with actual passed value ##
             $field_callback['args'] = str_replace( 
@@ -127,8 +127,8 @@ class callback {
 
         }
 
-        // h::log( $method );
-        // h::log( $args );
+        // w__log( $method );
+        // w__log( $args );
 
         // check if field callback is listed in the allowed array of callbacks ##
         if ( ! array_key_exists( $method, $callbacks ) ) {
@@ -136,7 +136,7 @@ class callback {
 			// self::$log['notice'][] = 'Cannot find callback: "'.$method.'"';
 			
 			// log ##
-			h::log( $_args['task'].'~>n:>Cannot find callback: "'.$method.'"');
+			w__log( $_args['task'].'~>n:>Cannot find callback: "'.$method.'"');
 
             return $value;
 
@@ -152,17 +152,17 @@ class callback {
 			// self::$log['notice'][] = 'Method is not callable: "'.$method.'"';
 			
 			// log ##
-			h::log( $_args['task'].'~>n:>Method is not callable: "'.$method.'"');
+			w__log( $_args['task'].'~>n:>Method is not callable: "'.$method.'"');
 
             return $value;
 
         }
 
         // checks over ##
-        // h::log( 'Field: "'.$field.'" has a valid callback: "'.$method.'"');
+        // w__log( 'Field: "'.$field.'" has a valid callback: "'.$method.'"');
 
         // $filter = 'q/field/callback/field/before/'.$method.'/'.$field;
-        // h::log( 'Filter: '.$filter );
+        // w__log( 'Filter: '.$filter );
 
         // filter field callback value ( $args ) before callback ##
         $args = $this->plugin->get( 'filter')->apply([ 
@@ -171,7 +171,7 @@ class callback {
             'return'        => $args
         ]); 
 
-        // h::log( $args );
+        // w__log( $args );
 
         // run callback using original value of field ##
         $data = call_user_func (
@@ -185,14 +185,14 @@ class callback {
 			// self::$log['notice'][] = 'Method returned bad data..';
 			
 			// log ##
-			h::log( $_args['task'].'~>n:>Method return bad data...');
+			w__log( $_args['task'].'~>n:>Method return bad data...');
 
             return $value;
 
         }
 
         // check ##
-        // h::log( $data );
+        // w__log( $data );
 
         // now add new data to class property $fields ##
 		$_fields[$field] = $data;

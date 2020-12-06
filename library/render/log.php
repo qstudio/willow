@@ -29,8 +29,8 @@ class log {
      */
     public function set( Array $args = null ){
 
-		// h::log( 'e:>'.$args['task'] );
-		// h::log( self::$args['config']['debug'] );
+		// w__log( 'e:>'.$args['task'] );
+		// w__log( self::$args['config']['debug'] );
 
         if (
             isset( self::$args['config']['debug'] )
@@ -43,13 +43,13 @@ class log {
 			// || ! self::$args['config']['debug']
         ) {
 
-			// h::log( 'd:>Debugging is turned ON for : "'.$args['task'].'"' );
+			// w__log( 'd:>Debugging is turned ON for : "'.$args['task'].'"' );
 
 			// filter in group to debug ##
 			\add_filter( 'willow/core/log/debug', function( $key ) use ( $args ){ 
-				// h::log( $key );
+				// w__log( $key );
 				$return = is_array( $key ) ? array_merge( $key, [ $args['task'] ] ) : [ $key, $args['task'] ]; 
-				// h::log( $return );
+				// w__log( $return );
 				return 
 					$return;
 				}
@@ -61,7 +61,7 @@ class log {
 		}
 
 		// default ##
-		// h::log( 'd:>Debugging is turned OFF for : "'.$args['task'].'"' );
+		// w__log( 'd:>Debugging is turned OFF for : "'.$args['task'].'"' );
 
 		return false;
 

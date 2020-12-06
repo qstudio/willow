@@ -19,7 +19,7 @@ class acf {
 		
 		if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 
-            h::log( 'ACF Missing, please install or activate: "https://www.advancedcustomfields.com/"' );
+            w__log( 'ACF Missing, please install or activate: "https://www.advancedcustomfields.com/"' );
 
             return false;
 
@@ -30,7 +30,7 @@ class acf {
             || ! is_array( $groups )
         ) {
 
-            h::log( 'No groups to load.' );
+            w__log( 'No groups to load.' );
 
             return false;
 
@@ -39,12 +39,12 @@ class acf {
 		// loop over gruops ##
         foreach( $groups as $key => $value ) {
 
-			// h::log( 'Filter: '.'q/plugin/acf/add_field_groups/'.$key );
+			// w__log( 'Filter: '.'q/plugin/acf/add_field_groups/'.$key );
 
             // filter groups -- NEW ##
 			$value = \apply_filters( 'willow/plugin/acf/add_field_groups/'.$key, $value );
 			
-            // h::log( $value );
+            // w__log( $value );
 
             // load them all up ##
             \acf_add_local_field_group( $value );
@@ -61,7 +61,7 @@ class acf {
         // sanity ##
         if ( ! \function_exists('acf_get_field_group') ) {
 
-            h::log( 'Error -> function "acf_get_field_group" not found' );
+            w__log( 'Error -> function "acf_get_field_group" not found' );
 
             return false;
 
@@ -70,7 +70,7 @@ class acf {
         // check if string passed ##
         if ( is_null( $group ) ) {
 
-            h::log( 'Error -> No "group" string passed to method.' );
+            w__log( 'Error -> No "group" string passed to method.' );
 
             return false;
 
@@ -79,7 +79,7 @@ class acf {
         // look for field group and return boolen if fails ##
         if ( ! $array = \acf_get_fields( $group ) ) {
 
-            h::log( 'Notice -> Group: "'.$group.'" not found.' );
+            w__log( 'Notice -> Group: "'.$group.'" not found.' );
 
             return false;
 
