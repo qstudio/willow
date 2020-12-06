@@ -26,11 +26,12 @@ class markup {
      * Get all tags of defined $type from passed $string 
      *  
      */
-    public function get( string $string = null, $type = 'variable' ) {
+    public function get( $string = null, $type = 'variable' ) {
         
         // sanity ##
         if (
 			is_null( $string ) 
+			|| ! is_string( $string )
 			|| is_null( $type )
         ) {
 

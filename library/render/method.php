@@ -309,11 +309,12 @@ class method {
 
 		if (
 			class_exists( 'willow' )
+			|| function_exists( 'willow' )
 		){
 
 			// variable replacement -- regex way ##
-			$open = \willow\tags::g( 'var_o' );
-			$close = \willow\tags::g( 'var_c' );
+			$open = willow()->tags->g( 'var_o' );
+			$close = willow()->tags->g( 'var_c' );
 
 		} else {
 

@@ -82,7 +82,7 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 
 	// kick off config and store object ##
 	$extend = new willow\context\extend( $plugin );
-	$extend->hooks();
+	$extend->hooks(); // adds action hook 'willow/context/extend/register'
 	$plugin->set( 'extend', $extend );
 
 	// set text domain on init hook ##

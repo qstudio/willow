@@ -2,7 +2,6 @@
 
 namespace Q\willow\parse;
 
-// use q\core;
 use Q\willow;
 
 class arguments {
@@ -15,7 +14,7 @@ class arguments {
 
 	;
 
-	protected function reset(){
+	private function reset(){
 
 		$this->string = false; 
 		$this->plugin->set( '_flags_argument', false );
@@ -27,6 +26,9 @@ class arguments {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
+
+		// parse flags ##
+		$this->parse_flags = new willow\parse\flags( $this->plugin );
 
 	}
 
@@ -63,8 +65,7 @@ class arguments {
 		$this->string = trim( $this->string );
 
 		// flags check for [array]
-		$parse_flags = new willow\parse\flags( $this->plugin );
-		$this->string = $parse_flags->get( $this->string, 'argument' );
+		$this->string = $this->parse_flags->get( $this->string, 'argument' );
 
 		// get flags locally ##
 		$_flags_argument = $this->plugin->get( '_flags_argument' );
@@ -96,7 +97,7 @@ class arguments {
 		// w__log( $_flags_argument );
 
 		// extract data array from string ##
-		$this->array = core\method::parse_str( $this->string );
+		$this->array = willow\core\method::parse_str( $this->string );
 
 		// w__log( $this->array );
 

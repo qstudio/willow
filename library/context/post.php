@@ -67,7 +67,7 @@ class post {
 		*/
 
 		// // test ##
-		w__log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

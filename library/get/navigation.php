@@ -202,9 +202,6 @@ class navigation {
 		
 	}
 
-
-
-	
     /**
      * Get Sibling page OT posts from same category 
      *

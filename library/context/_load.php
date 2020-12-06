@@ -208,7 +208,16 @@ class context  {
 				// w__log( 'run extended method: '.$extend['class'].'::'.$extend['method'] );
 
 				// gather field data from extend ##
-				$return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
+				// $return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
+
+				$class = $extend['class'];
+				$method = $extend['method'];
+				
+				// new object ##
+				$object = new $class( $this->plugin );
+
+				// return post method to 
+				$return_array = $object->{ $method }( $this->plugin->get( '_args' ) );
 
 			} else if ( 
 				\method_exists( $namespace, $args['task'] ) 
@@ -216,8 +225,16 @@ class context  {
 
 				// 	w__log( 'load base method: '.$extend['class'].'::'.$extend['method'] );
 
+				$method = $args['task'];
+
+				// new object ##
+				$object = new $namespace( $this->plugin );
+
+				// return post method to 
+				$return_array = $object->{ $method }( $this->plugin->get( '_args' ) );
+
 				// gather field data from $method ##
-				$return_array = $namespace::{ $args['task'] }( $this->plugin->get( '_args') ) ;
+				// $return_array = $namespace::{ $args['task'] }( $this->plugin->get( '_args') ) ;
 
 			} else if ( 
 				\method_exists( $namespace, 'get' ) 
@@ -306,7 +323,7 @@ class context  {
 
 			// w__log( self::$markup );
 
-			// w__log( self::$fields );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// w__log( self::$markup['template'] );
 

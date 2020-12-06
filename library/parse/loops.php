@@ -359,9 +359,9 @@ class loops {
 
 		// now, we need to edit the markup in two places -- or just one ??
 		// create updated loop scope tag ##
-		$loop_scope_tag = $this->plugin->get( 'tags' )->g( 'sco_o' ).self::$loop_scope.$this->plugin->get( 'tags' )->g( 'sco_c' );
+		$loop_scope_tag = $this->plugin->get( 'tags' )->g( 'sco_o' ).$this->loop_scope.$this->plugin->get( 'tags' )->g( 'sco_c' );
 		// w__log( 'New loop scope tag: '.$loop_scope_tag );
-		// w__log( self::$loop_scope_full );
+		// w__log( $this->loop_scope_full );
 
 		// w__log( self::$markup_template );
 

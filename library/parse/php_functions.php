@@ -9,6 +9,7 @@ class php_functions {
 
 	private
 		$plugin,
+		$parse_markup,
 
 		$return,
 		$function_hash, 
@@ -46,6 +47,8 @@ class php_functions {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
+
+		$this->parse_markup = new willow\parse\markup( $this->plugin );
 
 	}
 	
@@ -337,7 +340,7 @@ class php_functions {
 
 			if ( 
 				! class_exists( $this->class )
-				|| ! method_exists( $this->class, $this->method ) // internal methods are found via callstatic lookup ##
+				// || ! method_exists( $this->class, $this->method ) // internal methods are found via callstatic lookup ##
 				|| ! is_callable( $this->class, $this->method )
 			){
 
@@ -423,7 +426,7 @@ class php_functions {
 
 			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
-			parse\markup::swap( $this->function_match, '', 'php_function', 'string', $process );
+			$this->parse_markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -452,7 +455,7 @@ class php_functions {
 			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
 			// w__log( $this->return );
 
-			parse\markup::swap( $this->function_match, '', 'php_function', 'string', $process );
+			$this->parse_markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -521,8 +524,7 @@ class php_functions {
 			$this->plugin->set( '_markup_template', $_markup_template );
 
 			// update markup for willow parse ##
-			$parse_markup = new willow\parse\markup( $this->plugin );
-			$parse_markup->swap( $this->function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
+			$this->parse_markup->swap( $this->function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
 
 			// remove used flags ##
 			/*

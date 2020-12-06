@@ -256,15 +256,15 @@ class markup {
 				// && isset( $args['markup']['template'] ) // we can't validate "template" yet, as it might be pulled from config
 			) {
 
-				w__log('d:>Using array markup' );
-				w__log( $args['markup'] );
+				// w__log('d:>Using array markup' );
+				// w__log( $args['markup'] );
 
 				return $this->plugin->set( '_markup', $args['markup'] );
 
 			} else {
 
-				w__log('d:>Using single markup' );
-				w__log( $args['markup'] );
+				// w__log('d:>Using single markup' );
+				// w__log( $args['markup'] );
 
 				$_markup['template'] = $args['markup'];
 
@@ -277,8 +277,8 @@ class markup {
 		// convert string passed args, presuming it to be markup...??... ##
 		if ( is_string( $args ) ) {
 
-			w__log('d:>Using string markup:' );
-			w__log( $args );
+			// w__log('d:>Using string markup:' );
+			// w__log( $args );
 
 			$_markup['template'] = $args;
 
@@ -794,7 +794,7 @@ class markup {
         // w__log( $_markup[$field] );
 
         // get target variable ##
-		$tag = willow\tags::wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
+		$tag = $this->plugin->get( 'tags')->wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
         if ( 
 			! self::contains( $tag )
         ) {

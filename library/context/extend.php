@@ -5,13 +5,11 @@ namespace Q\willow\context;
 use Q\willow\core\helper as h;
 use Q\willow\context;
 
-// load it up ##
-// \Q\willow\context\extend::__run();
-
 class extend {
 
 	private 
 		$plugin = false,
+		$_extend = [],
 		$filtered = []
 	;
 
@@ -26,12 +24,18 @@ class extend {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
+		// extend array ##
+		$this->_extend = $this->plugin->get( '_extend' );
+
 	}
 
 	function hooks(){
 
 		// allow for class extensions ##
-		\do_action( 'willow/context/extend/register', [ get_class(), 'register' ] );
+		// \do_action( 'willow/context/extend/register', [ $this, 'register' ] );
+
+		// allow for class extensions ##
+		// \add_filter( 'after_setup_theme', [ $this, 'filter' ], 0, 1 );
 
 		// filter in context extensions ## 
 		// \add_action( 'after_setup_theme', [ get_class(), 'filter' ], 2 );
@@ -44,13 +48,14 @@ class extend {
 	/**
 	 * @todo
 	*/
-	public function filter(){
+	public function filter( $array = null ){
 
 		// filter extensions ##
-		$array = \apply_filters( 'willow/context/extend', [] );
+		$array = \apply_filters( 'willow/context/extend', $this->_extend );
 
-		// w__log( $array );
+		w__log( $array );
 
+		/*
 		// sanity ##
 		if( 
 			! $array
@@ -65,6 +70,7 @@ class extend {
 
 		// merge in - validate later ##
 		$this->filtered = array_merge( $array, $this->filtered );
+		*/
 
 		// w__log( self::$filtered );
 
@@ -232,14 +238,18 @@ class extend {
 		// w__log( $methods );
 
 		$_extend = $this->plugin->get( '_extend' );
+
 		$_extend[ $args['class'] ] = [
 			'context' 	=> $args['context'],
 			'class' 	=> $args['class'],
 			'methods' 	=> $methods,
-			'lookup' 	=> isset( $args['lookup'] ) ? $args['lookup'] : false
+			'lookup' 	=> $args['lookup'] ?? false
 		];
 
+		// store to object prop ##
 		return $this->plugin->set( '_extend', $_extend );
+
+		w__log( $this->plugin->get( '_extend' ) );
 
 		/*
 		return self::$extend[ $args['class'] ] = [
@@ -274,7 +284,7 @@ class extend {
 
 		// check ##
 		// w__log( 'd:>Looking for extension: '.$context );
-		// w__log( self::$extend );
+		// w__log( $_extend );
 
 		// is_array ##
 		if (

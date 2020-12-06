@@ -9,6 +9,8 @@ class willows {
 	private 
 		$plugin = false,
 		$parse_flags = false,
+		$parse_loops = false,
+		$parse_arguments = false,
 
 		$willow_context,
 		$willow_task,
@@ -58,6 +60,12 @@ class willows {
 
 		// flags ##
 		$this->parse_flags = new willow\parse\flags( $this->plugin );
+
+		// parse loops ##
+		$this->parse_loops = new willow\parse\loops( $this->plugin );
+
+		// parse argments ##
+		$this->parse_arguments = new willow\parse\arguments( $this->plugin );
 
 	}
 
@@ -250,8 +258,6 @@ class willows {
 		$this->willow = $this->parse_flags->get( $this->willow, 'willow' );
 		// w__log( $this->plugin->get( '_flags_willow' ) );
 
-		$parse_arguments = new willow\parse\arguments( $this->plugin );
-
 		// clean up ##
 		$this->willow = trim( $this->willow );
 
@@ -314,14 +320,13 @@ class willows {
 		){	
 
 			// check for loops in argument string - might be one or multiple ##
-			$parse_loops = new willow\parse\loops( $this->plugin );
-			if( $loops = $parse_loops->has( $this->argument_string ) ){
+			if( $loops = $this->parse_loops->has( $this->argument_string ) ){
 
 				// w__log( $this->willow_task.'~>n:>HAS a loop so taking part of config string as markup' );
 				// w__log( 'd:>HAS a loop so taking part of config string as markup' );
 
 				// we need the entire markup, without the flags ##
-				$decode_flags = $parse_arguments->decode( $this->argument_string );
+				$decode_flags = $this->parse_arguments->decode( $this->argument_string );
 				// w__log( $decode_flags );
 				// w__log( willow\arguments::decode( $this->argument_string ) );
 
@@ -336,7 +341,7 @@ class willows {
 					// w__log( $this->willow_task.'~>n:>FLAG set so take just loop markup: '.$loop['markup'] );
 					// w__log( 'd:>Flags set, so take just loop markup: '.$loop['markup'] );
 
-					$this->arguments = core\method::parse_args( 
+					$this->arguments = willow\core\method::parse_args( 
 						$this->arguments, 
 						[ 
 							'markup' 	=> $decode_flags['markup']['template']  ## // $loops['markup'] // 
@@ -349,7 +354,7 @@ class willows {
 					// w__log( $this->willow_task.'~>n:>NO flags, so take whole string: '.$this->argument_string );
 					// w__log( 'd:>No Flags, so take whole string: '.$this->argument_string );
 
-					$this->arguments = core\method::parse_args( 
+					$this->arguments = willow\core\method::parse_args( 
 						$this->arguments, 
 						[ 
 							'markup' 	=> $this->argument_string //, whole string ##
@@ -369,7 +374,7 @@ class willows {
 			// parse arguments ##
 			$this->arguments = willow\core\method::parse_args( 
 				$this->arguments, 
-				$parse_arguments->decode( $this->argument_string )
+				$this->parse_arguments->decode( $this->argument_string )
 			);
 
 			// w__log( $this->arguments );

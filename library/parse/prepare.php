@@ -76,7 +76,7 @@ class prepare {
 		$php_functions = new willow\parse\php_functions( $this->plugin );
 		$php_functions->match( $this->args, $this->process );
 
-		// pre-format markup to extract daa from willows ##
+		// pre-format markup to extract data from willows ##
 		$willows = new willow\parse\willows( $this->plugin );
 		$willows->match( $this->args, $this->process );
 

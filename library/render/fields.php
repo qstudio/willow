@@ -177,7 +177,7 @@ class fields {
 
 			// w__log( 'field: '.$field_key[0] );
 
-			if( array_key_exists( $field_key[0], self::$scope_map ) ){
+			if( array_key_exists( $field_key[0], $_scope_map ) ){
 
 				// w__log( 'scope map includes: '.$field_key[0] );
 
@@ -510,6 +510,7 @@ class fields {
 		// check if data is structured as an array of array ##
 		if ( 
 			isset( $_fields )
+			&& is_array( $_fields )
 			&& willow\render\method::is_array_of_arrays( $_fields[$field] )
 		){
 
