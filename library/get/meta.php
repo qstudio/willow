@@ -232,7 +232,7 @@ class meta {
 
 		// comments ##
 		if ( 
-			$this->plugin->get( 'config' )->get([ 'context' => 'global', 'task' => 'config', 'property' => 'allow_comments' ])
+			$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'allow_comments' ])
 			&& 'open' == $post->comment_status // comments are open
 		) {
 			
@@ -304,7 +304,7 @@ class meta {
 			\get_the_date( 
 				isset( $args['config']['date_format'] ) ? 
 				$args['date_format']['config'] : // take from value passed by caller ##
-					$this->plugin->get( 'config' )->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // take from global config ##
+					$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // take from global config ##
 					\apply_filters( 'q/format/date', 'F j, Y' ), // standard ##
 				$args['config']['post']->ID
 			);

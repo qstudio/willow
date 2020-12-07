@@ -43,7 +43,7 @@ class output {
 		}
 
         // filter output ##
-        $_output = $this->plugin->get( 'filter' )->apply([ 
+        $_output = $this->plugin->filter->apply([ 
             'parameters'    => [ // pass ( $fields, $args, $output ) as single array ##
                 'fields'    => $this->plugin->get( '_fields' ), 
                 'args'      => $this->plugin->get( '_args' ), 
@@ -81,6 +81,7 @@ class output {
         } else {
 
 			$_hash = $this->plugin->get( '_hash' );
+			// w__log( $_hash );
 
 			// build return array ##
 			$return = [ 

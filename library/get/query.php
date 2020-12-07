@@ -127,7 +127,7 @@ class query {
     public function posts_by_meta( $args = array() ){
 
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
-        $args = ( object ) \wp_parse_args( $args, $this->plugin->get( 'config' )->get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
+        $args = ( object ) \wp_parse_args( $args, $this->plugin->config->get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
 
         // grab page - polylang will take care of language selection ##
         $post_args = array(

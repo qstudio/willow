@@ -4,7 +4,6 @@ namespace Q\willow\core;
 
 // import ## 
 use Q\willow;
-use Q\willow\core\helper as h;
 
 class config {
 
@@ -122,7 +121,7 @@ class config {
 		$this->willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
 
 		// template ##
-		$this->template = willow\core\method::template() ? core\method::template() : '404';
+		$this->template = willow\core\method::template() ? willow\core\method::template() : '404';
 
 		// hit ##
 		$this->properties_loaded = true;

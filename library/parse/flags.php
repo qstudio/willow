@@ -7,17 +7,13 @@ use Q\willow;
 class flags {
 
 	private 
-		$plugin = false,
-		$filter_method = null
+		$plugin = false
 	;
 
 	public function __construct( \Q\willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		// prepare filters ##
-		$this->filter_method = new willow\filter\method( $this->plugin );
 
 	}
 
@@ -39,23 +35,23 @@ class flags {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'fla_o' )) ) !== false
-			&& strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'fla_c' )) ) !== false
+			strpos( $string, trim( $this->plugin->tags->g( 'fla_o' )) ) !== false
+			&& strpos( $string, trim( $this->plugin->tags->g( 'fla_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			// $fla_o = strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'fla_o' )) );
-			// $fla_c = strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'fla_c' )) );
+			// $fla_o = strpos( $string, trim( $this->plugin->tags->g( 'fla_o' )) );
+			// $fla_c = strrpos( $string, trim( $this->plugin->tags->g( 'fla_c' )) );
 			/*
 			w__log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
 				$string, 
-				( $loo_o + strlen( trim( $this->plugin->get( 'tags' )->g( 'loo_o' ) ) ) ), 
-				( $loo_c - $loo_o - strlen( trim( $this->plugin->get( 'tags' )->g( 'loo_c' ) ) ) ) ); 
+				( $loo_o + strlen( trim( $this->plugin->tags->g( 'loo_o' ) ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( $this->plugin->tags->g( 'loo_c' ) ) ) ) ); 
 
-			$return_string = $this->plugin->get( 'tags' )->g( 'loo_o' ).$return_string.$this->plugin->get( 'tags' )->g( 'loo_c' );
+			$return_string = $this->plugin->tags->g( 'loo_o' ).$return_string.$this->plugin->tags->g( 'loo_c' );
 
 			// w__log( 'e:>$string: "'.$return_string.'"' );
 
@@ -98,25 +94,25 @@ class flags {
 		if(
 			willow\core\method::starts_with( 
 				$string, 
-				trim( $this->plugin->get( 'tags' )->g( 'fla_o' ) ) 
+				trim( $this->plugin->tags->g( 'fla_o' ) ) 
 			)
 			&& $flags = willow\core\method::string_between( 
 				$string, 
-				trim( $this->plugin->get( 'tags' )->g( 'fla_o' ) ), 
-				trim( $this->plugin->get( 'tags' )->g( 'fla_c' ) ) 
+				trim( $this->plugin->tags->g( 'fla_o' ) ), 
+				trim( $this->plugin->tags->g( 'fla_c' ) ) 
 			)
 		){
 
 			$flags = trim(
 				willow\core\method::string_between( 
 					$string, 
-					trim( $this->plugin->get( 'tags' )->g( 'fla_o' ) ), 
-					trim( $this->plugin->get( 'tags' )->g( 'fla_c' ) ) 
+					trim( $this->plugin->tags->g( 'fla_o' ) ), 
+					trim( $this->plugin->tags->g( 'fla_c' ) ) 
 				)
 			);
 
 			// prepare flags / filters ##
-			$flags_array = $this->filter_method->prepare([ 'filters' => $flags, 'use' => $use ] );
+			$flags_array = $this->plugin->filter_method->prepare([ 'filters' => $flags, 'use' => $use ] );
 			
 			// w__log( $flags_array );
 			// w__log( 'use: '.$use );
@@ -184,8 +180,8 @@ class flags {
 			// get entire string, with tags ##
 			$flags_all = willow\core\method::string_between( 
 				$string, 
-				trim( $this->plugin->get( 'tags' )->g( 'fla_o' ) ), 
-				trim( $this->plugin->get( 'tags' )->g( 'fla_c' ) ), 
+				trim( $this->plugin->tags->g( 'fla_o' ) ), 
+				trim( $this->plugin->tags->g( 'fla_c' ) ), 
 				true 
 			);
 
@@ -204,8 +200,8 @@ class flags {
 
 	public function cleanup( $args = null, $process = 'secondary' ){
 
-		$open = trim( $this->plugin->get( 'tags' )->g( 'fla_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'fla_c' ) );
+		$open = trim( $this->plugin->tags->g( 'fla_o' ) );
+		$close = trim( $this->plugin->tags->g( 'fla_c' ) );
 
 		// w__log( self::$markup['template'] );
 

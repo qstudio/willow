@@ -231,7 +231,7 @@ class method {
 			|| ! is_array( $array )
 		){
 
-			w__log( 'e:>Error in passed args or not array' );
+			w__log( 'e:>Error in passed args or not an array' );
 
 			return false;
 

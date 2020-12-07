@@ -8,11 +8,11 @@ class context  {
 
 	private 
 		$plugin = false,
-		$render_args = false,
-		$render_markup = false,
-		$render_log = false,
-		$render_output = false,
-		$render_fields = false,
+		// $render_args = false,
+		// $render_markup = false,
+		// $render_log = false,
+		// $render_output = false,
+		// $render_fields = false,
 		$parse_prepare = false,
 
 		$lookup_error = false
@@ -28,19 +28,19 @@ class context  {
 		$this->plugin = $plugin;
 
 		// render args ##
-		$this->render_args = new willow\render\args( $this->plugin );
+		// $this->render_args = new willow\render\args( $this->plugin );
 
 		// render markup ##
-		$this->render_markup = new willow\render\markup( $this->plugin );
+		// $this->render_markup = new willow\render\markup( $this->plugin );
 
-		// build render log ##
-		$this->render_log = new willow\render\log( $this->plugin );
+		// // build render log ##
+		// $this->render_log = new willow\render\log( $this->plugin );
 
-		// render output ##
-		$this->render_output = new willow\render\output( $this->plugin );
+		// // render output ##
+		// $this->render_output = new willow\render\output( $this->plugin );
 
-		// render fields ##
-		$this->render_fields = new willow\render\fields( $this->plugin );
+		// // render fields ##
+		// $this->render_fields = new willow\render\fields( $this->plugin );
 
 		// parse prepare ##
 		$this->parse_prepare = new willow\parse\prepare( $this->plugin );
@@ -96,7 +96,7 @@ class context  {
 		if ( class_exists( $namespace ) ) {
 
 			// reset args ##
-			$this->render_args->reset();
+			$this->plugin->render->args->reset();
 
 			// w__log( 'd:>class: '.$namespace.' available' );
 
@@ -113,7 +113,7 @@ class context  {
 			// w__log( $args );
 
 			// extract markup from passed args ##
-			$this->render_markup->pre_validate( $args );
+			$this->plugin->render->markup->pre_validate( $args );
 
 			// make args an array, if it's not ##
 			if ( ! is_array( $args ) ){
@@ -156,14 +156,14 @@ class context  {
 
 				// log stop point ##
 				// render\log::set( $args );
-				$this->render_log->set( $args );
+				$this->plugin->render->log->set( $args );
 	
 				w__log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
 	
 				// we need to reset the class ##
 
 				// reset all args ##
-				$this->render_args->reset();
+				$this->plugin->render->args->reset();
 
 				// kick out ##
 				return false;
@@ -171,14 +171,14 @@ class context  {
 			}
 	
 			// validate passed args ##
-			if ( ! $this->render_args->validate( $args ) ) {
+			if ( ! $this->plugin->render->args->validate( $args ) ) {
 	
-				$this->render_log->set( $args );
+				$this->plugin->render->log->set( $args );
 				
 				w__log( 'e:>Args validation failed' );
 
 				// reset all args ##
-				$this->render_args->reset();
+				$this->plugin->render->args->reset();
 	
 				return false;
 	
@@ -188,9 +188,6 @@ class context  {
 
 			// prepare markup, fields and handlers based on passed configuration ##
 			$this->parse_prepare->hooks( $args );
-
-			// call class::method to gather data ##
-			// $namespace::run( $args );
 
 			// internal->buffering ##
 			if(
@@ -205,7 +202,7 @@ class context  {
 				$extend = $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] )
 			){
 
-				// w__log( 'run extended method: '.$extend['class'].'::'.$extend['method'] );
+				// w__log( 'run extended method: '.$extend['class'].'->'.$extend['method'] );
 
 				// gather field data from extend ##
 				// $return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
@@ -223,7 +220,7 @@ class context  {
 				\method_exists( $namespace, $args['task'] ) 
 			){
 
-				// 	w__log( 'load base method: '.$extend['class'].'::'.$extend['method'] );
+				// w__log( 'load defined method: '.$namespace.'->'.$args['task'] );
 
 				$method = $args['task'];
 
@@ -240,7 +237,7 @@ class context  {
 				\method_exists( $namespace, 'get' ) 
 			){
 
-				// 	w__log( 'load default get() method: '.$extend['class'].'::'.$extend['method'] );
+				// w__log( 'load: '.$namespace.'->get()' );
 
 				// gather field data from get() ##
 				// $return_array = $namespace::get( $this->plugin->get( '_args') ) ;
@@ -286,12 +283,12 @@ class context  {
 				true === $this->lookup_error
 			){
 
-				$this->render_log->set( $args );
+				$this->plugin->render->log->set( $args );
 				
 				w__log( 'e:>No matching method found for "'.$args['context'].'::'.$args['task'].'"' );
 
 				// reset all args ##
-				$this->render_args->reset();
+				$this->plugin->render->args->reset();
 	
 				return false;
 
@@ -312,14 +309,13 @@ class context  {
 			// w__log( $return_array );
 
 			// assign fields ##
-			$this->render_fields->define( $return_array );
-
-			// w__log( self::$markup );
+			$this->plugin->render->fields->define( $return_array );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// w__log( $return_array );
 
 			// prepare field data ##
-			$this->render_fields->prepare();
+			$this->plugin->render->fields->prepare();
 
 			// w__log( self::$markup );
 
@@ -328,34 +324,38 @@ class context  {
 			// w__log( self::$markup['template'] );
 
 			// check if feature is enabled ##
-			if ( ! $this->render_args->is_enabled() ) {
+			if ( ! $this->plugin->render->args->is_enabled() ) {
 
-				$this->render_log->set( $args );
-
-				w__log( 'd:>Not enabled...' );
+				// build log ##
+				$this->plugin->render->log->set( $args );
 
 				// reset all args ##
-				$this->render_args->reset();
-	
+				$this->plugin->render->args->reset();
+				
+				w__log( 'd:>Not enabled...' );
+
+				// done ##
 				return false;
 	
 		   	}    
 		
-			// w__log( self::$fields );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// Prepare template markup ##
-			$this->render_markup->prepare();
+			$this->plugin->render->markup->prepare();
 
-			// w__log( self::$markup );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// clean up left over tags ## --- @TODO --> REMOVED as handled by cleanup ??? ##
 			// willow\parse::cleanup();
 
 			// optional logging to show removals and stats ##
-			$this->render_log->set( $args );
+			$this->plugin->render->log->set( $args );
 
 			// return or echo ##
-			$output = $this->render_output->prepare();
+			$output = $this->plugin->render->output->prepare();
 
 			// w__log( $output );
 

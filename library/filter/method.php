@@ -21,8 +21,6 @@ class method {
 	*/
 	function __construct( $plugin = null ){
 
-		// Log::write( $plugin );
-
         // grab passed plugin object ## 
 		$this->plugin = $plugin;
 		
@@ -88,7 +86,7 @@ class method {
 	* @since 	1.3.0
 	* @return	Boolean
 	*/
-	public function apply( $args = null ) {
+	public function process( $args = null ) {
 
 		// w__log( $args );
 
@@ -139,7 +137,7 @@ class method {
 
 		/*
 		// now, we need to prepare the flags, if any, from the passed string ##
-		$filters = core\method::string_between( $args['string'], trim( willow\tags::g( 'fla_o' )), trim( willow\tags::g( 'fla_c' )) );
+		$filters = core\method::string_between( $args['string'], trim( $this->plugin->tags->g( 'fla_o' )), trim( $this->plugin->tags->g( 'fla_c' )) );
 
 		w__log( $filters );
 

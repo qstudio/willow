@@ -107,8 +107,8 @@ class comments {
 
 		// get all comments, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->get( 'tags' )->g( 'com_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'com_c' ) );
+		$open = trim( $this->plugin->tags->g( 'com_o' ) );
+		$close = trim( $this->plugin->tags->g( 'com_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -257,8 +257,8 @@ class comments {
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->get( 'tags' )->g( 'com_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'com_c' ) );
+		$open = trim( $this->plugin->tags->g( 'com_o' ) );
+		$close = trim( $this->plugin->tags->g( 'com_c' ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 

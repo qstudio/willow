@@ -38,6 +38,7 @@ class fields {
 			// w__log( self::$fields );
 
 			// log ##
+			w__log( 'e:>Error in $fields array' );
 			w__log( $_args['task'].'~>e:>Error in $fields array' );
 
 			// kick out ##
@@ -45,10 +46,10 @@ class fields {
 
 		}
 		
-		// w__log( self::$fields );
+		// w__log( $_fields );
 
         // filter $args now that we have fields data from ACF ##
-        $_args = $this->plugin->get('filter')->apply([ 
+        $_args = $this->plugin->filter->apply([ 
             'parameters'    => [ 'fields' => $_fields, 'args' => $_args ], // pass ( $fields, $args ) as single array ##
             'filter'        => 'willow/render/fields/prepare/before/args/'.$_args['task'], // filter handle ##
             'return'        => $_args
@@ -58,25 +59,26 @@ class fields {
 		$this->plugin->set( '_args', $_args );
 
         // filter all fields before processing ##
-        $_fields = $this->plugin->get('filter')->apply([ 
+        $_fields = $this->plugin->filter->apply([ 
             'parameters'    => [ 'fields' => $_fields, 'args' => $_args ], // pass ( $fields, $args ) as single array ##
             'filter'        => 'willow/render/fields/prepare/before/fields/'.$_args['task'], // filter handle ##
             'return'        => $_fields
 		]); 
+
+		// w__log( $_fields );
 		
 		// save ##
 		$this->plugin->set( '_fields', $_fields );
 
-		// load again ##
-		$_args = $this->plugin->get( '_args' );
-		$_fields = $this->plugin->get( '_fields' );
-
 		// w__log( $_fields );
-		// w__log( self::$fields_map );
 		// w__log( 'hash: '.$_args['config']['hash'] );
 
 		// push in new duplicate fields from field_map, required for unique filters on variables ##
 		$this->map();
+
+		// load again ##
+		// $_args = $this->plugin->get( '_args' );
+		$_fields = $this->plugin->get( '_fields' );
 
         // start loop ##
         foreach ( $_fields as $field => $value ) {
@@ -90,14 +92,14 @@ class fields {
 				// log ##
 				w__log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
 
-				// w__log( 'Field empty: '.$field );
+				w__log( 'Field empty: '.$field );
 
                 continue;
 
             }
 
             // filter field before callback ##
-            $field = $this->plugin->get('filter')->apply([ 
+            $field = $this->plugin->filter->apply([ 
                 'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => $_args, 'fields' => $_fields ], // params
                 'filter'        => 'willow/render/fields/prepare/before/callback/'.$_args['task'].'/'.$field, // filter handle ##
                 'return'        => $field
@@ -105,14 +107,13 @@ class fields {
 
             // Callback methods on specified field ##
 			// Note - field includes a list of standard callbacks, which can be extended via the filter willow/render/callbacks/get ##
-			$render_callback = new willow\render\callback( $this->plugin );
-            $value = $render_callback->field( $field, $value );
+            $value = $this->plugin->render->callback->field( $field, $value );
 
             // w__log( 'd:>After callback -- field: '.$field .' With Value:' );
             // w__log( $value );
 
             // filter field before format ##
-            $field = $this->plugin->get('filter')->apply([ 
+            $field = $this->plugin->filter->apply([ 
                 'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => $_args, 'fields' => $_fields ], // params
                 'filter'        => 'willow/render/fields/prepare/before/format/'.$_args['task'].'/'.$field, // filter handle ##
                 'return'        => $field
@@ -124,18 +125,21 @@ class fields {
             // Format each field value based on type ( int, string, array, WP_Post Object ) ##
             // each item is filtered as looped over -- q/render/field/GROUP/FIELD - ( $args, $fields ) ##
 			// results are saved back to the $_fields array in String format ##
-			$render_format = new willow\render\format( $this->plugin );
-			$render_format->field( $field, $value );
+			$this->plugin->render->format->field( $field, $value );
 
 		}
+
+		// get data a-fresh, for final filter ##
+		$_fields = $this->plugin->get( '_fields' );
 		
         // filter all fields ##
-        $_fields = $this->plugin->get('filter')->apply([ 
+        $_fields = $this->plugin->filter->apply([ 
             'parameters'    => [ 'fields' => $_fields, 'args' => $_args ], // pass ( $fields, $args ) as single array ##
             'filter'        => 'willow/render/fields/prepare/after/fields/'.$_args['task'], // filter handle ##
             'return'        => $_fields
 		]); 
 
+		// store _fields ##
 		$this->plugin->set( '_fields', $_fields );
 
     }
@@ -150,7 +154,7 @@ class fields {
 	*/
 	public function map(){
 
-		// w__log( self::$scope_map );
+		// w__log( $this->plugin->get( '_scope_map' ) );
 		// w__log( 'hash: '.$this->plugin->get( '_args' )['config']['hash'] );
 		
 		// local vars ##
@@ -160,7 +164,10 @@ class fields {
 		if ( 
 			! $_scope_map
 			|| ! is_array( $_scope_map )
+			|| ! $_fields
 		){
+
+			w__log( 'e:>_fields OR _scope_map empty' );
 
 			// no mapping required ##
 			return false;
@@ -170,7 +177,7 @@ class fields {
 		foreach( $_fields as $field => $value ){
 
 			// store
-			$field_matches = [];
+			// $field_matches = [];
 
 			// get first part of field key name  - before first dot ##
 			$field_key = explode( '.', $field );
@@ -194,73 +201,21 @@ class fields {
 					// self::$fields[$new_field_key] = $value;
 					$_fields[$new_field_key] = $value;
 
+					// w__log( $_fields );
+
 				}
 
 			}
 
 		}
+
+		// w__log( $_fields );
 
 		// save fields ##
 		$this->plugin->set( '_fields', $_fields );
 
 		// w__log( $field_matches );
 
-		/*
-		// start loop -- this was first patch for field data.. perhaps we'll NOT need it ##
-		foreach ( self::$fields as $field => $value ) {
-
-			if( false !== strpos( $field, '.' ) ) {
-			
-				$field_array = explode( '.', $field );
-				$find_field = end( $field_array );
-			
-			} else {
-
-				$find_field = $field ;
-
-			}
-			
-			// w__log( 'Search for: '.$field.' in fields_map' );
-
-			if( 
-				self::$fields_map
-				&& is_array( self::$fields_map )
-				&& core\method::array_key_exists( self::$fields_map, $find_field )
-			){
-
-				// w__log( 'Found: '.$find_field.' in fields_map' );
-
-				if( ! is_array( self::$fields_map[ $this->plugin->get( '_args' )['config']['hash'] ][ $find_field ] ) ){
-
-					// w__log( $find_field.' in fields_maps is not an array, so continuing...' );
-
-				} else {
-
-					foreach( self::$fields_map[ $this->plugin->get( '_args' )['config']['hash'] ][ $find_field ] as $map_key => $map_value ){
-
-						// w__log( 'map_value: '.$map_value );
-						// w__log( '$find_field: '.$find_field );
-						// w__log( $this->plugin->get( '_args' ) );
-
-						// prepare new key ##
-						$new_key = $field.str_replace( $find_field, '', $map_value );
-
-						// w__log( 'New Key: '.$new_key );
-
-						// assign existing key value to new key ##
-						self::$fields[$new_key] = $value;
-
-					}
-
-				}
-
-			}
-
-		}
-		*/
-
-		// w__log( self::$fields );
-		
 	}
 	
 	/**
@@ -275,6 +230,7 @@ class fields {
 		// local vars ##
 		$_args = $this->plugin->get( '_args' );
 		$_fields = $this->plugin->get( '_fields' );
+		// w__log( $_fields );
 
 		// sanity ##
 		if (
@@ -300,7 +256,7 @@ class fields {
 				$first_key = key( $args );
 				$_fields[$first_key] = $args[$first_key];
 				// w__log( $first_key );
-				// w__log( self::$fields );
+				// w__log( $_fields );
 
 			}
 
@@ -371,6 +327,8 @@ class fields {
 
 		}
 
+		// w__log( $_fields );
+
 		// save $_fields ##
 		$this->plugin->set( '_fields', $_fields );
 
@@ -399,7 +357,7 @@ class fields {
 
 		}
 		
-		// w__log( 'e:>Adding field: '.$field.' by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( 'e:>Adding field: '.$field.' by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 		// w__log( $value );
 
 		// add field to array ##
@@ -407,9 +365,12 @@ class fields {
 		$_fields = $this->plugin->get( '_fields' );
 		$_fields[$field] = $value;
 		$this->plugin->set( '_fields', $_fields );
+		// w__log( $this->plugin->get( '_fields' ) );
 
 		// log ##
 		w__log( $this->plugin->get( '_args' )['task'].'~>fields:>"'.$field.'"' );
+		// w__log( 'e:>field: "'.$field.'"' );
+		// w__log( $value );
 		// w__log( $this->plugin->get( '_args' )['task'].'~>fields_added:>"'.$field.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
@@ -643,7 +604,7 @@ class fields {
 		w__log( $_args['task'].'~>n:>Field: "'.$field.'" has callback: "'.$callback['method'].'" sending back to caller' );
 
         // filter ##
-        $callback = $this->plugin->get('filter')->apply([ 
+        $callback = $this->plugin->filter->apply([ 
             'parameters'    => [ 'callback' => $callback, 'field' => $field, 'args' => $_args, 'fiekds' => $this->plugin->get('_fields') ], // params ##
             'filter'        => 'q/render/fields/get_callback/'.$_args['task'].'/'.$field, // filter handle ##
             'return'        => $callback

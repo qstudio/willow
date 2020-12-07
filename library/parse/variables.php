@@ -180,8 +180,8 @@ class variables {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'var_o' )) ) !== false
-			&& strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'var_c' )) ) !== false
+			strpos( $string, trim( $this->plugin->tags->g( 'var_o' )) ) !== false
+			&& strrpos( $string, trim( $this->plugin->tags->g( 'var_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
@@ -210,12 +210,19 @@ class variables {
 		}
 
 		// clean up field name - remove variable tags ##
-		$variable = str_replace( [ $this->plugin->get( 'tags' )->g( 'var_o' ), $this->plugin->get( 'tags' )->g( 'var_c' ) ], '', $args['variable'] );
+		$variable = str_replace( 
+			[ 
+				$this->plugin->tags->g( 'var_o' ), 
+				$this->plugin->tags->g( 'var_c' ) 
+			], 
+			'', // with nada ##
+			$args['variable'] 
+		);
 		$variable = trim( $variable );
 		$variable_original = $variable;
 		// w__log( '$variable: '.$variable );
 
-		$this->flags_variable = false;
+		$this->plugin->set( '_flags_variable', false );
 
 		// look for flags ##
 		// $variable = flags::get( $variable, 'variable' );
@@ -224,73 +231,14 @@ class variables {
 		// w__log( self::$flags_variable );
 
 		// $variable = flags::get( $variable, 'variable' );
-		$parse_flags = new willow\parse\flags( $this->plugin );
-		$variable = $parse_flags->get( $variable, 'variable' );
-		// w__log( '$variable: '.trim( $variable ) );
+		$variable = $this->plugin->parse->flags->get( $variable, 'variable' );
+		// w__log( 'variable: '.trim( $variable ) );
 		// w__log( 'whole variable: '.$args['variable'] );
 
 		if(
-			$this->flags_variable
+			// $this->flags_variable
+			$this->plugin->get( '_flags_variable' )
 		){
-
-			// w__log( self::$flags_variable );
-
-			// clean up variable ##
-			// $variable = trim( $variable );
-
-			// if we do find flags, we need to create a unique variable reference key, to avoid duplicate filters on re-used variables ##
-			// but, at this point, we have no data -- so, we need to set a future-flag for use when filters are applied late on ##
-			// w__log( self::$fields );
-			// $variable_hash = $variable.'_'.core\method::hash();
-			// w__log( 'Original: '.$variable_original.' --> $args: '.$args['variable'].' --> variable_hash: '.$variable_hash );
-
-			// w__log( 'Willow Hash: '.$args['hash'] );
-
-			// store variable flags ##
-			// if( ! isset( self::$filter[ $args['context'] ][ $args['task']][ $variable_hash ] ) ) {
-			// self::$filter[ $args['hash'] ]['variable'][ $variable_hash ] = self::$flags_variable;
-			// }
-
-			// add flags to filter list ##
-			// self::$filter[ $args['context'] ][ $args['task'] ][ $variable_hash ] = self::$flags_variable; // [ $variable_hash ]
-
-			// self::$fields_map[$args['context']][$args['task']]['variables'][ $variable ] = $variable_hash;
-
-			// merge in new args to args->field ##
-			// if ( ! isset( self::$fields_map[$args['context']][$args['task']]['variables'][ $variable ] ) ) {
-			// 	self::$fields_map[$args['context']][$args['task']]['variables'][ $variable ] = [];
-			// }
-
-			// add field tracker ##
-			// if ( ! isset( self::$fields_map[ $args['hash'] ][ $variable ] ) ){
-				// self::$fields_map[ $args['hash'] ][ $variable ] = []; // empty array ##
-			// }
-			// self::$fields_map[ $args['hash'] ][ $variable ][] = $variable_hash; // add new variable hash as array value ##
-
-			// w__log( self::$fields_map );
-
-			// update self::$willow_match ##
-			// $tag = $args['tag'];
-			// alter willow_match ##
-			// $variable_hash_replace = str_replace( $variable, $variable_hash, $args['variable'] ); 
-			// $args['tag'] = str_replace( $args['variable'], $variable_hash_replace, $args['tag'] );
-			// w__log( $args['tag'] );
-
-			// variable replacement string ##
-			// $variable_replace = str_replace( $variable, $variable_hash, $args['variable'] );
-			// w__log( '$variable_replace: '.$variable_replace );			
-
-			// alter buffer_map ##
-			// self::$markup_template = str_replace( $args['variable'], $variable_replace, self::$markup_template );
-
-			// w__log( 'MARKUP->> '.self::$markup['template'] );
-			// w__log( self::$markup_template );
-			// w__log( $args['tag'] );
-			// w__log(  );
-			// $args['tag'] = 'hello';
-
-			// force markup->template update ##
-			// self::$markup['template'] = $args['tag'];
 
 			// kick back ##
 			return true; // $args['tag'];
@@ -351,8 +299,8 @@ class variables {
 			// $config_string = method::string_between( $value, '{+', '+}' )
 			$this->variable_config = willow\core\method::string_between( 
 				$this->variable, 
-				trim( $this->plugin->get( 'tags' )->g( 'arg_o' )), 
-				trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) 
+				trim( $this->plugin->tags->g( 'arg_o' )), 
+				trim( $this->plugin->tags->g( 'arg_c' )) 
 			)
 		){
 
@@ -399,7 +347,7 @@ class variables {
 			}
 
 			// create new variable for markup, based on $field value ##
-			$this->new_variable = $this->plugin->get( 'tags' )->wrap([ 'open' => 'var_o', 'value' => $this->field, 'close' => 'var_c' ]);
+			$this->new_variable = $this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => $this->field, 'close' => 'var_c' ]);
 
 			// test what we have ##
 			// w__log( 'd:>variable: "'.$this->variable.'"' );
@@ -408,9 +356,8 @@ class variables {
 			// w__log( 'd:>field_type: "'.$this->field_type.'"' );
 
 			// pass to argument handler -- returned value ##
-			$parse_arguments = new willow\parse\arguments( $this->plugin );
 			if ( 
-				$this->arguments = $parse_arguments->decode( $this->variable_config ) // string containing arguments ##
+				$this->arguments = $this->plugin->parse->arguments->decode( $this->variable_config ) // string containing arguments ##
 			){
 
 				// get args ##
@@ -461,8 +408,8 @@ class variables {
 		// vars ##
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
-		$open = trim( $this->plugin->get( 'tags' )->g( 'var_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'var_c' ) );
+		$open = trim( $this->plugin->tags->g( 'var_o' ) );
+		$close = trim( $this->plugin->tags->g( 'var_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 

@@ -38,7 +38,7 @@ final class plugin {
 		$_version = '2.0.0',
 
 		// log object ##
-		$log = null,
+		// $log = null,
 
 		// helper object ##
 		$helper = null,
@@ -46,21 +46,30 @@ final class plugin {
 		// tags ##
 		$tags = null,
 
-		// tags ##
+		// extend ##
 		$extend = null,
 
 		// log var ##
-		$_log = null
-
-	;
-
-	protected
+		// $_log = null,
 
 		// config object ##
 		$config = null,
 
 		// filter object ##
 		$filter = null,
+
+		// parsers ##
+		$parse = false,
+
+		// render objects ##
+		$render = false,
+
+		// filter objects ##
+		$filter_method = false
+
+	;
+
+	protected
 
 		// get object ##
 		$get = null,
@@ -74,10 +83,8 @@ final class plugin {
 		],
 
 		$_output 	= null, // return string ##
-		$_fields 	= null, // array of field names and values ##
-		$_fields_map = [], // field map for variables which are altered by filters ##
+		$_fields 	= [], // array of field names and values ##
 		$_markup 	= null, // array to store passed markup and extra keys added by formatting ##
-		// $log		= null, // tracking array for feedback ##
 		$_hash 		= null, // willow hash log, with data about calling method ##
 
 		// share willow match across parsers ##
@@ -270,7 +277,7 @@ final class plugin {
 		],
 
 		// post-processing of tags and variables ##
-		$_filter		= null, // array that holds all collected filters to be processed ##
+		$_filter		= [], // array that holds all collected filters to be processed ##
 
 		// list of allowed filters ##
 		// used in tags like [ esc_html, strtoupper ] can be chained ##
@@ -398,7 +405,23 @@ final class plugin {
 
 		// Log::write( $this->props );
 		
-    }
+	}
+	
+	public function factory( $plugin ){
+
+		// kick off filter and store object ##
+		$plugin->set( 'filter', new willow\core\filter( $plugin ) );
+
+		// build helper object ##
+		$plugin->set( 'helper', new willow\core\helper( $plugin ) );
+
+		// kick off tags and store object ##
+		$plugin->set( 'tags', new willow\core\tags( $plugin ) );
+
+		// prepare filters ##
+		$plugin->set( 'filter_method', new willow\filter\method( $plugin ) );
+
+	}
 
     /**
      * Get stored object property

@@ -30,7 +30,7 @@ class map {
     public function prepare() {
 
 		// get orignal markup string ##
-		$string = $this->plugin->get( '_markup_template' );
+		$_markup_template = $this->plugin->get( '_markup_template' );
 
 		// get buffer map ##
 		$_buffer_map = $this->plugin->get( '_buffer_map' );
@@ -68,7 +68,7 @@ class map {
 			// if( $value['parent'] ){
 
 			if ( 
-				! $row = $this->get_key_from_value( 'tag', $value['parent'] )
+				! $row = $this->get_key_from_value( $_buffer_map, 'tag', $value['parent'] )
 			){
 
 				continue;
@@ -90,11 +90,13 @@ class map {
 
 		// w__log( $this->plugin->get( '_buffer_map' ) );
 		// w__log( $this->plugin->get( '_buffer_log' ) );
-		// w__log( $string );
+		// w__log( $_markup_template );
 		// $return = '';
 
 		// now, search and replace tags in parent with tags from buffer_map ##
 		foreach( $_buffer_map as $key => $value ){
+
+			// w__log( $value );
 
 			// skip first row or rows which do not have a parent ##
 			if( 
@@ -110,7 +112,7 @@ class map {
 
 			// check if we have string, so we can warm if not ##
 			if( 
-				strpos( $string, $value['tag'] ) === false
+				strpos( $_markup_template, $value['tag'] ) === false
 			){
 
 				w__log( 'e:>'.$value['hash'].' -> Unable to locate: '.$value['tag'].' in buffer' );
@@ -120,24 +122,24 @@ class map {
 			}
 
 			// replacement ##
-			$string = str_replace( $value['tag'], $value['output'], $string );
+			$_markup_template = str_replace( $value['tag'], $value['output'], $_markup_template );
 
 		}
 
 		// check ##
-		// w__log( $string );
-		// w__log( $string );
+		// w__log( $_markup_template );
+		// // w__log( $string );
 
 		// save buffer map ##
 		$this->plugin->set( '_buffer_map', $_buffer_map );
 
 		// kick back ##
-		return $string;
+		return $_markup_template;
 
 	}
 
 
-	protected function get_key_from_value( $key = null, $value = null ){
+	protected function get_key_from_value( $_buffer_map = null, $key = null, $value = null ){
 
 		// sanity ##
 		if( 
@@ -153,7 +155,7 @@ class map {
 
 		// w__log( 'searching for: '. $value.' in row: '.$key );
 
-		foreach( $this->plugin->get( '_buffer_map' ) as $key_map => $value_map ){
+		foreach( $_buffer_map as $key_map => $value_map ){
 
 			if ( isset( $value_map[$key] ) && $value_map[$key] == $value ) {
 
@@ -167,27 +169,6 @@ class map {
 
 		// negative, if not found by now ##
 		return false;
-
-		/*
-		$result = array_search( $value, array_column( $this->plugin->get( '_buffer_map' ), $key ) );
-		$keys = array_keys(array_column( $this->plugin->get( '_buffer_map' ), $key ), $value );
-		w__log( $keys );
-		*/
-		/*
-		if( 
-			! isset( $this->plugin->get( '_buffer_map' )[$result] )
-		){
-
-			w__log( 'e:>Error finding key: '.$result );
-
-			return false;
-
-		}
-
-		// w__log( 'key found in row: '.$result );
-
-		return $result;
-		*/
 
 	}
 

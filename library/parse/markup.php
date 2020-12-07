@@ -48,8 +48,8 @@ class markup {
 			case "variable" :
 
 				// note, we trim() white space off tags, as this is handled by the regex ##
-				$open = trim( $this->plugin->get('tags')->g( 'var_o' ) );
-				$close = trim( $this->plugin->get('tags')->g( 'var_c' ) );
+				$open = trim( $this->plugin->tags->g( 'var_o' ) );
+				$close = trim( $this->plugin->tags->g( 'var_c' ) );
 
 				// w__log( 'open: '.$open );
 
@@ -141,8 +141,8 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->get('tags')->g( 'var_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -260,8 +260,8 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->get('tags')->g( 'var_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -401,8 +401,8 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->get('tags')->g( 'var_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -418,48 +418,48 @@ class markup {
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'par_o' ); #'{{> ';
-				$needle_end = $this->plugin->get('tags')->g( 'par_c' ); #' <}}';
+				$needle_start = $this->plugin->tags->g( 'par_o' ); #'{{> ';
+				$needle_end = $this->plugin->tags->g( 'par_c' ); #' <}}';
 
 			break ;
 
 			case "loop" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'loo_o' ); #'{{@ ';
-				$needle_end = $this->plugin->get('tags')->g( 'loo_c' ); #' /@}}';
+				$needle_start = $this->plugin->tags->g( 'loo_o' ); #'{{@ ';
+				$needle_end = $this->plugin->tags->g( 'loo_c' ); #' /@}}';
 
 			break ;
 
 			case "willow" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'wil_o' ); #'{{~ ';
-				$needle_end = $this->plugin->get('tags')->g( 'wil_c' ); #' ~}}';
+				$needle_start = $this->plugin->tags->g( 'wil_o' ); #'{{~ ';
+				$needle_end = $this->plugin->tags->g( 'wil_c' ); #' ~}}';
 
 			break ;
 
 			case "php_function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'php_fun_o' ); #'<% ';
-				$needle_end = $this->plugin->get('tags')->g( 'php_fun_c' ); #' %>';
+				$needle_start = $this->plugin->tags->g( 'php_fun_o' ); #'<% ';
+				$needle_end = $this->plugin->tags->g( 'php_fun_c' ); #' %>';
 
 			break ;
 
 			case "php_variable" :
 
 				// check if php variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'php_var_o' ); // {#
-				$needle_end = $this->plugin->get('tags')->g( 'php_var_c' ); // #}
+				$needle_start = $this->plugin->tags->g( 'php_var_o' ); // {#
+				$needle_end = $this->plugin->tags->g( 'php_var_c' ); // #}
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'com_o' ); #'{{! ';
-				$needle_end = $this->plugin->get('tags')->g( 'com_c' ); #' !}}';
+				$needle_start = $this->plugin->tags->g( 'com_o' ); #'{{! ';
+				$needle_end = $this->plugin->tags->g( 'com_c' ); #' !}}';
 
 			break ;
 
@@ -513,8 +513,8 @@ class markup {
 			case "willow" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'wil_o' ); #'{{~ ';
-				$needle_end = $this->plugin->get('tags')->g( 'wil_c' ); #' ~}}';
+				$needle_start = $this->plugin->tags->g( 'wil_o' ); #'{{~ ';
+				$needle_end = $this->plugin->tags->g( 'wil_c' ); #' ~}}';
 
 			break ;
 
@@ -531,56 +531,56 @@ class markup {
 			case "i18n" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'i18n_o' ); #'{_ ';
-				$needle_end = $this->plugin->get('tags')->g( 'i18n_c' ); #' _}';
+				$needle_start = $this->plugin->tags->g( 'i18n_o' ); #'{_ ';
+				$needle_end = $this->plugin->tags->g( 'i18n_c' ); #' _}';
 
 			break;
 
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->get('tags')->g( 'var_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'par_o' ); #'{{> ';
-				$needle_end = $this->plugin->get('tags')->g( 'par_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'par_o' ); #'{{> ';
+				$needle_end = $this->plugin->tags->g( 'par_c' ); #' }}';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'com_o' ); #'{{! ';
-				$needle_end = $this->plugin->get('tags')->g( 'com_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'com_o' ); #'{{! ';
+				$needle_end = $this->plugin->tags->g( 'com_c' ); #' }}';
 
 			break ;
 
 			case "loop" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'loo_o' ); // '{{@ ';
-				$needle_end = $this->plugin->get('tags')->g( 'loo_c' ); // ' }}';
+				$needle_start = $this->plugin->tags->g( 'loo_o' ); // '{{@ ';
+				$needle_end = $this->plugin->tags->g( 'loo_c' ); // ' }}';
 
 			break ;
 
 			case "php_function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'php_fun_o' ); #'<< ';
-				$needle_end = $this->plugin->get('tags')->g( 'php_fun_c' ); #' >>';
+				$needle_start = $this->plugin->tags->g( 'php_fun_o' ); #'<< ';
+				$needle_end = $this->plugin->tags->g( 'php_fun_c' ); #' >>';
 
 			break ;
 
 			case "php_variable" :
 
 				// check if php variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'php_var_o' ); // {#
-				$needle_end = $this->plugin->get('tags')->g( 'php_var_c' ); // #}
+				$needle_start = $this->plugin->tags->g( 'php_var_o' ); // {#
+				$needle_end = $this->plugin->tags->g( 'php_var_c' ); // #}
 
 			break ;
 
@@ -625,29 +625,32 @@ class markup {
 			default : 
 			case "secondary" :
 
-				$markup = $this->plugin->get( '_markup');
+				// w__log( 'd:>Swapping markup in $_markup' );
 
-				// w__log( 'd:>Swapping markup in $this->plugin->get( '_markup')' );
+				$_markup = $this->plugin->get( '_markup');
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				// $new_template = str_replace( $from, $to, $this->plugin->get( '_markup')['template'] );
-				$new_template = willow\render\method::str_replace_first( $from, $to, $markup['template'] ); // only replaces first occurance ##
+				$new_template = willow\render\method::str_replace_first( $from, $to, $_markup['template'] ); // only replaces first occurance ##
 
 				// test ##
 				// w__log( 'd:>'.$new_template );
-				$markup['template'] = $new_template;
+				$_markup['template'] = $new_template;
 
 				// push back into main stored markup ##
-				$this->plugin->set( '_markup', $markup );
+				$this->plugin->set( '_markup', $_markup );
 
 			break ;
 
 			case "primary" :
 
+				// w__log( 'd:>Swapping markup in $_buffer_markup' );
+
 				// w__log( 'd:>Swapping markup in self::$buffer_markup' );
+				$_buffer_markup = $this->plugin->get('_buffer_markup');
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
-				$new_template = str_replace( $from, $to, $this->plugin->get('_buffer_markup') );
+				$new_template = str_replace( $from, $to, $_buffer_markup );
 
 				// test ##
 				// w__log( 'd:>'.$new_template );
@@ -697,16 +700,16 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->get('tags')->g( 'var_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->get('tags')->g( 'com_o' ); #'{{ ';
-				$needle_end = $this->plugin->get('tags')->g( 'com_c' ); #' }}';
+				$needle_start = $this->plugin->tags->g( 'com_o' ); #'{{ ';
+				$needle_end = $this->plugin->tags->g( 'com_c' ); #' }}';
 
 			break ;
 

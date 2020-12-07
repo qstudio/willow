@@ -111,8 +111,8 @@ class partials {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->get('tags')->g( 'par_o' ) );
-		$close = trim( $this->plugin->get('tags')->g( 'par_c' ) );
+		$open = trim( $this->plugin->tags->g( 'par_o' ) );
+		$close = trim( $this->plugin->tags->g( 'par_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -287,8 +287,8 @@ class partials {
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
-		$open = trim( willow\tags::g( 'par_o' ) );
-		$close = trim( willow\tags::g( 'par_c' ) );
+		$open = trim( $this->plugin->tags->g( 'par_o' ) );
+		$close = trim( $this->plugin->tags->g( 'par_c' ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 

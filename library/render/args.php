@@ -34,7 +34,7 @@ class args {
 		// passed args ##
         $this->plugin->set( '_args', [ 'fields'	=> [] ] ); // default args array ##
 		$this->plugin->set( '_output', null ); // return string ##
-        $this->plugin->set( '_fields', null ); // array of field names and values ##
+        $this->plugin->set( '_fields', [] ); // array of field names and values ##
 		$this->plugin->set( '_markup', null ); // array to store passed markup and extra keys added by formatting ##
 		$this->plugin->set( '_hash', null ); // hasher ##
 
@@ -83,7 +83,7 @@ class args {
 
 		// get stored config via lookup, fallback 
 		// pulls from Q, but available to filter via willow/config/load ##
-		$config = $this->plugin->get( 'config' )->get( $args );
+		$config = $this->plugin->config->get( $args );
 
 		// test ##
 		// w__log( $config );
@@ -201,7 +201,7 @@ class args {
     public function assign( Array $args = null ) {
 
 		// get filter object ##
-		$filter = $this->plugin->get( 'filter' );
+		$filter = $this->plugin->filter;
 
         // apply global filter to $args - specific calls should be controlled by parameters included directly ##
         $args = $filter->apply([
@@ -340,7 +340,7 @@ class args {
 
 		// get stored config via lookup, fallback 
 		// pulls from Q, but available to filter via willow/config/load ##
-		$config = $this->plugin->get( 'config' )->get( $args );
+		$config = $this->plugin->config->get( $args );
 
 		// test ##
 		// w__log( $config );

@@ -35,8 +35,6 @@ class i18n {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		$this->parse_markup = new willow\parse\markup( $this->plugin );
-
 	}
 
 	public static function textdomain(){
@@ -121,8 +119,8 @@ class i18n {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->get( 'tags' )->g( 'i18n_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'i18n_c' ) );
+		$open = trim( $this->plugin->tags->g( 'i18n_o' ) );
+		$close = trim( $this->plugin->tags->g( 'i18n_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -201,8 +199,8 @@ class i18n {
 		$_markup_template = $this->plugin->get( '_markup_template' );
 
 		// tags ##
-		$open = trim( $this->plugin->get( 'tags' )->g( 'i18n_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'i18n_c' ) );
+		$open = trim( $this->plugin->tags->g( 'i18n_o' ) );
+		$close = trim( $this->plugin->tags->g( 'i18n_c' ) );
 
 		// clear slate ##
 		self::reset();
@@ -237,8 +235,8 @@ class i18n {
 		}
 
 		// php_function tags ##
-		// $return_open = $this->plugin->get( 'tags' )->g( 'php_fun_o' );
-		// $return_close = $this->plugin->get( 'tags' )->g( 'php_fun_c' );
+		// $return_open = $this->plugin->tags->g( 'php_fun_o' );
+		// $return_close = $this->plugin->tags->g( 'php_fun_c' );
 
 		// w__log( 'e:>$i18n: '.$i18n );
 
@@ -261,7 +259,7 @@ class i18n {
 		$this->plugin->set( '_markup_template', $_markup_template );
 
 		// update markup for willow parse ##
-		$this->parse_markup->swap( $this->i18n_match, $this->return, 'i18n', 'string', $process );
+		$this->plugin->get( 'parse_markup' )->swap( $this->i18n_match, $this->return, 'i18n', 'string', $process );
 		
 		// clear slate ##
 		$this->reset();
@@ -286,22 +284,22 @@ class i18n {
 
 		// check for opening and closing tags
 		if(
-			strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'i18n_o' )) ) !== false
-			&& strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'i18n_c' )) ) !== false
+			strpos( $string, trim( $this->plugin->tags->g( 'i18n_o' )) ) !== false
+			&& strpos( $string, trim( $this->plugin->tags->g( 'i18n_c' )) ) !== false
 		){
 
-			// $loo_o = strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'i18n_o' )) );
-			// $loo_c = strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'i18n_c' )) );
+			// $loo_o = strpos( $string, trim( $this->plugin->tags->g( 'i18n_o' )) );
+			// $loo_c = strrpos( $string, trim( $this->plugin->tags->g( 'i18n_c' )) );
 
 			// // w__log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// // get string between opening and closing args ##
 			// $return_string = substr( 
 			// 	$string, 
-			// 	( $loo_o + strlen( trim( $this->plugin->get( 'tags' )->g( 'loo_o' ) ) ) ), 
-			// 	( $loo_c - $loo_o - strlen( trim( $this->plugin->get( 'tags' )->g( 'loo_c' ) ) ) ) ); 
+			// 	( $loo_o + strlen( trim( $this->plugin->tags->g( 'loo_o' ) ) ) ), 
+			// 	( $loo_c - $loo_o - strlen( trim( $this->plugin->tags->g( 'loo_c' ) ) ) ) ); 
 
-			// $return_string = $this->plugin->get( 'tags' )->g( 'loo_o' ).$return_string.$this->plugin->get( 'tags' )->g( 'loo_c' );
+			// $return_string = $this->plugin->tags->g( 'loo_o' ).$return_string.$this->plugin->tags->g( 'loo_c' );
 
 			// w__log( 'e:>$string: "'.$return_string.'"' );
 
@@ -322,8 +320,8 @@ class i18n {
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->get( 'tags' )->g( 'i18n_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'i18n_c' ) );
+		$open = trim( $this->plugin->tags->g( 'i18n_o' ) );
+		$close = trim( $this->plugin->tags->g( 'i18n_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );

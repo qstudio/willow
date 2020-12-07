@@ -9,7 +9,6 @@ class php_functions {
 
 	private
 		$plugin,
-		$parse_markup,
 
 		$return,
 		$function_hash, 
@@ -47,8 +46,6 @@ class php_functions {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		$this->parse_markup = new willow\parse\markup( $this->plugin );
 
 	}
 	
@@ -125,8 +122,8 @@ class php_functions {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->get( 'tags' )->g( 'php_fun_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'php_fun_c' ) );
+		$open = trim( $this->plugin->tags->g( 'php_fun_o' ) );
+		$close = trim( $this->plugin->tags->g( 'php_fun_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -195,8 +192,8 @@ class php_functions {
 
 		}
 
-		$open = trim( $this->plugin->get( 'tags' )->g( 'php_fun_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'php_fun_c' ) );
+		$open = trim( $this->plugin->tags->g( 'php_fun_o' ) );
+		$close = trim( $this->plugin->tags->g( 'php_fun_c' ) );
 
 		// clear slate ##
 		self::reset();
@@ -238,8 +235,8 @@ class php_functions {
 		// $config_string = core\method::string_between( $value, '[[', ']]' )
 		$this->config_string = willow\core\method::string_between( 
 			$this->function, 
-			trim( $this->plugin->get( 'tags' )->g( 'arg_o' )), 
-			trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) 
+			trim( $this->plugin->tags->g( 'arg_o' )), 
+			trim( $this->plugin->tags->g( 'arg_c' )) 
 		);
 
 		// go with it ##
@@ -247,12 +244,10 @@ class php_functions {
 			$this->config_string 
 		){
 
-			$parse_arguments = new willow\parse\arguments( $this->plugin );
-
 			// pass to argument handler ##
-			$this->arguments = $parse_arguments->decode( $this->config_string );
+			$this->arguments = $this->plugin->parse->arguments->decode( $this->config_string );
 
-			$function_explode = explode( trim( $this->plugin->get( 'tags' )->g( 'arg_o' )), $this->function );
+			$function_explode = explode( trim( $this->plugin->tags->g( 'arg_o' )), $this->function );
 			$this->function = trim( $function_explode[0] );
 
 			$this->function_hash = $this->function; // update hash to take simpler function name.. ##
@@ -300,8 +295,8 @@ class php_functions {
 
 		// function name might still contain opening and closing args brakets, which were empty - so remove them ##
 		$this->function = str_replace( [
-				trim( $this->plugin->get( 'tags' )->g( 'arg_o' )), 
-				trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) 
+				trim( $this->plugin->tags->g( 'arg_o' )), 
+				trim( $this->plugin->tags->g( 'arg_c' )) 
 			], '',
 			$this->function 
 		);
@@ -426,7 +421,7 @@ class php_functions {
 
 			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
-			$this->parse_markup->swap( $this->function_match, '', 'php_function', 'string', $process );
+			$this->plugin->get( 'parse_markup' )->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -455,7 +450,7 @@ class php_functions {
 			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
 			// w__log( $this->return );
 
-			$this->parse_markup->swap( $this->function_match, '', 'php_function', 'string', $process );
+			$this->plugin->get( 'parse_markup' )->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -472,8 +467,7 @@ class php_functions {
 			// w__log( $_flags_php_function );
 			// w__log( $this->return );
 			// bounce to filter::apply() ##
-			$filter_method = new willow\filter\method( $this->plugin );
-			$filter_return = $filter_method->apply([ 
+			$filter_return = $this->plugin->filter_method->process([ 
 				'filters' 	=> $_flags_php_function, 
 				'string' 	=> $this->return, 
 				'use' 		=> 'php_function', // for filters ##
@@ -524,7 +518,7 @@ class php_functions {
 			$this->plugin->set( '_markup_template', $_markup_template );
 
 			// update markup for willow parse ##
-			$this->parse_markup->swap( $this->function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
+			$this->plugin->parse->markup->swap( $this->function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
 
 			// remove used flags ##
 			/*
@@ -559,8 +553,8 @@ class php_functions {
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->get( 'tags' )->g( 'php_fun_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'php_fun_c' ) );
+		$open = trim( $this->plugin->tags->g( 'php_fun_o' ) );
+		$close = trim( $this->plugin->tags->g( 'php_fun_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );

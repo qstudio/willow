@@ -8,15 +8,11 @@ class willows {
 
 	private 
 		$plugin = false,
-		$parse_flags = false,
-		$parse_loops = false,
-		$parse_arguments = false,
 
 		$willow_context,
 		$willow_task,
 		$willow_matches, // array of matches ##
 		$willow,
-		// $willow_match, // full string matched ##
 		$arguments,
 		$class,
 		$method,
@@ -30,7 +26,6 @@ class willows {
 
 		$this->willow_context = false;
 		$this->willow_task = false;
-		// $this->flags_willow = false;
 		$this->plugin->set( '_flags_willow', false );
 		$this->willow_hash = false;
 		$this->willow = false;
@@ -58,21 +53,13 @@ class willows {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// flags ##
-		$this->parse_flags = new willow\parse\flags( $this->plugin );
-
-		// parse loops ##
-		$this->parse_loops = new willow\parse\loops( $this->plugin );
-
-		// parse argments ##
-		$this->parse_arguments = new willow\parse\arguments( $this->plugin );
-
 	}
 
 	/**
-	 * Scan for willows in markup and add any required markup or call requested context method and capture output
+	 * Scan for {~ willows ~} in markup and add any required markup or call requested context method and capture output
 	 * 
-	 * @since 4.1.0
+	 * @since 	1.0.0
+	 * @return	void
 	*/
     public function match( $args = null, $process = 'secondary' ){ 
 
@@ -148,8 +135,8 @@ class willows {
 
 		// get all willows, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->get( 'tags')->g( 'wil_o' ) );
-		$close = trim( $this->plugin->get( 'tags')->g( 'wil_c' ) );
+		$open = trim( $this->plugin->tags->g( 'wil_o' ) );
+		$close = trim( $this->plugin->tags->g( 'wil_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close. ' - end: '.$end );
 
@@ -238,8 +225,8 @@ class willows {
 		// w__log( $args );
 
 		// get Willow tags ##
-		$open = trim( $this->plugin->get( 'tags' )->g( 'wil_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'wil_c' ) );
+		$open = trim( $this->plugin->tags->g( 'wil_o' ) );
+		$close = trim( $this->plugin->tags->g( 'wil_c' ) );
 
 		// clear slate ##
 		$this->reset();
@@ -250,12 +237,10 @@ class willows {
 
 		// get Willow, without tags ##
 		$this->willow = willow\core\method::string_between( $match, $open, $close );
-
 		// w__log( $this->willow );
 
 		// look for Willow flags -- assigned to a filter for use late on, pre-rendering ##
-		$parse_flags = new willow\parse\flags( $this->plugin );
-		$this->willow = $this->parse_flags->get( $this->willow, 'willow' );
+		$this->willow = $this->plugin->parse->flags->get( $this->willow, 'willow' );
 		// w__log( $this->plugin->get( '_flags_willow' ) );
 
 		// clean up ##
@@ -273,7 +258,7 @@ class willows {
 
 		}
 
-		// check format ##
+		// check format -- all willows require a tilder delimiter '~' ##
 		if(
 			false === strpos( $this->willow, '~' ) 
 		){
@@ -289,25 +274,24 @@ class willows {
 		$this->willow_task = explode( '~', $this->willow, 2 )[1];
 
 		// w__log( 'Willow Context: '.$this->willow_context.' // Task: '.$this->willow_task );
-
 		// w__log( $args );
 
 		// get position of first arg_o and position of last arg_c ( in case the string includes additional args )
 		if(
-			strpos( $this->willow, trim( $this->plugin->get( 'tags' )->g( 'arg_o' )) ) !== false
-			&& strrpos( $this->willow, trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) ) !== false
+			strpos( $this->willow, trim( $this->plugin->tags->g( 'arg_o' )) ) !== false
+			&& strrpos( $this->willow, trim( $this->plugin->tags->g( 'arg_c' )) ) !== false
 		){
 
-			$arg_o = strpos( $this->willow, trim( $this->plugin->get( 'tags' )->g( 'arg_o' )) );
-			$arg_c = strrpos( $this->willow, trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) );
+			$arg_o = strpos( $this->willow, trim( $this->plugin->tags->g( 'arg_o' )) );
+			$arg_c = strrpos( $this->willow, trim( $this->plugin->tags->g( 'arg_c' )) );
 
 			// w__log( 'e:>Found opening arg_o @ "'.$arg_o.'" and closing arg_c @ "'.$arg_c.'" for willow: '.$this->willow  ); 
 
 			// get string between opening and closing args ##
 			$this->argument_string = substr( 
 				$this->willow, 
-				( $arg_o + strlen( trim( $this->plugin->get( 'tags' )->g( 'arg_o' ) ) ) ), 
-				( $arg_c - $arg_o - strlen( trim( $this->plugin->get( 'tags' )->g( 'arg_c' ) ) ) ) 
+				( $arg_o + strlen( trim( $this->plugin->tags->g( 'arg_o' ) ) ) ), 
+				( $arg_c - $arg_o - strlen( trim( $this->plugin->tags->g( 'arg_c' ) ) ) ) 
 			); 
 
 		}
@@ -320,19 +304,18 @@ class willows {
 		){	
 
 			// check for loops in argument string - might be one or multiple ##
-			if( $loops = $this->parse_loops->has( $this->argument_string ) ){
+			if( $loops = $this->plugin->parse->loops->has( $this->argument_string ) ){
 
 				// w__log( $this->willow_task.'~>n:>HAS a loop so taking part of config string as markup' );
 				// w__log( 'd:>HAS a loop so taking part of config string as markup' );
 
 				// we need the entire markup, without the flags ##
-				$decode_flags = $this->parse_arguments->decode( $this->argument_string );
+				$decode_flags = $this->plugin->parse->arguments->decode( $this->argument_string );
 				// w__log( $decode_flags );
-				// w__log( willow\arguments::decode( $this->argument_string ) );
 
 				// check if string contains any [ flags ] -- technically filters -- ##
 				if( 
-					$parse_flags->has( $this->argument_string ) 
+					$this->plugin->parse->flags->has( $this->argument_string ) 
 					&& $decode_flags
 					&& isset( $decode_flags['markup']['template'] )
 				) {
@@ -364,23 +347,18 @@ class willows {
 
 				}
 
-				// take the first part of the passed string, before the arg_o tag as the {~ Willow ~} ##
-				// --> REMOVED <-- //
-				// $willow_explode = explode( trim( $this->plugin->get( 'tags')->g( 'arg_o' )), $this->willow );
-				// $this->willow = trim( $willow_explode[0] );
-
 			} 
 
 			// parse arguments ##
 			$this->arguments = willow\core\method::parse_args( 
 				$this->arguments, 
-				$this->parse_arguments->decode( $this->argument_string )
+				$this->plugin->parse->arguments->decode( $this->argument_string )
 			);
 
 			// w__log( $this->arguments );
 
 			// take the first part of the passed string, before the arg_o tag as the {~ Willow ~} ##
-			$willow_explode = explode( trim( $this->plugin->get( 'tags')->g( 'arg_o' )), $this->willow );
+			$willow_explode = explode( trim( $this->plugin->tags->g( 'arg_o' )), $this->willow );
 			$this->willow = trim( $willow_explode[0] );
 
 			// if arguments are not in an array, take the whole string passed as the arguments ##
@@ -393,7 +371,7 @@ class willows {
 				// w__log( $args['task'].'~>d:>'.$this->argument_string );
 
 				// check for variable filters ##
-				$this->argument_string = $parse_flags->get( $this->argument_string, 'variable' );	
+				$this->argument_string = $this->plugin->parse->flags->get( $this->argument_string, 'variable' );	
 
 				// clean up ## -- 
 				$this->argument_string = trim( $this->argument_string ); // trim whitespace ##
@@ -408,8 +386,8 @@ class willows {
 
 		// function name might still contain opening and closing args brakets, which were empty - so remove them ##
 		$this->willow = str_replace( [
-				trim( $this->plugin->get( 'tags' )->g( 'arg_o' )), 
-				trim( $this->plugin->get( 'tags' )->g( 'arg_c' )) 
+				trim( $this->plugin->tags->g( 'arg_o' )), 
+				trim( $this->plugin->tags->g( 'arg_c' )) 
 			], '',
 			$this->willow 
 		);
@@ -455,7 +433,7 @@ class willows {
 
 		if ( 
 			! class_exists( $this->class )
-			// || ! method_exists( $this->class, $this->method ) // methods are found via MAIGC lookup ##
+			// || ! method_exists( $this->class, $this->method ) // methods are found via __MAGIC__ lookup __call ##
 			|| ! is_callable( $this->class, $this->method )
 		){
 
@@ -476,7 +454,7 @@ class willows {
 
 		$parse_variables = new willow\parse\variables( $this->plugin );
 		if ( 
-			$argument_variables = $parse_markup->get( $this->argument_string, 'variable' )
+			$argument_variables = $this->plugin->parse->markup->get( $this->argument_string, 'variable' )
 		){
 
 			// w__log( $argument_variables );
@@ -487,7 +465,7 @@ class willows {
 				// w__log( 'variable: '.$arg_var_v );
 
 				// check for variable filters ( formally flags  )##
-				$parse_variables->flags([
+				$this->plugin->parse->variables->flags([
 					'variable' 	=> $arg_var_v, 
 					'context' 	=> $this->class, 
 					'task'		=> $this->method,
@@ -513,6 +491,8 @@ class willows {
 				] 
 			]
 		);
+
+		// w__log( $this->arguments );
 
 		// get willow flags ##
 		$_flags_willow = $this->plugin->get( '_flags_willow' );
@@ -563,9 +543,7 @@ class willows {
 		}
 
 		// collect current process state ##
-		// render\args::collect();
-		$render_args = new willow\render\args( $this->plugin );
-		$render_args->collect();
+		$this->plugin->render->args->collect();
 		
 		// instantiate new context loaded object ##
 		$context = new willow\context( $this->plugin );
@@ -596,15 +574,15 @@ class willows {
 			|| ! is_array( $this->return )
 		) {
 
-			$task = isset( $args['task'] ) ? $args['task'] : $args['task'];
+			$task = $this->willow_task ?? $args['task'] ;
 
 			w__log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
+			// w__log( 'e:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
 
 		}
 
 		// restore previous process state ##
-		// render\args::set();
-		$render_args->restore();
+		$this->plugin->render->args->restore();
 
 		// clear local props for next run ##
 		$this->reset();
@@ -628,8 +606,8 @@ class willows {
 		}
 
 		// get loop tags ##
-		$wil_o =  $this->plugin->get( 'tags' )->g( 'wil_o' );
-		$wil_c =  $this->plugin->get( 'tags' )->g( 'wil_c' );
+		$wil_o =  $this->plugin->tags->g( 'wil_o' );
+		$wil_c =  $this->plugin->tags->g( 'wil_c' );
 
 		// test string ##
 		// w__log( $string );
@@ -677,21 +655,21 @@ class willows {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( $this->plugin->get( 'tags' )->g( 'wil_o' )) ) !== false // start ##
-			&& strrpos( $string, trim( $this->plugin->get( 'tags' )->g( 'wil_c' )) ) !== false // end ##
+			strpos( $string, trim( $this->plugin->tags->g( 'wil_o' )) ) !== false // start ##
+			&& strrpos( $string, trim( $this->plugin->tags->g( 'wil_c' )) ) !== false // end ##
 		){
 
 			/*
-			$loo_o = strpos( $string, trim( $this->plugin->get( 'tags')->g( 'loo_o' )) );
-			$loo_c = strrpos( $string, trim( $this->plugin->get( 'tags')->g( 'loo_c' )) );
+			$loo_o = strpos( $string, trim( $this->plugin->tags->g( 'loo_o' )) );
+			$loo_c = strrpos( $string, trim( $this->plugin->tags->g( 'loo_c' )) );
 
 			w__log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
 				$string, 
-				( $loo_o + strlen( trim( $this->plugin->get( 'tags')->g( 'loo_o' ) ) ) ), 
-				( $loo_c - $loo_o - strlen( trim( $this->plugin->get( 'tags')->g( 'loo_c' ) ) ) ) ); 
+				( $loo_o + strlen( trim( $this->plugin->tags->g( 'loo_o' ) ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( $this->plugin->tags->g( 'loo_c' ) ) ) ) ); 
 
 			w__log( 'e:>$string: "'.$return_string .'"' );
 
@@ -711,10 +689,10 @@ class willows {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// vars ##
-		$_markup = $this->pluing->get( '_markup' );
-		$_buffer_markup = $this->pluing->get( '_buffer_markup' );
-		$open = trim( $this->plugin->get( 'tags')->g( 'wil_o' ) );
-		$close = trim( $this->plugin->get( 'tags')->g( 'wil_c' ) );
+		$_markup = $this->plugin->get( '_markup' );
+		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$open = trim( $this->plugin->tags->g( 'wil_o' ) );
+		$close = trim( $this->plugin->tags->g( 'wil_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );

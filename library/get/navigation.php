@@ -70,7 +70,7 @@ class navigation {
 		}
 		
 		// get config ##
-		$config = $this->plugin->get( 'config' )->get([ 'context' => 'navigation', 'task' => 'pagination' ]);
+		$config = $this->plugin->config->get([ 'context' => 'navigation', 'task' => 'pagination' ]);
 
 		// w__log( $config );
 
@@ -377,7 +377,7 @@ class navigation {
 		// Parse incoming $args into an array and merge it with $defaults ##
 		$args = willow\core\method::parse_args( 
 			$args['args'], 
-			$this->plugin->get( 'config' )->get([ 'context' => $context, 'task' => $task ])['args'] 
+			$this->plugin->config->get([ 'context' => $context, 'task' => $task ])['args'] 
 		);
 		// w__log( 'e:>MENU: '.$args['theme_location'] );
 		

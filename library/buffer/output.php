@@ -13,8 +13,7 @@ class output {
      * @var     Object      $plugin
      */
 	protected 
-		$plugin = false,
-		$render_args = false
+		$plugin = false
 		// $is_willow // @TODO
 	;
 
@@ -25,8 +24,6 @@ class output {
 
         // grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		$this->render_args = new willow\render\args( $this->plugin );
 
 	}
 
@@ -75,7 +72,8 @@ class output {
 		\add_action( 'wp',  function(){ 
 
 			// hook up filters ##
-			new willow\filter\apply( $this->plugin );
+			$filter = new willow\filter\apply( $this->plugin );
+			$filter->hooks();
 			
 			// if ( 'willow' == \q\view\is::format() ){
 
@@ -127,7 +125,7 @@ class output {
 			echo $this->prepare( $string );
 
 			// reset all args ##
-			$this->render_args->reset();
+			$this->plugin->render->args->reset();
 
 		}, 0 );
 
@@ -153,6 +151,9 @@ class output {
 
 		}
 
+		// build factory objects ##
+		$this->plugin->factory( $this->plugin );
+
 		// we are passed an html string, captured from output buffering, which we need to parse for tags and process ##
 		// w__log( $string );
 
@@ -176,18 +177,19 @@ class output {
 		$this->plugin->set( '_args_default', $_args_default );
 
 		// prepare .willow template markup -- affects _buffer_map ##
-		$parse_prepare = new willow\parse\prepare( $this->plugin );
-		$parse_prepare->hooks( $this->plugin->get( '_buffer_args' ), 'primary' );
+		$prepare = new willow\parse\prepare( $this->plugin );
+		$prepare->factory();
+		$prepare->hooks( $this->plugin->get( '_buffer_args' ), 'primary' );
 
-		// w__log( self::$buffer_map );
+		// w__log( $this->plugin->get( '_buffer_map' ) );
 		$buffer_map = new willow\buffer\map( $this->plugin );
 		$_buffer_map = $buffer_map->prepare();
 		$this->plugin->set( '_buffer_markup', $_buffer_map );
 		// w__log( $this->plugin->get( '_buffer_markup' ) );
 
 		// clean up left over tags ##
-		new willow\parse\cleanup( $this->plugin );
-		$parse_prepare->hooks( $this->plugin->get( '_buffer_args' ), 'primary' );
+		$cleanup = new willow\parse\cleanup( $this->plugin );
+		// $cleanup->hooks( $this->plugin->get( '_buffer_args' ), 'primary' ); // @TODO - removed for testing ##
 		
 		// reset properties ##
 		$this->plugin->set( '_buffer_map', [] );

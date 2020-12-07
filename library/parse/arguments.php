@@ -143,8 +143,8 @@ class arguments {
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
-		$open = trim( willow\tags::g( 'arg_o' ) );
-		$close = trim( willow\tags::g( 'arg_c' ) );
+		$open = trim( $this->plugin->tags->g( 'arg_o' ) );
+		$close = trim( $this->plugin->tags->g( 'arg_c' ) );
 
 		// w__log( self::$markup['template'] );
 

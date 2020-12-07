@@ -2,12 +2,7 @@
 
 namespace Q\willow\render;
 
-// use willow\core;
-use Q\willow\core\helper as h;
-// use q\view;
-// use q\get;
 use Q\willow;
-// use willow\render;
 
 class callback {
 
@@ -31,13 +26,15 @@ class callback {
      */
     public function field( String $field = null, $value = null ){
 
+		// w__log( 'Field: '.$field );
+
 		$_args = $this->plugin->get( '_args' );
 		$_fields = $this->plugin->get( '_fields' );
 
         // sanity ##
         if ( is_null( $field ) ) {
 
-			// self::$log['error'][] = 'No field value passed to method.';
+			// w__log['error'][] = 'No field value passed to method.';
 			
 			// log ##
 			w__log( $_args['task'].'~>e:>No field value passed to method.');
@@ -49,7 +46,7 @@ class callback {
         // sanity ##
         if ( is_null( $value ) ) {
 
-			// self::$log['error'][] = 'No value passed to method.';
+			// w__log['error'][] = 'No value passed to method.';
 			
 			// log ##
 			w__log( $_args['task'].'~>e:>No value passed to method.');
@@ -67,7 +64,7 @@ class callback {
             || ! \is_array( $callbacks ) 
         ) {
 
-			// self::$log['error'][] = 'No callbacks allowed in plugin';
+			// w__log['error'][] = 'No callbacks allowed in plugin';
 			
 			// log ##
 			w__log( $_args['task'].'~>e:>No callbacks allowed in plugin.');
@@ -81,7 +78,8 @@ class callback {
 		$render_fields = new willow\render\fields( $this->plugin );
         if ( ! $field_callback = $render_fields->get_callback( $field ) ) {
 
-			// self::$log['error'][] = 'No callbacks found for Field: "'.$field.'"';
+			// w__log['error'][] = 'No callbacks found for Field: "'.$field.'"';
+			// w__log( 'd:>No callbacks found for Field: "'.$field.'"' );
 
             return $value;
 
@@ -96,7 +94,7 @@ class callback {
         // Check we have a real field value to work with ##
         if ( ! $field_value ) {
 
-			// self::$log['notice'][] = 'No field value found, stopping callback';
+			// w__log['notice'][] = 'No field value found, stopping callback';
 			
 			// log ##
 			w__log( $_args['task'].'~>n:>No field value found, stopping callback: "'.$field.'"');
@@ -133,7 +131,7 @@ class callback {
         // check if field callback is listed in the allowed array of callbacks ##
         if ( ! array_key_exists( $method, $callbacks ) ) {
 
-			// self::$log['notice'][] = 'Cannot find callback: "'.$method.'"';
+			// w__log['notice'][] = 'Cannot find callback: "'.$method.'"';
 			
 			// log ##
 			w__log( $_args['task'].'~>n:>Cannot find callback: "'.$method.'"');
@@ -149,7 +147,7 @@ class callback {
             ! is_callable( $method )
         ){
 
-			// self::$log['notice'][] = 'Method is not callable: "'.$method.'"';
+			// w__log['notice'][] = 'Method is not callable: "'.$method.'"';
 			
 			// log ##
 			w__log( $_args['task'].'~>n:>Method is not callable: "'.$method.'"');
@@ -182,7 +180,7 @@ class callback {
         // Opps ##
         if ( ! $data ) {
 
-			// self::$log['notice'][] = 'Method returned bad data..';
+			// w__log['notice'][] = 'Method returned bad data..';
 			
 			// log ##
 			w__log( $_args['task'].'~>n:>Method return bad data...');

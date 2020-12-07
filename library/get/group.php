@@ -173,8 +173,8 @@ class group {
     public function group_fields( $args = null ){
 
         // assign variable ##
-        $group = $args['task'];
-
+		$group = $args['task'];
+		
         // try to get fields ##
         $array = willow\plugin\acf::get_field_group( $group );
 
@@ -194,7 +194,7 @@ class group {
         }
 
         // filter ##
-        $array = $this->plugin->get( 'filter' )->apply([ 
+        $array = $this->plugin->filter->apply([ 
             'parameters'    => [ 'fields' => $array ], // pass ( $fields ) as single array ##
             'filter'        => 'willow/get/group/'.$group, // filter handle ##
             'return'        => $array
@@ -202,7 +202,9 @@ class group {
 
         // assign to class properties ##
 		// self::$fields = $array; // capture all fields for type and callback lookups ##
-		$this->plugin->set( '_fields', $array );
+		$_fields = $this->plugin->get( '_fields', $array ) ?? [];
+		$_fields = array_merge( $_fields, $array );
+		$this->plugin->set( '_fields', $_fields ); 
 		$this->data = $array; // data to return to fields\define ##
 
         // w__log( $array );

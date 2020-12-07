@@ -8,7 +8,6 @@ class apply {
 
 	private 
 		$plugin = false,
-		$filter_method = false,
 		$hooked = false // run hooks once ##
 	;
 
@@ -19,12 +18,6 @@ class apply {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		// build new filter\method object ##
-		$this->filter_method = new willow\filter\method( $this->plugin );
-
-		// add filter ##
-		$this->hooks();
 
 	}
 
@@ -76,7 +69,7 @@ class apply {
 			$pre_value = $value; 
 
 			// bounce to filter::apply()
-			$filter_value = $this->filter_method->apply([ 
+			$filter_value = $this->plugin->filter_method->process([ 
 				'filters' 	=> $_filter[ $_args['config']['hash'] ], 
 				'string' 	=> $value, 
 				'use' 		=> 'tag', // for filters ##

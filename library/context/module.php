@@ -33,7 +33,7 @@ class module {
     public function get( $args = null ) {
 
 		// w__log( $args );
-		return $this->plugin->get( 'config')->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

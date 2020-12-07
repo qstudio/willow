@@ -39,7 +39,7 @@ class php_variables extends willow\parse {
 	}
 
 
-	public static function format( $match = null, $process = 'secondary' ){
+	public function format( $match = null, $process = 'secondary' ){
 
 		// sanity ##
 		if(
@@ -52,8 +52,8 @@ class php_variables extends willow\parse {
 
 		}
 
-		$open = trim( willow\tags::g( 'php_var_o' ) );
-		$close = trim( willow\tags::g( 'php_var_c' ) );
+		$open = trim( $this->plugin->tags->g( 'php_var_o' ) );
+		$close = trim( $this->plugin->tags->g( 'php_var_c' ) );
 
 		// clear slate ##
 		self::reset();
@@ -196,7 +196,7 @@ class php_variables extends willow\parse {
 	 * 
 	 * @since 4.1.0
 	*/
-    public static function prepare( $args = null, $process = 'secondary' ){
+    public function prepare( $args = null, $process = 'secondary' ){
 
 		// sanity -- method requires requires ##
 		if ( 
@@ -259,8 +259,8 @@ class php_variables extends willow\parse {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( willow\tags::g( 'php_var_o' ) );
-		$close = trim( willow\tags::g( 'php_var_c' ) );
+		$open = trim( $this->plugin->tags->g( 'php_var_o' ) );
+		$close = trim( $this->plugin->tags->g( 'php_var_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -323,10 +323,10 @@ class php_variables extends willow\parse {
 
 
 
-	public static function cleanup( $args = null, $process = 'secondary' ){
+	public function cleanup( $args = null, $process = 'secondary' ){
 
-		$open = trim( willow\tags::g( 'php_var_o' ) );
-		$close = trim( willow\tags::g( 'php_var_c' ) );
+		$open = trim( $this->plugin->tags->g( 'php_var_o' ) );
+		$close = trim( $this->plugin->tags->g( 'php_var_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );

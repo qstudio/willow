@@ -7,10 +7,7 @@ use Q\willow;
 class markup {
 
 	private 
-		$plugin = false,
-		$parse_markup = false,
-		$parse_variables = false,
-		$filter_method = false
+		$plugin = false
 		// $wrapped = false
 	;
 
@@ -22,15 +19,6 @@ class markup {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		// builder markup parser ##
-		$this->parse_markup = new willow\parse\markup( $this->plugin );
-
-		// builder varaible parser ##
-		$this->parse_variables = new willow\parse\variables( $this->plugin );
-
-		// prepare filters ##
-		$this->filter_method = new willow\filter\method( $this->plugin );
 
 	}
 
@@ -47,9 +35,6 @@ class markup {
 		$_markup = $this->plugin->get( '_markup' );
 		$_fields = $this->plugin->get( '_fields' );
 		$_args = $this->plugin->get('_args');
-
-		// check for any left over variables - remove them ##
-		// $parse_markup = new willow\parse\markup( $this->plugin );
 
         // sanity checks ##
         if (
@@ -70,10 +55,11 @@ class markup {
         // test ##
         // w__log( $_fields );
 		// w__log( $_markup );
-		
+		// w__log( $_args );
+
         // new string to hold output ## 
 		$string = $_markup['template'];
-		// $string = core\method::string_between( self::$args['config']['tag'], trim( $this->plugin->get( 'tags')->g( 'arg_o' )), trim( $this->plugin->get( 'tags')->g( 'arg_c' )) );
+		// $string = core\method::string_between( self::$args['config']['tag'], trim( $this->plugin->tags->g( 'arg_o' )), trim( $this->plugin->tags->g( 'arg_c' )) );
 
 		// w__log( '$string: '.$string );
 		// w__log( self::$args );
@@ -81,7 +67,7 @@ class markup {
         // loop over each field, replacing variables with values ##
         foreach( $_fields as $key => $value ) {
 
-			// w__log( '$value: '.$value );
+			// w__log( $value );
 
 			// cast booleans to integer ##
 			if ( \is_bool( $value ) ) {
@@ -97,7 +83,7 @@ class markup {
 				&& ! \is_int( $value ) 
 			) {
 
-				w__log( 'd:>"'.$_args['context'].'->'.$this->plugin->get('_args')['task'].'->'.$key.'" is not a string or integer. Willow will look for a default value' );
+				w__log( 'd:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" is not a string or integer. Willow will look for a default value' );
 
 				if( 
 					isset( $_args['config']['default'] ) 
@@ -138,7 +124,7 @@ class markup {
 
 					}
 
-					w__log( 'd:>Default value for "'.$_args['context'].'->'.$this->plugin->get('_args')['task'].'->'.$key.'" set to "'.$default_value.'"' );
+					w__log( 'd:>Default value for "'.$_args['context'].'->'.$_args['task'].'->'.$key.'" set to "'.$default_value.'"' );
 
 					// set value and continue ##
 					$value = $default_value;
@@ -146,16 +132,22 @@ class markup {
 				} else {
 
 					// log ##
-					// w__log( $this->plugin->get('_args')['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
+					// w__log( $_args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
+					w__log( 'e:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
 
 					unset( $_fields[$key] );
-					$this->plugin->set( '_fields', null );
+
+					// save updated _fields object ##
+					// $this->plugin->set( '_fields', $_fields ); // PROBLEMO... ####
 
 					continue;
 
 				}
 
-            }
+			}
+			
+			// save updated _fields object ##
+			$this->plugin->set( '_fields', $_fields );
 
 			// w__log( 'working key: '.$key.' with value: '.$value );
 			
@@ -173,16 +165,16 @@ class markup {
 
         if ( 
 			// $placeholders = placeholder::get( $string ) 
-			$variables = $this->parse_markup->get( $string, 'variable' ) 
+			$variables = $this->plugin->parse->markup->get( $string, 'variable' ) 
         ) {
 
 			// log ##
-			w__log( $this->plugin->get('_args')['task'].'~>n:>"'.count( $variables ) .'" variables found in formatted string - these will be removed');
+			w__log( $_args['task'].'~>n:>"'.count( $variables ) .'" variables found in formatted string - these will be removed');
 
 			// w__log( $variables );
 			
 			// w__log( 't:>moved from loop removal to regex model, make sure this does not cause other problems ##');
-			$this->parse_variables->cleanup();
+			$this->plugin->parse->variables->cleanup();
 
             // remove any leftover variables in string ##
             // foreach( $variables as $key => $value ) {
@@ -195,9 +187,9 @@ class markup {
         }
 
         // filter ##
-        $string = $this->plugin->get('filter')->apply([ 
+        $string = $this->plugin->filter->apply([ 
             'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-            'filter'        => 'q/render/markup/'.$this->plugin->get('_args')['task'], // filter handle ##
+            'filter'        => 'q/render/markup/'.$_args['task'], // filter handle ##
             'return'        => $string
         ]); 
 
@@ -416,7 +408,7 @@ class markup {
 
 			// default -- almost useless - but works for single values.. ##
 			// $markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => 'value', 'close' => 'var_c' ]); // OLD WAY ##
-			$backup_markup = $this->plugin->get('tags')->wrap([ 
+			$backup_markup = $this->plugin->tags->wrap([ 
 				'open' 	=> 'var_o', 
 				'value' => $this->plugin->get( '_args' )['task'], // takes "task" as default ##
 				'close' => 'var_c' 
@@ -460,6 +452,9 @@ class markup {
 
 	public function string( $args = null ){
 
+		$_markup = $this->plugin->get( '_markup' );
+		$_args = $this->plugin->get('_args');
+
 		// w__log( $args['key'] );
 
 		// sanity ##
@@ -470,7 +465,7 @@ class markup {
 			|| ! isset( $args['string'] )
 		){
 
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error in passed args to "string" method' );
+			w__log( $_args['task'].'~>e:>Error in passed args to "string" method' );
 
 			return false;
 
@@ -486,7 +481,7 @@ class markup {
 		// string needs to be a... string.. so check ##
 		if( ! is_string( $string ) ){
 
-			w__log( $this->plugin->get('_args')['task'].'~>e:>Error in passed args. "string" is not a string' );
+			w__log( $_args['task'].'~>e:>Error in passed args. "string" is not a string' );
 			// w__log( $string );
 
 			return false;
@@ -496,7 +491,7 @@ class markup {
 		// filter ##
 		$string = $this->plugin->get('filter')->apply([ 
              'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'willow/render/markup/string/before/'.$this->plugin->get('_args')['task'].'/'.$key, // filter handle ##
+             'filter'        => 'willow/render/markup/string/before/'.$_args['task'].'/'.$key, // filter handle ##
              'return'        => $string
 		]); 
 
@@ -521,7 +516,7 @@ class markup {
 		// filters ##
 		// we need to find each {{ variable }} in the passed string which matches the current "key"
 		if ( 
-            $variables = $this->parse_markup->get( $string, 'variable' ) 
+            $variables = $this->plugin->parse->markup->get( $string, 'variable' ) 
         ) {
 
 			// check variables ##
@@ -532,8 +527,8 @@ class markup {
 				// strip filter flags ##
 				$filters = willow\core\method::string_between( 
 					$var_value, 
-					trim( $this->plugin->get( 'tags' )->g( 'fla_o' )), 
-					trim( $this->plugin->get( 'tags' )->g( 'fla_c' )), 
+					trim( $this->plugin->tags->g( 'fla_o' )), 
+					trim( $this->plugin->tags->g( 'fla_c' )), 
 					true 
 				);
 
@@ -551,8 +546,8 @@ class markup {
 				$raw_var_value = str_replace( 
 					[ 
 						$filters, 
-						trim( $this->plugin->get( 'tags')->g( 'var_o' )), 
-						trim( $this->plugin->get( 'tags')->g( 'var_c' )) 
+						trim( $this->plugin->tags->g( 'var_o' )), 
+						trim( $this->plugin->tags->g( 'var_c' )) 
 					], 
 					'', // with nada ## 
 					$var_value 
@@ -575,23 +570,23 @@ class markup {
 				// grab filters again, this time without tags ##
 				$filters = willow\core\method::string_between( 
 					$var_value, 
-					trim( $this->plugin->get( 'tags')->g( 'fla_o' )), 
-					trim( $this->plugin->get( 'tags')->g( 'fla_c' )), 
+					trim( $this->plugin->tags->g( 'fla_o' )), 
+					trim( $this->plugin->tags->g( 'fla_c' )), 
 					false 
 				);
 
 				// w__log( $filters );
 
 				// get filters ##
-				$filters = $this->filter_method->prepare([ 'filters' => $filters ]);
+				$filters = $this->plugin->filter_method->prepare([ 'filters' => $filters ]);
 
-				// w__log( $filters );
+				w__log( $filters );
 
 				// store pre-filter value ##
 				$pre_value = $value; 
 
 				// run filters ##
-				$filter_value = $this->filter_method->apply([ 
+				$filter_value = $this->plugin->filter_method->process([ 
 					'filters'	=> $filters,
 					'string' 	=> $value, 
 					'use' 		=> 'variable', // for filters ##
@@ -626,8 +621,8 @@ class markup {
 		// w__log( 'string before regex: '.$string );
 
 		// variable replacement -- regex way ##
-		$open = trim( $this->plugin->get( 'tags' )->g( 'var_o' ) );
-		$close = trim( $this->plugin->get( 'tags' )->g( 'var_c' ) );
+		$open = trim( $this->plugin->tags->g( 'var_o' ) );
+		$close = trim( $this->plugin->tags->g( 'var_c' ) );
 
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
 		$regex = \apply_filters( 'willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
@@ -640,7 +635,7 @@ class markup {
 		// filter ##
 		$string = $this->plugin->get('filter')->apply([ 
 			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-			'filter'        => 'willow/render/markup/string/after/'.$this->plugin->get('_args')['task'].'/'.$key, // filter handle ##
+			'filter'        => 'willow/render/markup/string/after/'.$_args['task'].'/'.$key, // filter handle ##
 			'return'        => $string
 		]); 
 
@@ -651,8 +646,6 @@ class markup {
 		return $string;
 
 	}
-
-
 
 	public function wrap( $args = null ){
 
@@ -712,7 +705,7 @@ class markup {
 			// example: markup->wrap = '<h2 class="mt-5">{{ template }}</h2>' ##
 			$string = str_replace( 
 				// '{{ template }}', 
-				$this->plugin->get('tags')->wrap([ 'open' => 'var_o', 'value' => 'template', 'close' => 'var_c' ]), 
+				$this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => 'template', 'close' => 'var_c' ]), 
 				$string, 
 				$markup 
 			);
@@ -749,13 +742,15 @@ class markup {
 
 	}
 
-
-
     /**
      * Update Markup base for passed field ##
      * 
      */
     public function set( string $field = null, $count = null ){
+
+		// make some local vars ##
+		$_markup = $this->plugin->get( '_markup' );
+		$_args = $this->plugin->get('_args');
 
         // sanity ##
         if ( 
@@ -764,16 +759,12 @@ class markup {
         ) {
 
 			// log ##
-			w__log( $this->plugin->get('_args')['task'].'~>n:>No field value or count iterator passed to method');
+			w__log( $_args['task'].'~>n:>No field value or count iterator passed to method');
 
             return false;
 
 		}
 		
-		// make some local vars ##
-		$_markup = $this->plugin->get( '_markup' );
-		$_args = $this->plugin->get('_args');
-
         // check ##
         // w__log( 'Update template markup for field: '.$field.' @ count: '.$count );
 
@@ -783,8 +774,8 @@ class markup {
 		if ( ! isset( $_markup[$field] ) ) {
 
 			// log ##
-			w__log( $this->plugin->get('_args')['task'].'~>n:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
-			// w__log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
+			w__log( $_args['task'].'~>n:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
+			w__log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
 
             // bale if not found ##
             return false;
@@ -794,13 +785,13 @@ class markup {
         // w__log( $_markup[$field] );
 
         // get target variable ##
-		$tag = $this->plugin->get( 'tags')->wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
+		$tag = $this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
         if ( 
-			! self::contains( $tag )
+			! $this->contains( $tag )
         ) {
 
 			// log ##
-			w__log( $this->plugin->get('_args')['task'].'~>n:>Tag: "'.$tag.'" is not in the passed markup template' );
+			w__log( $_args['task'].'~>n:>Tag: "'.$tag.'" is not in the passed markup template' );
 			w__log( 'd:>Tag: "'.$tag.'" is not in the passed markup template' );
 
             return false;
@@ -812,11 +803,11 @@ class markup {
 
         // get all variables from markup->$field ##
         if ( 
-			! $variables = $this->parse_markup->get( $_markup[$field], 'variable' ) 
+			! $variables = $this->plugin->parse->markup->get( $_markup[$field], 'variable' ) 
         ) {
 
 			// log ##
-			w__log( $this->plugin->get('_args')['task'].'~>n:>No variables found in passed string' );
+			w__log( $_args['task'].'~>n:>No variables found in passed string' );
 			w__log( 'e:>No variables found in passed string' );
 
             return false;
@@ -824,9 +815,8 @@ class markup {
         }
 
         // test ##
-		// helper::log( $variables );
+		// w__log( $variables );
 		
-		// w__log( self::$fields_map );
 		// w__log( 'hash: '.self::$args['config']['hash'] );
 
         // iterate over {{ variables }} adding prefix ##
@@ -841,8 +831,8 @@ class markup {
 			if(
 				willow\core\method::string_between( 
 					$value, 
-					trim( $this->plugin->get( 'tags')->g( 'fla_o' ) ), 
-					trim( $this->plugin->get( 'tags')->g( 'fla_c' ) ) 
+					trim( $this->plugin->tags->g( 'fla_o' ) ), 
+					trim( $this->plugin->tags->g( 'fla_c' ) ) 
 				)
 			){
 
@@ -850,13 +840,13 @@ class markup {
 				$flags = trim(
 					willow\core\method::string_between( 
 						$value, 
-						trim( $this->plugin->get( 'tags')->g( 'fla_o' ) ), 
-						trim( $this->plugin->get( 'tags')->g( 'fla_c' ) ) 
+						trim( $this->plugin->tags->g( 'fla_o' ) ), 
+						trim( $this->plugin->tags->g( 'fla_c' ) ) 
 					)
 				);
 
 				// wrap stored flag in flag tags ##
-				$flags = $this->plugin->get( 'tags')->g( 'fla_o' ).$flags.$this->plugin->get( 'tags')->g( 'fla_c' ).' ';
+				$flags = $this->plugin->tags->g( 'fla_o' ).$flags.$this->plugin->tags->g( 'fla_c' ).' ';
 
 				// remove flags from worked string $value ##
 				$value = str_replace( $flags, "", $value ); 
@@ -867,14 +857,14 @@ class markup {
 
 			// var open and close, with and without whitespace  at start and end ##
 			$array_replace = [
-				$this->plugin->get( 'tags')->g( 'var_o' ),
-				trim( $this->plugin->get( 'tags')->g( 'var_o' ) ),
-				$this->plugin->get( 'tags')->g( 'var_c' ),
-				trim( $this->plugin->get( 'tags')->g( 'var_c' ) )
+				$this->plugin->tags->g( 'var_o' ),
+				trim( $this->plugin->tags->g( 'var_o' ) ),
+				$this->plugin->tags->g( 'var_c' ),
+				trim( $this->plugin->tags->g( 'var_c' ) )
 			];
 
 			// new variable --- complex... ##
-			$new = $this->plugin->get( 'tags')->g( 'var_o' ).$flags.trim($field).'.'.trim($count).'.'.trim( str_replace( $array_replace, '', trim($value) ) ).$this->plugin->get( 'tags')->g( 'var_c' );
+			$new = $this->plugin->tags->g( 'var_o' ).$flags.trim($field).'.'.trim($count).'.'.trim( str_replace( $array_replace, '', trim($value) ) ).$this->plugin->tags->g( 'var_c' );
 
 			// single whitespace max ## @might be needed ##
 			// $new = preg_replace( '!\s+!', ' ', $new );	
@@ -904,11 +894,11 @@ class markup {
         $new_template = substr_replace( $_markup['template'], $new_markup, $position, 0 );
 
         // test ##
-        // helper::log( $new_template );
+        // w__log( $new_template );
 
         // push back into main stored markup ##
 		$_markup['template'] = $new_template;
-		$this->plugin->set( '_markup', $markup );
+		$this->plugin->set( '_markup', $_markup );
 
         // kick back ##
         return true;
@@ -923,7 +913,7 @@ class markup {
     public function contains( string $variable = null, $field = null ) {
 		
 		// if $markup template passed, check there, else check self::$markup ##
-		$markup = is_null( $field ) ? $this->plugin->get( '_markup' )['template'] : $this->plugin->get( '_markup')[$field] ;
+		$markup = is_null( $field ) ? $this->plugin->get( '_markup' )['template'] : $this->plugin->get( '_markup' )[$field] ;
 
         if ( ! substr_count( $markup, $variable ) ) {
 

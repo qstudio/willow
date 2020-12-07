@@ -8,9 +8,7 @@ use Q\willow;
 class format {
 
 	private 
-		$plugin = false,
-		$render_fields = false,
-		$render_markup = false
+		$plugin = false
 	;
 
 	/**
@@ -19,12 +17,6 @@ class format {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		// build render_fields object ##
-		$this->render_fields = new willow\render\fields( $this->plugin );
-
-		// build render_markup object ##
-		$this->render_markup = new willow\render\markup( $this->plugin );
 
 	}
 
@@ -71,16 +63,20 @@ class format {
 
 			// log ##
 			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No formats allowed in plugin or array corrupt.');
+			// w__log( 'e:>No formats allowed in plugin or array corrupt.');
 
             return false;
 
-        }
-
+		}
+		
         // Now check the format of $value - Array requires repeat check on each row ##
-        $format = $this->get( $value, $field );
+		$format = $this->get( $value, $field );
+		// w__log( 'Format: '.$format );
 
         // now try to format value ##
 		$return = $this->apply( $value, $field, $format );
+
+		// w__log( $this->plugin->get( '_fields' ) );
 		
         // self::$fields should all be String values by now, ready for markup ##
         return $return;
@@ -133,7 +129,7 @@ class format {
 
             }
 
-            // w__log( 'function exists: '.$format_value['type'] );
+            // w__log( 'd:>function exists: '.$format_value['type'] );
 
             // boolean check ## is_TYPE === true
             if ( 
@@ -142,7 +138,7 @@ class format {
             ) {
 
                 // log ##
-                // w__log( 'Field value: '.$field.' is Type: '.$format_value['type'].' Format with: '.$format_value['method'] );
+                // w__log( 'd:>Field value: '.$field.' is Type: '.$format_value['type'].' Format with: '.$format_value['method'] );
 
                 // update tracker ##
                 $tracker = true;
@@ -186,8 +182,10 @@ class format {
 			// log ##
 			w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
 
+			// w__log( 'e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
+
 			// this item needs to be removed from $_fields
-            $this->render_fields->remove( $field );
+            $this->plugin->render->fields->remove( $field );
 
              // we do not return the $value either ##
             return false;
@@ -204,20 +202,28 @@ class format {
 
 			// log ##
 			w__log( $this->plugin->get( '_args' )['task'].'~>e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
+			// w__log( 'e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
 
             // this item needs to be removed from self::$fields
-            $this->render_fields->remove( $field );
+            $this->plugin->render->fields->remove( $field );
 
             // we do not return the $value either ##
             return false; 
 
-        }
+		}
+		
+		// w__log( 'e:>format: '.$format );
 
-        // call class method and pass arguments ##
+		// call method and pass arguments ##
+		/*
         $value = call_user_func_array (
-            array( __CLASS__, $format )
+            array( $this, $format )
             ,   array( $value, $field )
-        );
+		);
+		*/
+		$value = $this->{ $format }( $value, $field );
+		
+		// w__log( $value );
 
         if ( ! $value ) {
 
@@ -226,14 +232,14 @@ class format {
             // this item needs to be removed from self::$fields
 			// self::remove_field( $field, 'Removed by "apply" due to bad or empty data' );
 			
-			// w__log( 'Field value bad: '.$field );
+			w__log( 'Field value bad: '.$field );
 
             return false; // we do not return the $value either ##
 
         }
 
         // test returned data ##
-		// w__log( self::$fields );
+		// w__log( $this->plugin->get( '_fields' ) );
 		// w__log( 'Field value now: '.$value );
 
         // fields are filtered and saved by each type handler, as new fields might be added or removed internally ##
@@ -284,7 +290,7 @@ class format {
         // array of arrays containing named indexes ( not WP_Post Objects ) needs to be be marked up as a block, like an Object ##
 
         // add check to see if array is a collection of array - as exported by repeater fields ##
-        if ( 'repeater' == $this->render_fields->get_type( $field ) ) {
+        if ( 'repeater' == $this->plugin->render->fields->get_type( $field ) ) {
 
             // w__log( 'd:>Array is a repeater' );
 
@@ -310,7 +316,7 @@ class format {
 				WAS
 				$key_field = $field.'_'.$count;
 				*/
-                $this->render_fields->set( $key_field, '' );
+                $this->plugin->render->fields->set( $key_field, '' );
 
                 // Format each field value based on type ( int, string, array, WP_Post Object ) ##
                 // each item is filtered as looped over -- q/render/format/GROUP/FIELD - ( $args, $fields ) ##
@@ -319,7 +325,7 @@ class format {
 
                     // format ran ok ##
                     // w__log( 'd:>format ran ok.. so now we can update markup for field: '.$field );
-                    $this->render_markup->set( $field, $count );
+                    $this->plugin->render->markup->set( $field, $count );
 
                 }
 
@@ -334,24 +340,24 @@ class format {
 		// self::$markup['template'] = render\markup::remove_placeholder( '{{ '.$field.' }}', self::$markup['template'] );
 
 		// get parse_markup object ##
-		$parse_markup = new willow\parse\markup( $this->plugin );
+		// $parse_markup = new willow\parse\markup( $this->plugin );
 
 		// get _markup ##
 		$_markup = $this->plugin->get( '_markup' );
 
-		$variable = $this->plugin->get( 'tags' )->wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
-		$_markup['template'] = $parse_markup->remove( $variable, $_markup['template'], 'variable' );
+		$variable = $this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => $field, 'close' => 'var_c' ]);
+		$_markup['template'] = $this->plugin->parse->markup->remove( $variable, $_markup['template'], 'variable' );
 
 		// set _markup ##
 		$this->plugin->set( '_markup', $_markup );
 
-        // delete sending field ##
-        $this->render_fields->remove( $field, 'Removed by format_array after working' );
+		// delete sending field ##
+        $this->plugin->render->fields->remove( $field, 'Removed by format_array after working' );
 
         // checkout markup ##
 		// w__log( self::$markup['template'] );
 		
-		// w__log( self::$fields );
+		// w__log( $this->plugin->get( '_fields' ) );
 		// w__log( self::$markup);
 
         // returning false will delete the original passed field ##
@@ -415,14 +421,14 @@ class format {
 					// create a new, named and numbered field based on field__COUNT.row_key ##
 					// $key_field = $field.'__'.$count.'__'.$r2;
 					// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
-					$this->render_fields->set( $field.'.'.$count.'.'.$r2, $v2 );
+					$this->plugin->render->fields->set( $field.'.'.$count.'.'.$r2, $v2 );
 				
 				}
 
             }
 
             // format ran ok ##
-			$this->render_markup->set( $field, $count );
+			$this->plugin->render->markup->set( $field, $count );
 			
             // iterate count ##
             $count ++ ;
@@ -469,7 +475,7 @@ class format {
 		
 						// create a new, named and numbered field based on field__COUNT.row_key ##
 						// render\fields::set( $field.'__'.$count.'__'.$r2, $v2 );
-						$this->render_fields->set( $field.'.'.$r2, $v2 );
+						$this->plugin->render->fields->set( $field.'.'.$r2, $v2 );
 
 					}
 	
@@ -485,7 +491,7 @@ class format {
 
 		}
 
-		// w__log( self::$fields );
+		// w__log( $this->plugin->get( '_fields' ) );
 		// w__log( self::$markup);
 
         return true;
@@ -522,7 +528,7 @@ class format {
 			w__log( $this->plugin->get( '_args' )['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
 
             // this item needs to be removed from self::$fields
-            $this->render_fields->remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
+            $this->plugin->render->fields->remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
 
             // we do not return the $value either ##
             return false; 
@@ -530,7 +536,7 @@ class format {
         }
 
         // delete sending field ##
-        $this->render_fields->remove( $field, 'Removed by format_object after working' );
+        $this->plugin->render->fields->remove( $field, 'Removed by format_object after working' );
 
         // return false will delete the passed field ##
         return true;
@@ -681,7 +687,7 @@ class format {
 
 			// assign field and value ##
 			// willow\render\fields::set( $field.'.'.$wp_post_field, $string );
-			$this->render_fields->set( $field.'.'.$wp_post_field, $string );
+			$this->plugin->render->fields->set( $field.'.'.$wp_post_field, $string );
 
 		}
 
@@ -727,7 +733,7 @@ class format {
 
 				// assign field and value ##
 				// willow\render\fields::set( $field.'.'.$key, $value );
-				$this->render_fields->set( $field.'.'.$key, $value );
+				$this->plugin->render->fields->set( $field.'.'.$key, $value );
 
 			}
 
@@ -864,7 +870,7 @@ class format {
 
 			// assign field and value ##
 			// willow\render\fields::set( $field.'.'.$wp_term_field, $string );
-			$this->render_fields->set( $field.'.'.$wp_term_field, $string );
+			$this->plugin->render->fields->set( $field.'.'.$wp_term_field, $string );
 
 		}
 
@@ -910,7 +916,7 @@ class format {
 
 				// assign field and value ##
 				// willow\render\fields::set( $field.'.'.$key, $value );
-				$this->render_fields->set( $field.'.'.$key, $value );
+				$this->plugin->render->fields->set( $field.'.'.$key, $value );
 
 			}
 

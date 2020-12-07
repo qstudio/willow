@@ -64,25 +64,14 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 // \add_action( 'init', [ $plugin, 'hooks' ], 0 );
 \add_action( 'init', function() use( $plugin ){
 
-	// build helper object ##
-	$plugin->set( 'helper', new willow\core\helper( $plugin ) );
-
 	// kick off config and store object ##
 	$config = new willow\core\config( $plugin );
 	$config->hooks();
 	$plugin->set( 'config', $config );
 
-	// kick off filter and store object ##
-	$plugin->set( 'filter', new willow\core\filter( $plugin ) );
-	// $this->filter->hooks();
-
-	// kick off tags and store object ##
-	$plugin->set( 'tags', new willow\core\tags( $plugin ) );
-	// $this->tags->hooks();
-
-	// kick off config and store object ##
+	// kick off extend and store object ##
 	$extend = new willow\context\extend( $plugin );
-	$extend->hooks(); // adds action hook 'willow/context/extend/register'
+	// $extend->hooks();
 	$plugin->set( 'extend', $extend );
 
 	// set text domain on init hook ##
