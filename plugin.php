@@ -65,7 +65,10 @@ final class plugin {
 		$render = false,
 
 		// filter objects ##
-		$filter_method = false
+		$filter_method = false,
+
+		// type handlers ##
+		$type = false
 
 	;
 
@@ -408,6 +411,9 @@ final class plugin {
 	}
 	
 	public function factory( $plugin ){
+
+		// kick off extend and store object ##
+		$plugin->set( 'extend', new willow\context\extend( $plugin ) );
 
 		// kick off filter and store object ##
 		$plugin->set( 'filter', new willow\core\filter( $plugin ) );

@@ -106,8 +106,6 @@ class media {
 		return willow\get\method::prepare_return( $args, $array );
 
 	}
-	
-
 
 	/**
      * Check for a return post thumbnail images and exif-data baed on passed settings ##

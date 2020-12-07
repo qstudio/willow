@@ -317,11 +317,7 @@ class context  {
 			// prepare field data ##
 			$this->plugin->render->fields->prepare();
 
-			// w__log( self::$markup );
-
 			// w__log( $this->plugin->get( '_fields' ) );
-
-			// w__log( self::$markup['template'] );
 
 			// check if feature is enabled ##
 			if ( ! $this->plugin->render->args->is_enabled() ) {
@@ -339,8 +335,8 @@ class context  {
 	
 		   	}    
 		
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_fields' ) );
+			w__log( $this->plugin->get( '_markup' ) );
+			w__log( $this->plugin->get( '_fields' ) );
 
 			// Prepare template markup ##
 			$this->plugin->render->markup->prepare();

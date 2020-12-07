@@ -50,6 +50,8 @@ require_once __DIR__ . '/plugin.php';
 // get plugin instance ##
 $plugin = plugin::get_instance();
 
+if ( \wp_doing_ajax() ){ $plugin = plugin::get_instance(); } 
+
 // validate instance ##
 if( ! ( $plugin instanceof willow\plugin ) ) {
 
@@ -69,10 +71,8 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	$config->hooks();
 	$plugin->set( 'config', $config );
 
-	// kick off extend and store object ##
-	$extend = new willow\context\extend( $plugin );
-	// $extend->hooks();
-	$plugin->set( 'extend', $extend );
+	// build factory objects ##
+	$plugin->factory( $plugin );
 
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );

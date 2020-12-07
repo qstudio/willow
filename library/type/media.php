@@ -8,8 +8,7 @@ use Q\willow;
 class media {
 
 	private 
-		$plugin = false,
-		$type_method = false
+		$plugin = false
 	;
 
 	/**
@@ -19,9 +18,6 @@ class media {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// get types ##
-		$this->type_method = new willow\type\method( $this->plugin );
-
 	}
 
 	/**
@@ -29,15 +25,18 @@ class media {
      *  
      * 
      **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+
+		// local var ##
+		$_args = $this->plugin->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
 
-			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.$type );
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $_args['task'].'~>e:Value Type not allowed: "'.$type.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +47,7 @@ class media {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $_args['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -61,7 +60,7 @@ class media {
 		if (
 			is_null( $wp_post )
 			|| ! $wp_post instanceof \WP_Post
-			|| is_null ( $this->plugin->get( '_args' ) )
+			|| is_null ( $_args )
 			|| ! isset( $type_field )
 			|| ! isset( $field )
 			|| ! isset( $context ) // can be WP_Post OR ... @todo
@@ -93,7 +92,7 @@ class media {
 				// w__log( $args );
 
 				$get_media = new willow\get\media( $this->plugin );
-				$get_media->src( $args );
+				$array = $get_media->src( $args );
 				// $array = willow\get\media::src( $args );
 
 				// w__log( $array );
@@ -109,7 +108,7 @@ class media {
 		) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>n:>get\media::thumbnail returned bad data');
+			w__log( $_args['task'].'~>n:>get\media::thumbnail returned bad data');
 
 			return $string;
 
@@ -137,8 +136,8 @@ class media {
 				if ( 
 					// set locally..
 					(
-						isset( $this->plugin->get( '_args' )['config']['srcset'] )
-						&& true == $this->plugin->get( '_args' )['config']['srcset'] 
+						isset( $_args['config']['srcset'] )
+						&& true == $_args['config']['srcset'] 
 					)
 					/*
 					||
@@ -177,7 +176,7 @@ class media {
 			is_null( $string ) 
 		) {
 
-			w__log( $this->plugin->get( '_args' )['task'].'~>n:>String is empty.. so return null' );
+			w__log( $_args['task'].'~>n:>String is empty.. so return null' );
 
 		}
 

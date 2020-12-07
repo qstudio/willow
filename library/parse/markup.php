@@ -35,8 +35,12 @@ class markup {
 			|| is_null( $type )
         ) {
 
+			// w__log( willow\core\method::backtrace(['level' => 2]) );
+			// w__log( $this->plugin->get( '_args' ) );
+			$task = $this->plugin->get( '_args' )['task'] ?? 'unknown' ;
+
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:>No string or type value passed to method' );
+			w__log( $task.'~>e:>No string or type value passed to method' );
 
             return false;
 

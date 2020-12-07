@@ -34,10 +34,12 @@ class prepare {
 		// create parse object, pushing in each individual parser object ##
 		$parse = new \stdClass();
 
+		// generic ##
 		$parse->flags = new willow\parse\flags( $this->plugin );
 		$parse->arguments = new willow\parse\arguments( $this->plugin );
 		$parse->markup = new willow\parse\markup( $this->plugin );
 
+		// tag specific ##
 		$parse->partials = new willow\parse\partials( $this->plugin );
 		$parse->i18n = new willow\parse\i18n( $this->plugin );
 		$parse->php_functions = new willow\parse\php_functions( $this->plugin );
@@ -60,7 +62,16 @@ class prepare {
 		$render->output = new willow\render\output( $this->plugin );
 		$render->fields = new willow\render\fields( $this->plugin );
 
+		// store render objects ##
 		$this->plugin->set( 'render', $render );
+
+		// create type object, pushing in each individual render object ##
+		$type = new \stdClass();
+		
+		// get types ##
+		$type->method = new willow\type\method( $this->plugin );
+
+		$this->plugin->set( 'type', $type );
 
 	}
 	

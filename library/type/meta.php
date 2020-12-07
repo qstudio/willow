@@ -8,8 +8,7 @@ use Q\willow;
 class meta {
 
 	private 
-		$plugin = false,
-		$type_method = false
+		$plugin = false
 	;
 
 	/**
@@ -19,9 +18,6 @@ class meta {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// get types ##
-		$this->type_method = new willow\type\method( $this->plugin );
-
 	}
 
 	/**
@@ -29,15 +25,18 @@ class meta {
      *  
      * 
      **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+
+		// local var ##
+		$_args = $this->plugin->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
 
-			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.$type );
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $_args['task'].'~>e:Value Type not allowed: "'.$type.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,14 +47,14 @@ class meta {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $_args['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
 		}
 
 		// build render_fields object ##
-		$render_fields = new willow\render\fields( $this->plugin );
+		// $render_fields = new willow\render\fields( $this->plugin );
 
 		// w__log( \get_post_meta( $wp_post->ID ) );
 
@@ -81,7 +80,7 @@ class meta {
 			){
 
 				// assign field and value ##
-				$render_fields->set( $field.'.meta.'.$key, $value );
+				$this->plugin->render->fields->set( $field.'.meta.'.$key, $value );
 
 			} else {
 
@@ -99,7 +98,7 @@ class meta {
 					}
 
 					// assign field and value ##
-					$render_fields->set( $field.'.meta.'.$key, $sub_value );
+					$this->plugin->render->fields->set( $field.'.meta.'.$key, $sub_value );
 
 				}
 

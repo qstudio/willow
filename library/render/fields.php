@@ -38,11 +38,13 @@ class fields {
 			// w__log( self::$fields );
 
 			// log ##
-			w__log( 'e:>Error in $fields array' );
-			w__log( $_args['task'].'~>e:>Error in $fields array' );
+			// w__log( 'e:>$_fields array is empty' );
+			w__log( $_args['task'].'~>d:>$_fields array is empty' );
 
 			// kick out ##
-            return false;
+			// return false;
+			
+			$_fields = [];
 
 		}
 		
@@ -167,7 +169,7 @@ class fields {
 			|| ! $_fields
 		){
 
-			w__log( 'e:>_fields OR _scope_map empty' );
+			// w__log( 'e:>_fields OR _scope_map empty' );
 
 			// no mapping required ##
 			return false;
@@ -358,7 +360,7 @@ class fields {
 		}
 		
 		// w__log( 'e:>Adding field: '.$field.' by "'.willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
-		// w__log( $value );
+		// w__log( 'e:>Value: '.$value );
 
 		// add field to array ##
 		// self::$fields[$field] = $value;
@@ -421,7 +423,6 @@ class fields {
 
 		// w__log( $this->plugin->get( '_args' ) );
 
-		$type_method = new willow\type\method( $this->plugin );
 		$_fields = $this->plugin->get( '_fields' );
 
 		// sanity ##
@@ -444,7 +445,7 @@ class fields {
 		// shortcut check for ui\method gather data ##
 		if ( 
 			isset( $this->plugin->get( '_args' )['config']['type'] ) 
-			&& array_key_exists( $this->plugin->get( '_args' )['config']['type'], $type_method->get_allowed() )
+			&& array_key_exists( $this->plugin->get( '_args' )['config']['type'], $this->plugin->type->method->get_allowed() )
 		){
 
 			// w__log( 'd:>Shortcut to type passed in args: '.$this->plugin->get( '_args' )['config']['type'] );

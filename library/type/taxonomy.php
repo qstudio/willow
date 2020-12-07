@@ -8,8 +8,7 @@ use Q\willow;
 class taxonomy {
 
 	private 
-		$plugin = false,
-		$type_method = false
+		$plugin = false
 	;
 
 	/**
@@ -19,9 +18,6 @@ class taxonomy {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// get types ##
-		$this->type_method = new willow\type\method( $this->plugin );
-
 	}
 
 	/**
@@ -29,15 +25,17 @@ class taxonomy {
      *  
      * 
      **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+
+		$_args = $this->plugin->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
 
-			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.$type );
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $_args['task'].'~>e:Value Type not allowed: "'.$type.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +46,7 @@ class taxonomy {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $_args['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -71,7 +69,7 @@ class taxonomy {
 			// w__log( 'No category or corrupt data returned' );
 
 			// log ##
-			w__log( self::$args['task'].'~>n:No category or corrupt data returned');
+			w__log( $_args['task'].'~>n:No category or corrupt data returned');
 
 			return $string;
 

@@ -199,9 +199,9 @@ class group {
 
         // assign to class properties ##
 		// self::$fields = $array; // capture all fields for type and callback lookups ##
-		$_fields = $this->plugin->get( '_fields', $array ) ?? [];
-		$_fields = array_merge( $_fields, $array );
-		$this->plugin->set( '_fields', $_fields ); 
+		$_args = $this->plugin->get( '_args' );
+		$_args['fields'] = array_merge( $_args['fields'] ?? [], $array );
+		$this->plugin->set( '_args', $_args ); 
 		$this->data = $array; // data to return to fields\define ##
 
         // w__log( $array );

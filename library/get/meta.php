@@ -243,11 +243,11 @@ class meta {
 			$comments_number = \get_comments_number( $post->ID );
 
 			if ( $comments_number == 0 ) {
-				$comments = __( 'Comment', self::text_domain );
+				$comments = __( 'Comment', 'willow' );
 			} elseif ( $comments_number > 1 ) {
-				$comments = $comments_number.' '.__( 'Comments', self::text_domain );
+				$comments = $comments_number.' '.__( 'Comments', 'willow' );
 			} else {
-				$comments = '1 '.__( 'Comment', self::text_domain );
+				$comments = '1 '.__( 'Comment', 'willow' );
 			}
 
 			// assign ##

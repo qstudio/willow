@@ -51,14 +51,12 @@ class media {
 
 		}
 
-		// return \willow\get\post::$method;
-
-		// w__log( 'e:>Class method IS callable: q\get\media\\'.$method );
+		// w__log( 'e:>Class method IS callable: Q\willow\get\media\\'.$method );
 
 		// new object ##
 		$media = new willow\get\media( $this->plugin );
 
-		// return post method to 
+		// return call ## 
 		$return = $media->{$method}( $args );
 
 		// call method ##
@@ -76,9 +74,5 @@ class media {
 		return $return;
 
 	}
-
-
-	/// ---- deprecated by get()
-
 
 }

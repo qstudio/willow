@@ -751,7 +751,7 @@ class method {
 
 			return sprintf(
 				__( '%s%s()', 'Q' )
-				,  	isset($caller['class']) ? $caller['class'].'::' : null
+				,  	isset($caller['class']) ? $caller['class'].'->' : null
 				,   $caller['function']
 			);
 
@@ -805,7 +805,7 @@ class method {
 		// default - everything ##
 		return sprintf(
 			__( '%s%s() %s:%d', 'Q' )
-			,   isset($caller['class']) ? $caller['class'].'::' : ''
+			,   isset($caller['class']) ? $caller['class'].'->' : ''
 			,   $caller['function']
 			,   isset( $caller['file'] ) ? $caller['file'] : 'n'
 			,   isset( $caller['line'] ) ? $caller['line'] : 'x'

@@ -213,15 +213,13 @@ class method {
 
 	}
 
-
-
 	/**
 	 * Check if array contains other arrays
 	 * 
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function is_array_of_arrays( $array = null ) {
+	public static function is_array_of_arrays( $array = null ):bool {
 
 		// w__log( $array );
 
@@ -231,7 +229,7 @@ class method {
 			|| ! is_array( $array )
 		){
 
-			w__log( 'e:>Error in passed args or not an array' );
+			// w__log( 'e:>Error in passed args or not an array' );
 
 			return false;
 

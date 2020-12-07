@@ -18,7 +18,7 @@ class filter {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct( $plugin = null ){
+	function __construct( \Q\willow\plugin $plugin = null ){
 
 		// Log::write( $plugin );
 

@@ -8,8 +8,7 @@ use Q\willow;
 class author {
 
 	private 
-		$plugin = false,
-		$type_method = false
+		$plugin = false
 	;
 
 	/**
@@ -19,9 +18,6 @@ class author {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// get types ##
-		$this->type_method = new willow\type\method( $this->plugin );
-
 	}
 
 	/**
@@ -29,15 +25,15 @@ class author {
      *  
      * 
      **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
 
 		// check if type allowed ##
-		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
 
-			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.$type );
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.$type.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;

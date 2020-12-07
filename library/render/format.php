@@ -71,7 +71,7 @@ class format {
 		
         // Now check the format of $value - Array requires repeat check on each row ##
 		$format = $this->get( $value, $field );
-		w__log( 'Field: '.$field.' --> Format: '.$format );
+		// w__log( 'Field: '.$field.' --> Format: '.$format );
 
         // now try to format value ##
 		$return = $this->apply( $value, $field, $format );
@@ -233,6 +233,7 @@ class format {
             // this item needs to be removed from self::$fields
 			// self::remove_field( $field, 'Removed by "apply" due to bad or empty data' );
 			
+			// @TODO --> VERY BAD <--
 			w__log( 'Field value bad: '.$field );
 
             return false; // we do not return the $value either ##
@@ -366,7 +367,6 @@ class format {
 
 	}
 	
-
 	public static function is_associative_array( $array ) { 
 
 		foreach ( $array as $key => $value ) { 
@@ -379,12 +379,10 @@ class format {
 
 	}
 
-
-
     public function format_array_repeater( $value = null, $field = null ){
 
-        w__log( 'Formatting repeater array for field: '.$field );
-        // w__log_direct( $value );
+        // w__log( 'Formatting repeater array for field: '.$field );
+        // w__log( $value );
 
         // check how many items are in array and format ##
 		$count = 0;
@@ -506,11 +504,18 @@ class format {
      */
     public function format_object( $value = null, $field = null ){
 
+		// w__log( 'Formatting object for field: '.$field );
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+
         // allow filtering early ##
-        $value = \apply_filters( 'willow/render/format/object/'.$this->plugin->get( '_args' )['task'].'/'.$field, $value );
+        $value = \apply_filters( 'willow/render/format/object/'.$_args['task'].'/'.$field, $value );
 
         // WP_Post Object ##
         if ( $value instanceof \WP_Post ) {
+
+			// // w__log( 'Formatting object WP_Post field: '.$field );
 
             // pass to WP formatter ##
             $value = $this->format_object_wp_post( $value, $field );
@@ -526,7 +531,7 @@ class format {
         } else {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
+			w__log( $_args['task'].'~>n:>Object is not of type WP_Post, so emptied, $value returned empty and field removed from $fields');
 
             // this item needs to be removed from self::$fields
             $this->plugin->render->fields->remove( $field, 'Removed by format_object because Object format is not allowed in $formats' );
@@ -544,12 +549,14 @@ class format {
 
     }
 
-
-
     /**
      * Format WP_Post Objects
      */
     public function format_object_wp_post( \WP_Post $wp_post = null, $field = null ): bool {
+
+		// local vars ##
+		$_args = $this->plugin->get( '_args' );
+		$_wp_post_fields = $this->plugin->get( '_wp_post_fields');
 
         // sanity ##
         if (
@@ -558,7 +565,8 @@ class format {
         ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_post_object');
+			w__log( $_args['task'].'~>e:>No value or field passed to format_wp_post_object');
+			w__log( 'e:>No value or field passed to format_wp_post_object');
 
             return false;
 
@@ -582,7 +590,7 @@ class format {
 		// w__log( 'Field: '.$field ); // whole object ##
 
         // now, we need to create some new $fields based on each value in self::$wp_post_fields ##
-        foreach( $this->plugin->get( '_wp_post_fields') as $wp_post_field ) {
+        foreach( $_wp_post_fields as $wp_post_field ) {
 			
 			// w__log( 'Working: '.$wp_post_field.' context: '.$context );
 			// w__log( 't:>move to object.property - post.title - variable calls..' );
@@ -596,18 +604,18 @@ class format {
 				// case "ID" : // post special ##
 				case substr( $wp_post_field, 0, strlen( 'post_' ) ) === 'post_' :
 
-					$type_post = new willow\type\post( $this->plugin );
+					$post = new willow\type\post( $this->plugin );
 
-					$string = $type_post->format( $wp_post, $wp_post_field, $field, $context );
+					$string = $post->format( $wp_post, $wp_post_field, $field, $context, $type = 'post' );
 
 				break ;
 
 				// author handlers ##	
 				case substr( $wp_post_field, 0, strlen( 'author_' ) ) === 'author_' :
 
-					$type_author = new willow\type\author( $this->plugin );
+					$author = new willow\type\author( $this->plugin );
 
-					$string = $type_author->format( $wp_post, $wp_post_field, $field, $context );
+					$string = $author->format( $wp_post, $wp_post_field, $field, $context, $type = 'author' );
 
 				break ;
 
@@ -615,9 +623,9 @@ class format {
 				case substr( $wp_post_field, 0, strlen( 'category_' ) ) === 'category_' :
 				// case substr( $wp_post_field, 0, strlen( 'term_' ) ) === 'term_' : // @todo ##
 
-					$type_taxonomy = new willow\type\taxonomy( $this->plugin );
+					$taxonomy = new willow\type\taxonomy( $this->plugin );
 
-					$string = $type_taxonomy->format( $wp_post, $wp_post_field, $field, $context );
+					$string = $taxonomy->format( $wp_post, $wp_post_field, $field, $context, $type = 'category' );
 
 				break ;
 
@@ -627,29 +635,30 @@ class format {
 				case 'media' : // @todo
 	
 					// $attachment = \get_post( $attachment_id );
+					// w__log( 'Get media gallery...' );
 
-					$type_media = new willow\type\media( $this->plugin );
+					$media = new willow\type\media( $this->plugin );
 
-					$string = $type_media->format( $wp_post, $wp_post_field, $field, $context );
+					$string = $media->format( $wp_post, $wp_post_field, $field, $context, $type = 'media' );
 
 				break ;
 
 				case 'src' :
 		
-					// w__log( $this->plugin->get( '_args' ) );
+					// w__log( $_args );
 
-					$type_media = new willow\type\media( $this->plugin );
+					$media = new willow\type\media( $this->plugin );
 
-					$string = $type_media->format( $wp_post, $wp_post_field, $field, $context );
+					$string = $media->format( $wp_post, $wp_post_field, $field, $context, $type = 'media' );
 
 				break ;
 
 				case 'meta' :
 		
-					// w__log( $this->plugin->get( '_args' ) );
-					$type_meta = new willow\type\meta( $this->plugin );
+					// w__log( $_args );
+					$meta = new willow\type\meta( $this->plugin );
 
-					$string = $type_meta->format( $wp_post, $wp_post_field, $field, $context );
+					$string = $meta->format( $wp_post, $wp_post_field, $field, $context, $type = 'meta' );
 
 				break ;
 
@@ -669,7 +678,7 @@ class format {
 				// w__log( 'Field: '.$field.' / '.$wp_post_field.' returned an empty string' );
 
 				// log ##
-				w__log( $this->plugin->get( '_args' )['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
+				w__log( $_args['task'].'~>e:Field: "'.$field.' / '.$wp_post_field.'" returned an empty string');
 
 				// next ... ##
 				continue;
@@ -678,12 +687,12 @@ class format {
 
 			// filter post fields -- global ##
 			$string = \apply_filters( 
-				'willow/render/type/'.$this->plugin->get( '_args')['context'], $string 
+				'willow/render/type/'.$_args['context'], $string 
 			);
 
 			// filter group/field -- field specific ##
 			$string = \apply_filters( 
-				'willow/render/type/'.$this->plugin->get( '_args')['context'].'/'.$this->plugin->get( '_args')['task'], $string
+				'willow/render/type/'.$_args['context'].'/'.$_args['task'], $string
 			);
 
 			// assign field and value ##
@@ -721,12 +730,12 @@ class format {
 			// loo over array values ##
 			foreach( $array as $key => $value ) {
 
-				// w__log( 'e:>Adding "'.$key.'" with value "'.$value.'"' );
+				// w__log( 'e:>Adding key: "'.$key.'" with value: "'.$value.'"' );
 
 				// validate $value is a string ##
 				if( ! is_string( $value ) ){
 
-					w__log( 'e:>"'.$key.'" value is not a string' );
+					// w__log( 'e:>"'.$key.'" value is not a string' );
 
 					continue;
 
@@ -750,6 +759,8 @@ class format {
      */
     public function format_object_wp_term( \WP_Term $wp_term = null, $field = null ) :bool {
 
+		$_args = $this->plugin->get( '_args' );
+
         // sanity ##
         if (
             is_null( $wp_term )
@@ -757,7 +768,7 @@ class format {
         ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:>No value or field passed to format_wp_term_object');
+			w__log( $_args['task'].'~>e:>No value or field passed to format_wp_term_object');
 
             return false;
 

@@ -28,6 +28,7 @@ class callback {
 
 		// w__log( 'Field: '.$field );
 
+		// local vars ##
 		$_args = $this->plugin->get( '_args' );
 		$_fields = $this->plugin->get( '_fields' );
 
@@ -162,7 +163,7 @@ class callback {
         // w__log( 'Filter: '.$filter );
 
         // filter field callback value ( $args ) before callback ##
-        $args = $this->plugin->get( 'filter')->apply([ 
+        $args = $this->plugin->filter->apply([ 
             'parameters'    => [ 'args' => $args, 'field' => $field, 'value' => $value, 'fields' => $_fields ], // params ##
             'filter'        => 'willow/render/callback/field/before/'.$method.'/'.$field, // filter handle ##
             'return'        => $args

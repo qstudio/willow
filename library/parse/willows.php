@@ -294,9 +294,20 @@ class willows {
 				( $arg_c - $arg_o - strlen( trim( $this->plugin->tags->g( 'arg_c' ) ) ) ) 
 			); 
 
+			// update task ##
+			$this->willow_task = trim( str_replace(
+				[
+					trim( $this->plugin->tags->g( 'arg_o' ) ),
+					$this->argument_string, 
+					trim( $this->plugin->tags->g( 'arg_c' ) )
+				],
+				'',
+				$this->willow_task
+			) );
+
 		}
 
-		// w__log( $this->argument_string  );
+		// w__log( 'willow_task: '.$this->willow_task  );
 
 		// argument_string looks ok, so go with it ##
 		if ( 
@@ -411,6 +422,8 @@ class willows {
 		// break function into class::method parts ##
 		$this->method = $this->willow_task;
 
+		// w__log( 'willow_method: '.$this->method );
+
 		// check ##
 		if ( 
 			! $this->class 
@@ -429,7 +442,7 @@ class willows {
 		// clean up method name ##
 		$this->method = willow\core\method::sanitize( $this->method, 'php_function' );
 
-		// w__log( 'class->method -- '.$this->class.'->'.$this->method );
+		// w__log( 'class->method: '.$this->class.'->'.$this->method );
 
 		if ( 
 			! class_exists( $this->class )
@@ -450,9 +463,6 @@ class willows {
 		$willow_array = explode( '__', $this->method );
 
 		// get all {{ variables }} in $argument_string and check for flags ##
-		$parse_markup = new willow\parse\markup( $this->plugin );
-
-		$parse_variables = new willow\parse\variables( $this->plugin );
 		if ( 
 			$argument_variables = $this->plugin->parse->markup->get( $this->argument_string, 'variable' )
 		){
@@ -532,6 +542,8 @@ class willows {
 			&& in_array( 'debug', $_flags_willow ) // debug defined ##
 		) {
 
+			// w__log( 'Setting up debug for: '.$this->willow );
+
 			$this->arguments = willow\core\method::parse_args( 
 				$this->arguments, 
 				[ 
@@ -547,6 +559,8 @@ class willows {
 		
 		// instantiate new context loaded object ##
 		$context = new willow\context( $this->plugin );
+
+		// w__log( 'Task: '.$this->method );
 
 		// pass args, if set ##
 		if( $this->arguments ){
@@ -565,7 +579,7 @@ class willows {
 		}	
 
 		// check return ##
-		// w__log( $this->return );
+		w__log( $this->return );
 
 		if ( 
 			! isset( $this->return ) 
@@ -577,7 +591,7 @@ class willows {
 			$task = $this->willow_task ?? $args['task'] ;
 
 			w__log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
-			// w__log( 'e:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
+			w__log( 'e:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
 
 		}
 

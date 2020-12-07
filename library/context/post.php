@@ -113,7 +113,7 @@ class post {
 		]);
 
         // pass to get_posts -- and validate that we get an array back ##
-		if ( ! $array = \willow\get\query::posts( $args ) ) {
+		if ( ! $array = willow\get\query::posts( $args ) ) {
 
 			// log ##
 			w__log( self::$args['task'].'~>n:query::posts did not return any data');

@@ -152,7 +152,7 @@ class output {
 		}
 
 		// build factory objects ##
-		$this->plugin->factory( $this->plugin );
+		// $this->plugin->factory( $this->plugin );
 
 		// we are passed an html string, captured from output buffering, which we need to parse for tags and process ##
 		// w__log( $string );
@@ -189,7 +189,7 @@ class output {
 
 		// clean up left over tags ##
 		$cleanup = new willow\parse\cleanup( $this->plugin );
-		// $cleanup->hooks( $this->plugin->get( '_buffer_args' ), 'primary' ); // @TODO - removed for testing ##
+		$cleanup->hooks( $this->plugin->get( '_buffer_args' ), 'primary' ); // @TODO - removed for testing ##
 		
 		// reset properties ##
 		$this->plugin->set( '_buffer_map', [] );

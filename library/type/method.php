@@ -8,7 +8,8 @@ use Q\willow;
 class method {
 
 	private 
-		$plugin = false
+		$plugin = false,
+		$_type = null
 	;
 
 	/**
@@ -20,13 +21,25 @@ class method {
 
 	}
 
+	
     /**
      * Get allowed fomats with filter ##
      * 
      */
     public function get_allowed(){
 
-        return \apply_filters( 'willow/render/type/get', $this->plugin->get( '_type' ) );
+		// cache ##
+		if ( $this->_type ) { 
+		
+			// w__log( 'Type set..' );
+			// w__log( $this->_type );
+
+			return $this->_type; 
+		
+		} 
+
+		// via filter ##
+        return $this->_type = \apply_filters( 'willow/render/type/get', $this->plugin->get( '_type' ) );
 
     }
 

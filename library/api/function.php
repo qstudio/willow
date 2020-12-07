@@ -52,6 +52,8 @@ if ( ! function_exists( 'willow' ) ) {
 
 		}
 
+		// w__log( 'Willow is ok..' );
+
 		// return willow instance ## 
 		return $willow;
 

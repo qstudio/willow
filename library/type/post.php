@@ -8,8 +8,7 @@ use Q\willow;
 class post {
 
 	private 
-		$plugin = false,
-		$type_method = false
+		$plugin = false
 	;
 
 	/**
@@ -19,9 +18,6 @@ class post {
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
 
-		// get types ##
-		$this->type_method = new willow\type\method( $this->plugin );
-
 	}
 
 	/**
@@ -29,15 +25,18 @@ class post {
      *  
      * 
      **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+
+		// local var ##
+		$_args = $this->plugin->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( __CLASS__, $this->type_method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
 
-			// w__log( 'e:>Value Type not allowed: '.__CLASS__ );
+			// w__log( 'e:>Value Type not allowed: '.$type );
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.__CLASS__.'"');
+			w__log( $_args['task'].'~>e:Value Type not allowed: "'.$type.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -48,7 +47,7 @@ class post {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( $_args['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 
@@ -88,9 +87,9 @@ class post {
 
 				$string = 
 					\get_the_date( 
-						isset( $this->plugin->get( '_args' )['date_format'] ) ? 
-						$this->plugin->get( '_args' )['date_format'] : // take from value passed by caller ##
-							core\config::get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // global config ##
+						isset( $_args['date_format'] ) ? 
+						$_args['date_format'] : // take from value passed by caller ##
+							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // global config ##
 							\apply_filters( 'q/format/date', 'F j, Y' ), // standard ##
 						// $wp_post->post_date, 
 						$wp_post->ID
@@ -120,13 +119,13 @@ class post {
 				if ( \is_search() ) {
 
 					$string = 
-						render\method::search_the_content([
+						willow\render\method::search_the_content([
 							'string' 	=> \apply_filters( 'q/get/wp/post_content', $wp_post->post_content ),
-							'limit'		=> isset( $this->plugin->get( '_args' )['length'] ) ? $this->plugin->get( '_args' )['length'] : 100
+							'limit'		=> isset( $_args['length'] ) ? $_args['length'] : 100
 						]) ? 
-						render\method::search_the_content([
+						willow\render\method::search_the_content([
 							'string' 	=> \strip_shortcodes(\apply_filters( 'q/get/wp/post_content', $wp_post->post_content )),
-							'limit'		=> isset( $this->plugin->get( '_args' )['length'] ) ? $this->plugin->get( '_args' )['length'] : 100
+							'limit'		=> isset( $_args['length'] ) ? $_args['length'] : 100
 						]) : 
 						$wp_post->post_excerpt ;
 
