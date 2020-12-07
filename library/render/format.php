@@ -71,7 +71,7 @@ class format {
 		
         // Now check the format of $value - Array requires repeat check on each row ##
 		$format = $this->get( $value, $field );
-		// w__log( 'Format: '.$format );
+		w__log( 'Field: '.$field.' --> Format: '.$format );
 
         // now try to format value ##
 		$return = $this->apply( $value, $field, $format );
@@ -182,7 +182,7 @@ class format {
 			// log ##
 			w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
 
-			// w__log( 'e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
+			w__log( 'e:>Error in parameters passed to "apply", $value returned empty and field removed from $fields');
 
 			// this item needs to be removed from $_fields
             $this->plugin->render->fields->remove( $field );
@@ -192,7 +192,8 @@ class format {
 
         }
 
-        // w__log( 'd:>Checking Format for - Field: "'.$field.'" with method: "'.$format.'"' );
+		// w__log( 'd:>Checking Format for - Field: "'.$field.'" with method: "'.$format.'"' );
+		// w__log( $value );
 
         // we can now distribute the $value to the relevant format method ##
         if (
@@ -202,7 +203,7 @@ class format {
 
 			// log ##
 			w__log( $this->plugin->get( '_args' )['task'].'~>e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
-			// w__log( 'e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
+			w__log( 'e:>handler wrong - class: "'.__CLASS__.'" / method: "'.$format.'"');
 
             // this item needs to be removed from self::$fields
             $this->plugin->render->fields->remove( $field );
@@ -382,7 +383,7 @@ class format {
 
     public function format_array_repeater( $value = null, $field = null ){
 
-        // w__log( 'Formatting repeater array for field: '.$field );
+        w__log( 'Formatting repeater array for field: '.$field );
         // w__log_direct( $value );
 
         // check how many items are in array and format ##
@@ -403,7 +404,7 @@ class format {
 				// WP_Post Object ##
 				if ( $v2 instanceof \WP_Post ) {
 
-					// w__log( 'WP Post Object...' );
+					w__log( 'WP Post Object...' );
 
 					// pass to WP formatter and capture returned array ##
 					$this->format_object_wp_post( $v2, $field.'.'.$count );

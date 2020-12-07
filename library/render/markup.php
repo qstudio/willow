@@ -580,7 +580,7 @@ class markup {
 				// get filters ##
 				$filters = $this->plugin->filter_method->prepare([ 'filters' => $filters ]);
 
-				w__log( $filters );
+				// w__log( $filters );
 
 				// store pre-filter value ##
 				$pre_value = $value; 
@@ -775,7 +775,7 @@ class markup {
 
 			// log ##
 			w__log( $_args['task'].'~>n:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
-			w__log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
+			// w__log( 'e:>Field: "'.$field.'" does not have required markup defined in "$markup->'.$field.'"' );
 
             // bale if not found ##
             return false;

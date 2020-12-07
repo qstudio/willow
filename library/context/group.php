@@ -3,7 +3,6 @@
 namespace Q\willow\context;
 
 use Q\willow; 
-use Q\willow\core\helper as h;
 
 class group {
 
@@ -46,14 +45,14 @@ class group {
 		}
 
 		// build object ##
-		$get_group = new willow\get\group( $this->plugin );
+		$group = new willow\get\group( $this->plugin );
 
 		// method returns an array with 'data' and 'fields' ##
 		if ( 
 			// $array = \willow\get\group::fields( $args )
-			$array = $get_group->fields( $args )
+			$array = $group->fields( $args )
 		){
-			// w__log( $array );
+			// w__log( $array['data'] );
 			
 			// "args->fields" are used for type and callback lookups ##
 			// self::$args['fields'] = $array['fields']; 

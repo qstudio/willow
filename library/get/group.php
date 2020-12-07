@@ -3,7 +3,6 @@
 namespace Q\willow\get;
 
 use Q\willow;
-use Q\willow\core\helper as h;
 
 class group {
 	
@@ -125,7 +124,7 @@ class group {
     }
 
     /**
-     * Get ACF Fields
+     * Get ACF Fields data
      */
     public function acf_fields( $args = null ){
 
@@ -140,9 +139,7 @@ class group {
         // get fields ##
 		$array = 
 			\get_fields( 
-				isset( $args['config']['post']->ID ) ? 
-				$args['config']['post']->ID : 
-				false 
+				$args['config']['post']->ID ?? false 
 			);
 		
 		// w__log( $array );
@@ -239,7 +236,7 @@ class group {
         ) {
 
             // w__log( $args['skip'] );
-            $this->data = array_diff($this->data, $args['skip'] );
+            $this->data = array_diff( $this->data, $args['skip'] );
 
         }
 

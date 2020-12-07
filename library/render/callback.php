@@ -75,8 +75,7 @@ class callback {
 
 		// w__log( 'Looking for callback for field: "'.$field.'" in self::$fields' );
 		
-		$render_fields = new willow\render\fields( $this->plugin );
-        if ( ! $field_callback = $render_fields->get_callback( $field ) ) {
+        if ( ! $field_callback = $this->plugin->render->fields->get_callback( $field ) ) {
 
 			// w__log['error'][] = 'No callbacks found for Field: "'.$field.'"';
 			// w__log( 'd:>No callbacks found for Field: "'.$field.'"' );
@@ -180,8 +179,6 @@ class callback {
         // Opps ##
         if ( ! $data ) {
 
-			// w__log['notice'][] = 'Method returned bad data..';
-			
 			// log ##
 			w__log( $_args['task'].'~>n:>Method return bad data...');
 
@@ -190,7 +187,7 @@ class callback {
         }
 
         // check ##
-        // w__log( $data );
+        w__log( $data );
 
         // now add new data to class property $fields ##
 		$_fields[$field] = $data;
