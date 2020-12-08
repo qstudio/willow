@@ -42,9 +42,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 // plugin deactivation hook - clear stored data ##
 \register_deactivation_hook( __FILE__, [ '\\Q\\willow\\plugin', 'deactivation_hook' ] );
 
-// @TODO --> Mostly, Willow only needs to run on the front-end ##
-// if( \is_admin() ){ return; }
-
 // required bits to get set-up ##
 require_once __DIR__ . '/library/api/function.php';
 require_once __DIR__ . '/autoload.php';
@@ -75,13 +72,18 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	// build factory objects ##
 	$plugin->factory( $plugin );
 
+}, 0 );
+
+// @TODO --> Mostly, Willow only needs to run on the front-end ##
+if( ! \is_admin() ){ 
+
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );
 	
 	// check debug settings ##
 	\add_action( 'plugins_loaded', [ $plugin, 'debug' ], 11 );
 
-}, 0 );
+	// build output buffer ##
+	\add_action( 'plugins_loaded', [ new willow\buffer\output( $plugin ), 'hooks' ], 1 );
 
-// build output buffer ##
-\add_action( 'plugins_loaded', [ new willow\buffer\output( $plugin ), 'hooks' ], 1 );
+}

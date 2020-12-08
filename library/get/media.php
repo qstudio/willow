@@ -302,7 +302,7 @@ class media {
         // self::log( 'Handle: '.$args['handle'] );
 		if ( ! $src = \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) ){
 
-			w__log( $this->plugin->get( '_args' ).'~>n wp_get_attachment_image_src did not return data' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n wp_get_attachment_image_src did not return data' );
 
 			return false;
 

@@ -40,7 +40,7 @@ class query {
 
 		}
 
-		// w__log( $args );
+		// w__log( $args['wp_query_args'] );
 
 		// add hardcoded query args ##
 		$wp_query_args['paged'] = \get_query_var( 'paged' ) ? \get_query_var( 'paged' ) : 1 ;
@@ -79,6 +79,8 @@ class query {
 		
 		// set-up new array to hold returned post objects ##
 		$array = [];
+
+		w__log( $wp_query_args );
 
         // run query ##
 		$q_query = new \WP_Query( $wp_query_args );

@@ -333,8 +333,6 @@ class markup {
 				&& ! \is_int( $value ) 
 			) {
 
-				w__log( 'd:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" is not a string or integer. Willow will look for a default value' );
-
 				if( 
 					isset( $_args['config']['default'] ) 
 					&& is_array( $_args['config']['default'] )
@@ -366,7 +364,8 @@ class markup {
 						|| ! is_string( $default_value ) // and that it is a string ##
 					) {
 
-						w__log( 'd:>NO Default value set or NOT a string' );
+						// w__log( 'd:>NO Default value set or NOT a string' );
+						w__log( 'd:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" is not a string or integer and Willow did not find a default value.' );
 
 						unset( $_fields[$key] );
 
@@ -374,7 +373,7 @@ class markup {
 
 					}
 
-					w__log( 'd:>Default value for "'.$_args['context'].'->'.$_args['task'].'->'.$key.'" set to "'.$default_value.'"' );
+					w__log( 'd:>Value for "'.$_args['context'].'->'.$_args['task'].'->'.$key.'" set to "'.$default_value.'"' );
 
 					// set value and continue ##
 					$value = $default_value;
@@ -383,7 +382,7 @@ class markup {
 
 					// log ##
 					// w__log( $_args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
-					w__log( 'e:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
+					w__log( 'd:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" cannot be printed, it will be skipped and removed from markup.');
 
 					unset( $_fields[$key] );
 

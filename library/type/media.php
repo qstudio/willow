@@ -25,7 +25,7 @@ class media {
      *  
      * 
      **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ):? string {
 
 		// local var ##
 		$_args = $this->plugin->get( '_args' );
