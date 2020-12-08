@@ -594,20 +594,20 @@ final class plugin {
 	public function debug(){
 
 		// define debug ##
-		$this->$debug = 
+		$this->_debug = 
 			( 
 				class_exists( 'Q' )
 				&& true === \Q::$debug
 			) ?
 			true :
-			$this->$debug;
+			$this->_debug;
 
 		// test ##
 		// w__log( 'Q exists: '.json_encode( class_exists( 'Q' ) ) );
 		// w__log( 'Q debug: '.json_encode( \Q::$debug ) );
 		// w__log( json_encode( self::$debug ) );
 
-		return $this->$debug;
+		return $this->_debug;
 
 	}
 

@@ -22,10 +22,260 @@ class markup {
 
 	}
 
-    /**
+	/**
+	 * filter passed args for markup - accepts an array of keys+values or a string
+	 * 
+	 * @since 4.1.0
+	*/
+	public function pre_validate( $args = null ){
+
+		// sanity ##
+		if (
+			is_null( $args )
+		){
+
+			w__log( 'd:>No $args sent from calling method' );
+
+			return false;
+
+		}
+		
+        // test args sent from view caller ##
+		// w__log( $args );
+
+		// empty stored markup ##
+		$this->plugin->set( '_markup', [] );
+		// $_markup = $this->plugin->get( '_markup' );
+		$_markup = []; // OR [] ##
+
+		// $for = '';#' - '.$args['context'].'_'.$args['task'];
+
+		// if "markup" set in args, take this ##
+		if ( 
+			is_array( $args )
+			&& isset( $args['markup'] ) 
+		){
+
+			// passed markup is an array - so take all values ##
+			if ( 
+				is_array( $args['markup'] ) 
+				// && isset( $args['markup']['template'] ) // we can't validate "template" yet, as it might be pulled from config
+			) {
+
+				// w__log('d:>Using array markup' );
+				// w__log( $args['markup'] );
+
+				$this->plugin->set( '_markup', $args['markup'] );
+
+				return true;
+
+			} else {
+
+				// w__log('d:>Using single markup' );
+				// w__log( $args['markup'] );
+
+				$_markup['template'] = $args['markup'];
+
+				$this->plugin->set( '_markup', $_markup );
+
+				// w__log( $this->plugin->get( '_markup' ) );
+
+				return true;
+
+			}
+
+		}
+
+		// convert string passed args, presuming it to be markup...??... ##
+		if ( is_string( $args ) ) {
+
+			// w__log('d:>Using string markup:' );
+			// w__log( $args );
+
+			$_markup['template'] = $args;
+
+			// set markup ##
+			$this->plugin->set( '_markup', $_markup );
+
+			// add markup->template ##
+			return $_markup;
+
+			/*
+			return self::$markup = [
+				'template' => $args
+			];
+			*/
+
+		} 
+
+		// w__log( $this->plugin->get( '_markup' ) );
+		// w__log( 'NO markup set...' );
+
+		// kick back ##
+		return false;
+
+	}
+
+	/**
+	 * $markup is set, so now we need to merge in any new markup values returned from get::config()
+	 * 
+	 * @since 4.1.0
+	*/
+	public function merge(){
+
+		$_markup = $this->plugin->get( '_markup' );
+		$_fields = $this->plugin->get( '_fields' );
+		$_args = $this->plugin->get('_args');
+
+		// sanity ##
+		if (
+			is_null( $_args )
+		){
+
+			w__log( 'd:>No $args available or corrupt' );
+
+			return false;
+
+		}
+		
+		// test ##
+		// w__log( $_args['markup'] );
+
+		// make an array ##
+		if (
+			! $_markup
+			|| ! isset( $_markup )
+			|| empty( $_markup )
+			|| ! is_array( $_markup )
+		){
+			
+			// w__log( 'd:>Create empty _markup array...' );
+
+			// self::$markup = []; 
+			// $this->plugin->set( '_markup', [] );
+
+			$_markup = [];
+	
+		}
+
+		// get fresh ##
+		// $_markup = $this->plugin->get( '_markup' );
+
+		// for ##
+		$for = ' for: '.willow\render\method::get_context();
+
+		// we only accept correctly formatted markup from config ##
+		if (
+			isset( $_args['markup'] ) 
+		) {
+
+			// config has a single markup value, take ##
+			if (
+				is_string( $_args['markup'] )
+			){
+
+				// w__log( 'adding additional single markup from config'.$for );
+				// w__log( $_args['markup'] );
+				// w__log( $_markup );
+
+				// take as main template ##
+				$_markup['template'] = $_args['markup'];
+
+			}
+
+			// config passed an array fo values ##
+			if ( is_array( $_args['markup'] ) ) {
+
+				// w__log( 'adding additional array of markup from config'.$for );
+				// w__log( self::$args['markup'] );
+				// w__log( self::$markup );
+
+				// take array or markup ##
+				$_markup = $_args['markup'];
+
+			}
+
+			// merge into defaults -- view passed markup takes preference ##
+			// $_markup_get = $this->plugin->get( '_markup' );
+			// $_markup_merge = willow\core\method::parse_args( $_markup_get, $_markup );
+			$this->plugin->set( '_markup', $_markup );
+			// self::$markup = core\method::parse_args( self::$markup, $markup );
+
+			// test ##
+			// w__log( $_markup );
+
+			// return true;
+
+		}
+
+		// get fresh ##
+		$_markup = $this->plugin->get( '_markup' );
+
+		// @todo no additional markup passes from config.. so we should check if we actually have a markup->template
+		if (
+			! $_markup
+			|| ! is_array( $_markup )
+			|| ! isset( $_markup['template'] )
+			// || null == self::$markup['template']
+		){
+
+			// w__log( 'e:>Creating backup markup...' );
+			// w__log( $this->plugin->get( '_args' ) );
+
+			$backup_markup = '';
+
+			// default -- almost useless - but works for single values.. ##
+			// $markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => 'value', 'close' => 'var_c' ]); // OLD WAY ##
+			$backup_markup = $this->plugin->tags->wrap([ 
+				'open' 	=> 'var_o', 
+				'value' => $this->plugin->get( '_args' )['task'], // takes "task" as default ##
+				'close' => 'var_c' 
+			]);
+
+			// w__log( $backup_markup );
+
+			// filter ##
+			$backup_markup = \apply_filters( 'willow/render/markup/default', $backup_markup );
+
+			// w__log( $_markup );
+
+			// note ##
+			w__log( $this->plugin->get( '_args' )['task'].'~>n:>Using default markup'.$for.' : '.$backup_markup );
+
+			// last validation ##
+			if ( 
+				is_null( $backup_markup ) 
+				// || ! is_array( $_markup ) 
+			){ 
+				w__log( 'e:>ERORR: _markup empty still..' );
+				$backup_markup = ''; 
+			}
+
+			// store _markup ##
+			$_markup['template'] = $backup_markup;
+			$this->plugin->set( '_markup', $_markup );
+
+			// w__log( $this->plugin->get( '_markup' ) );
+
+		}
+
+		// remove markup from args ##
+		// w__log( $this->plugin->get( '_markup' ) );
+		unset( $_args['markup'] );
+		// w__log( $_args );
+		$this->plugin->set( '_args', $_args );
+
+		// kick back ##
+		return true;
+
+	}
+
+	/**
      * Apply Markup changes to passed template
-     * find all variables in self::$markup and connected values in self::$fields
+     * find all variables in $_markup and connected values in $_fields
      * 
+	 * @since
+	 * @return
      */
     public function prepare(){
 
@@ -156,6 +406,8 @@ class markup {
 
 		}
 
+		// w__log( $string );
+
 		// w__log( self::$fields );
 		
 		// optional wrapper, html passed in markup->wrap with {{ template }} variable ##
@@ -207,255 +459,12 @@ class markup {
 
 	}
 
-
-
-	/**
-	 * filter passed args for markup - accepts an array of keys+values or a string
-	 * 
-	 * @since 4.1.0
-	*/
-	public function pre_validate( $args = null ){
-
-		// sanity ##
-		if (
-			is_null( $args )
-		){
-
-			w__log( 'd:>No $args sent from calling method' );
-
-			return false;
-
-		}
-		
-        // test args sent from view caller ##
-		// w__log( $args );
-
-		// empty stored markup ##
-		$this->plugin->set( '_markup', [] );
-		$_markup = $this->plugin->get( '_markup' );
-
-		// $for = '';#' - '.$args['context'].'_'.$args['task'];
-
-		// if "markup" set in args, take this ##
-		if ( 
-			is_array( $args )
-			&& isset( $args['markup'] ) 
-		){
-
-			// passed markup is an array - so take all values ##
-			if ( 
-				is_array( $args['markup'] ) 
-				// && isset( $args['markup']['template'] ) // we can't validate "template" yet, as it might be pulled from config
-			) {
-
-				// w__log('d:>Using array markup' );
-				// w__log( $args['markup'] );
-
-				return $this->plugin->set( '_markup', $args['markup'] );
-
-			} else {
-
-				// w__log('d:>Using single markup' );
-				// w__log( $args['markup'] );
-
-				$_markup['template'] = $args['markup'];
-
-				return $this->plugin->set( '_markup', $_markup );
-
-			}
-
-		}
-
-		// convert string passed args, presuming it to be markup...??... ##
-		if ( is_string( $args ) ) {
-
-			// w__log('d:>Using string markup:' );
-			// w__log( $args );
-
-			$_markup['template'] = $args;
-
-			// set markup ##
-			$this->plugin->set( '_markup', $_markup );
-
-			// add markup->template ##
-			return $_markup;
-
-			/*
-			return self::$markup = [
-				'template' => $args
-			];
-			*/
-
-		} 
-
-		// w__log( $this->plugin->get( '_markup' ) );
-		// w__log( 'NO markup set...' );
-
-		// kick back ##
-		return false;
-
-	}
-
-	
-
-	/**
-	 * $markup is set, so now we need to merge in any new markup values returned from get::config()
-	 * 
-	 * @since 4.1.0
-	*/
-	public function merge(){
-
-		$_markup = $this->plugin->get( '_markup' );
-		$_fields = $this->plugin->get( '_fields' );
-		$_args = $this->plugin->get('_args');
-
-		// sanity ##
-		if (
-			is_null( $_args )
-			// || is_array( self::$args )
-		){
-
-			w__log( 'd:>No $args available or corrupt' );
-
-			return false;
-
-		}
-		
-		// test ##
-		// w__log( self::$markup );
-		// w__log( self::$args );
-
-		// make an array ##
-		if (
-			! $_markup
-			|| ! isset( $_markup )
-			|| empty( $_markup )
-			|| ! is_array( $_markup )
-		){
-			
-			// w__log( 'd:>Create empty markup array...' );
-
-			// self::$markup = []; 
-			$this->plugin->set( '_markup', [] );
-	
-		}
-
-		// get fresh ##
-		$_markup = $this->plugin->get( '_markup' );
-
-		// for ##
-		$for = ' for: '.willow\render\method::get_context();
-
-		// we only accept correctly formatted markup from config ##
-		if (
-			isset( $_args['markup'] ) 
-		) {
-
-			// config has a single markup value, take ##
-			if (
-				is_string( $_args['markup'] )
-			){
-
-				// w__log( 'adding additional single markup from config'.$for );
-				// w__log( self::$args['markup'] );
-				// w__log( self::$markup );
-
-				// take as main template ##
-				$_markup['template'] = $_args['markup'];
-
-			}
-
-			// config passed an array fo values ##
-			if ( is_array( $_args['markup'] ) ) {
-
-				// w__log( 'adding additional array of markup from config'.$for );
-				// w__log( self::$args['markup'] );
-				// w__log( self::$markup );
-
-				// take array or markup ##
-				$_markup = $_args['markup'];
-
-			}
-
-			// merge into defaults -- view passed markup takes preference ##
-			$_markup_get = $this->plugin->get( '_markup' );
-			$_markup_merge = willow\core\method::parse_args( $_markup_get, $_markup );
-			$this->plugin->set( '_markup', $_markup_merge );
-			// self::$markup = core\method::parse_args( self::$markup, $markup );
-
-			// test ##
-			// w__log( self::$markup );
-
-			// return true;
-
-		}
-
-		// get fresh ##
-		$_markup = $this->plugin->get( '_markup' );
-
-		// @todo no additional markup passes from config.. so we should check if we actually have a markup->template
-		if (
-			! $_markup
-			|| ! is_array( $_markup )
-			|| ! isset( $_markup['template'] )
-			// || null == self::$markup['template']
-		){
-
-			// w__log( 'e:>Creating emergency markup...' );
-			// w__log( $this->plugin->get( '_args' ) );
-
-			$backup_markup = '';
-
-			// default -- almost useless - but works for single values.. ##
-			// $markup = willow\tags::wrap([ 'open' => 'var_o', 'value' => 'value', 'close' => 'var_c' ]); // OLD WAY ##
-			$backup_markup = $this->plugin->tags->wrap([ 
-				'open' 	=> 'var_o', 
-				'value' => $this->plugin->get( '_args' )['task'], // takes "task" as default ##
-				'close' => 'var_c' 
-			]);
-
-			// w__log( $backup_markup );
-
-			// filter ##
-			$backup_markup = \apply_filters( 'willow/render/markup/default', $backup_markup );
-
-			// w__log( $_markup );
-
-			// note ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>n:>Using default markup'.$for.' : '.$backup_markup );
-
-			// last validation ##
-			if ( 
-				is_null( $backup_markup ) 
-				// || ! is_array( $_markup ) 
-			){ 
-				w__log( 'e:>ERORR: _markup empty still..' );
-				$backup_markup = ''; 
-			}
-
-			// store _markup ##
-			$_markup['template'] = $backup_markup;
-			$this->plugin->set( '_markup', $_markup );
-
-			// w__log( $this->plugin->get( '_markup' ) );
-
-		}
-
-		// remove markup from args ##
-		unset( $_args['markup'] );
-		$this->plugin->set( '_args', $_args );
-
-		// kick back ##
-		return true;
-
-	}
-
 	public function string( $args = null ){
 
 		$_markup = $this->plugin->get( '_markup' );
 		$_args = $this->plugin->get('_args');
 
-		// w__log( $args['key'] );
+		// w__log( $args );
 
 		// sanity ##
 		if (  
@@ -482,6 +491,7 @@ class markup {
 		if( ! is_string( $string ) ){
 
 			w__log( $_args['task'].'~>e:>Error in passed args. "string" is not a string' );
+			// w__log( 'e:>Error in passed args. "string" is not a string' );
 			// w__log( $string );
 
 			return false;
@@ -497,6 +507,7 @@ class markup {
 
 		// key might be in object.iterator.property format - we only need the property for filters ##
 		$filter_key = $key;
+
 		// $regex = \apply_filters( 'willow/render/markup/string', "~\\$open(?:\s*\[[^][{}]*])?\s*$key\s*\\$close~" ); 
 		if( false !== strpos( $key, '.' ) ){ 
 		
@@ -650,7 +661,9 @@ class markup {
 	public function wrap( $args = null ){
 
 		// w__log( $args['key'] );
-		// w__log( 'd:>hello...' );
+
+		$_markup = $this->plugin->get( '_markup' );
+		$_args = $this->plugin->get( '_args' );
 
 		// sanity ##
 		if (  
@@ -660,19 +673,17 @@ class markup {
 			|| ! isset( $args['string'] )
 		){
 
-			w__log( $this->plugin->get('_args')['task'].'~>e:>Error in passed args to "wrap" method' );
+			w__log( $_args['task'].'~>e:>Error in passed args to "wrap" method' );
+			// w__log( 'e:>Error in passed args to "wrap" method' );
 
 			return false;
 
 		}
 
-		$_markup = $this->plugin->get( '_markup' );
-		$_args = $this->plugin->get('_args');
-
 		// w__log( 'd:>hello 2...' );
 
 		// get string ##
-		$string = $args['string'];
+		$_wrapped = $args['string'];
 		// $value = $args['value'];
 		// $key = $args['key'];
 
@@ -688,27 +699,34 @@ class markup {
 			// w__log( 'd:>hello 3...' );
 
 			// $markup = self::$args[ $key ];
-			$markup = $_markup[ 'wrap' ];
+			$_wrap = $_markup[ 'wrap' ];
 
-			// w__log( 'd:>wrap string in: '.$markup );
+			// w__log( 'd:>wrap string in: '.$_wrap );
+			// w__log( $string );
 
 			// filter ##
-			$string = $this->plugin->get('filter')->apply([ 
-				'parameters'    => [ 'markup' => $markup ], // pass ( $string ) as single array ##
+			$_wrap = $this->plugin->filter->apply([ 
+				'parameters'    => [ 'wrap' => $_wrap ], // pass ( $string ) as single array ##
 				'filter'        => 'q/render/markup/wrap/'.$_args['context'].'/'.$this->plugin->get('_args')['task'], // filter handle ##
-				'return'        => $markup
+				'return'        => $_wrap
 			]); 
+
+			// w__log( $_wrap );
 
 			// w__log( 'found: '.$markup );
 
+			// w__log( 'wrap: '.$this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => 'template', 'close' => 'var_c' ]) );
+
 			// wrap key value in found markup ##
 			// example: markup->wrap = '<h2 class="mt-5">{{ template }}</h2>' ##
-			$string = str_replace( 
+			$_wrapped = str_replace( 
 				// '{{ template }}', 
 				$this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => 'template', 'close' => 'var_c' ]), 
-				$string, 
-				$markup 
+				$_wrapped, 
+				$_wrap 
 			);
+
+			// w__log( $_wrapped );
 
 			// track ##
 			// self::$wrapped = true;
@@ -716,15 +734,15 @@ class markup {
 		}
 
 		// filter ##
-		$string = $this->plugin->get('filter')->apply([ 
-             'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
-             'filter'        => 'willow/render/markup/string/wrap/'.$_args['context'].'/'.$this->plugin->get('_args')['task'], // filter handle ##
-             'return'        => $string
+		$_wrapped = $this->plugin->filter->apply([ 
+             'parameters'    => [ 'string' => $_wrapped ], // pass ( $string ) as single array ##
+             'filter'        => 'willow/render/markup/string/wrap/'.$_args['context'].'/'.$_args['task'], // filter handle ##
+             'return'        => $_wrapped
         ]); 
 
 		// template replacement ##
 		// $string = str_replace( '{{ '.$key.' }}', $value, $string );
-		// w__log( $string );
+		// w__log( $_wrapped );
 
 		// // regex way ##
 		// $regex = \apply_filters( 'q/render/markup/string', "~\{{\s+$key\s+\}}~" ); // '~\{{\s(.*?)\s\}}~' 
@@ -738,7 +756,7 @@ class markup {
         // ]); 
 
 		// return ##
-		return $string;
+		return $_wrapped;
 
 	}
 
@@ -769,7 +787,7 @@ class markup {
         // w__log( 'Update template markup for field: '.$field.' @ count: '.$count );
 
         // look for required markup ##
-		// w__log( self::$markup );
+		// w__log( $this->plugin->get ( '_markup' ) );
 		// w__log( '$field: '.$field );
 		if ( ! isset( $_markup[$field] ) ) {
 

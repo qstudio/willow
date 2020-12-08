@@ -78,11 +78,7 @@ class args {
 
 		// w__log( $args );
 
-		// pre-format args to extract markup -- if only one string is passed, this will empty the args ##
-		// $args = render\markup::pre_config( $args );
-
-		// get stored config via lookup, fallback 
-		// pulls from Q, but available to filter via willow/config/load ##
+		// get stored config ##
 		$config = $this->plugin->config->get( $args );
 
 		// test ##
@@ -96,12 +92,12 @@ class args {
 		
 		}
 
-		// w__log( $args );
+		w__log( $args );
 
         // checks on required fields in $args array ##
         if (
-			// ! isset( $args )
-			is_null( $args )
+			! isset( $args )
+			|| is_null( $args )
             || ! is_array( $args )
         ){
 
@@ -153,8 +149,14 @@ class args {
 
 		// w__log( $args['config']['post']->ID );
 
+		// store current _args stage ##
+		$this->plugin->set( '_args', $args );
+
         // assign properties with initial filters ##
-		$args = $this->assign( $args );
+		$this->assign();
+
+		// get _args again, in case they changed ##
+		$_args = $this->plugin->get( '_args' );
 		
 		// w__log( $args );
 
@@ -176,14 +178,14 @@ class args {
 		if ( 
             // isset( $args['config']['run'] )
 			// && 
-			isset( $args['config']['run'] )
-            && false === $args['config']['run']
+			isset( $_args['config']['run'] )
+            && false === $_args['config']['run']
         ){
 
 			// w__log( $args );
 
 			// log ##
-			w__log( $args['task'].'~>n:>config->run defined as false for: '.$args['task'].', so stopping here.. ' );
+			w__log( $_args['task'].'~>n:>config->run defined as false for: '.$_args['task'].', so stopping here.. ' );
 			// w__log( 'd:>config run defined as false for: '.$args['task'].', so stopping here..' );
 
             return false;
@@ -191,38 +193,41 @@ class args {
         }
 
         // ok - should be good ##
-        return $args;
+        return true;
 
 	}
 
     /**
      * Assign class properties with initial filters, merging in passed $args from calling method
+	 * 
+	 * @since 	1.0.0
+	 * @return
      */
-    public function assign( Array $args = null ) {
+    public function assign() {
 
-		// get filter object ##
-		$filter = $this->plugin->filter;
+		// get local copy ##
+		$_args = $this->plugin->get( '_args' );
 
         // apply global filter to $args - specific calls should be controlled by parameters included directly ##
-        $args = $filter->apply([
+        $_args = $this->plugin->filter->apply([
 			'filter'        => 'willow/render/args',
-			'parameters'    => $args,
-			'return'        => $args
+			'parameters'    => $_args,
+			'return'        => $_args
 		]);
 		
 		// apply template level filter to $args - specific calls should be controlled by parameters included directly ##
-        $args = $filter->apply([
-			'filter'        => 'willow/render/args/'.\q\view\is::get(),
-			'parameters'    => $args,
-			'return'        => $args
+        $_args = $this->plugin->filter->apply([
+			'filter'        => 'willow/render/args/'.\Q\willow\view\is::get(),
+			'parameters'    => $_args,
+			'return'        => $_args
         ]);
 
 		// w__log( core\config::$config );
 			
 		// merge CONTEXT->global settings - this allows to pass config per context ##
-		if ( $config = $this->plugin->get('config')->get([ 'context' => $args['context'], 'task' => 'config' ]) ){
+		if ( $config = $this->plugin->config->get([ 'context' => $_args['context'], 'task' => 'config' ]) ){
 
-			// w__log( 'd:>Merging settings from: '.$args['context'].'->config' );
+			// w__log( 'd:>Merging settings from: '.$_args['context'].'->config' );
 			$context_config = [ 'config' => $config ];
 			// w__log( $context_config );
 
@@ -230,45 +235,26 @@ class args {
 
 			// merge in global__CONTEXT settings ##
 			// w__log( 't:>NOTE, swapped order of merge here to try to give preference to task args over global args... keep an eye' );
-			$args = willow\core\method::parse_args( $args, $context_config );
+			$_args = willow\core\method::parse_args( $_args, $context_config );
 			// $args = core\method::parse_args( $context_config, $args );
 
-			// w__log( $args );
+			// w__log( $_args );
 
 		}
 
 		// grab all passed args and merge with defaults -- this ensures we have config->run, config->debug etc.. ##
-		$args = willow\core\method::parse_args( $args, $this->plugin->get( '_args_default' ) );
+		$_args = willow\core\method::parse_args( $_args, $this->plugin->get( '_args_default' ) );
 
-		// w__log( $args );
+		// w__log( $_args['markup'] );
 
-		// assign class property ##
-		// self::$args = $args;
-		$this->plugin->set( '_args', $args );
-
-		// prepare markup, fields and handlers based on passed configuration ##
-		// render\parse::prepare( $args );
-
-		// pre-format markup ##
-		$this->post_config();
-		
-        // return args for validation ##
-        return $args;
-
-	}
-	
-	/**
-	 * Extract data from passed args 
-	 * 
-	 * @since 4.1.0
-	*/
-	public function post_config(){
-
-		// w__log( self::$args['markup'] );
+		// store object property ##
+		$this->plugin->set( '_args', $_args );
 
 		// post-format markup to extract markup keys collected by config ##
-		$markup = new willow\render\markup( $this->plugin );
-		$markup->merge();
+		$this->plugin->render->markup->merge();
+		
+        // return ##
+        return;
 
 	}
 

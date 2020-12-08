@@ -8,13 +8,7 @@ class context  {
 
 	private 
 		$plugin = false,
-		// $render_args = false,
-		// $render_markup = false,
-		// $render_log = false,
-		// $render_output = false,
-		// $render_fields = false,
 		$parse_prepare = false,
-
 		$lookup_error = false
 	;
 
@@ -26,21 +20,6 @@ class context  {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		// render args ##
-		// $this->render_args = new willow\render\args( $this->plugin );
-
-		// render markup ##
-		// $this->render_markup = new willow\render\markup( $this->plugin );
-
-		// // build render log ##
-		// $this->render_log = new willow\render\log( $this->plugin );
-
-		// // render output ##
-		// $this->render_output = new willow\render\output( $this->plugin );
-
-		// // render fields ##
-		// $this->render_fields = new willow\render\fields( $this->plugin );
 
 		// parse prepare ##
 		$this->parse_prepare = new willow\parse\prepare( $this->plugin );
@@ -118,7 +97,7 @@ class context  {
 			// make args an array, if it's not ##
 			if ( ! is_array( $args ) ){
 			
-				// w__log( 'Caste $args to array' );
+				// w__log( 'Caste $args to empty array' );
 
 				$args = [];
 			
@@ -134,7 +113,7 @@ class context  {
 
 			// create hash ##
 			$hash = false;
-			$hash = $args['config']['hash'] ?: $args['context'].'__'.$args['task'].'.'.rand(); // HASH can be passed from calling Willow ## 
+			$hash = $args['config']['hash'] ?? $args['context'].'__'.$args['task'].'.'.rand() ; // HASH can be passed from calling Willow ## 
 
 			// w__log( 'e:>Context Loaded: '.$hash );
 
@@ -155,7 +134,6 @@ class context  {
 			) {
 
 				// log stop point ##
-				// render\log::set( $args );
 				$this->plugin->render->log->set( $args );
 	
 				w__log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
@@ -169,6 +147,9 @@ class context  {
 				return false;
 	
 			}
+
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_args' ) );
 	
 			// validate passed args ##
 			if ( ! $this->plugin->render->args->validate( $args ) ) {
@@ -184,10 +165,17 @@ class context  {
 	
 			}
 
-			// w__log( $args );
+			// w__log( $this->plugin->get( '_args' ) );
+
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// prepare markup, fields and handlers based on passed configuration ##
 			$this->parse_prepare->hooks( $args );
+
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_scope_map' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// internal->buffering ##
 			if(
@@ -285,7 +273,7 @@ class context  {
 
 				$this->plugin->render->log->set( $args );
 				
-				w__log( 'e:>No matching method found for "'.$args['context'].'::'.$args['task'].'"' );
+				w__log( 'e:>No matching method found for "'.$args['context'].'~'.$args['task'].'"' );
 
 				// reset all args ##
 				$this->plugin->render->args->reset();
@@ -299,7 +287,7 @@ class context  {
 				|| ! is_array( $return_array )
 			){
 
-				w__log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
+				// w__log( 'e:>Error in returned data from "'.$args['context'].'~'.$args['task'].'"' );
 				// w__log( $return_array );
 
 				// ...
@@ -308,16 +296,19 @@ class context  {
 
 			// w__log( $return_array );
 
-			// assign fields ##
+			// assign fields from returned data array ##
 			$this->plugin->render->fields->define( $return_array );
 			// w__log( $this->plugin->get( '_fields' ) );
+			w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_args' ) );
 
 			// w__log( $return_array );
 
 			// prepare field data ##
 			$this->plugin->render->fields->prepare();
-
-			// w__log( $this->plugin->get( '_fields' ) );
+			w__log( $this->plugin->get( '_fields' ) );
+			w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_scope_map' ) );
 
 			// check if feature is enabled ##
 			if ( ! $this->plugin->render->args->is_enabled() ) {
@@ -335,8 +326,8 @@ class context  {
 	
 		   	}    
 		
-			w__log( $this->plugin->get( '_markup' ) );
-			w__log( $this->plugin->get( '_fields' ) );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// Prepare template markup ##
 			$this->plugin->render->markup->prepare();

@@ -325,9 +325,11 @@ class willows {
 				// w__log( $decode_flags );
 
 				// check if string contains any [ flags ] -- technically filters -- ##
+				// NOTE -- changed scraped markup from tag to pass into array key "markup->template" directly ##
 				if( 
 					$this->plugin->parse->flags->has( $this->argument_string ) 
 					&& $decode_flags
+					&& is_array( $decode_flags )
 					&& isset( $decode_flags['markup']['template'] )
 				) {
 
@@ -338,8 +340,8 @@ class willows {
 					$this->arguments = willow\core\method::parse_args( 
 						$this->arguments, 
 						[ 
-							'markup' 	=> $decode_flags['markup']['template']  ## // $loops['markup'] // 
-							// 'scope'		=> $loop['scope'] // {: scope :} <<-- doing nothing ##
+							// 'markup' 	=> $decode_flags['markup']['template'] 
+							'markup' 	=> [ 'template' => $decode_flags['markup']['template'] ] // <-- new return to markup->template ##
 						]
 					);
 
@@ -351,8 +353,8 @@ class willows {
 					$this->arguments = willow\core\method::parse_args( 
 						$this->arguments, 
 						[ 
-							'markup' 	=> $this->argument_string //, whole string ##
-							// 'scope'		=> $loop['scope'] {: scope :}
+							// 'markup' 	=> $this->argument_string 
+							'markup' 	=> [ 'template' => $this->argument_string ] // <-- new return to markup->template ##
 						]
 					);
 
@@ -565,21 +567,21 @@ class willows {
 		// pass args, if set ##
 		if( $this->arguments ){
 
-			w__log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'::'.$this->method );
+			w__log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'->'.$this->method );
 			// w__log( $this->arguments );
 			
 			$this->return = $context->{ $this->willow }( $this->arguments );
 
 		} else { 
 
-			w__log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'::'.$this->method );
+			w__log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'->'.$this->method );
 			// $this->return = call_user_func_array( $this->willow_array ); 
 			$this->return = $context->{ $this->willow };
 
 		}	
 
 		// check return ##
-		w__log( $this->return );
+		// w__log( $this->return );
 
 		if ( 
 			! isset( $this->return ) 
@@ -590,8 +592,8 @@ class willows {
 
 			$task = $this->willow_task ?? $args['task'] ;
 
-			w__log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
-			w__log( 'e:>Willow "'.$this->willow_match.'" did not return a value, perhaps it is a hook.' );
+			w__log( $task.'~>n:>Willow "'.$this->willow_match.'" did not return a value.' );
+			// w__log( 'e:>Willow "'.$this->willow_match.'" did not return a value.' );
 
 		}
 

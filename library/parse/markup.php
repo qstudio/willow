@@ -212,10 +212,6 @@ class markup {
         return true; 
 
     }
-
-
-
-
 	
 	/**
      * Set {{ variable }} in self:markup['template'] at defined position
@@ -370,9 +366,6 @@ class markup {
         return true; #$markup['template'];
 
     }
-
-
-
 	
 	/**
      * Set {{ variable }} in self:markup['template'] at defined position
@@ -619,10 +612,6 @@ class markup {
 		
 		// w__log( 'd:>swapping from: "'.$from.'" to: "'.$to.'"' );
 
-		// use strpos to get location of {{ variable }} ##
-		// $position = strpos( $this->plugin->get( '_markup'), $to );
-		// w__log( 'Position: '.$position );
-
 		// find out which markup to affect ##
 		switch( $process ){
 
@@ -631,17 +620,18 @@ class markup {
 
 				// w__log( 'd:>Swapping markup in $_markup' );
 
-				$_markup = $this->plugin->get( '_markup');
+				$_markup = $this->plugin->get( '_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
-				// $new_template = str_replace( $from, $to, $this->plugin->get( '_markup')['template'] );
 				$new_template = willow\render\method::str_replace_first( $from, $to, $_markup['template'] ); // only replaces first occurance ##
 
 				// test ##
 				// w__log( 'd:>'.$new_template );
+
+				// set 'template' key with new template markup ##
 				$_markup['template'] = $new_template;
 
-				// push back into main stored markup ##
+				// push back into _markup ##
 				$this->plugin->set( '_markup', $_markup );
 
 			break ;
@@ -651,7 +641,7 @@ class markup {
 				// w__log( 'd:>Swapping markup in $_buffer_markup' );
 
 				// w__log( 'd:>Swapping markup in self::$buffer_markup' );
-				$_buffer_markup = $this->plugin->get('_buffer_markup');
+				$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = str_replace( $from, $to, $_buffer_markup );
@@ -670,8 +660,6 @@ class markup {
         return true;
 
     }
-
-
 
     /**
      * Remove {{ variable }} from self:$args['markup'] array
@@ -754,7 +742,5 @@ class markup {
         return $markup;
 
     }
-
-
 
 }

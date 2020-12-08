@@ -188,7 +188,7 @@ class callback {
         }
 
         // check ##
-        w__log( $data );
+        // w__log( $data );
 
         // now add new data to class property $fields ##
 		$_fields[$field] = $data;

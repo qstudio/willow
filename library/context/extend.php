@@ -122,7 +122,7 @@ class extend {
 
 	}
 
-    public function set( $args = null ) {
+    protected function set( $args = null ) {
 
 		// sanity ###
 		if (
@@ -249,7 +249,7 @@ class extend {
 		// store to object prop ##
 		return $this->plugin->set( '_extend', $_extend );
 
-		w__log( $this->plugin->get( '_extend' ) );
+		// w__log( $this->plugin->get( '_extend' ) );
 
 		/*
 		return self::$extend[ $args['class'] ] = [

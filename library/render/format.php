@@ -402,7 +402,7 @@ class format {
 				// WP_Post Object ##
 				if ( $v2 instanceof \WP_Post ) {
 
-					w__log( 'WP Post Object...' );
+					// w__log( 'WP Post Object...' );
 
 					// pass to WP formatter and capture returned array ##
 					$this->format_object_wp_post( $v2, $field.'.'.$count );

@@ -56,9 +56,6 @@ class output {
 		// store _output ##
 		$this->plugin->set( '_output', $_output );
 
-		// get args object ##
-		$render_args = new willow\render\args( $this->plugin );
-		
         // w__log( self::$output );
 
         // either return or echo ##
@@ -73,7 +70,7 @@ class output {
 			echo $_output;
 
 			// reset all args ##
-			$render_args->reset();
+			$this->plugin->render->args->reset();
 
 			// stop here ##
             return true;
@@ -107,7 +104,7 @@ class output {
 			$this->plugin->set( '_buffer_map', $_buffer_map );
 
 			// reset all args ##
-			$render_args->reset();
+			$this->plugin->render->args->reset();
 
 			// return ##
             return $return;

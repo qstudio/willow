@@ -468,18 +468,19 @@ class config {
 		if( 'extend' == $source ) {
 
 			// w__log( 'd:>looking for source: '.$source );
+			$_extend = $this->plugin->get( '_extend' );
 
 			if(
-				! empty( $this->plugin->get('extend') )
+				! empty( $_extend )
 			){
 
 				$extended_lookups = [];
-				foreach( $this->plugin->get('extend') as $k => $v ){
+				foreach( $_extend as $k => $v ){
 
-					// w__log( $v );
+					w__log( $v );
 					if( $v['lookup'] ){
 
-						$extended_lookups[] = $this->plugin->get('extend')[$k];
+						$extended_lookups[] = $_extend[$k];
 
 					}
 

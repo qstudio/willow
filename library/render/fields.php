@@ -93,13 +93,12 @@ class fields {
 
 				// log ##
 				w__log( $_args['task'].'~>n:>Field: "'.$field.'" has no value, check for data issues' );
-
-				w__log( 'Field empty: '.$field );
+				// w__log( 'Field empty: '.$field );
 
                 continue;
 
             }
-
+			
             // filter field before callback ##
             $field = $this->plugin->filter->apply([ 
                 'parameters'    => [ 'field' => $field, 'value' => $value, 'args' => $_args, 'fields' => $_fields ], // params
@@ -158,6 +157,7 @@ class fields {
 
 		// w__log( $this->plugin->get( '_scope_map' ) );
 		// w__log( 'hash: '.$this->plugin->get( '_args' )['config']['hash'] );
+		// w__log( $this->plugin->get( '_fields' ) );
 		
 		// local vars ##
 		$_scope_map = $this->plugin->get( '_scope_map' );
@@ -177,9 +177,6 @@ class fields {
 		}
 
 		foreach( $_fields as $field => $value ){
-
-			// store
-			// $field_matches = [];
 
 			// get first part of field key name  - before first dot ##
 			$field_key = explode( '.', $field );
@@ -205,6 +202,8 @@ class fields {
 
 					// w__log( $_fields );
 
+					// ?? remove original field.. bad idea, as this is needed for any subsequent copies...
+
 				}
 
 			}
@@ -213,10 +212,11 @@ class fields {
 
 		// w__log( $_fields );
 
-		// save fields ##
+		// store fields ##
 		$this->plugin->set( '_fields', $_fields );
 
-		// w__log( $field_matches );
+		// done ##
+		return true;
 
 	}
 	

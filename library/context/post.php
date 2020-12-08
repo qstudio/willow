@@ -81,9 +81,12 @@ class post {
 	* @return		Array
     * @since        1.6.2
     */
-    public static function this( $args = null ){
+    public function this( $args = null ){
 
-		return [ 'this' => \willow\get\post::this( $args ) ];
+		// new object ##
+		$post = new willow\get\post( $this->plugin );
+
+		return [ 'this' => $post->this( $args ) ];
 
 	}
 
@@ -94,7 +97,7 @@ class post {
     *
     * @since       1.0.2
     */
-    public static function query( $args = [] ){
+    public function query( $args = [] ){
 
 		// @todo -- add filter to return value and avoid Q check and get routine ##
 
@@ -103,6 +106,10 @@ class post {
 
 		// w__log( self::$markup );
 		// w__log( self::$args );
+
+		// new object ##
+		$query = new willow\get\query( $this->plugin );
+		$navigation = new willow\get\navigation( $this->plugin );
 
 		// build fields array with default values ##
 		$return = ([
@@ -113,7 +120,7 @@ class post {
 		]);
 
         // pass to get_posts -- and validate that we get an array back ##
-		if ( ! $array = willow\get\query::posts( $args ) ) {
+		if ( ! $array = $query->posts( $args ) ) {
 
 			// log ##
 			w__log( self::$args['task'].'~>n:query::posts did not return any data');
@@ -155,7 +162,7 @@ class post {
 			// self::$fields = [
 			$return = [
 				'total' 		=> $array['query']->found_posts, // total posts ##
-				'pagination'	=> \willow\get\navigation::pagination( $args ), // get pagination, returns string ##
+				'pagination'	=> $navigation->pagination( $args ), // get pagination, returns string ##
 				'results'		=> $array['query']->posts // array of WP_Posts ##
 			];
 

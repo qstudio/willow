@@ -493,11 +493,23 @@ class method {
         $result = $defaults;
         
         foreach ( $args as $k => &$v ) {
-            if ( is_array( $v ) && isset( $result[ $k ] ) ) {
-                $result[ $k ] = self::parse_args( $v, $result[ $k ] );
-            } else {
-                $result[ $k ] = $v;
-            }
+
+            if ( 
+				is_array( $v ) 
+				&& $result
+				&& is_array( $result )
+				&& isset( $result[ $k ] ) 
+				&& ! is_null( $result[ $k ] )
+			) {
+			
+				$result[ $k ] = self::parse_args( $v, $result[ $k ] );
+			
+			} else {
+			
+				$result[ $k ] = $v;
+			
+			}
+
         }
 
         return $result;

@@ -103,13 +103,8 @@ class flags {
 			)
 		){
 
-			$flags = trim(
-				willow\core\method::string_between( 
-					$string, 
-					trim( $this->plugin->tags->g( 'fla_o' ) ), 
-					trim( $this->plugin->tags->g( 'fla_c' ) ) 
-				)
-			);
+			// trim ##
+			$flags = trim( $flags );
 
 			// prepare flags / filters ##
 			$flags_array = $this->plugin->filter_method->prepare([ 'filters' => $flags, 'use' => $use ] );

@@ -7,11 +7,9 @@ use Q\willow;
 class arguments {
 
 	private 
-
 		$plugin,
 		$string, 
 		$array
-
 	;
 
 	private function reset(){
@@ -26,9 +24,6 @@ class arguments {
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
-
-		// parse flags ##
-		$this->parse_flags = new willow\parse\flags( $this->plugin );
 
 	}
 
@@ -65,7 +60,7 @@ class arguments {
 		$this->string = trim( $this->string );
 
 		// flags check for [array]
-		$this->string = $this->parse_flags->get( $this->string, 'argument' );
+		$this->string = $this->plugin->parse->flags->get( $this->string, 'argument' );
 
 		// get flags locally ##
 		$_flags_argument = $this->plugin->get( '_flags_argument' );
@@ -74,11 +69,11 @@ class arguments {
 
 		if( 
 			! $_flags_argument
-			|| ! isset( $_flags_argument ) // not an array
+			|| ! isset( $_flags_argument )
 			|| ! is_array( $_flags_argument )
 		){
 
-			// w__log( 'd:>Argument string "'.self::$string.'" does not contains any flag, so returning' );
+			// w__log( 'd:>Argument string "'.$this->string.'" does not contains any flag, so returning' );
 
 			// done here ##
 			return false;
@@ -111,7 +106,7 @@ class arguments {
 			// ! $config_string
 			! $this->array
 			|| ! is_array( $this->array )
-			|| empty( $this->array ) // added empty check ##
+			// || empty( $this->array ) // added empty check ##
 			// || ! isset( $matches[0] ) 
 			// || ! $matches[0]
 		){
