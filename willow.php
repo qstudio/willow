@@ -26,10 +26,10 @@
 */
 
 // namespace plugin ##
-namespace Q\willow;
+namespace willow;
 
 // import ##
-use Q\willow;
+use willow;
 
 // If this file is called directly, Bulk!
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,10 +37,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // plugin activation hook to store current application and plugin state ##
-\register_activation_hook( __FILE__, [ '\\Q\\willow\\plugin', 'activation_hook' ] );
+\register_activation_hook( __FILE__, [ '\\willow\\plugin', 'activation_hook' ] );
 
 // plugin deactivation hook - clear stored data ##
-\register_deactivation_hook( __FILE__, [ '\\Q\\willow\\plugin', 'deactivation_hook' ] );
+\register_deactivation_hook( __FILE__, [ '\\willow\\plugin', 'deactivation_hook' ] );
 
 // required bits to get set-up ##
 require_once __DIR__ . '/library/api/function.php';
@@ -61,7 +61,6 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 }
 
 // fire hooks - build log, helper and config objects and translations ## 
-// \add_action( 'init', [ $plugin, 'hooks' ], 0 );
 \add_action( 'plugins_loaded', function() use( $plugin ){
 
 	// kick off config and store object ##
@@ -72,16 +71,16 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	// build factory objects ##
 	$plugin->factory( $plugin );
 
-}, 0 );
-
-// @TODO --> Mostly, Willow only needs to run on the front-end ##
-if( ! \is_admin() ){ 
-
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );
 	
 	// check debug settings ##
 	\add_action( 'plugins_loaded', [ $plugin, 'debug' ], 11 );
+
+}, 0 );
+
+// Willow only needs to parse templates on the front-end ##
+if( ! \is_admin() ){ 
 
 	// build output buffer ##
 	\add_action( 'plugins_loaded', [ new willow\buffer\output( $plugin ), 'hooks' ], 1 );

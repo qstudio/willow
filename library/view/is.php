@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\view;
+namespace willow\view;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
+use willow\core\helper as h;
 
 class is {
 

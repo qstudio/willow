@@ -1,10 +1,10 @@
 <?php
 
 // namespace ##
-namespace Q\willow\core;
+namespace willow\core;
 
 // core ##
-use Q\willow;
+use willow;
 
 /**
  * helper Class

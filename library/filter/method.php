@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\filter;
+namespace willow\filter;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
+use willow\core\helper as h;
 
 class method {
 

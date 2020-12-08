@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\render;
+namespace willow\render;
 
-use Q\willow;
+use willow;
 
 class markup {
 
@@ -15,7 +15,7 @@ class markup {
      * Construct class
      * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\context;
+namespace willow\context;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class widget {
 

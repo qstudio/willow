@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\context;
+namespace willow\context;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class meta {
 
@@ -15,7 +15,7 @@ class meta {
 	/**
 	 * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -44,8 +44,8 @@ class meta {
 		$method = $args['task'];
 
 		if(
-			! method_exists( 'Q\willow\get\meta', $method )
-			|| ! is_callable([ 'Q\willow\get\meta', $method ])
+			! method_exists( 'willow\get\meta', $method )
+			|| ! is_callable([ 'willow\get\meta', $method ])
 		){
 
 			w__log( 'e:>Class method is not callable: willow\get\meta\\'.$method );

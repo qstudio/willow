@@ -4,7 +4,7 @@
 // namespace willow\core;
 
 // use willow\core;
-use Q\willow\core\log;
+use willow\core\log;
 
 /** 
  * Willow API 
@@ -17,7 +17,7 @@ if ( ! function_exists( 'willow' ) ) {
 
 		// sanity ##
 		if(
-			! class_exists( '\Q\willow\plugin' )
+			! class_exists( '\willow\plugin' )
 		){
 
 			error_log( 'e:>Willow is not available to '.__FUNCTION__ );
@@ -27,21 +27,21 @@ if ( ! function_exists( 'willow' ) ) {
 		}
 
 		// cache ##
-		$willow = \Q\willow\plugin::get_instance();
+		$willow = \willow\plugin::get_instance();
 
 		// sanity - make sure willow instance returned ##
 		if( 
 			is_null( $willow )
-			|| ! ( $willow instanceof \Q\willow\plugin ) 
+			|| ! ( $willow instanceof \willow\plugin ) 
 		) {
 
 			// get stored willow instance from filter ##
-			$willow = \apply_filters( 'Q\willow/instance', NULL );
+			$willow = \apply_filters( 'willow/instance', NULL );
 
 			// sanity - make sure willow instance returned ##
 			if( 
 				is_null( $willow )
-				|| ! ( $willow instanceof \Q\willow\plugin ) 
+				|| ! ( $willow instanceof \willow\plugin ) 
 			) {
 
 				error_log( 'Error in object instance returned to '.__FUNCTION__ );
@@ -135,7 +135,7 @@ if ( ! function_exists( 'w__log_direct' ) ) {
         if ( true === WP_DEBUG ) {
 
 			// get caller ##
-			$backtrace = Q\willow\core\method::backtrace();
+			$backtrace = willow\core\method::backtrace();
 
             if ( is_array( $log ) || is_object( $log ) ) {
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow;
+namespace willow;
 
-use Q\willow;
+use willow;
 
 class context  {
 
@@ -16,7 +16,7 @@ class context  {
      * @todo
      * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

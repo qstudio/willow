@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\context;
+namespace willow\context;
 
-use Q\willow; 
+use willow; 
 
 class group {
 
@@ -13,7 +13,7 @@ class group {
 	/**
 	 * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -34,8 +34,8 @@ class group {
 
 		// Q needed to run get method ##
 		if(
-			! method_exists( 'Q\willow\get\group', $method )
-			|| ! is_callable([ 'Q\willow\get\group', $method ])
+			! method_exists( 'willow\get\group', $method )
+			|| ! is_callable([ 'willow\get\group', $method ])
 		){
 
 			w__log( 'e:>Class method is not callable: willow\get\group\\'.$method );

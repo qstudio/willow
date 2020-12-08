@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\strings;
+namespace willow\strings;
 
-use Q\willow\core\helper as h;
+use willow\core\helper as h;
 
 class method {
 
@@ -248,8 +248,8 @@ class method {
 		}
 
 		if (
-			class_exists( 'willow' )
-			|| class_exists( 'Q\willow\plugin' )
+			function_exists( 'willow' )
+			// || class_exists( 'willow\plugin' )
 		){
 
 			$plugin = willow();

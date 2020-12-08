@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\get;
+namespace willow\get;
 
-use Q\willow;
+use willow;
 
 class group {
 	
@@ -16,7 +16,7 @@ class group {
 	/**
 	 * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

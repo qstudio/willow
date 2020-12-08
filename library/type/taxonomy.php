@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\type;
+namespace willow\type;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class taxonomy {
 
@@ -13,7 +13,7 @@ class taxonomy {
 
 	/**
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

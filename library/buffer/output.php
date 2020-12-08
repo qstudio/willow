@@ -1,9 +1,8 @@
 <?php
 
-namespace Q\willow\buffer;
+namespace willow\buffer;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
 
 class output {
 
@@ -39,7 +38,7 @@ class output {
 		// sanity ##
         if( 
             is_null( $this->plugin )
-            || ! ( $this->plugin instanceof \Q\willow\plugin ) 
+            || ! ( $this->plugin instanceof \willow\plugin ) 
         ) {
 
             error_log( 'Error in object instance passed to '.__CLASS__ );

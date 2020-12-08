@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\context;
+namespace willow\context;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
+use willow\core\helper as h;
 
 class ui {
 
@@ -17,7 +17,7 @@ class ui {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\parse;
+namespace willow\parse;
 
-use Q\willow;
+use willow;
 
 class loops {
 
@@ -33,7 +33,7 @@ class loops {
 		$this->loop_variables = false;
 	}
 
-	public function __construct( \Q\willow\plugin $plugin ){
+	public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

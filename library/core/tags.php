@@ -1,10 +1,10 @@
 <?php
 
-namespace Q\willow\core;
+namespace willow\core;
 
 // use classes ##
 // use willow\core\helper as h;
-use Q\willow;
+use willow;
 
 class tags {
 
@@ -18,7 +18,7 @@ class tags {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function __construct( \Q\willow\plugin $plugin ){
+	public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

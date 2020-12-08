@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\context;
+namespace willow\context;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class filter {
 
@@ -14,7 +14,7 @@ class filter {
 	/**
 	 * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

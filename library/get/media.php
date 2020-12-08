@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\get;
+namespace willow\get;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
+use willow\core\helper as h;
 
 class media {
 
@@ -14,7 +14,7 @@ class media {
 
 	/**
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -242,7 +242,7 @@ class media {
 
 		// handle filtered into config by markup pre-processor at field level ##
 		} else if ( 
-			class_exists( 'willow' )
+			function_exists( 'willow' )
 			// && isset( \willow::$args )
 			&& $this->plugin->get( '_args' )
 			&& isset( $args['field'] )
@@ -256,7 +256,7 @@ class media {
 
 		// handle filtered into config by markup pre-processor at global level ##
 		} else if ( 
-			class_exists( 'willow' )
+			function_exists( 'willow' )
 			// && isset( \willow::$args )
 			&& $this->plugin->get( '_args' )
 			// && isset( $args['field'] )
@@ -333,7 +333,7 @@ class media {
 		if ( 
 			// set locally..
 			(
-				class_exists( 'willow' )
+				function_exists( 'willow' )
 				// && isset( \willow::$args['config']['meta'] )
 				&& isset( $this->plugin->get( '_args' )['config']['meta'] )
 				// && true === \willow::$args['config']['meta'] 
@@ -343,7 +343,7 @@ class media {
 			||
 			// OR, set globally ##
 			(
-				class_exists( 'willow' )
+				function_exists( 'willow' )
 				&& isset( willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['meta'] )
 				&& true == willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['meta']
 			)
@@ -365,7 +365,7 @@ class media {
         if ( 
 			// set locally..
 			(	
-				class_exists( 'willow' )
+				function_exists( 'willow' )
 				// && isset( \willow::$args['config']['srcset'] )
 				&& isset( $this->plugin->get( '_args' )['config']['srcset'] )
 				// && true === \willow::$args['config']['srcset'] 
@@ -375,7 +375,7 @@ class media {
 			||
 			// OR, set globally ##
 			(
-				class_exists( 'willow' )
+				function_exists( 'willow' )
 				&& isset( willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
 				&& true == willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['srcset']
 			)

@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\render;
+namespace willow\render;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class method {
 
@@ -306,8 +306,9 @@ class method {
 		}
 
 		if (
-			class_exists( 'willow' )
-			|| function_exists( 'willow' )
+			// class_exists( 'willow' )
+			// || 
+			function_exists( 'willow' )
 		){
 
 			// variable replacement -- regex way ##

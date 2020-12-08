@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\core;
+namespace willow\core;
 
-use Q\willow;
+use willow;
 
 // run ##
 willow\core\log::__run();

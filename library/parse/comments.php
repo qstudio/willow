@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\parse;
+namespace willow\parse;
 
-use Q\willow;
+use willow;
 
 class comments {
 
@@ -22,7 +22,7 @@ class comments {
 		$this->flags_comment = false;
 	}
 
-	public function __construct( \Q\willow\plugin $plugin ){
+	public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

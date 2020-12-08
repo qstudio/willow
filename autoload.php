@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Autoload classes within the namespace `Q\\willow`
+ * Autoload classes within the namespace `willow`
  */
 spl_autoload_register( function( $class ) {
 
 	// error_log( 'Autoload Class: '.$class );
 
 	// project-specific namespace prefix
-	$prefix = 'Q\\willow\\';
+	$prefix = 'willow\\';
 
 	/**
 	 * Does the class being called use the namespace prefix?
@@ -35,7 +35,7 @@ spl_autoload_register( function( $class ) {
 	/**
 	 * Perform normalizing operations on the requested class string
 	 *
-	 * - Remove the prefix from the class name (so that Q\willow\Plugin looks at src/plugin.php)
+	 * - Remove the prefix from the class name (so that willow\Plugin looks at src/plugin.php)
 	 * - Replace namespace separators with directory separators in the class name
 	 * - Prepend the base directory
 	 * - Append with .php

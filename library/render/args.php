@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\render;
+namespace willow\render;
 
-use Q\willow;
+use willow;
 
 class args {
 
@@ -15,7 +15,7 @@ class args {
      * @todo
      * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -217,7 +217,7 @@ class args {
 		
 		// apply template level filter to $args - specific calls should be controlled by parameters included directly ##
         $_args = $this->plugin->filter->apply([
-			'filter'        => 'willow/render/args/'.\Q\willow\view\is::get(),
+			'filter'        => 'willow/render/args/'.\willow\view\is::get(),
 			'parameters'    => $_args,
 			'return'        => $_args
         ]);

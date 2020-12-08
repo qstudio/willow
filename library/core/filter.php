@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\core;
+namespace willow\core;
 
-use Q\willow\core;
+use willow\core;
 
 class filter {
 
@@ -18,7 +18,7 @@ class filter {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct( \Q\willow\plugin $plugin = null ){
+	function __construct( \willow\plugin $plugin = null ){
 
 		// Log::write( $plugin );
 

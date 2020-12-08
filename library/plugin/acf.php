@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\plugin;
+namespace willow\plugin;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
+use willow\core\helper as h;
 
 class acf {
 

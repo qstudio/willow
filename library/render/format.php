@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\render;
+namespace willow\render;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class format {
 
@@ -13,7 +13,7 @@ class format {
 
 	/**
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

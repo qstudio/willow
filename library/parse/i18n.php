@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\parse;
+namespace willow\parse;
 
-use Q\willow;
+use willow;
 
 class i18n {
 
@@ -30,7 +30,7 @@ class i18n {
 
 	}
 
-	public function __construct( \Q\willow\plugin $plugin ){
+	public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

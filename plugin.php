@@ -1,11 +1,11 @@
 <?php
 
-namespace Q\willow;
+namespace willow;
 
 // import classes ##
-use Q\willow;
-use Q\willow\plugin as plugin;
-use Q\willow\core\helper as h;
+use willow;
+use willow\plugin as plugin;
+use willow\core\helper as h;
 
 // If this file is called directly, Bulk!
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +24,13 @@ final class plugin {
      */
 	private static $instance;
 
+	public static 
+	
+		// current tag ##
+		$_version = '2.0.0'
+	
+	;
+
 	/**
 	 * Props
 	 * 
@@ -33,9 +40,6 @@ final class plugin {
 
 		// debugging control ##
 		$_debug = \WP_DEBUG, // boolean --> control debugging / minification etc ##
-
-		// current tag ##
-		$_version = '2.0.0',
 
 		// log object ##
 		// $log = null,
@@ -522,10 +526,9 @@ final class plugin {
         // store data about the current plugin state at activation point ##
         $config = [
             'configured'            => true , 
-            'version'               => self::version ,
+            'version'               => self::$_version ,
             'wp'                    => \get_bloginfo( 'version' ) ?? null ,
 			'timestamp'             => time(),
-			// add custom props here ##
 		];
 		
 		// Get path to main .htaccess for WordPress ##
@@ -553,9 +556,6 @@ final class plugin {
         // activation running, so update configuration flag ##
         \update_option( 'plugin_willow', $config, true );
 
-        // flush permalinks to enable new rewrite rules to work ##
-        // \flush_rewrite_rules();
-        
     }
 
     /**

@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\get;
+namespace willow\get;
 
-use Q\willow;
-use Q\willow\core\helper as h;
+use willow;
+use willow\core\helper as h;
 
 class query {
 
@@ -14,7 +14,7 @@ class query {
 	/**
 	 * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;

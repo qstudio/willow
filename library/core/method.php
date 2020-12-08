@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\core;
+namespace willow\core;
 
-use Q\willow\core;
+use willow\core;
 
 class method {
     

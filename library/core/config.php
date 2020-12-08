@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\core;
+namespace willow\core;
 
 // import ## 
-use Q\willow;
+use willow;
 
 class config {
 
@@ -56,7 +56,7 @@ class config {
 		// sanity ##
         if( 
             is_null( $this->plugin )
-            || ! ( $this->plugin instanceof \Q\willow\plugin ) 
+            || ! ( $this->plugin instanceof \willow\plugin ) 
         ) {
 
             error_log( 'Error in object instance passed to '.__CLASS__ );

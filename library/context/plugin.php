@@ -1,9 +1,9 @@
 <?php
 
-namespace Q\willow\context;
+namespace willow\context;
 
-use Q\willow\core\helper as h;
-use Q\willow;
+use willow\core\helper as h;
+use willow;
 
 class plugin {
 
@@ -14,7 +14,7 @@ class plugin {
 	/**
 	 * 
      */
-    public function __construct( \Q\willow\plugin $plugin ){
+    public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -41,8 +41,8 @@ class plugin {
 		$method = $args['task'];
 
 		if(
-			! method_exists( 'Q\willow\get\plugin', $method )
-			|| ! is_callable([ 'Q\willow\get\plugin', $method ])
+			! method_exists( 'willow\get\plugin', $method )
+			|| ! is_callable([ 'willow\get\plugin', $method ])
 		){
 
 			w__log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );

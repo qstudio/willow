@@ -1,8 +1,8 @@
 <?php
 
-namespace Q\willow\parse;
+namespace willow\parse;
 
-use Q\willow;
+use willow;
 
 class willows {
 
@@ -48,7 +48,7 @@ class willows {
 	 * 
 	 * @since 2.0.0
 	*/
-	public function __construct( \Q\willow\plugin $plugin ){
+	public function __construct( \willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
 		$this->plugin = $plugin;
@@ -380,7 +380,7 @@ class willows {
 				|| ! is_array( $this->arguments ) 
 			) {
 
-				w__log( $this->willow_task.'~>d:>No array arguments found in willow args, but perhaps we still have filters in the {{ variables }}' );
+				w__log( $this->willow_task.'~>d:>No [ array ] arguments found in willow, but perhaps we still have filters in the {{ variables }}' );
 				// w__log( $args['task'].'~>d:>'.$this->argument_string );
 
 				// check for variable filters ##
@@ -412,14 +412,14 @@ class willows {
 		$this->willow_hash = $this->willow.'.'.willow\core\method::hash(); 
 		// w__log( 'willow_hash: '.$this->willow_hash );
 		
-		// add escaped Willow namespace --- Q\willow\context:: ##
-		// $this->willow = '\\Q\\willow\\context::'.$this->willow;
+		// add escaped Willow namespace --- willow\context:: ##
+		// $this->willow = '\\willow\\context::'.$this->willow;
 
 		// break function into class::method parts ##
 		// list( $this->class, $this->method ) = explode( '::', $this->willow ); 
 
-		// add escaped Willow namespace --- Q\willow\context\\XXX ##
-		$this->class = '\\Q\\willow\\context\\'.$this->willow_context;
+		// add escaped Willow namespace --- willow\context\\XXX ##
+		$this->class = '\\willow\\context\\'.$this->willow_context;
 
 		// break function into class::method parts ##
 		$this->method = $this->willow_task;
