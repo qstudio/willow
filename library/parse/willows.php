@@ -380,7 +380,7 @@ class willows {
 				|| ! is_array( $this->arguments ) 
 			) {
 
-				w__log( $this->willow_task.'~>d:>No array arguments found in willow args, but perhaps we still have filters in the vars' );
+				w__log( $this->willow_task.'~>d:>No array arguments found in willow args, but perhaps we still have filters in the {{ variables }}' );
 				// w__log( $args['task'].'~>d:>'.$this->argument_string );
 
 				// check for variable filters ##
@@ -545,6 +545,8 @@ class willows {
 		) {
 
 			// w__log( 'Setting up debug for: '.$this->willow );
+
+			w__log( $this->willow_task.'~>n:>Debugging set-up for "'.$this->willow_match.'"' );
 
 			$this->arguments = willow\core\method::parse_args( 
 				$this->arguments, 

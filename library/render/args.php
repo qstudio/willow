@@ -92,7 +92,7 @@ class args {
 		
 		}
 
-		w__log( $args );
+		// w__log( $args );
 
         // checks on required fields in $args array ##
         if (

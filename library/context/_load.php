@@ -287,10 +287,13 @@ class context  {
 				|| ! is_array( $return_array )
 			){
 
-				// w__log( 'e:>Error in returned data from "'.$args['context'].'~'.$args['task'].'"' );
+				w__log( 'e:>Stopping, as calling function was found, but returned false --> "'.$args['context'].'~'.$args['task'].'"' );
 				// w__log( $return_array );
 
-				// ...
+				// BREAKING CHANGE  ## 
+				// this did not return before - but what use is there to continue with no data to markup ?
+				// any filters and hooks could already have run from the called function - which was found, but returned false ##
+				return false;
 
 			}
 
@@ -299,15 +302,15 @@ class context  {
 			// assign fields from returned data array ##
 			$this->plugin->render->fields->define( $return_array );
 			// w__log( $this->plugin->get( '_fields' ) );
-			w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_markup' ) );
 			// w__log( $this->plugin->get( '_args' ) );
 
 			// w__log( $return_array );
 
 			// prepare field data ##
 			$this->plugin->render->fields->prepare();
-			w__log( $this->plugin->get( '_fields' ) );
-			w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( $this->plugin->get( '_markup' ) );
 			// w__log( $this->plugin->get( '_scope_map' ) );
 
 			// check if feature is enabled ##

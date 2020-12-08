@@ -123,7 +123,7 @@ class config {
 		// template ##
 		$this->template = willow\core\method::template() ? willow\core\method::template() : '404';
 
-		// hit ##
+		// update tracker ##
 		$this->properties_loaded = true;
 
 		// done ##
@@ -321,10 +321,10 @@ class config {
 
 	}
 
-
 	/**
 	 * Hook into Fastest Cache delete routine - as an example how to clear Willow cache from third party plugin
 	 * 
+	 * @todo	Should be moved to a plugin->filter
 	 * @since 	1.4.7
 	 * @return 	void
 	*/
@@ -335,7 +335,6 @@ class config {
 		$this->delete_cache();
 
 	}
-
 
 	public function delete_cache(){
 
@@ -362,7 +361,6 @@ class config {
 
 	}
 
-
 	public function global(){
 
 		// cache ##
@@ -384,7 +382,6 @@ class config {
 		$this->global_loaded = true;
 
 	}
-
 	
 	/**
 	 * Get configuration files
@@ -468,18 +465,22 @@ class config {
 		if( 'extend' == $source ) {
 
 			// w__log( 'd:>looking for source: '.$source );
+			// get _extend var ##
 			$_extend = $this->plugin->get( '_extend' );
 
 			if(
 				! empty( $_extend )
 			){
 
+				// new empty array ##
 				$extended_lookups = [];
+
 				foreach( $_extend as $k => $v ){
 
-					w__log( $v );
+					// w__log( $v );
 					if( $v['lookup'] ){
 
+						// add location path ##
 						$extended_lookups[] = $_extend[$k];
 
 					}
@@ -498,7 +499,7 @@ class config {
 		// $parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
 
 		// loop over allowed extensions ##
-		// TODO - this could be a whole load more effecient... ##
+		// @TODO - this could be a whole load more effecient... ##
 		foreach( $this->file_extensions as $ext ) {
 
 			// loop over array values ##
@@ -565,6 +566,7 @@ class config {
 					break ;
 
 					// global lookup ~~> willow/FILE.ext
+					// REMOVED, as offers little additional config and is merged elsewhere ##
 					/*
 					case "global" :
 					default :
@@ -603,8 +605,8 @@ class config {
 					
 						$cache_key = 
 							! is_null( $source ) ? 
-							$k.'_'.$source.'_'.core\method::file_extension( $file ) : 
-							$k.'_'.core\method::file_extension( $file ) ;
+							$k.'_'.$source.'_'.willow\core\method::file_extension( $file ) : 
+							$k.'_'.willow\core\method::file_extension( $file ) ;
 
 					}
 
@@ -758,10 +760,6 @@ class config {
 		\apply_filters( 'willow/config/load', $this->config_args );
 
 	}
-
-
-
-
 
 	/**
 	 * Include configuration file, with local cache via handle

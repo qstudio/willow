@@ -46,7 +46,7 @@ final class plugin {
 		// tags ##
 		$tags = null,
 
-		// extend ##
+		// extend object ##
 		$extend = null,
 
 		// log var ##
@@ -58,16 +58,16 @@ final class plugin {
 		// filter object ##
 		$filter = null,
 
-		// parsers ##
+		// parser objects ##
 		$parse = false,
 
 		// render objects ##
 		$render = false,
 
-		// filter objects ##
+		// filter methods ##
 		$filter_method = false,
 
-		// type handlers ##
+		// type handler objects ##
 		$type = false
 
 	;
@@ -91,7 +91,7 @@ final class plugin {
 		$_hash 		= null, // willow hash log, with data about calling method ##
 
 		// share willow match across parsers ##
-		$_willow_match = false,
+		// $_willow_match = false,
 
 		// used to map original {: scope :} value to unqiue {: scope_hash :} ##
 		// $scope_count = 0,

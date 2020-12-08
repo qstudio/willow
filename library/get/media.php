@@ -344,8 +344,8 @@ class media {
 			// OR, set globally ##
 			(
 				class_exists( 'willow' )
-				&& isset( \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['meta'] )
-				&& true == \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['meta']
+				&& isset( willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['meta'] )
+				&& true == willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['meta']
 			)
 			*/
 		) {
@@ -376,8 +376,8 @@ class media {
 			// OR, set globally ##
 			(
 				class_exists( 'willow' )
-				&& isset( \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
-				&& true == \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset']
+				&& isset( willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
+				&& true == willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['srcset']
 			)
 			*/
         ) {

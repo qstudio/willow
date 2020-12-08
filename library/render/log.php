@@ -29,15 +29,16 @@ class log {
      */
     public function set( Array $args = null ){
 
+		// w__log( $args );
 		// w__log( 'e:>'.$args['task'] );
 		// w__log( self::$args['config']['debug'] );
 
         if (
-            isset( self::$args['config']['debug'] )
+            isset( $args['config']['debug'] )
 			&& 
 				( 
-					'1' === self::$args['config']['debug']
-					||  true === self::$args['config']['debug']
+					'1' === $args['config']['debug']
+					||  true === $args['config']['debug']
 				)
 			// || 'false' == self::$args['config']['debug']
 			// || ! self::$args['config']['debug']

@@ -421,7 +421,7 @@ class php_functions {
 
 			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
-			$this->plugin->get( 'parse_markup' )->swap( $this->function_match, '', 'php_function', 'string', $process );
+			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -433,10 +433,19 @@ class php_functions {
 		){
 
 			// w__log( $this->return );
-			w__log( '"'.$open.' '.$this->function.' '.$close.'" returned an array, Willow will try to convert to a string' );
 
 			$this->return = implode ( " ", array_values( $this->return ) );
 			$this->return = trim( $this->return );
+
+			if ( is_string( $this->return ) ) {
+				
+				w__log( '"'.$open.' '.$this->function.' '.$close.'" returned an array, Willow converted this to a string: "'.$this->return.'"' );
+
+			} else {
+
+				w__log( '"'.$open.' '.$this->function.' '.$close.'" returned an array, Willow failed to convert this to a string.' );
+
+			}
 			// w__log( 'return: '.$this->return );
 
 		}
@@ -450,7 +459,7 @@ class php_functions {
 			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
 			// w__log( $this->return );
 
-			$this->plugin->get( 'parse_markup' )->swap( $this->function_match, '', 'php_function', 'string', $process );
+			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
