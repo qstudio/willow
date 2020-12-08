@@ -3,15 +3,8 @@
 namespace willow\core;
 
 use willow\core;
-use willow\core\helper as h;
-// use q\ui;
-// use q\plugin;
-// use q\get;
-// use q\view;
-// use q\asset;
 
-class method extends \willow {
-
+class method {
     
     /**
      * Sanitize user input data using WordPress functions
@@ -23,8 +16,7 @@ class method extends \willow {
      * @link        http://wp.tutsplus.com/tutorials/creative-coding/data-sanitization-and-validation-with-wordpress/
      * @return      string      HTML output
      */
-    public static function sanitize( $value = null, $type = 'text' )
-    {
+    public static function sanitize( $value = null, $type = 'text' ){
         
         // check submitted data ##
         if ( is_null( $value ) ) {
@@ -110,8 +102,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function php_namespace( $key = null ) 
-    {
+    public static function php_namespace( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -133,8 +124,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function php_function( $key = null ) 
-    {
+    public static function php_function( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -156,8 +146,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function php_class( $key = null ) 
-    {
+    public static function php_class( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -179,8 +168,7 @@ class method extends \willow {
     * @param string $key String key
     * @return string Sanitized key
     */
-    public static function sanitize_key( $key = null ) 
-    {
+    public static function sanitize_key( $key = null ){
         
         // sanity check ##
         if ( ! $key ) { return false; }
@@ -200,12 +188,11 @@ class method extends \willow {
      * 
      * 
      */
-    public static function template() 
-    {
+    public static function template(){
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
-            // h::log( 'e:>Page template empty' );
+            // w__log( 'e:>Page template empty' );
             
 			// return false;
 			
@@ -214,7 +201,7 @@ class method extends \willow {
 
         } else {
 
-            // h::log( 'Page template: '.$GLOBALS['q_template'] );
+            // w__log( 'Page template: '.$GLOBALS['q_template'] );
 
             return str_replace( [ '.php', '.willow' ], '', $GLOBALS['q_template'] );        
 
@@ -228,8 +215,7 @@ class method extends \willow {
      * 
 	 * @since 4.1.0
      */
-    public static function template_format() 
-    {
+    public static function template_format(){
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
@@ -238,17 +224,17 @@ class method extends \willow {
 
         } else {
 
-            // h::log( 'Page template: '.$GLOBALS['q_template'] );
+            // w__log( 'Page template: '.$GLOBALS['q_template'] );
 
             $template = $GLOBALS['q_template'];        
 
 		}
 		
-		// h::log( 'e:>Template: "'.$template.'"' );
+		// w__log( 'e:>Template: "'.$template.'"' );
 
 		$extension = self::file_extension( $template );
 
-		// h::log( 'e:>Extension: "'.$extension.'"' );
+		// w__log( 'e:>Extension: "'.$extension.'"' );
 
 		// kick back ##
 		return $extension;
@@ -257,12 +243,12 @@ class method extends \willow {
 
 
 	
-	public static function file_extension( $string = null ) {
+	public static function file_extension( $string = null ){
 
 		// sanity ##
 		if( is_null( $string ) ){
 
-			h::log( 'e:>No string passed to method' );
+			w__log( 'e:>No string passed to method' );
 
 			return false;
 
@@ -276,8 +262,7 @@ class method extends \willow {
 
 
 	
-	public static function file_put_array( $path, $array )
-	{
+	public static function file_put_array( $path, $array ){
 
 		if ( is_array( $array ) ){
 
@@ -287,7 +272,7 @@ class method extends \willow {
 			// stripslashes ## .. hmmm ##
 			$contents = str_replace( '\\', '', $contents );
 
-			// h::log( 'd:>Array data good, saving to file' );
+			// w__log( 'd:>Array data good, saving to file' );
 
 			// save in php as an array, ready to return ##
 			file_put_contents( $path, "<?php\n return {$contents};\n") ;
@@ -297,7 +282,7 @@ class method extends \willow {
 
 		}
 
-		h::log( 'e:>Error with data format, config file NOT saved' );
+		w__log( 'e:>Error with data format, config file NOT saved' );
 		
 		// failed ##
 		return false;
@@ -330,7 +315,7 @@ class method extends \willow {
 
 
 
-	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ) {
+	public static function tab2space( $line, $tab = 4, $nbsp = FALSE ){
 
 		while (($t = mb_strpos($line,"\t")) !== FALSE) {
 			
@@ -378,7 +363,7 @@ class method extends \willow {
 		// trim white spaces ##
 		$string = trim( $string );
 
-		// h::log( 'string: '.$string );
+		// w__log( 'string: '.$string );
 
 		// kick back ##
 		return $string;
@@ -391,7 +376,7 @@ class method extends \willow {
 	 * 
 	 * @link https://stackoverflow.com/questions/27078259/get-string-between-find-all-occurrences-php/27078384#27078384
 	*/
-	public static function strings_between( $str, $startDelimiter, $endDelimiter ) {
+	public static function strings_between( $str, $startDelimiter, $endDelimiter ){
 
 		$contents = array();
 		$startDelimiterLength = strlen($startDelimiter);
@@ -431,7 +416,7 @@ class method extends \willow {
 			|| is_null( $needle )
 		){
 			
-			h::log('e:>Error in passed params');
+			w__log('e:>Error in passed params');
 
 			return false;
 
@@ -461,7 +446,7 @@ class method extends \willow {
 			|| is_null( $needle )
 		){
 			
-			h::log('e:>Error in passed params');
+			w__log('e:>Error in passed params');
 
 			return false;
 
@@ -490,14 +475,14 @@ class method extends \willow {
      * 
      * @link    https://mekshq.com/recursive-wp-parse-args-wordpress-function/
      */
-    public static function parse_args( &$args, $defaults ) {
+    public static function parse_args( &$args, $defaults ){
 
 		// sanity ##
 		if(
 			! $defaults
 		){
 
-			// h::log( 'e:>No $defaults passed to method' );
+			// w__log( 'e:>No $defaults passed to method' );
 
 			return $args; // ?? TODO, is this good ? 
 
@@ -508,11 +493,23 @@ class method extends \willow {
         $result = $defaults;
         
         foreach ( $args as $k => &$v ) {
-            if ( is_array( $v ) && isset( $result[ $k ] ) ) {
-                $result[ $k ] = self::parse_args( $v, $result[ $k ] );
-            } else {
-                $result[ $k ] = $v;
-            }
+
+            if ( 
+				is_array( $v ) 
+				&& $result
+				&& is_array( $result )
+				&& isset( $result[ $k ] ) 
+				&& ! is_null( $result[ $k ] )
+			) {
+			
+				$result[ $k ] = self::parse_args( $v, $result[ $k ] );
+			
+			} else {
+			
+				$result[ $k ] = $v;
+			
+			}
+
         }
 
         return $result;
@@ -526,7 +523,7 @@ class method extends \willow {
 	 * 
 	 * @link https://www.php.net/manual/en/function.parse-str.php
 	*/
-	public static function parse_str( $string = null ) {
+	public static function parse_str( $string = null ){
 
 		// sanity ##
 		if(
@@ -534,13 +531,13 @@ class method extends \willow {
 			|| ! is_string( $string )
 		){
 			
-			h::log( 'e:>Passed string empty or bad format' );
+			w__log( 'e:>Passed string empty or bad format' );
 
 			return false;
 
 		}
 
-		// h::log($string);
+		// w__log($string);
 
 		// delimiters ##
 		$operator_assign = '=';
@@ -552,7 +549,7 @@ class method extends \willow {
 		// check for "=" delimiter ##
 		if( false === strpos( $string, $operator_assign ) ){
 
-			h::log( 'e:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
+			w__log( 'e:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
 
 			return false;
 
@@ -564,7 +561,7 @@ class method extends \willow {
 		# split on outer delimiter
 		$pairs = explode( $delimiter_and_key, $string );
 
-		// h::log( $pairs );
+		// w__log( $pairs );
 	  
 		# loop through each pair
 		foreach ( $pairs as $i ) {
@@ -575,7 +572,7 @@ class method extends \willow {
 				// || true !== strpos( $i, $operator_assign ) 
 			){
 			
-				h::log( '$i is empty ~~ "'.$i.'"' );
+				w__log( '$i is empty ~~ "'.$i.'"' );
 
 				continue;
 			
@@ -587,7 +584,7 @@ class method extends \willow {
 				false === strpos( $i, $operator_assign ) 
 			){
 			
-				h::log( '$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
+				w__log( '$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
 
 				continue;
 			
@@ -604,19 +601,19 @@ class method extends \willow {
 				$value_array = [];	
 
 				// preg_match_all( "~\'[^\"]++\"|[^,]++~", $value, $result );
-				// h::log( $result );
+				// w__log( $result );
 				$value_pairs = self::quoted_explode( $value, $delimiter_and_property, '"' );
-				// h::log( $value_pairs );
+				// w__log( $value_pairs );
 
 				// split value into an array at "," ##
 				// $value_pairs = explode( $delimiter_and_property, $value );
 
-				// h::log( $value_pairs );
+				// w__log( $value_pairs );
 
 				# loop through each pair
 				foreach ( $value_pairs as $v_pair ) {
 
-					// h::log( 'e:>'.$v_pair ); // 'sm:medium'
+					// w__log( 'e:>'.$v_pair ); // 'sm:medium'
 
 					# split into name and value
 					list( $value_key, $value_value ) = explode( $delimiter_key, $v_pair, 2 );
@@ -687,7 +684,7 @@ class method extends \willow {
 			}
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 	  
 		# return result array
 		return $array;
@@ -698,7 +695,7 @@ class method extends \willow {
 	/**
 	 * Regex Escape values 
 	*/
-	public static function regex_escape( $subject ) {
+	public static function regex_escape( $subject ){
 
 		return str_replace( array( '\\', '^', '-', ']' ), array( '\\\\', '\\^', '\\-', '\\]' ), $subject );
 	
@@ -709,8 +706,7 @@ class method extends \willow {
 	 * 
 	 * @link https://stackoverflow.com/questions/3264775/an-explode-function-that-ignores-characters-inside-quotes/13755505#13755505
 	*/
-	public static function quoted_explode( $subject, $delimiter = ',', $quotes = '\"' )
-	{
+	public static function quoted_explode( $subject, $delimiter = ',', $quotes = '\"' ){
 		$clauses[] = '[^'.self::regex_escape( $delimiter.$quotes ).']';
 
 		foreach( str_split( $quotes) as $quote ) {
@@ -736,7 +732,7 @@ class method extends \willow {
 	 * 
 	 * @since 	4.0.0
 	 */
-	public static function backtrace( $args = null ) {
+	public static function backtrace( $args = null ){
 
 		// default args ##
 		$level = isset( $args['level'] ) ? $args['level'] : 1 ; // direct caller ##
@@ -767,7 +763,7 @@ class method extends \willow {
 
 			return sprintf(
 				__( '%s%s()', 'Q' )
-				,  	isset($caller['class']) ? $caller['class'].'::' : null
+				,  	isset($caller['class']) ? $caller['class'].'->' : null
 				,   $caller['function']
 			);
 
@@ -821,7 +817,7 @@ class method extends \willow {
 		// default - everything ##
 		return sprintf(
 			__( '%s%s() %s:%d', 'Q' )
-			,   isset($caller['class']) ? $caller['class'].'::' : ''
+			,   isset($caller['class']) ? $caller['class'].'->' : ''
 			,   $caller['function']
 			,   isset( $caller['file'] ) ? $caller['file'] : 'n'
 			,   isset( $caller['line'] ) ? $caller['line'] : 'x'
@@ -841,7 +837,7 @@ class method extends \willow {
 			|| ! is_array( $array )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return false;
 
@@ -868,8 +864,7 @@ class method extends \willow {
 	 * 
 	 * @link	https://stackoverflow.com/questions/6284553/using-an-array-as-needles-in-strpos
 	 */
-	public static function strposa($haystack, $needle, $offset=0) 
-	{
+	public static function strposa( $haystack, $needle, $offset=0 ){
 		if( ! is_array( $needle ) ) {
 			
 			$needle = array($needle);
@@ -888,7 +883,7 @@ class method extends \willow {
 	}
 
 
-	public static function get_acronym( $string = null, $length = 10 ) {
+	public static function get_acronym( $string = null, $length = 10 ){
 
 		// sanity ##
 		if ( is_null( $string ) ) { return false; }

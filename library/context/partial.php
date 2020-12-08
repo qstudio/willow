@@ -3,9 +3,23 @@
 namespace willow\context;
 
 use willow\core\helper as h;
-use willow\core;
+use willow;
 
-class partial extends \willow\context {
+class partial {
+
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Generic Getter - looks for properties in config matching context->task
@@ -15,9 +29,9 @@ class partial extends \willow\context {
      * @since       1.4.1
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
-		return core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

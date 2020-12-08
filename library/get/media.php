@@ -2,19 +2,32 @@
 
 namespace willow\get;
 
-use willow\core;
+use willow;
 use willow\core\helper as h;
-use willow\get;
 
-class media extends \willow\get {
+class media {
+
+	private 
+		$plugin = false,
+		$type_method = false
+	;
+
+	/**
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 	
 	/**
      * Check for a return post thumbnail images and exif-data baed on passed settings ##
      *
      */
-    public static function thumbnail( $args = null ){
+    public function thumbnail( $args = null ){
 
-		// h::log( \willow::$args );
+		// w__log( \willow::$args );
 
 		// sanity ##
 		if (
@@ -24,7 +37,7 @@ class media extends \willow\get {
 			// || ! $args['post'] instanceof \WP_Post
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -35,7 +48,7 @@ class media extends \willow\get {
 			! isset( $args['config']['post'] )
 		){
 
-			$args['post'] = get\post::object();
+			$args['post'] = willow\get\post::object();
 
 		} else {
 
@@ -53,12 +66,12 @@ class media extends \willow\get {
 		}
 
         // test incoming args ##
-        // h::log( $args );
+        // w__log( $args );
 
 		// check for post thumbnail ##
         if ( ! \has_post_thumbnail( $args['post']->ID ) ) { 
 			
-			// h::log( 'd:>'.$args['post']->post_type.' "'.$args['post']->post_title.'" does not have a thumbnail' );
+			// w__log( 'd:>'.$args['post']->post_type.' "'.$args['post']->post_title.'" does not have a thumbnail' );
 
 			return false; 
 		
@@ -69,40 +82,38 @@ class media extends \willow\get {
 			! $args['attachment_id'] = \get_post_thumbnail_id( $args['post']->ID ) 
 		){
 
-			h::log('d:>get_post_thumbnail_id() for '.$args['post']->post_type.' "'.$args['post']->post_title.'" returned false' );
+			w__log('d:>get_post_thumbnail_id() for '.$args['post']->post_type.' "'.$args['post']->post_title.'" returned false' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 		
 		// bounce on to get src attrs ##
-		$array = self::src( $args );
+		$array = $this->src( $args );
 
         // if we do not have a src, perhaps we should stop?? ##
 		// if ( ! $array['src'] ) { return false; }
 		
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
         // kick back array ##
 		// return $array;
 		
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-	
-
 
 	/**
      * Check for a return post thumbnail images and exif-data baed on passed settings ##
      *
      */
-    public static function gallery( $args = null ){
+    public function gallery( $args = null ){
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if (
@@ -110,7 +121,7 @@ class media extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -121,12 +132,12 @@ class media extends \willow\get {
 			! isset( $args['post'] )
 		){
 
-			$args['post'] = get\post::object();
+			$args['post'] = willow\get\post::object();
 
 		}
 
         // test incoming args ##
-        // h::log( $args );
+        // w__log( $args );
 
 		// check for post thumbnail ##
         if ( 
@@ -134,14 +145,14 @@ class media extends \willow\get {
 			|| ! is_array( \get_field( 'media_gallery', $args['post']->ID ) )
 		) { 
 			
-			h::log( 'd:>Post does not have gallery images' );
+			w__log( 'd:>Post does not have gallery images' );
 
 			return false; 
 		
 		}
 
 		$get_field = \get_field( 'media_gallery', $args['post']->ID );
-		// h::log( $get_field );
+		// w__log( $get_field );
 
 		// gallery returns an array of IDs, so let's loop over each getting src_large and src_small from passed handles
 		$return = []; // new array ##
@@ -150,7 +161,7 @@ class media extends \willow\get {
 		foreach( $get_field as $key => $value ){
 
 			if ( 
-				$small = self::src([ 
+				$small = $this->src([ 
 					'handle' 		=> isset( $args['config']['handle']['small'] ) ? $args['config']['handle']['small'] : false,
 					'attachment_id'	=> $value,
 					'post'			=> $args['post']
@@ -167,7 +178,7 @@ class media extends \willow\get {
 			}
 
 			if ( 
-				$large = self::src([ 
+				$large = $this->src([ 
 					'handle' 		=> isset( $args['config']['handle']['large'] ) ? $args['config']['handle']['large'] : false,
 					'attachment_id'	=> $value,
 					'post'			=> $args['post']
@@ -192,20 +203,18 @@ class media extends \willow\get {
 		// if ( ! $array['src'] ) { return false; }
 		
 		// test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// return ##
-		return get\method::prepare_return( $args, [ 'gallery' => $return ] );
+		return willow\get\method::prepare_return( $args, [ 'gallery' => $return ] );
 
     }
-
-
 
     /**
      * Check for a return src and exif-data from attachment ID ##
      *
      */
-    public static function src( $args = null ){
+    public function src( $args = null ){
 
 		// sanity ##
 		if (
@@ -213,15 +222,15 @@ class media extends \willow\get {
 			|| ! isset( $args['attachment_id'] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
 		}
 
 		// check and assign ##
-		// h::log( \willow::$args );
-		// h::log( $args );
+		// w__log( \willow::$args );
+		// w__log( $args );
 		// handle could be assigned in a few ways -- so, let's check them all in specific to generic order ##
 		// from passed args ##
 		if ( 
@@ -229,38 +238,42 @@ class media extends \willow\get {
 		){
 
 			// nothing to do ##
-			// h::log( 'e:> Handle passed $args->handle: '.$args['handle'] );
+			// w__log( 'e:> Handle passed $args->handle: '.$args['handle'] );
 
 		// handle filtered into config by markup pre-processor at field level ##
 		} else if ( 
-			class_exists( 'willow' )
-			&& isset( \willow::$args )
+			function_exists( 'willow' )
+			// && isset( \willow::$args )
+			&& $this->plugin->get( '_args' )
 			&& isset( $args['field'] )
-			&& isset( \willow::$args[ $args['field'] ]['config']['handle'] ) 
+			// && isset( \willow::$args[ $args['field'] ]['config']['handle'] ) 
+			&& isset( $this->plugin->get( '_args' )[ $args['field'] ]['config']['handle'] )
 		){
 
-			$args['handle'] = \willow::$args[ $args['field'] ]['config']['handle'];
+			$args['handle'] = $this->plugin->get( '_args' )[ $args['field'] ]['config']['handle'];
 
-			// h::log( 'e:> Handle grabbed from field specific... config->handle: '.$args['handle'] );
+			// w__log( 'e:> Handle grabbed from field specific... config->handle: '.$args['handle'] );
 
 		// handle filtered into config by markup pre-processor at global level ##
 		} else if ( 
-			class_exists( 'willow' )
-			&& isset( \willow::$args )
+			function_exists( 'willow' )
+			// && isset( \willow::$args )
+			&& $this->plugin->get( '_args' )
 			// && isset( $args['field'] )
-			&& isset( \willow::$args['config']['handle'] ) 
+			// && isset( \willow::$args['config']['handle'] ) 
+			&& isset( $this->plugin->get( '_args' )['config']['handle'] )
 		){
 
-			$args['handle'] = \willow::$args['config']['handle'];
+			$args['handle'] = $this->plugin->get( '_args' )['config']['handle'];
 
-			// h::log( 'e:> Handle grabbed from global args... config->handle: '.$args['handle'] );
+			// w__log( 'e:> Handle grabbed from global args... config->handle: '.$args['handle'] );
 
 		// filterable default ##
 		} else {
 
 			$args['handle'] = \apply_filters( 'q/get/media/src/handle', 'medium' );
 
-			// h::log( 'e:> Handle set by filterable default: '.$args['handle'] );
+			// w__log( 'e:> Handle set by filterable default: '.$args['handle'] );
 
 		}
 
@@ -270,18 +283,18 @@ class media extends \willow\get {
         //     \apply_filters( 'q/render/type/src/handle', 'medium' ); // filterable default ##
 
 		// Testing feedback ##
-		// h::log( 'e:>Handle: '.$args['handle'] );
-		// h::log( \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) );
+		// w__log( 'e:>Handle: '.$args['handle'] );
+		// w__log( \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) );
 		/*
-		h::log( \get_intermediate_image_sizes() );
+		w__log( \get_intermediate_image_sizes() );
 		global $_wp_additional_image_sizes;
 		if ( isset( $_wp_additional_image_sizes[ $args['handle'] ] ) ) {
-			h::log( $_wp_additional_image_sizes[ $args['handle'] ] ); 
+			w__log( $_wp_additional_image_sizes[ $args['handle'] ] ); 
 		}
 		*/
 
         // test incoming args ##
-        // h::log( \willow::$args[ $args['field'] ] );
+        // w__log( \willow::$args[ $args['field'] ] );
 
         // set-up a new array ##
         $array = [];
@@ -289,13 +302,13 @@ class media extends \willow\get {
         // self::log( 'Handle: '.$args['handle'] );
 		if ( ! $src = \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) ){
 
-			h::log( \willow::$args['task'].'~>n wp_get_attachment_image_src did not return data' );
+			w__log( $this->plugin->get( '_args' )['task'].'~>n wp_get_attachment_image_src did not return data' );
 
 			return false;
 
 		}
 
-		// h::log( $src );
+		// w__log( $src );
 		
 		// take array items ##
 		$array['src'] = $src[0];
@@ -310,7 +323,7 @@ class media extends \willow\get {
 		// image found ? ##
 		if ( ! $array['src'] ) { 
 		
-			h::log( 'd:>array->src missing, so cannot continue...' );
+			w__log( 'd:>array->src missing, so cannot continue...' );
 
 			return false; 
 		
@@ -320,56 +333,60 @@ class media extends \willow\get {
 		if ( 
 			// set locally..
 			(
-				class_exists( 'willow' )
-				&& isset( \willow::$args['config']['meta'] )
-				&& true === \willow::$args['config']['meta'] 
+				function_exists( 'willow' )
+				// && isset( \willow::$args['config']['meta'] )
+				&& isset( $this->plugin->get( '_args' )['config']['meta'] )
+				// && true === \willow::$args['config']['meta'] 
+				&& true === $this->plugin->get( '_args' )['config']['meta']
 			)
 			/*
 			||
 			// OR, set globally ##
 			(
-				class_exists( 'willow' )
-				&& isset( \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['meta'] )
-				&& true == \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['meta']
+				function_exists( 'willow' )
+				&& isset( willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['meta'] )
+				&& true == willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['meta']
 			)
 			*/
 		) {
 
-			// h::log( 'd:>Adding media meta' );
+			// w__log( 'd:>Adding media meta' );
 
 			// add caption values ##
 			$array = array_merge( 
-				self::meta( $args ), 
+				$this->meta( $args ), 
 				$array
 			);
 		
 		}
 
-		// h::log( 't:>global / local logic is wrong, as global always overrules local... look into that..' );
+		// w__log( 't:>global / local logic is wrong, as global always overrules local... look into that..' );
 		// conditional -- add img meta values ( sizes ) and srcset ##
         if ( 
 			// set locally..
 			(	
-				class_exists( 'willow' )
-				&& isset( \willow::$args['config']['srcset'] )
-            	&& true === \willow::$args['config']['srcset'] 
+				function_exists( 'willow' )
+				// && isset( \willow::$args['config']['srcset'] )
+				&& isset( $this->plugin->get( '_args' )['config']['srcset'] )
+				// && true === \willow::$args['config']['srcset'] 
+				&& true === $this->plugin->get( '_args' )['config']['srcset']
 			)
 			/*
 			||
 			// OR, set globally ##
 			(
-				class_exists( 'willow' )
-				&& isset( \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
-				&& true == \willow\core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset']
+				function_exists( 'willow' )
+				&& isset( willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
+				&& true == willow()->config->get([ 'context' => 'media', 'task' => 'config' ])['srcset']
 			)
 			*/
         ) {
 
-			// h::log( 'd:>Adding srcset' );
+			// w__log( 'd:>Adding srcset' );
 
 			// add srcset values ##
 			$array = array_merge( 
-				self::srcset( $args ), 
+				$this->srcset( $args ), 
 				$array
 			);
 
@@ -378,7 +395,7 @@ class media extends \willow\get {
         // image found ? ##
 		// if ( ! $array['src'] ) { return false; }
 		
-		// h::log( $array );
+		// w__log( $array );
 
         // kick back array ##
         return $array;
@@ -392,7 +409,7 @@ class media extends \willow\get {
 	 * 
 	 * @since 4.1.0
 	 */
-	public static function srcset( $args = null ): Array {
+	public function srcset( $args = null ): Array {
 
 		// sanity ##
 		if (
@@ -403,7 +420,7 @@ class media extends \willow\get {
 			|| ! isset( $args['handle'] )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return [];
 
@@ -431,7 +448,7 @@ class media extends \willow\get {
 	 * 
 	 * @since 4.1.0
 	 */
-	public static function meta( $args = null ): Array {
+	public function meta( $args = null ): Array {
 
 		// sanity ##
 		if (
@@ -441,7 +458,7 @@ class media extends \willow\get {
 			// || ! is_int( $args['attachment_id'] )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return [];
 
@@ -463,8 +480,8 @@ class media extends \willow\get {
 		$metadata = \wp_get_attachment_metadata( $args['attachment_id'] );
 		if ( $metadata ) {
 
-			h::log( 'd:>Adding metadata from: '.$args['attachment_id'] );
-			h::log( $metadata );
+			w__log( 'd:>Adding metadata from: '.$args['attachment_id'] );
+			w__log( $metadata );
 			
 			$array['caption'] = $metadata['image_meta']['caption'];
 			$array['credit'] = $metadata['image_meta']['credit'];
@@ -488,14 +505,13 @@ class media extends \willow\get {
      * @since       1.0.1
      * @return      Mixed       Object || Boolean false
      */
-    public static function avatar( $args = array() )
-    {
+    public function avatar( $args = array() ){
 
-		h::log( 't:>@todo..' );
+		w__log( 't:>@todo..' );
 		return false;
 
         // get the_post ##
-        if ( ! $the_post = get\post::object( $args ) ) { return false; }
+        if ( ! $the_post = willow\get\post::object( $args ) ) { return false; }
 
         // set-up new object ##
         $object = new \stdClass;
@@ -524,7 +540,7 @@ class media extends \willow\get {
             #pr( $object->category );
 
             // categories have a smaller holder image ##
-            $object->src = helper::get( "theme/images/global/102x102.png", 'return' );
+            $object->src = h::get( "theme/images/global/102x102.png", 'return' );
 
             if ( isset( $object->category[0] ) ) {
 
@@ -564,18 +580,13 @@ class media extends \willow\get {
 
     }
 
-
-
-
-
     /**
     * Get Video URL from oEmbed field in ACF
     *
     * @since		1.4.5
     * @return		String		Video URL
     */
-    public static function video_thumbnail_uri( $video_uri = null )
-    {
+    public static function video_thumbnail_uri( $video_uri = null ){
 
         $thumbnail_uri = '';
 
@@ -592,11 +603,6 @@ class media extends \willow\get {
 
             $thumbnail_uri = self::get_vimeo_thumbnail_uri( $video['id'] );
 
-        // get wistia thumbnail
-        } else if( $video['type'] == 'wistia' ) {
-
-            $thumbnail_uri = self::get_wistia_thumbnail_uri( $video_uri );
-
         // get default/placeholder thumbnail ##
         } else if( ! $thumbnail_uri || \is_wp_error( $thumbnail_uri ) ) {
 
@@ -609,9 +615,6 @@ class media extends \willow\get {
 
     }
 
-
-
-	
     /**
     * Parse the video uri/url to determine the video type/source and the video id
     *
@@ -694,15 +697,13 @@ class media extends \willow\get {
 
     }
 
-
     /**
     * Takes a Vimeo video/clip ID and calls the Vimeo API v2 to get the large thumbnail URL.
     *
     * @since		1.4.5
     * @return		String		Video Thumbnail Src
     */
-    public static function vimeo_thumbnail_uri( $clip_id = null )
-    {
+    public static function vimeo_thumbnail_uri( $clip_id = null ){
 
         // sanity check ##
         if ( is_null( $clip_id ) ) return false;
@@ -723,34 +724,6 @@ class media extends \willow\get {
 
     }
 
-
-    /**
-    * Takes a wistia oembed url and gets the video thumbnail url.
-    *
-    * @since		1.4.5
-    * @return		String		Video Thumbnail Src
-    */
-    public static function wistia_thumbnail_uri( $video_uri = null )
-    {
-
-        // sanity check ##
-        if ( is_null( $video_uri ) ) return false;
-
-        $wistia_api_uri = 'http://fast.wistia.com/oembed?url=' . $video_uri;
-        $wistia_response = \wp_remote_get( $wistia_api_uri );
-
-        if( \is_wp_error( $wistia_response ) ) {
-
-            return $wistia_response;
-
-        } else {
-
-            $wistia_response = json_decode( $wistia_response['body'], true );
-            return $wistia_response['thumbnail_url'];
-
-        }
-
-    }
 
 
 }

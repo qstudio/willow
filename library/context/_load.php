@@ -2,105 +2,49 @@
 
 namespace willow;
 
-// use q\core;
-use willow\core\helper as h;
-use willow\render;
-use willow\context;
 use willow;
 
-// load it up ##
-\willow\context::__run();
+class context  {
 
-class context extends \willow {
+	private 
+		$plugin = false,
+		$parse_prepare = false,
+		$lookup_error = false
+	;
 
-	public static function __run(){
+	/**
+     * @todo
+     * 
+     */
+    public function __construct( \willow\plugin $plugin ){
 
-		// load libraries ##
-		self::load();
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
 
-	}
-
-    /**
-    * Load Libraries
-    *
-    * @since        4.1.0
-    */
-    public static function load(){
-
-		// context extensions ##
-		require_once self::get_plugin_path( 'library/context/extend.php' );
-
-		// acf field groups ##
-		require_once self::get_plugin_path( 'library/context/group.php' );
-
-		// post objects content, title, excerpt etc ##
-		require_once self::get_plugin_path( 'library/context/post.php' );
-
-		// author, custom fields etc. ##
-		require_once self::get_plugin_path( 'library/context/meta.php' );
-
-		// navigation items ##
-		require_once self::get_plugin_path( 'library/context/navigation.php' );
-
-		// media items ##
-		require_once self::get_plugin_path( 'library/context/media.php' );
-
-		// taxonomies ##
-		require_once self::get_plugin_path( 'library/context/taxonomy.php' );
-
-		// extension ##
-		// require_once self::get_plugin_path( 'library/context/extension.php' );
-
-		// modules ##
-		require_once self::get_plugin_path( 'library/context/module.php' );
-
-		// plugins ##
-		require_once self::get_plugin_path( 'library/context/plugin.php' );
-
-		// widgets ##
-		require_once self::get_plugin_path( 'library/context/widget.php' );
-
-		// ui render methods - open, close.. etc ##
-		require_once self::get_plugin_path( 'library/context/ui.php' );
-
-		// elements, html snippets, which can be processed to expand via {> markdown <} ##
-		require_once self::get_plugin_path( 'library/context/partial.php' );
-
-		// user context ##
-		require_once self::get_plugin_path( 'library/context/user.php' );
-
-		// action hook context ##
-		require_once self::get_plugin_path( 'library/context/action.php' );
-
-		// filter hook context ##
-		// require_once self::get_plugin_path( 'library/context/filter.php' );
-
-		// wordpress context ##
-		require_once self::get_plugin_path( 'library/context/wordpress.php' );
+		// parse prepare ##
+		$this->parse_prepare = new willow\parse\prepare( $this->plugin );
 
 	}
-
-
 
 	/** 
 	 * extract and validate args from template to gather data and return via render methods
 	 * 
 	 * @since 0.0.1
 	 */
-	public static function __callStatic( $function, $args ){	
+	public function __call( $function, $args ){	
 
-		// h::log( '$function: '.$function );
-		// h::log( $args );
+		// w__log( '$function: '.$function );
+		// w__log( $args );
 
-		// reset class::method tracker ##
-		$lookup_error = false;
+		// reset lookup error tracker ##
+		$this->lookup_error = false;
 
 		// check class__method is formatted correctly ##
 		if ( 
 			false === strpos( $function, '__' )
 		){
 
-			h::log( 'e:>Error in passed render method: "'.$function.'" - should have format CLASS__METHOD' );
+			w__log( 'e:>Error in passed render method: "'.$function.'" - should have format CLASS__METHOD' );
 
 			return false;
 
@@ -115,46 +59,45 @@ class context extends \willow {
 			|| ! $method
 		){
 		
-			h::log( 'e:>Error in passed render method: "'.$function.'" - should have format CLASS__METHOD' );
+			w__log( 'e:>Error in passed render method: "'.$function.'" - should have format CLASS__METHOD' );
 
 			return false;
 
 		}
 
-		// h::log( 'd:>search if -- class: '.$class.'::'.$method.' available' );
+		// w__log( 'd:>search if -- class: '.$class.'::'.$method.' available' );
 
-		// look for "namespace/render/CLASS" ##
+		// look for "namespace/context/CLASS" ##
 		$namespace = __NAMESPACE__."\\context\\".$class;
-		// h::log( 'd:>namespace --- '.$namespace );
+		// w__log( 'd:>namespace: '.$namespace );
 
-		if (
-			class_exists( $namespace ) // && exists ##
-		) {
+		// called class ( namespace ) exists ##
+		if ( class_exists( $namespace ) ) {
 
 			// reset args ##
-			render\args::reset();
+			$this->plugin->render->args->reset();
 
-			// h::log( 'd:>class: '.$namespace.' available' );
+			// w__log( 'd:>class: '.$namespace.' available' );
 
-			// h::log( $args );
+			// w__log( $args );
 
-			// take first array item, unwrap array - __callStatic wraps the array in an array ##
+			// take first array item, unwrap array --> __call wraps the array inside an array ##
 			if ( is_array( $args ) && isset( $args[0] ) ) { 
 				
-				// h::log('Taking the first array item..');
+				// w__log('Taking the first array item..');
 				$args = $args[0];
 			
 			}
 
-			// h::log( $args );
+			// w__log( $args );
 
 			// extract markup from passed args ##
-			render\markup::pre_validate( $args );
+			$this->plugin->render->markup->pre_validate( $args );
 
 			// make args an array, if it's not ##
 			if ( ! is_array( $args ) ){
 			
-				// h::log( 'Caste $args to array' );
+				// w__log( 'Caste $args to empty array' );
 
 				$args = [];
 			
@@ -166,65 +109,73 @@ class context extends \willow {
 			// set task tracker -- i.e "title" ##
 			$args['task'] = $method;
 
-			// h::log( $args );
+			// w__log( $args );
 
 			// create hash ##
 			$hash = false;
-			$hash = $args['config']['hash'] ?: $args['context'].'__'.$args['task'].'.'.rand(); // HASH can be passed from calling Willow ## 
+			$hash = $args['config']['hash'] ?? $args['context'].'__'.$args['task'].'.'.rand() ; // HASH can be passed from calling Willow ## 
 
-			// h::log( 'e:>Context Loaded: '.$hash );
+			// w__log( 'e:>Context Loaded: '.$hash );
 
 			// log hash ##
-			\willow::$hash 	= [
+			// \willow::$hash 	= [
+			$this->plugin->set( '_hash', [
 				'hash'			=> $hash,
 				'context'		=> $args['context'],
 				'task'			=> $args['task'],
 				'tag'			=> isset( $args['config']['tag'] ) ? $args['config']['tag'] : false , // matching tag from template ##
 				'parent'		=> isset( $args['config']['parent'] ) ? $args['config']['parent'] : false,
-			];
+			]);
 
 			if (
 				! \method_exists( $namespace, 'get' ) // base context method is get() -- and missing ##
 				&& ! \method_exists( $namespace, $args['task'] ) // ... also, context + specific task missing ##
-				&& ! context\extend::get( $args['context'], $args['task'] ) // ... and no extended context method match ##
+				&& ! $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] ) // ... and no extended context method match ##
 			) {
-				
+
 				// log stop point ##
-				render\log::set( $args );
+				$this->plugin->render->log->set( $args );
 	
-				h::log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
+				w__log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
 	
 				// we need to reset the class ##
 
 				// reset all args ##
-				render\args::reset();
+				$this->plugin->render->args->reset();
 
 				// kick out ##
 				return false;
 	
 			}
+
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_args' ) );
 	
 			// validate passed args ##
-			if ( ! render\args::validate( $args ) ) {
+			if ( ! $this->plugin->render->args->validate( $args ) ) {
 	
-				render\log::set( $args );
+				$this->plugin->render->log->set( $args );
 				
-				// h::log( 'e:>Args validation failed' );
+				w__log( 'e:>Args validation failed' );
 
 				// reset all args ##
-				render\args::reset();
+				$this->plugin->render->args->reset();
 	
 				return false;
 	
 			}
 
-			// h::log( $args );
+			// w__log( $this->plugin->get( '_args' ) );
+
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// prepare markup, fields and handlers based on passed configuration ##
-			willow\parse::prepare( $args );
+			$this->parse_prepare->hooks( $args );
 
-			// call class::method to gather data ##
-			// $namespace::run( $args );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_scope_map' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// internal->buffering ##
 			if(
@@ -236,38 +187,65 @@ class context extends \willow {
 			}
 
 			if (
-				$extend = context\extend::get( $args['context'], $args['task'] )
+				$extend = $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] )
 			){
 
-				// h::log( 'run extended method: '.$extend['class'].'::'.$extend['method'] );
+				// w__log( 'run extended method: '.$extend['class'].'->'.$extend['method'] );
 
 				// gather field data from extend ##
-				$return_array = $extend['class']::{ $extend['method'] }( render::$args ) ;
+				// $return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
+
+				$class = $extend['class'];
+				$method = $extend['method'];
+				
+				// new object ##
+				$object = new $class( $this->plugin );
+
+				// return post method to 
+				$return_array = $object->{ $method }( $this->plugin->get( '_args' ) );
 
 			} else if ( 
 				\method_exists( $namespace, $args['task'] ) 
 			){
 
-				// 	h::log( 'load base method: '.$extend['class'].'::'.$extend['method'] );
+				// w__log( 'load defined method: '.$namespace.'->'.$args['task'] );
+
+				$method = $args['task'];
+
+				// new object ##
+				$object = new $namespace( $this->plugin );
+
+				// return post method to 
+				$return_array = $object->{ $method }( $this->plugin->get( '_args' ) );
 
 				// gather field data from $method ##
-				$return_array = $namespace::{ $args['task'] }( render::$args ) ;
+				// $return_array = $namespace::{ $args['task'] }( $this->plugin->get( '_args') ) ;
 
 			} else if ( 
 				\method_exists( $namespace, 'get' ) 
 			){
 
-				// 	h::log( 'load default get() method: '.$extend['class'].'::'.$extend['method'] );
+				// w__log( 'load: '.$namespace.'->get()' );
 
 				// gather field data from get() ##
-				$return_array = $namespace::get( render::$args ) ;
+				// $return_array = $namespace::get( $this->plugin->get( '_args') ) ;
+
+				// w__log( $this->plugin->get( '_args' ) ); exit;
+
+				// new object ##
+				$object = new $namespace( $this->plugin );
+
+				// return post method to 
+				$return_array = $object->get( $this->plugin->get( '_args' ) );
+
+				// w__log( $return_array );
 
 			} else {
 
-				// h::log( 'e:>No matching class::method found' );
+				// w__log( 'e:>No matching class::method found' );
 
 				// nothing found ##
-				$lookup_error = true;
+				$this->lookup_error = true;
 
 			}
 
@@ -282,23 +260,23 @@ class context extends \willow {
 				// ob_flush();
 				if( ob_get_level() > 0 ) ob_flush();
 
-				// h::log( $return_array );
+				// w__log( $return_array );
 
 			}
 
 			// test ##
-			// h::log( $return_array );
+			// w__log( $return_array );
 
 			if(
-				true === $lookup_error
+				true === $this->lookup_error
 			){
 
-				render\log::set( $args );
+				$this->plugin->render->log->set( $args );
 				
-				h::log( 'e:>No matching method found for "'.$args['context'].'::'.$args['task'].'"' );
+				w__log( 'e:>No matching method found for "'.$args['context'].'~'.$args['task'].'"' );
 
 				// reset all args ##
-				render\args::reset();
+				$this->plugin->render->args->reset();
 	
 				return false;
 
@@ -309,78 +287,80 @@ class context extends \willow {
 				|| ! is_array( $return_array )
 			){
 
-				// h::log( 'e:>Error in returned data from "'.$args['context'].'::'.$args['task'].'"' );
-				// h::log( $return_array );
+				w__log( 'e:>"'.$args['context'].'~'.$args['task'].'" Calling function found, but returned false - stopping here.' );
+				// w__log( $return_array );
 
-				// ...
+				// BREAKING CHANGE  ## 
+				// this did not return before - but what use is there to continue with no data to markup ?
+				// any filters and hooks could already have run from the called function - which was found, but returned false ##
+				return false;
 
 			}
 
-			// h::log( $return_array );
+			// w__log( $return_array );
 
-			// assign fields ##
-			render\fields::define( $return_array );
+			// assign fields from returned data array ##
+			$this->plugin->render->fields->define( $return_array );
+			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_args' ) );
 
-			// h::log( self::$markup );
-
-			// h::log( $return_array );
+			// w__log( $return_array );
 
 			// prepare field data ##
-			render\fields::prepare();
-
-			// h::log( self::$markup );
-
-			// h::log( self::$fields );
-
-			// h::log( self::$markup['template'] );
+			$this->plugin->render->fields->prepare();
+			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_scope_map' ) );
 
 			// check if feature is enabled ##
-			if ( ! render\args::is_enabled() ) {
+			if ( ! $this->plugin->render->args->is_enabled() ) {
 
-				render\log::set( $args );
-
-				h::log( 'd:>Not enabled...' );
+				// build log ##
+				$this->plugin->render->log->set( $args );
 
 				// reset all args ##
-				render\args::reset();
-	
+				$this->plugin->render->args->reset();
+				
+				w__log( 'd:>Not enabled...' );
+
+				// done ##
 				return false;
 	
 		   	}    
 		
-			// h::log( self::$fields );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
 			// Prepare template markup ##
-			render\markup::prepare();
+			$this->plugin->render->markup->prepare();
 
-			// h::log( self::$markup );
+			// w__log( $this->plugin->get( '_markup' ) );
+			// w__log( $this->plugin->get( '_fields' ) );
 
-			// h::log( 'running-> '.$extend['class'].'::'.$extend['method'] );
-			// if( 'hello' == $args['task'] ) {
-				// h::log( $args['context'].'__'.$args['task'] );
-				// h::log( render::$fields );
-				// h::log( render::$markup );
-			// }
-
-			// clean up left over tags ## --- REMOVED ##
+			// clean up left over tags ## --- @TODO --> REMOVED as handled by cleanup ??? ##
 			// willow\parse::cleanup();
 
 			// optional logging to show removals and stats ##
-			render\log::set( $args );
+			$this->plugin->render->log->set( $args );
 
 			// return or echo ##
-			return render\output::prepare();
+			$output = $this->plugin->render->output->prepare();
+
+			// w__log( $output );
+
+		} else {
+
+			// nothing matched, so report and return false ##
+			w__log( 'e:>No matching context for: '.$namespace );
+
+			// optional clean up.. how do we know what to clean ?? ##
+			// @todo -- add shutdown cleanup, so remove all lost pieces ##
+
+			// kick back nada - as this renders on the UI ##
+			return false;
 
 		}
-
-		// nothing matched, so report and return false ##
-		h::log( 'e:>No matching context for: '.$namespace );
-
-		// optional clean up.. how do we know what to clean ?? ##
-		// @todo -- add shutdown cleanup, so remove all lost pieces ##
-
-		// kick back nada - as this renders on the UI ##
-		return false;
 
 	}
 	

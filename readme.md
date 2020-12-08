@@ -3,7 +3,7 @@
 **Tags:** Simple, logic-less, procedural, semantic, markup, language  
 **Requires at least:** 5.0  
 **Tested up to:** 5.5.3  
-**Stable tag:** 1.6.3    
+**Stable tag:** 2.0.0    
 **License:** GPL2  
 
 Willow ~ A logic-less template engine built for WordPress.
@@ -18,12 +18,12 @@ All Willow tags include a matching opening and closing pair, starting and ending
 {~ ui~hello {+ Willow says <strong>{{ hello }}</strong> +} ~}
 ```
 
-This tag calls the class **ui** method **hello** - ui::hello() - and wraps the returned data in any markup passed in the Willow argument: 
+This tag calls the class **ui** method **hello** - ui->hello() - and wraps the returned data in any markup passed in the Willow argument: 
 
 ```php
 class ui {
 
-	public static function hello( $args = null ) {
+	function hello( $args = null ) {
 
 		// define key + value to render ##
 		return [

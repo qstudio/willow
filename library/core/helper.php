@@ -4,48 +4,66 @@
 namespace willow\core;
 
 // core ##
-use willow\core;
+use willow;
 
 /**
  * helper Class
  * @package   willow\core
  */
-class helper extends \willow {
-
-
-    /**
-     * Write to WP Error Log
-     *
-     * @since       1.5.0
-     * @return      void
-     */
-    public static function log( $args = null )
-    {
-		
-		// shift callback level, as we added another level.. ##
-		\add_filter( 
-			'willow/core/log/backtrace/function', function () {
-			return 4;
-		});
-		\add_filter( 
-			'willow/core/log/backtrace/file', function () {
-			return 3;
-		});
-		
-		// pass to core\log::set();
-		return core\log::set( $args );
-
-	}
-	
-
+class helper {
 
 	/**
-     * Write to WP Error Log directly, not via core\log
+     * Plugin Instance
+     *
+     * @var     Object      $plugin
+     */
+	protected 
+		$plugin
+	;
+
+	/**
+	 * CLass Constructer 
+	*/
+	function __construct( $plugin = null ){
+
+		// Log::write( $plugin );
+
+        // grab passed plugin object ## 
+		$this->plugin = $plugin;
+		
+	}
+
+	/**
+     * callback method for class instantiation
+     *
+     * @since   0.0.2
+     * @return  void
+     */
+	public function hooks() {
+
+		// sanity ##
+        if( 
+            is_null( $this->plugin )
+            || ! ( $this->plugin instanceof plugin ) 
+        ) {
+
+            error_log( 'Error in object instance passed to '.__CLASS__ );
+
+            return false;
+        
+		}
+		
+		// error_log( 'Helper hooks run..' );
+
+    }
+
+	/**
+     * Write to WP Error Log directly, not via log->set
      *
      * @since       4.1.0
      * @return      void
      */
-    public static function hard_log( $args = null ){
+    public static function log( $args = null ){
 		
 		// error_log( $args );
 
@@ -81,18 +99,18 @@ class helper extends \willow {
 		} 
 
 		// debugging is on in WP, so write to error_log ##
-        if ( true === WP_DEBUG ) {
+        if ( true === \WP_DEBUG ) {
 
 			// get caller ##
-			$backtrace = core\method::backtrace();
+			$backtrace = willow\core\method::backtrace();
 
             if ( is_array( $log ) || is_object( $log ) ) {
 
-				core\log::error_log( print_r( $log, true ).' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
+				error_log( print_r( $log, true ).' -> '.$backtrace );
 				
             } else {
 
-				core\log::error_log( $log.' -> '.$backtrace, \WP_CONTENT_DIR."/debug.log" );
+				error_log( $log.' -> '.$backtrace );
 				
             }
 
@@ -102,9 +120,6 @@ class helper extends \willow {
 		return true;
 
     }
-
-
-
 
 	/**
     * check if a file exists with environmental fallback
@@ -118,8 +133,7 @@ class helper extends \willow {
     *
     * @since 0.1
     */
-    public static function get( $include = null, $return = 'echo', $type = 'url', $path = "library/", $class = null )
-    {
+    public function get( $include = null, $return = 'echo', $type = 'url', $path = "library/", $class = null )    {
 
         // nothing passed ##
         if ( is_null( $include ) ) { 
@@ -133,11 +147,11 @@ class helper extends \willow {
         
         #if ( ! defined( 'TEMPLATEPATH' ) ) {
 
-        #    h::log( 'MISSING for: '.$include.' - AJAX = '.( \wp_doing_ajax() ? 'true' : 'false' ) );
+        #    w__log( 'MISSING for: '.$include.' - AJAX = '.( \wp_doing_ajax() ? 'true' : 'false' ) );
 
 		#}
 		
-		// h::log( 'd:>h::get class/include: '.$class.'/'.$include );
+		// w__log( 'd:>h::get class/include: '.$class.'/'.$include );
 
         // perhaps this is a child theme ##
         if ( 
@@ -180,7 +194,7 @@ class helper extends \willow {
             // file_exists( self::get_plugin_path( $path.$include ) )
         ) {
 
-            // h::log( 'd:>h::get class: '.$class );
+            // w__log( 'd:>h::get class: '.$class );
 
             // $template = self::get_plugin_url( $path.$include ); // plugin URL ##
             $template = call_user_func( array( $class, 'get_plugin_url' ), $path.$include );
@@ -192,7 +206,7 @@ class helper extends \willow {
                 
             } 
 
-            // h::log( 'extended plugin: '.$template );
+            // w__log( 'extended plugin: '.$template );
 
         }
 
@@ -221,19 +235,19 @@ class helper extends \willow {
             // echo or return string ##
             if ( 'return' === $return ) {
 
-                #if ( self::$debug ) h::log( 'returned' );
+                #if ( self::$debug ) w__log( 'returned' );
 
                 return $template;
 
             } elseif ( 'require' === $return ) {
 
-                #if ( self::$debug ) h::log( 'required' );
+                #if ( self::$debug ) w__log( 'required' );
 
                 return require_once( $template );
 
             } else {
 
-                #if ( self::$debug ) h::log( 'echoed..' );
+                #if ( self::$debug ) w__log( 'echoed..' );
 
                 echo $template;
 

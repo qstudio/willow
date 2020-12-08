@@ -5,20 +5,37 @@ namespace willow\context;
 use willow\core\helper as h;
 use willow\context;
 
-// load it up ##
-\willow\context\extend::__run();
+class extend {
 
-class extend extends \willow\context {
-
-	protected static $filtered = [];
+	private 
+		$plugin = false,
+		$_extend = [],
+		$filtered = []
+	;
 
 	/**
-	 * Fire things up
-	*/
-	public static function __run(){
+     * Apply Markup changes to passed template
+     * find all placeholders in self::$markup and replace with matching values in self::$fields
+	 * most complex and most likely to clash go first, then simpler last ##
+     * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+		// extend array ##
+		$this->_extend = $this->plugin->get( '_extend' );
+
+	}
+
+	function hooks(){
 
 		// allow for class extensions ##
-		\do_action( 'willow/context/extend/register', [ get_class(), 'register' ] );
+		// \do_action( 'willow/context/extend/register', [ $this, 'register' ] );
+
+		// allow for class extensions ##
+		// \add_filter( 'after_setup_theme', [ $this, 'filter' ], 0, 1 );
 
 		// filter in context extensions ## 
 		// \add_action( 'after_setup_theme', [ get_class(), 'filter' ], 2 );
@@ -28,47 +45,47 @@ class extend extends \willow\context {
 
 	}
 
-
-
 	/**
 	 * @todo
 	*/
-	public static function filter(){
+	public function filter( $array = null ){
 
 		// filter extensions ##
-		$array = \apply_filters( 'willow/context/extend', [] );
+		$array = \apply_filters( 'willow/context/extend', $this->_extend );
 
-		// h::log( $array );
+		w__log( $array );
 
+		/*
 		// sanity ##
 		if( 
 			! $array
 			|| ! is_array( $array ) 
 		){
 
-			h::log( 'e:>Not an Array' );
+			w__log( 'e:>Not an Array' );
 
 			return false;
 
 		}
 
 		// merge in - validate later ##
-		self::$filtered = array_merge( $array, self::$filtered );
+		$this->filtered = array_merge( $array, $this->filtered );
+		*/
 
-		// h::log( self::$filtered );
+		// w__log( self::$filtered );
 
 		/*
 		$merge = [];
 
 		foreach( $array as $key => $value ){
 
-			h::log( $key );
+			w__log( $key );
 
 			$merge[ $key['class'] ] = $key;
 
 		}
 
-		h::log( $merge );
+		w__log( $merge );
 
 		// merge into class property ##
 		self::$extend = array_merge(
@@ -79,11 +96,10 @@ class extend extends \willow\context {
 
 	}
 
-
-	public static function register( $args = null ){
+	public function register( $args = null ){
 
 		// test ##
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ###
 		if (
@@ -95,20 +111,18 @@ class extend extends \willow\context {
 			// || ! is_array( $args['methods'] )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return false;
 
 		}
 
 		// store ##
-		self::set( $args );
+		$this->set( $args );
 
 	}
 
-
-	
-    public static function set( $args = null ) {
+    protected function set( $args = null ) {
 
 		// sanity ###
 		if (
@@ -120,7 +134,7 @@ class extend extends \willow\context {
 			// || ! is_array( $args['methods'] )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return false;
 
@@ -129,10 +143,9 @@ class extend extends \willow\context {
 		// reject invalid class objects ##
 		if( 
 			! class_exists( $args['class'] ) 
-			// ! is_call( $args['class'] ) 
 		){
 
-			h::log( 'Invalid class: '.$args['class'] );
+			w__log( 'Invalid class: '.$args['class'] );
 
 			return false;
 
@@ -158,7 +171,7 @@ class extend extends \willow\context {
 
 					$class = new \ReflectionClass( $args['class'] );
 					$public_methods = $class->getMethods( \ReflectionMethod::IS_PUBLIC );
-					// h::log( $public_methods );
+					// w__log( $public_methods );
 					foreach( $public_methods as $key ){ 
 						
 						// match format returned by get_class_methods() ##
@@ -183,10 +196,17 @@ class extend extends \willow\context {
 
 		}
 
+		// @todo - check if any methods found ...
+		if( empty( $methods ) ){
+
+			return false;
+
+		}
+
 		// remove quasi-private methods with __NAME ##
 		foreach ( $methods as $key ) {
 
-			// h::log( 'Checking method: '.$key );
+			// w__log( 'Checking method: '.$key );
 
 			if( substr( $key, 0, 2, ) === '__' ) {
 
@@ -195,7 +215,7 @@ class extend extends \willow\context {
 
 					unset($methods[$remove_key]);
 
-					// h::log( 'Removing method: '.$args['class'].'::'.$key );
+					// w__log( 'Removing method: '.$args['class'].'::'.$key );
 					
 				}
 
@@ -209,29 +229,44 @@ class extend extends \willow\context {
 			|| empty( $methods )
 		){
 
-			h::log( 'e:>Error in gathered methods' );
+			w__log( 'e:>Error in gathered methods' );
 
 			return false;
 
 		}
 
-		// h::log( $methods );
+		// w__log( $methods );
 
+		$_extend = $this->plugin->get( '_extend' );
+
+		$_extend[ $args['class'] ] = [
+			'context' 	=> $args['context'],
+			'class' 	=> $args['class'],
+			'methods' 	=> $methods,
+			'lookup' 	=> $args['lookup'] ?? false
+		];
+
+		// store to object prop ##
+		return $this->plugin->set( '_extend', $_extend );
+
+		// w__log( $this->plugin->get( '_extend' ) );
+
+		/*
 		return self::$extend[ $args['class'] ] = [
 			'context' 	=> $args['context'],
 			'class' 	=> $args['class'],
 			'methods' 	=> $methods,
 			'lookup' 	=> isset( $args['lookup'] ) ? $args['lookup'] : false
 		];
+		*/
 
 	}
-
 
 	/**
 	 * Get stored extension by context+task
 	 *
 	 */
-	public static function get( $context = null, $task = null ) {
+	public function get( $context = null, $task = null ) {
 
 		// sanity ###
 		if (
@@ -239,30 +274,32 @@ class extend extends \willow\context {
 			|| is_null( $task )
 		){
 
-			h::log( 'e:>Error in passed params' );
+			w__log( 'e:>Error in passed params' );
 
 			return false;
 
 		}
 
+		$_extend = $this->plugin->get( '_extend' );
+
 		// check ##
-		// h::log( 'd:>Looking for extension: '.$context );
-		// h::log( self::$extend );
+		// w__log( 'd:>Looking for extension: '.$context );
+		// w__log( $_extend );
 
 		// is_array ##
 		if (
-			! is_array( self::$extend )
+			! is_array( $_extend )
 		){
 
-			h::log( 'e:>Error in stored $extend' );
+			w__log( 'e:>Error in stored $extend' );
 
 			return false;
 
 		}
 
-		foreach( self::$extend as $k => $v ){
+		foreach( $_extend as $k => $v ){
 
-			// h::log( 'checking class: '.$k.' for task: '.$task );
+			// w__log( 'checking class: '.$k.' for task: '.$task );
 
 			// check if $context match ##
 			if ( $v['context'] == $context ){
@@ -270,7 +307,7 @@ class extend extends \willow\context {
 				// now check if we have a matching method ##
 				if ( false !== $key = array_search( $task, $v['methods'] ) ) {
 
-					// h::log( 'found task: '.$task );
+					// w__log( 'found task: '.$task );
 
 					// check if extension is callable ##
 					if (
@@ -279,13 +316,13 @@ class extend extends \willow\context {
 						|| ! is_callable([ $v['class'], $v['methods'][$key] ])
 					){
 
-						// h::log( $v['class'].'::'.$v['methods'][$key].' is NOT available' );
+						// w__log( $v['class'].'::'.$v['methods'][$key].' is NOT available' );
 
 						return false;
 
 					}
 
-					// h::log( $v['class'].'::'.$v['methods'][$key].' IS available' );
+					// w__log( $v['class'].'::'.$v['methods'][$key].' IS available' );
 
 					// kick back ##
 					return [ 'class' => $v['class'], 'method' => $v['methods'][$key] ];
@@ -301,29 +338,27 @@ class extend extends \willow\context {
 
 	}
 
-
-
-
 	/**
 	 * Get all stored extensions
 	 *
 	 */
-	public static function get_all() {
+	public function get_all() {
 
-		// h::log( self::$extend );
+		// w__log( self::$extend );
+		$_extend = $this->plugin->get( '_extend' );
 
 		// is_array ##
 		if (
-			! is_array( self::$extend )
+			! is_array( $_extend )
 		){
 
-			h::log( 'e:>Error in stored $extend' );
+			w__log( 'e:>Error in stored $extend' );
 
 			return false;
 
 		}
 
-		return self::$extend;
+		return $_extend;
 
 	}
 

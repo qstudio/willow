@@ -4,11 +4,23 @@ namespace willow\context;
 
 use willow\core\helper as h;
 use willow;
-use willow\context;
 
-class post extends willow\context {
+class post {
 
-	public static function get( $args = null ){
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -18,7 +30,7 @@ class post extends willow\context {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -28,28 +40,34 @@ class post extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\post', $method )
-			|| ! is_callable([ '\willow\get\post', $method ])
+			! method_exists( 'willow\get\post', $method )
+			|| ! is_callable([ 'willow\get\post', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\post\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\post\\'.$method );
 
 			return false;
 
 		}
 
-		// return \willow\get\post::$method;
+		// w__log( 'e:>Class method IS callable: willow\get\post\\'.$method );
 
-		// h::log( 'e:>Class method IS callable: q\get\post\\'.$method );
+		// new object ##
+		$post = new willow\get\post( $this->plugin );
+
+		// return post method to 
+		$return = $post->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\post', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;
@@ -63,9 +81,12 @@ class post extends willow\context {
 	* @return		Array
     * @since        1.6.2
     */
-    public static function this( $args = null ){
+    public function this( $args = null ){
 
-		return [ 'this' => \willow\get\post::this( $args ) ];
+		// new object ##
+		$post = new willow\get\post( $this->plugin );
+
+		return [ 'this' => $post->this( $args ) ];
 
 	}
 
@@ -76,15 +97,19 @@ class post extends willow\context {
     *
     * @since       1.0.2
     */
-    public static function query( $args = [] ){
+    public function query( $args = [] ){
 
 		// @todo -- add filter to return value and avoid Q check and get routine ##
 
 		// Q needed to run get method ##
-		if ( ! class_exists( 'Q' ) ){ return false; }
+		// if ( ! class_exists( 'Q' ) ){ return false; }
 
-		// h::log( self::$markup );
-		// h::log( self::$args );
+		// w__log( self::$markup );
+		// w__log( self::$args );
+
+		// new object ##
+		$query = new willow\get\query( $this->plugin );
+		$navigation = new willow\get\navigation( $this->plugin );
 
 		// build fields array with default values ##
 		$return = ([
@@ -95,10 +120,10 @@ class post extends willow\context {
 		]);
 
         // pass to get_posts -- and validate that we get an array back ##
-		if ( ! $array = \willow\get\query::posts( $args ) ) {
+		if ( ! $array = $query->posts( $args ) ) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:query::posts did not return any data');
+			w__log( self::$args['task'].'~>n:query::posts did not return any data');
 
 		}
 
@@ -109,10 +134,10 @@ class post extends willow\context {
 			// || ! isset( $array['query']->posts ) 
 		){
 
-			// h::log( 'Error in data returned from query::posts' );
+			// w__log( 'Error in data returned from query::posts' );
 
 			// log ##
-			h::log( self::$args['task'].'~>n:Error in data returned from query::posts');
+			w__log( self::$args['task'].'~>n:Error in data returned from query::posts');
 
 		}
 		
@@ -122,8 +147,8 @@ class post extends willow\context {
 			|| 0 == count( $array['query']->posts )
 		){
 
-			// h::log( 'No results returned from the_posts' );
-			h::log( self::$args['task'].'~>n:No results returned from query::posts');
+			// w__log( 'No results returned from the_posts' );
+			w__log( self::$args['task'].'~>n:No results returned from query::posts');
 
 		// we have posts, so let's add some charm ##
 		} else {
@@ -131,13 +156,13 @@ class post extends willow\context {
 			// merge array into args ##
 			$args = \q\core\method::parse_args( $array, $args );
 
-			// h::log( $array['query']->found_posts );
+			// w__log( $array['query']->found_posts );
 
 			// define all required fields for markup ##
 			// self::$fields = [
 			$return = [
 				'total' 		=> $array['query']->found_posts, // total posts ##
-				'pagination'	=> \willow\get\navigation::pagination( $args ), // get pagination, returns string ##
+				'pagination'	=> $navigation->pagination( $args ), // get pagination, returns string ##
 				'results'		=> $array['query']->posts // array of WP_Posts ##
 			];
 

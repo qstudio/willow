@@ -2,16 +2,26 @@
 
 namespace willow\context;
 
-use q\core\helper as h;
-use q\get;
+use willow\core\helper as h;
 use willow;
-use willow\context;
-use willow\render; 
 
-class media extends willow\context {
+class media {
 
+	private
+		$plugin = null // this 
+	;
 
-	public static function get( $args = null ){
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -21,7 +31,7 @@ class media extends willow\context {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -31,36 +41,38 @@ class media extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\media', $method )
-			|| ! is_callable([ '\willow\get\media', $method ])
+			! method_exists( 'willow\get\media', $method )
+			|| ! is_callable([ 'willow\get\media', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\media\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\media\\'.$method );
 
 			return false;
 
 		}
 
-		// return \willow\get\post::$method;
+		// w__log( 'e:>Class method IS callable: willow\get\media\\'.$method );
 
-		// h::log( 'e:>Class method IS callable: q\get\media\\'.$method );
+		// new object ##
+		$media = new willow\get\media( $this->plugin );
+
+		// return call ## 
+		$return = $media->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\media', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;
 
 	}
-
-
-	/// ---- deprecated by get()
-
 
 }

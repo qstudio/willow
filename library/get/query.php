@@ -2,24 +2,31 @@
 
 namespace willow\get;
 
-// Q ##
-use willow\core;
+use willow;
 use willow\core\helper as h;
-use willow\get;
 
-// Q Theme ##
-use willow\theme;
+class query {
 
-class query extends \willow\get {
+	private
+		$plugin = null // this
+	;
 
-	
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Get Main Posts Loop
      *
      * @since       1.0.2
      */
-    public static function posts( $args = null ){
+    public function posts( $args = null ){
 
 		// sanity ##
 		if (
@@ -27,13 +34,13 @@ class query extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'Error in passed args' );
+			w__log( 'Error in passed args' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args['wp_query_args'] );
 
 		// add hardcoded query args ##
 		$wp_query_args['paged'] = \get_query_var( 'paged' ) ? \get_query_var( 'paged' ) : 1 ;
@@ -61,17 +68,19 @@ class query extends \willow\get {
             // merge all args together ##
             $wp_query_args = array_merge( $wp_query->query_vars, $wp_query_args );
 
-			// h::log('e:>added query vars');
+			// w__log('e:>added query vars');
 
 		}
 		
 		// filter posts_args ##
 		$wp_query_args = \apply_filters( 'willow/get/query/posts/wp_query_args', $wp_query_args );
 
-		// h::log( $wp_query_args );
+		// w__log( $wp_query_args );
 		
 		// set-up new array to hold returned post objects ##
 		$array = [];
+
+		w__log( $wp_query_args );
 
         // run query ##
 		$q_query = new \WP_Query( $wp_query_args );
@@ -84,16 +93,16 @@ class query extends \willow\get {
 			&& count( $q_query->posts ) > $wp_query_args['posts_per_page'] 
 		){
 
-			// h::log( 'e:>Sticky mess...' );
+			// w__log( 'e:>Sticky mess...' );
 			
-			// h::log( $q_query->posts );
+			// w__log( $q_query->posts );
 
-			h::log( 'Old count: '.count( $q_query->posts ) );
+			w__log( 'Old count: '.count( $q_query->posts ) );
 
 			// slice ##
 			$sliced_array = array_slice( $q_query->posts, 0, $wp_query_args['posts_per_page'] );
 
-			h::log( 'New count: '.count( $sliced_array ) );
+			w__log( 'New count: '.count( $sliced_array ) );
 
 			// re-assign ##
 			$q_query->posts = $sliced_array;
@@ -104,15 +113,12 @@ class query extends \willow\get {
 		// put results in the array key 'query' ##
 		$array['query'] = $q_query ;
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// filter and return array ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
     }
-
-
-
 
   	/**
      * Get Post object by post_meta query
@@ -120,10 +126,10 @@ class query extends \willow\get {
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function posts_by_meta( $args = array() ){
+    public function posts_by_meta( $args = array() ){
 
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
-        $args = ( object ) \wp_parse_args( $args, core\config::get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
+        $args = ( object ) \wp_parse_args( $args, $this->plugin->config->get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
 
         // grab page - polylang will take care of language selection ##
         $post_args = array(
@@ -159,17 +165,13 @@ class query extends \willow\get {
 
 	}
 
-
-
-
 	/**
      * Get Post object by post_meta query
      *
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function post_id_by_title( $args = null )
-    {
+    public static function post_id_by_title( $args = null ){
 
 		/*
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
@@ -191,7 +193,7 @@ class query extends \willow\get {
 		*/
 
 		// test ##
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -200,7 +202,7 @@ class query extends \willow\get {
 			// || ! isset( $args[0] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -213,14 +215,12 @@ class query extends \willow\get {
         if ( ! $post || \is_wp_error( $post ) ) return false;
 
         // test it ##
-        // h::log( $post );
+        // w__log( $post );
 
         // kick back result->ID ##
         return $post->ID;
 
 	}
-
-
 
 	/**
      * Get Post object by post_meta query
@@ -228,8 +228,7 @@ class query extends \willow\get {
      * @since       1.0.4
      * @return      Object      $args
      */
-    public static function post_id_by_path( $args = null )
-    {
+    public static function post_id_by_path( $args = null ){
 
 		/*
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
@@ -251,7 +250,7 @@ class query extends \willow\get {
 		*/
 
 		// test ##
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -260,7 +259,7 @@ class query extends \willow\get {
 			// || ! isset( $args[0] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -273,15 +272,12 @@ class query extends \willow\get {
         if ( ! $post || \is_wp_error( $post ) ) return false;
 
         // test it ##
-        // h::log( $post );
+        // w__log( $post );
 
         // kick back result->ID ##
         return $post->ID;
 
 	}
-
-
-
 	
     /**
     * Get post with title %like% search term
@@ -293,8 +289,7 @@ class query extends \willow\get {
     * @since       0.3
     * @return      Mixed           Array || False
     */
-    public static function posts_with_title_like( $title = null, $method = 'get_col', $columns = array ( 'ID' ) )
-    {
+    public static function posts_with_title_like( $title = null, $method = 'get_col', $columns = array ( 'ID' ) ){
 
         // sanity check ##
         if ( ! $title ) { return false; }
@@ -330,9 +325,6 @@ class query extends \willow\get {
 
 	}
 	
-	
-
-
 	/**
      * Check if a page has children
      *
@@ -340,8 +332,7 @@ class query extends \willow\get {
      * @param       integer         $post_id
      * @return      boolean
      */
-    public static function has_children( $post_id = null )
-    {
+    public static function has_children( $post_id = null ){
 
         // nothing to do here ##
         if ( is_null ( $post_id ) ) { return false; }
@@ -395,6 +386,5 @@ class query extends \willow\get {
         }
 
     }
-
 
 }	

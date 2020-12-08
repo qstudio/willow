@@ -5,9 +5,26 @@ namespace willow\context;
 use willow\core\helper as h;
 use willow;
 
-class meta extends willow\context {
+class meta {
 
-	public static function get( $args = null ){
+	private
+		$plugin = null, // this
+		$get = null 
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+		$this->get = new willow\get\meta( $this->plugin );
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -17,7 +34,7 @@ class meta extends willow\context {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -27,11 +44,11 @@ class meta extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\meta', $method )
-			|| ! is_callable([ '\willow\get\meta', $method ])
+			! method_exists( 'willow\get\meta', $method )
+			|| ! is_callable([ 'willow\get\meta', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\meta\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\meta\\'.$method );
 
 			return false;
 
@@ -39,23 +56,26 @@ class meta extends willow\context {
 
 		// return \willow\get\post::$method;
 
-		// h::log( 'e:>Class method IS callable: willow\get\meta\\'.$method );
+		// w__log( 'e:>Class method IS callable: willow\get\meta\\'.$method );
+
+		// return callback ##
+		$return = $this->get->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\meta', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;
 
 	}
-
-
 
 	/**
      * Get Meta field data via meta handler
@@ -65,10 +85,11 @@ class meta extends willow\context {
 	 * @uses		define
      * @return      Array
      */
-    public static function field( $args = null ) {
+    public function field( $args = null ) {
 
 		// return an array with the field "task" as the placeholder key and value
-		return [ $args['task'] => \willow\get\meta::field( $args ) ];
+
+		return [ $args['task'] => $this->get->field( $args ) ];
 
 	}
 

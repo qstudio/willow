@@ -3,14 +3,24 @@
 namespace willow\get;
 
 // Q ##
-use willow\core;
+use willow;
 use willow\core\helper as h;
-use willow\get;
 
-// Q Theme ##
-// use willow\theme;
+class theme {
 
-class theme extends \willow\get {
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 		
 	/**
      * Get body classes
@@ -18,8 +28,7 @@ class theme extends \willow\get {
      * @since       1.0.2
      * @return      string   HTML
      */
-    public static function body_class( $args = array() ) 
-    {
+    public static function body_class( $args = array() ){
 
         // set-up new array ##
         $array = [];
@@ -44,7 +53,7 @@ class theme extends \willow\get {
         // added passed element, if ! is_null ##
         if ( isset ( $args['class'] ) ) {
 
-            // h::log( 'Adding passed class..' );
+            // w__log( 'Adding passed class..' );
 
             if ( is_array( $args['class'] ) ) {
                 
@@ -57,7 +66,7 @@ class theme extends \willow\get {
 
         }
 
-		// h::log( $array );
+		// w__log( $array );
 		
         // check if we've got an array - if so filter and implode it ##
         $string =
@@ -70,17 +79,13 @@ class theme extends \willow\get {
 
 	}
 
-
-
-
     /**
     * Get installed theme data
     *
     * @return  Object
     * @since   0.3
     */
-    public static function data( $refresh = false )
-    {
+    public static function data( $refresh = false ){
 
        if ( $refresh ) {
 
@@ -110,24 +115,21 @@ class theme extends \willow\get {
 
            if ( $array ) {
 
-               core\method::add_update_option( 'q_theme_data', $array, '', 'yes' );
+               willow\core\method::add_update_option( 'q_theme_data', $array, '', 'yes' );
                #echo 'stored fresh theme data<br />';
 
            }
 
        }
 
-       return core\method::array_to_object( $array );
+       return willow\core\method::array_to_object( $array );
 
     }
 
-
-
-	public static function is_child()
-	{
+	public static function is_child(){
 
 		$theme = \wp_get_theme(); // gets the current theme
-		// h::log( $theme );
+		// w__log( $theme );
 
 		if ( $theme->template ) {
 			return true;
@@ -137,10 +139,7 @@ class theme extends \willow\get {
 
 	}
 
-
-
-	public static function is_parent()
-	{
+	public static function is_parent(){
 
 		$theme = \wp_get_theme(); // gets the current theme
 		

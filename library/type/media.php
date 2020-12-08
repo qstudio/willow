@@ -1,22 +1,57 @@
 <?php
 
-namespace willow\render\type;
+namespace willow\type;
 
-use willow\core;
 use willow\core\helper as h;
-use willow\get;
-use willow\render;
+use willow;
 
-class media extends render\type {
+class media {
 
-    /**
-     * Image type handler 
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	/**
+     * WP Post handler
+     *  
      * 
-	 * @wp_post		Object 
-     * @todo - placeholder fallback
-     * @todo - Add picture handler ##
      **/ 
-    public static function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null ): ?string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ):? string {
+
+		// local var ##
+		$_args = $this->plugin->get( '_args' );
+
+		// check if type allowed ##
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+
+			// w__log( 'e:>Value Type not allowed: '.$type );
+
+			// log ##
+			w__log( $_args['task'].'~>e:Value Type not allowed: "'.$type.'"');
+
+			// return $args[0]->$args[1]; // WHY ??#
+			return false;
+
+		}
+
+		// $value needs to be a WP_Post object ##
+		if ( ! $wp_post instanceof \WP_Post ) {
+
+			// log ##
+			w__log( $_args['task'].'~>e:Error in pased $args - not a WP_Post object');
+
+			return false;
+
+		}
 
 		// start empty ##
         $string = null;
@@ -25,25 +60,25 @@ class media extends render\type {
 		if (
 			is_null( $wp_post )
 			|| ! $wp_post instanceof \WP_Post
-			|| ! isset( self::$args )
+			|| is_null ( $_args )
 			|| ! isset( $type_field )
 			|| ! isset( $field )
 			|| ! isset( $context ) // can be WP_Post OR ... @todo
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return $string;
 
 		}
 
 		// check ##
-		// h::log( 'Field: '.$field.' - Type: '.$type_field.' - Attachment ID: '.$wp_post->ID );
+		// w__log( 'Field: '.$field.' - Type: '.$type_field.' - Attachment ID: '.$wp_post->ID );
 
 		// prepare args ##
 		$args['post'] = $wp_post; // we have a post, so send it to control the loading ##
 		$args['field'] = $field; // send on post_field name ##
-		// h::log( '$field: '.$field );
+		// w__log( '$field: '.$field );
 
 		// get context ##
 		switch ( $context ) {
@@ -54,11 +89,13 @@ class media extends render\type {
 				$args['attachment_id'] = \get_post_thumbnail_id( $wp_post );
 				// $att vachment = \get_post( $attachment_id );
 
-				// h::log( $args );
+				// w__log( $args );
 
-				$array = get\media::src( $args );
+				$get_media = new willow\get\media( $this->plugin );
+				$array = $get_media->src( $args );
+				// $array = willow\get\media::src( $args );
 
-				// h::log( $array );
+				// w__log( $array );
 
 			break ;
 
@@ -71,7 +108,7 @@ class media extends render\type {
 		) {
 
 			// log ##
-			h::log( self::$args['task'].'~>n:>get\media::thumbnail returned bad data');
+			w__log( $_args['task'].'~>n:>get\media::thumbnail returned bad data');
 
 			return $string;
 
@@ -85,7 +122,7 @@ class media extends render\type {
 				// esc src array ##
 				// $array = array_map( 'esc_attr', $array );
 
-				// h::log( $array );
+				// w__log( $array );
 
 				// let's do this nicely -- remember we're starting inside src="{{}}" ##
 				// $markup = \apply_filters( 'q/render/type/media/src', '" data-src="{{ src }}" srcset="{{ srcset }}" sizes="{{ sizes }}" alt="{{ alt }}' );
@@ -93,14 +130,14 @@ class media extends render\type {
 				// $string = render\method::markup( $markup, $array );
 
 				// $string = $array['src'];
-				// h::log( self::$args );
+				// w__log( self::$args );
 
 				// conditional -- add img meta values ( sizes ) and srcset ##
 				if ( 
 					// set locally..
 					(
-						isset( self::$args['config']['srcset'] )
-						&& true == self::$args['config']['srcset'] 
+						isset( $_args['config']['srcset'] )
+						&& true == $_args['config']['srcset'] 
 					)
 					/*
 					||
@@ -132,14 +169,14 @@ class media extends render\type {
 
 		}
 
-		// h::log( $string );
+		// w__log( $string );
 
 		// check ##
 		if ( 
 			is_null( $string ) 
 		) {
 
-			h::log( self::$args['task'].'~>n:>String is empty.. so return null' );
+			w__log( $_args['task'].'~>n:>String is empty.. so return null' );
 
 		}
 

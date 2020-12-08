@@ -3,12 +3,23 @@
 namespace willow\context;
 
 use willow\core\helper as h;
-// use q\get;
 use willow;
-use willow\context;
-use willow\render; 
 
-class action extends willow\context {
+class action {
+
+	private
+		$plugin = null // this 
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Run WP action - buffer and return with matching field name
@@ -18,15 +29,15 @@ class action extends willow\context {
 	 * @uses		define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
 		if ( \has_action( $args['task'] ) ) {
 
 			// @todo - filter to pass additional args to action / filter ##
 
-			// h::log( 'e:>has_action: '.$args['task'] );
+			// w__log( 'e:>has_action: '.$args['task'] );
 
 			// buffer action ##
 			ob_start();
@@ -35,9 +46,13 @@ class action extends willow\context {
 			
 			$string = ob_get_clean();
 
-			// h::log( $string );
+			// prepare return array ##
+			$array = [ $args['task'] => $string ];
 
-			return [ $args['task'] => $string ];
+			// w__log( $string );
+			// w__log( $array );
+
+			return $array;
 
 		}
 

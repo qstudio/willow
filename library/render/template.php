@@ -2,17 +2,26 @@
 
 namespace willow\render;
 
-
-// Q ##
-use willow\get;
-use willow\core\helper as h;
 use willow;
-use willow\core;
-use willow\render;
+use willow\core\helper as h;
 
-class template extends willow\render {
+class template {
 
-	public static function partial( $args = null ){
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function partial( $args = null ){
 
 		// sanity ##
 		if( 
@@ -20,7 +29,7 @@ class template extends willow\render {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Missing or corrupt arguments' );
+			w__log( 'e:>Missing or corrupt arguments' );
 
 			return false;
 
@@ -32,7 +41,7 @@ class template extends willow\render {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Both context and task as required to render a template.' );
+			w__log( 'e:>Both context and task as required to render a template.' );
 
 			return false;
 
@@ -44,21 +53,21 @@ class template extends willow\render {
 			|| ! is_array( $args['data'] )
 		){
 
-			h::log( 'e:>A valid array of data is required to markup the template from "'.$args['context'].'~'.$args['task'].'"' );
+			w__log( 'e:>A valid array of data is required to markup the template from "'.$args['context'].'~'.$args['task'].'"' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// get template ##
-		$config = core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		$config = $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
-		// h::log( $config );
+		// w__log( $config );
 
 		// filter ##
-		$config = core\filter::apply([ 
+		$config = $this->plugin->filter->apply([ 
 			'parameters'    => [ 'config' => $config ], // pass ( $template ) as single array ##
 			'filter'        => 'willow/render/template/config/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $config
@@ -67,10 +76,10 @@ class template extends willow\render {
 		// args->template - if not set, define to task ##
 		$markup = isset( $args['markup'] ) ? $args['markup'] : $args['task'] ;
 
-		// h::log( 'markup: '.$markup );
+		// w__log( 'markup: '.$markup );
 
 		// filter ##
-		$markup = core\filter::apply([ 
+		$markup = $this->plugin->filter->apply([ 
 			'parameters'    => [ 'markup' => $markup ], // pass ( $template ) as single array ##
 			'filter'        => 'willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $markup
@@ -85,25 +94,25 @@ class template extends willow\render {
 			|| ! isset( $config['markup'][ $markup ] )
 		){
 
-			h::log( 'e:>Missing or corrupt config settings' );
+			w__log( 'e:>Missing or corrupt config settings' );
 
 			return false;
 
 		}
 
-		// h::log( $config['markup'][ $markup ] );
+		// w__log( $config['markup'][ $markup ] );
 
 		// markup string ##
-		$string = render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
+		$string = willow\render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
 
 		// filter ##
-		$string = core\filter::apply([ 
+		$string = $this->plugin->filter->apply([ 
 			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
 			'filter'        => 'willow/render/template/string/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $string
 	   	]); 
 
-		// h::log( $string );
+		// w__log( $string );
 
 		// validate we have a string ##
 		if(
@@ -111,7 +120,7 @@ class template extends willow\render {
 			|| ! is_string( $string )
 		){
 
-			h::log( 'e:>Error in string returned from markup' );
+			w__log( 'e:>Error in string returned from markup' );
 
 			return false;
 

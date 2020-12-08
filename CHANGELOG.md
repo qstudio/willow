@@ -1,3 +1,8 @@
+### 2.0.0 ###
+
+* Breaking changes - fundamental changes to architecture and OOP model, will require updates to themes / plugins to use - see documentation
+* New: willow() global function to retrieve current instance and access public methods - get(), set(), config(), filter() extend()
+
 ### 1.6.3 ###
 
 * New: post.this Willow, which returns all standard WP Post, media and meta info for current post object

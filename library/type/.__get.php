@@ -1,50 +1,26 @@
 <?php
 
-namespace willow\render;
+namespace Q\willow\type;
 
 // use q\core;
-use willow\core\helper as h;
-use willow;
+use Q\willow\core\helper as h;
+use Q\willow;
 
-// load it up ##
-\willow\render\type::__run();
+class get {
 
-class type extends willow\render {
-	
-	public static function __run(){
+	private 
+		$plugin = false
+	;
 
-		self::load();
+	/**
+     */
+    public function __construct( \Q\willow\plugin $plugin ){
 
-	}
-
-
-    /**
-    * Load Libraries
-    *
-    * @since        2.0.0
-    */
-    public static function load()
-    {
-
-		// media object ##
-		require_once self::get_plugin_path( 'library/render/type/media.php' );
-
-		// post fields ##
-		require_once self::get_plugin_path( 'library/render/type/post.php' );
-
-		// meta ## ##
-		require_once self::get_plugin_path( 'library/render/type/meta.php' );
-
-		// author fields ##
-		require_once self::get_plugin_path( 'library/render/type/author.php' );
-
-		// taxonomy ## ##
-		require_once self::get_plugin_path( 'library/render/type/taxonomy.php' );
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
 
 	}
-	
 
-	
 	/** 
 	 * bounce to function getter ##
 	 * function name can be any of the following patterns:
@@ -55,7 +31,11 @@ class type extends willow\render {
 	 * field_FIELDNAME // @todo
 	 * type_IMAGE || ARRAY || WP_Object etc // @todo
 	 */
-	public static function __callStatic( $function, $args = null ){	
+	// public static function __callStatic( $function, $args = null ){	
+	public function __call( $function, $args = null ){	
+
+		h::log( $function );
+		h::log( $args );
 
 		// check if args format is correct ##
 		if (
@@ -113,9 +93,9 @@ class type extends willow\render {
 		}
 
 		// test namespace ##
-		$namespace = '\\willow\\render\\type\\'.$function;
+		$namespace = '\\willow\\type\\'.$function;
 		$method_function = 'format';
-		// h::log( $namespace.'::'.$function );
+		h::log( $namespace.'::'.$function );
 
 		// the__ methods ##
 		if (
@@ -123,7 +103,7 @@ class type extends willow\render {
 			&& \is_callable([ $namespace, $method_function ]) // && exists ##
 		) {
 
-			// h::log( 'Found function: "'.$namespace.'::'.$method_function.'()"' );
+			h::log( 'Found function: "'.$namespace.'::'.$method_function.'()"' );
 
 			// call it and capture response ##
 			$string = $namespace::{$method_function}( $args[0], $args[1], $args[2], $args[3] );
@@ -154,17 +134,4 @@ class type extends willow\render {
 
 	}
 	
-
-    /**
-     * Get allowed fomats with filter ##
-     * 
-     */
-    public static function get_allowed()
-    {
-
-        return \apply_filters( 'willow/render/type/get', self::$type );
-
-    }
-
-
 }

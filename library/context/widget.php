@@ -3,9 +3,9 @@
 namespace willow\context;
 
 use willow\core\helper as h;
-use willow\context;
+use willow;
 
-class widget extends \willow\context {
+class widget {
 
 	// BASE CONTEXT ##
 	

@@ -2,12 +2,29 @@
 
 namespace willow\filter;
 
-use willow\core;
+use willow;
 use willow\core\helper as h;
-// use willow;
-use willow\filter;
 
-class method extends \willow {
+class method {
+
+	/**
+     * Plugin Instance
+     *
+     * @var     Object      $plugin
+     */
+	protected 
+		$plugin
+	;
+
+	/**
+	 * CLass Constructer 
+	*/
+	function __construct( $plugin = null ){
+
+        // grab passed plugin object ## 
+		$this->plugin = $plugin;
+		
+	}
 
 	/**
 	* prepare passed flags before adding to $filter property
@@ -18,7 +35,7 @@ class method extends \willow {
 	* @since 	1.3.0
 	* @return	Mixed
 	*/
-	public static function prepare( $args = null ){
+	public function prepare( $args = null ){
 
 		/*
 		One or multiple filters, should be delimited into sets by "," comma
@@ -36,13 +53,13 @@ class method extends \willow {
 			// || ! isset( $args['use'] )
 		){
 
-			h::log( 'e:>Error. Missing required args' );
+			w__log( 'e:>Error. Missing required args' );
 
 			return false;
 
 		}
 
-		// h::log( 'Filters: '.$args['filters'] );
+		// w__log( 'Filters: '.$args['filters'] );
 
 		// explode at "," comma, into array of key:values ##
 		$array = explode( ',', $args['filters'] );
@@ -53,15 +70,12 @@ class method extends \willow {
 		// clean up array ##
 		$array = array_filter( $array );
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// kick back ##
 		return $array;
 
 	}
-
-
-
 
 	/**
 	* Apply assigned filter function
@@ -72,7 +86,9 @@ class method extends \willow {
 	* @since 	1.3.0
 	* @return	Boolean
 	*/
-	public static function apply( $args = null ) {
+	public function process( $args = null ) {
+
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -84,7 +100,7 @@ class method extends \willow {
 			|| ! isset( $args['string'] ) // string to apply filter to ##
 		){
 
-			h::log( 'e:>Missing required args' );
+			w__log( 'e:>Missing required args' );
 
 			return $args['string'];
 
@@ -96,8 +112,8 @@ class method extends \willow {
 			filter_var( $args['string'], FILTER_VALIDATE_INT) !== false
 		){
 
-			h::log( 'e:>Passed $string is actually an integer: "'.$args['string'].'" Willow will cast it to a string value' );
-			// h::log( $args['string'] );
+			w__log( 'e:>Passed $string is actually an integer: "'.$args['string'].'" Willow will cast it to a string value' );
+			// w__log( $args['string'] );
 
 			$args['string'] = (string) $args['string'];
 
@@ -110,20 +126,20 @@ class method extends \willow {
 			&& filter_var( $args['string'], FILTER_VALIDATE_INT) === false // && not an integer
 		){
 
-			h::log( 'e:>Passed $string is not in a valid string or integer format' );
-			h::log( $args['string'] );
+			w__log( 'e:>Passed $string is not in a valid string or integer format' );
+			w__log( $args['string'] );
 
 			return $args['string'];
 
 		}
 
-		// h::log( $args['string'] );
+		// w__log( $args['string'] );
 
 		/*
 		// now, we need to prepare the flags, if any, from the passed string ##
-		$filters = core\method::string_between( $args['string'], trim( willow\tags::g( 'fla_o' )), trim( willow\tags::g( 'fla_c' )) );
+		$filters = core\method::string_between( $args['string'], trim( $this->plugin->tags->g( 'fla_o' )), trim( $this->plugin->tags->g( 'fla_c' )) );
 
-		h::log( $filters );
+		w__log( $filters );
 
 		$args['filters'] = self::prepare([ 'filters' => $filters ]);
 
@@ -134,23 +150,26 @@ class method extends \willow {
 			|| empty( $args['filters'] )
 		){
 
-			h::log( 'd:>There are no flags in the string, returning.' );
-			h::log( $args['string'] );
+			w__log( 'd:>There are no flags in the string, returning.' );
+			w__log( $args['string'] );
 
 			return $args['string'];
 
 		}
 		*/
 
-		// h::log( $args['filters'] );
+		// w__log( $args['filters'] );
 			
 		// load all stored filters, if filters_loaded is empty ##
-		if( ! self::$filters_filtered ){
+		if( null === $this->plugin->get( '_filters_filtered' ) ){
 
-			self::$filters = \apply_filters( 'willow/filters', self::$filters );
+			// self::$filters = \apply_filters( 'willow/filters', self::$filters );
+			$filters = $this->plugin->get( '_filters' );
+			$this->plugin->set( '_filters', \apply_filters( 'willow/filters', $filters ) );
 
 			// update tracker ##
-			self::$filters_filtered = true;
+			// self::$filters_filtered = true;
+			$this->plugin->set( '_filters_filtered', true );
 
 		}
 
@@ -176,26 +195,26 @@ class method extends \willow {
 		)
 		*/
 
-		// h::log( self::$filters );
+		// w__log( self::$filters );
 
 		// now, loop over each filter, allow it to be altered ( via apply_filters ) validate it exists and run it
 		foreach( $args['filters'] as $function ) {
 
-			// h::log( 'e:>Filter Function: '.$function );
+			// w__log( 'e:>Filter Function: '.$function );
 
 			// check that requested function is in the allowed list - which has now passed by the load filter ##
 			if (
-				! in_array( $function, self::$filters )
+				! in_array( $function, $this->plugin->get( '_filters' ) )
 			){
 
 				// No need to warn about missing $flags ##
 				if( 
-					! in_array( $function, self::$flags )
+					! in_array( $function, $this->plugin->get( '_flags' ) )
 				) {
 
-					// h::log( self::$flags );
+					// w__log( self::$flags );
 
-					h::log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
+					w__log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
 
 				}
 
@@ -205,16 +224,16 @@ class method extends \willow {
 			}
 
 			// get function value from $filters matching request ##
-			// h::log( '$function: '.$function );
+			// w__log( '$function: '.$function );
 
 			// filter function - allows for replacement by use-case ( tag OR variable ) ##
 			$function = \apply_filters( 'willow/filter/apply/'.$function.'/'.$args['use'], $function );
 
 			// sanitize function name -- in case something funky was returned by filters or altered in the default list ##
-			$function = core\method::sanitize( $function, 'php_function' );
+			$function = willow\core\method::sanitize( $function, 'php_function' );
 
 			// check clean function name ##
-			// h::log( '$function: '.$function );
+			// w__log( '$function: '.$function );
 
 			// check if function exists ##
 			if ( 
@@ -222,7 +241,7 @@ class method extends \willow {
 				|| ! is_callable( $function ) 
 			) {
 
-				h::log( 'e:>Function "'.$function.'" does not exist or is not callable' );
+				w__log( 'e:>Function "'.$function.'" does not exist or is not callable' );
 
 				continue;
 
@@ -232,7 +251,7 @@ class method extends \willow {
 			// note that functions run in passed sequence, updating the current variable state ##
 			$return = $function( $return );
 
-			// h::log( '$return: '.$return );
+			// w__log( '$return: '.$return );
 
 		}
 

@@ -2,23 +2,40 @@
 
 namespace willow\render;
 
-use willow\core;
 use willow\core\helper as h;
 use willow;
-use willow\render;
 
-class output extends willow\render {
+class output {
 
-    public static function prepare() {
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+    public function prepare() {
+
+		// local var ##
+		$_output = $this->plugin->get( '_output' );
+
+		// w__log( 'e:>'.$_output );
 
 		// sanity ##
 		if ( 
-			! isset( self::$output )
-			|| is_null( self::$output )
+			! isset( $_output )
+			|| is_null( $_output )
 		){
 
 			// log ##
-			h::log( self::$args['task'].'~>e:>$output is empty, so nothing to render.. stopping here.');
+			w__log( $this->plugin->get( '_args' )['task'].'~>e:>$_output is empty, so nothing to render.. stopping here.');
+			// w__log( 'e:>$_output is empty, so nothing to render.. stopping here.');
 
 			// kick out ##
 			return false;
@@ -26,57 +43,68 @@ class output extends willow\render {
 		}
 
         // filter output ##
-        self::$output = core\filter::apply([ 
+        $_output = $this->plugin->filter->apply([ 
             'parameters'    => [ // pass ( $fields, $args, $output ) as single array ##
-                'fields'    => self::$fields, 
-                'args'      => self::$args, 
-				'output'    => self::$output 
+                'fields'    => $this->plugin->get( '_fields' ), 
+                'args'      => $this->plugin->get( '_args' ), 
+				'output'    => $_output 
 			], 
-            'filter'        => 'willow/render/output/'.self::$args['task'], // filter handle ##
-            'return'        => self::$output
+            'filter'        => 'willow/render/output/'.$this->plugin->get( '_args' )['task'], // filter handle ##
+            'return'        => $_output
 		]); 
-		
-        // h::log( self::$output );
+
+		// store _output ##
+		$this->plugin->set( '_output', $_output );
+
+        // w__log( self::$output );
 
         // either return or echo ##
         if ( 
-			isset( self::$args['config']['return'])
-			&& 'echo' === self::$args['config']['return'] 
+			isset( $this->plugin->get( '_args' )['config']['return'])
+			&& 'echo' === $this->plugin->get( '_args' )['config']['return'] 
 		) {
 
-			// h::log( self::$output );
+			// w__log( self::$output );
 
 			// echo ##
-			echo self::$output;
+			echo $_output;
 
 			// reset all args ##
-			render\args::reset();
+			$this->plugin->render->args->reset();
 
 			// stop here ##
             return true;
 
         } else {
 
+			$_hash = $this->plugin->get( '_hash' );
+			// w__log( $_hash );
+
 			// build return array ##
 			$return = [ 
-				'hash'		=> self::$hash['hash'],
-				'tag'		=> self::$hash['tag'],
-				'output' 	=> self::$output,
-				'parent'	=> self::$hash['parent'],
+				'hash'		=> $_hash['hash'],
+				'tag'		=> $_hash['tag'],
+				'output' 	=> $_output,
+				'parent'	=> $_hash['parent'],
 			];
 
-			// h::log( $return );
+			// w__log( $return );
+
+			$_buffer_map = $this->plugin->get( '_buffer_map' );
 
 			// add data to buffer_map ##
-			self::$buffer_map[] = [
-				'hash'		=> self::$hash['hash'],
-				'tag'		=> self::$hash['tag'],
-				'output'	=> $return['output'],
-				'parent'	=> self::$hash['parent'],
+			$_buffer_map[] = [
+				'hash'		=> $_hash['hash'],
+				'tag'		=> $_hash['tag'],
+				'output'	=> $_output, // $return['output'],
+				'parent'	=> $_hash['parent'],
 			];
 
+			// set buffer map ##
+			$this->plugin->set( '_buffer_map', $_buffer_map );
+
 			// reset all args ##
-			render\args::reset();
+			$this->plugin->render->args->reset();
 
 			// return ##
             return $return;

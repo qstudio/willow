@@ -3,19 +3,24 @@
 namespace willow\get;
 
 // Q ##
-use willow\core;
 use willow\core\helper as h;
-use willow\get;
-use willow\strings;
+use willow;
 
-// Q Theme ##
-use q\theme;
+class navigation {
 
-// Willow ##
-// use willow;
+	private
+		$plugin = null // this
+	;
 
-class navigation extends \willow\get {
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
 
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
     * Get Pagination links
@@ -24,9 +29,9 @@ class navigation extends \willow\get {
 	* @return      String      HTML
 	* @link	https://gist.github.com/mtx-z/f95af6cc6fb562eb1a1540ca715ed928
     */
-	public static function pagination( $args = null ) {
+	public function pagination( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if (
@@ -34,7 +39,7 @@ class navigation extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in pased args' );
+			w__log( 'e:>Error in pased args' );
 
 			return false;
 
@@ -49,7 +54,7 @@ class navigation extends \willow\get {
 		// grab some global variables ##
 		} else {
 			
-			// h::log( 'Grabbing global query..' );
+			// w__log( 'Grabbing global query..' );
 			global $wp_query;
 			$query = $wp_query;
 
@@ -58,21 +63,21 @@ class navigation extends \willow\get {
 		// no query, no pagination ##
 		if ( ! $query ) {
 
-			h::log( 'e:>Nothing to query here' );
+			w__log( 'e:>Nothing to query here' );
 
 			return false;
 
 		}
 		
 		// get config ##
-		$config = core\config::get([ 'context' => 'navigation', 'task' => 'pagination' ]);
+		$config = $this->plugin->config->get([ 'context' => 'navigation', 'task' => 'pagination' ]);
 
-		// h::log( $config );
+		// w__log( $config );
 
 		// validate config ##
 		if ( ! $config ) {
 
-			h::log( 'e:>Error loading config' );
+			w__log( 'e:>Error loading config' );
 
 			return false;
 
@@ -80,7 +85,7 @@ class navigation extends \willow\get {
 
 		// work out total ##
 		$total = $query->max_num_pages;
-		// h::log( 'Total: '.$total );
+		// w__log( 'Total: '.$total );
 
 		// append query to pagination links, if set ##
 		$fragement = '';
@@ -109,7 +114,7 @@ class navigation extends \willow\get {
 			
 		}
 
-		// h::log( $query_args );
+		// w__log( $query_args );
 
 		// filter args ##
 		$paginate_args = \apply_filters( 'q/get/navigation/pagination/args', $paginate_args );
@@ -123,15 +128,15 @@ class navigation extends \willow\get {
 			|| 0 == count( $paginate_links )
 		) {
 
-			// h::log( 'd:>$paginate_links empty.. bailing' );
+			// w__log( 'd:>$paginate_links empty.. bailing' );
 
 			return false;
 
 		}
 
 		// test ##
-		// h::log( $pages );
-		// h::log( 'd:>paged: '.\get_query_var( 'paged' ) );
+		// w__log( $pages );
+		// w__log( 'd:>paged: '.\get_query_var( 'paged' ) );
 
 		// empty array ##
 		$array = [];
@@ -152,7 +157,7 @@ class navigation extends \willow\get {
 		}
  
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// format page items ##
 		$items = [];
@@ -172,14 +177,14 @@ class navigation extends \willow\get {
 		}
 
 		// filters and checks ##
-		$items = get\method::prepare_return( $args, $items );
+		$items = willow\get\method::prepare_return( $args, $items );
 
-		// h::log( $items );
+		// w__log( $items );
 
 		// markup array ##
-		$string = \willow\strings\method::markup( $config['markup']['template'], $items, $config['markup'] );
+		$string = willow\strings\method::markup( $config['markup']['template'], $items, $config['markup'] );
 
-		// h::log( $string );
+		// w__log( $string );
 
 		// echo ##
 		// if ( 'return' == $return ){ 
@@ -197,16 +202,13 @@ class navigation extends \willow\get {
 		
 	}
 
-
-
-	
     /**
      * Get Sibling page OT posts from same category 
      *
      * @since       1.0.1
      * @return      Mixed|Array|Boolean
      */
-    public static function siblings( $args = null ){
+    public function siblings( $args = null ){
 
 		// sanity ##
 		if (
@@ -214,7 +216,7 @@ class navigation extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in pased args' );
+			w__log( 'e:>Error in pased args' );
 
 			return false;
 
@@ -225,11 +227,11 @@ class navigation extends \willow\get {
 			! isset( $args['config']['post'] )
 		){
 
-			$args['config']['post'] = get\post::object();
+			$args['config']['post'] = willow\get\post::object();
 
 		}
 
-		// h::log( $args['config']['post'] );
+		// w__log( $args['config']['post'] );
 		
 		// change behavious, depending on post type ##
 		switch( $args['config']['post']->post_type ){
@@ -271,7 +273,7 @@ class navigation extends \willow\get {
 				// get posts ##
 				$posts = \get_posts( $wp_args );
 		
-				// h::log( $posts );
+				// w__log( $posts );
 		
 				// we need to manipulate the array of post objects a little...
 				foreach( $posts as $post => $post_value ){
@@ -285,16 +287,13 @@ class navigation extends \willow\get {
 
 		}
 
-		// h::log( $posts );
+		// w__log( $posts );
 
 		// return posts array to Willow ##
 		return $posts;
 
 	}
 	
-
-
-
 	/**
      * Get children pages
      *
@@ -309,7 +308,7 @@ class navigation extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in pased args' );
+			w__log( 'e:>Error in pased args' );
 
 			return false;
 
@@ -320,11 +319,11 @@ class navigation extends \willow\get {
 			! isset( $args['config']['post'] )
 		){
 
-			$args['config']['post'] = get\post::object();
+			$args['config']['post'] = willow\get\post::object();
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// query for child posts ##
         $wp_args = array(
@@ -341,15 +340,12 @@ class navigation extends \willow\get {
 		// get posts ##
 		$posts = \get_posts( $wp_args );
 
-		// h::log( $posts );
+		// w__log( $posts );
 
 		// return posts array to Willow ##
 		return $posts;
 
     }
-	
-
-
 	
     /**
     * Render nav menu
@@ -357,9 +353,9 @@ class navigation extends \willow\get {
     * @since       1.3.3
     * @return      string   HTML
 	*/
-    public static function menu( $args = null, $blog_id = 1 ){
+    public function menu( $args = null, $blog_id = 1 ){
 
-		// h::log( $args );
+		// w__log( $args );
 
 		// sanity ##
 		if(
@@ -368,7 +364,7 @@ class navigation extends \willow\get {
 			|| ! isset( $args['args']['theme_location'] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -379,12 +375,15 @@ class navigation extends \willow\get {
 		$task = isset( $args['task'] ) ? $args['task'] : 'menu' ;
 
 		// Parse incoming $args into an array and merge it with $defaults ##
-		$args = core\method::parse_args( $args['args'], core\config::get([ 'context' => $context, 'task' => $task ])['args'] );
-		// h::log( 'e:>MENU: '.$args['theme_location'] );
+		$args = willow\core\method::parse_args( 
+			$args['args'], 
+			$this->plugin->config->get([ 'context' => $context, 'task' => $task ])['args'] 
+		);
+		// w__log( 'e:>MENU: '.$args['theme_location'] );
 		
         if ( ! \has_nav_menu( $args['theme_location'] ) ) {
         
-            h::log( 'd:>! has nav menu: '.$args['theme_location'] );
+            w__log( 'd:>! has nav menu: '.$args['theme_location'] );
 
             return false;
 
@@ -394,11 +393,11 @@ class navigation extends \willow\get {
             ! \is_multisite() 
         ) {
 
-            // h::log( $args );
+            // w__log( $args );
 			$menu = \wp_nav_menu( $args );
 			
 			// test ##
-			// h::log( $menu );
+			// w__log( $menu );
 
 			// return ##
 			return $menu;
@@ -408,21 +407,18 @@ class navigation extends \willow\get {
 		#global $blog_id;
 		$blog_id = \absint( $blog_id );
 
-		// h::log( 'nav_menu - $blog_id: '.$blog_id.' / $origin_id: '.$origin_id );
+		// w__log( 'nav_menu - $blog_id: '.$blog_id.' / $origin_id: '.$origin_id );
 
         \switch_to_blog( $blog_id );
-        #h::log( 'get_current_blog_id(): '.\get_current_blog_id()  );
-        // h::log( $args );
+        #w__log( 'get_current_blog_id(): '.\get_current_blog_id()  );
+        // w__log( $args );
 		$menu = \wp_nav_menu( $args );
-		// h::log( $menu );
+		// w__log( $menu );
         \restore_current_blog();
 
 		return $menu;
 
     }
-
-
-
 
     /**
     * Get Multisite network nav menus items
@@ -445,7 +441,7 @@ class navigation extends \willow\get {
 			|| ! isset( $args['args']['theme_location'] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -460,7 +456,7 @@ class navigation extends \willow\get {
 			// ! \has_nav_menu( $args['args']['theme_location'] ) 
 		) {
         
-            h::log( 'd:>Unable to locate menu: '.$args['args']['theme_location'] );
+            w__log( 'd:>Unable to locate menu: '.$args['args']['theme_location'] );
 
             return false;
 
@@ -471,7 +467,7 @@ class navigation extends \willow\get {
 			! $locations = \get_nav_menu_locations()
 		) {
         
-            h::log( 'd:>1 Unable to locate menu: '.$args['args']['theme_location'] );
+            w__log( 'd:>1 Unable to locate menu: '.$args['args']['theme_location'] );
 
             return false;
 
@@ -481,7 +477,7 @@ class navigation extends \willow\get {
 			! isset( $locations[ $args['args']['theme_location'] ] )
 		) {
         
-            h::log( 'd:>2 Unable to locate menu: '.$args['args']['theme_location'] );
+            w__log( 'd:>2 Unable to locate menu: '.$args['args']['theme_location'] );
 
             return false;
 
@@ -491,7 +487,7 @@ class navigation extends \willow\get {
 			! $menu = \get_term( $locations[ $args['args']['theme_location'] ], 'nav_menu' )
 		) {
         
-            h::log( 'd:>3 Unable to locate menu: '.$args['args']['theme_location'] );
+            w__log( 'd:>3 Unable to locate menu: '.$args['args']['theme_location'] );
 
             return false;
 
@@ -501,13 +497,13 @@ class navigation extends \willow\get {
           	! $array = wp_get_nav_menu_items( $menu->term_id )
 		) {
         
-            h::log( 'd:>4 Unable to locate menu: '.$args['args']['theme_location'] );
+            w__log( 'd:>4 Unable to locate menu: '.$args['args']['theme_location'] );
 
             return false;
 
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 
         // nothing found ##
         if ( 
@@ -515,7 +511,7 @@ class navigation extends \willow\get {
 			|| ! is_array( $array )
 		) { 
 
-			h::log( 'd:>Menu returned no items: '.$args['args']['theme_location'] ); // theme_location
+			w__log( 'd:>Menu returned no items: '.$args['args']['theme_location'] ); // theme_location
 			
 			return false; 
 		

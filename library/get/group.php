@@ -2,19 +2,26 @@
 
 namespace willow\get;
 
-// Q ##
-use willow\core;
-use willow\core\helper as h;
-use willow\get;
-use willow\plugin;
+use willow;
 
-class group extends \willow\get {
+class group {
 	
-	public static 
+	private
+		$plugin = null, // this 
 		$acf_fields = null, // fields grabbed by acf function ##
 		$data = null, // returned field data array ##
 		$fields = null // to return to self::$args['fields]
 	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Get group data via meta handler
@@ -24,9 +31,9 @@ class group extends \willow\get {
 	 * @uses		define
      * @return      Array
      */
-    public static function fields( $args = null ) {
+    public function fields( $args = null ) {
 
-		// h::log( $args );
+		// w__log( $args );
 
         // sanity ##
         if ( 
@@ -36,33 +43,33 @@ class group extends \willow\get {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error in passed parameter $args');
-			// h::log( 'e:>Error in passed parameter $args');
+			w__log( $args['task'].'~>e:Error in passed parameter $args');
+			// w__log( 'e:>Error in passed parameter $args');
 
             return false;
 
         }
 
         // Get all ACF field data for this post ##
-        if ( ! self::acf_fields( $args ) ) {
+        if ( ! $this->acf_fields( $args ) ) {
 
             return false;
 
         }
 
         // get all fields defined in this group -- pass to $args['fields'] ##
-        if ( ! self::group_fields( $args ) ) {
+        if ( ! $this->group_fields( $args ) ) {
 
             return false;
 
         }
 
-        // h::log( $args[ 'fields' ] );
+        // w__log( $args[ 'fields' ] );
 
         // get field names from passed $args ##
-        $array = array_column( self::$data, 'name' );
+        $array = array_column( $this->data, 'name' );
 
-		// h::log( $array );
+		// w__log( $array );
 
         // sanity ##
         if ( 
@@ -71,61 +78,59 @@ class group extends \willow\get {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error extracting field list from passed data');
-			// h::log( 'e:>Error extracting field list from passed data');
+			w__log( $args['task'].'~>e:Error extracting field list from passed data');
+			// w__log( 'e:>Error extracting field list from passed data');
 
             return false;
 
         }
 
-        // h::log( $array );
+        // w__log( $array );
 
         // assign class property ##
-        self::$data = $array;
-		// h::log( self::$data );
+        $this->data = $array;
+		// w__log( self::$data );
 
         // remove skipped fields, if defined ##
-        self::skip( $args );
+        $this->skip( $args );
 
         // if group specified, get only fields from this group ##
-        self::group( $args );
+        $this->group( $args );
 
-        // h::log( self::$data );
+        // w__log( self::$data );
 
         // we should do a check if $fields is empty after all the filtering ##
         if ( 
-            0 == count( self::$data ) 
+            0 == count( $this->data ) 
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>n:Fields array is empty, so nothing to process...');
-			// h::log( 'e:>:Fields array is empty, so nothing to process...');
+			w__log( $args['task'].'~>n:Fields array is empty, so nothing to process...');
+			// w__log( 'e:>:Fields array is empty, so nothing to process...');
 
             return false;
 
 		}
 		
-		// h::log( self::$data );
-		// h::log( self::$fields );
+		// w__log( self::$data );
+		// w__log( self::$fields );
 
         // positive ##
         return [
-			'fields'	=> self::$fields,
-			'data' 		=> self::$data
+			'fields'	=> $this->plugin->get( '_fields' ), // self::$fields
+			'data' 		=> $this->data
 		];
 
     }
 
-	
-
     /**
-     * Get ACF Fields
+     * Get ACF Fields data
      */
-    public static function acf_fields( $args = null ){
+    public function acf_fields( $args = null ){
 
 		if ( ! function_exists( 'get_fields' ) ) {
 
-			h::log( 'e:>ACF Plugin missing' );
+			w__log( 'e:>ACF Plugin missing' );
 
 			return false;
 
@@ -134,12 +139,10 @@ class group extends \willow\get {
         // get fields ##
 		$array = 
 			\get_fields( 
-				isset( $args['config']['post']->ID ) ? 
-				$args['config']['post']->ID : 
-				false 
+				$args['config']['post']->ID ?? false 
 			);
 		
-		// h::log( $array );
+		// w__log( $array );
 
         // sanity ##
         if ( 
@@ -148,33 +151,31 @@ class group extends \willow\get {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>n:Post has no ACF field data or corrupt data returned');
-			// h::log( 'd:>Post has no ACF field data or corrupt data returned');
+			w__log( $args['task'].'~>n:Post has no ACF field data or corrupt data returned');
+			// w__log( 'd:>Post has no ACF field data or corrupt data returned');
 
             return false;
 
         }
 
-        // h::log( $array );
+        // w__log( $array );
 
-        return self::$acf_fields = $array;
+        return $this->acf_fields = $array;
 
     }
-
-
 
 	/**
 	 * Get ACF Field Group from passed $group reference
 	 */
-    public static function group_fields( $args = null ){
+    public function group_fields( $args = null ){
 
         // assign variable ##
-        $group = $args['task'];
-
+		$group = $args['task'];
+		
         // try to get fields ##
-        $array = plugin\acf::get_field_group( $group );
+        $array = willow\plugin\acf::get_field_group( $group );
 
-        // h::log( $array );
+        // w__log( $array );
 
         if ( 
             ! $array
@@ -182,37 +183,38 @@ class group extends \willow\get {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:No valid ACF field group returned for Group: "'.$group.'"');
-			// h::log( 'd:>:No valid ACF field group returned for Group: "'.$group.'"');
+			w__log( $args['task'].'~>e:No valid ACF field group returned for Group: "'.$group.'"');
+			// w__log( 'd:>:No valid ACF field group returned for Group: "'.$group.'"');
 
             return false;
 
         }
 
         // filter ##
-        $array = core\filter::apply([ 
+        $array = $this->plugin->filter->apply([ 
             'parameters'    => [ 'fields' => $array ], // pass ( $fields ) as single array ##
             'filter'        => 'willow/get/group/'.$group, // filter handle ##
             'return'        => $array
         ]); 
 
         // assign to class properties ##
-		self::$fields = $array; // capture all fields for type and callback lookups ##
-		self::$data = $array; // data to return to fields\define ##
+		// self::$fields = $array; // capture all fields for type and callback lookups ##
+		$_args = $this->plugin->get( '_args' );
+		$_args['fields'] = array_merge( $_args['fields'] ?? [], $array );
+		$this->plugin->set( '_args', $_args ); 
+		$this->data = $array; // data to return to fields\define ##
 
-        // h::log( $array );
+        // w__log( $array );
 
         // return
         return true;
 
     }
 
-
-
 	/**
 	 * Skip fields marked to avoid
 	 */
-    public static function skip( $args = null ){
+    public function skip( $args = null ){
 
         // sanity ##
         if ( 
@@ -221,8 +223,8 @@ class group extends \willow\get {
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error in passed $args');
-			// h::log( 'e:>Error in passed $args');
+			w__log( $args['task'].'~>e:Error in passed $args');
+			// w__log( 'e:>Error in passed $args');
 
             return false;
 
@@ -233,48 +235,46 @@ class group extends \willow\get {
             && is_array( $args['skip'] )
         ) {
 
-            // h::log( $args['skip'] );
-            self::$data = array_diff( self::$data, $args['skip'] );
+            // w__log( $args['skip'] );
+            $this->data = array_diff( $this->data, $args['skip'] );
 
         }
 
     }
 
-
-
 	/**
 	* Get the fields from the listed ACF group, removing fields returned form acf_fields()
 	*/
-    public static function group( $args = null ){
+    public function group( $args = null ){
 
         // sanity ##
         if ( 
             ! $args 
             || ! is_array( $args )
-            || ! self::$data
-            || ! is_array( self::$data )
+            || ! $this->data
+            || ! is_array( $this->data )
         ) {
 
 			// log ##
-			h::log( $args['task'].'~>e:Error in passed $args or $fields');
-			// h::log( 'e:>Error in passed $args or $fields');
+			w__log( $args['task'].'~>e:Error in passed $args or $fields');
+			// w__log( 'e:>Error in passed $args or $fields');
 
             return false;
 
 		}
 		
-		// h::log( self::$acf_fields );
+		// w__log( $this->acf_fields );
 
         if ( 
             isset( $args['task'] )
         ) {
 
-            // h::log( 'Removing fields from other groups... BEFORE: '.count( self::$data ) );
-            // h::log( self::$data );
+            // w__log( 'Removing fields from other groups... BEFORE: '.count( $this->data ) );
+            // w__log( $this->data );
 
-            self::$data = array_intersect_key( self::$acf_fields, array_flip( self::$data ) );
+            $this->data = array_intersect_key( $this->acf_fields, array_flip( $this->data ) );
 
-            // h::log( 'Removing fields from other groups... AFTER: '.count( self::$data ) );
+            // w__log( 'Removing fields from other groups... AFTER: '.count( $this->data ) );
 
         }
 

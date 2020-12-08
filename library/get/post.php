@@ -2,26 +2,36 @@
 
 namespace willow\get;
 
-// Q ##
-use willow\core;
+use willow;
 use willow\core\helper as h;
-use willow\get;
 use willow\strings;
 
-class post extends \willow\get {
+class post {
+
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
     /**
      * Method to clean up calling and checking for the global $post object
      * Allows $post to be passed
      *
      * @param       Mixed       $post       post ID or $post object
-     *
      * @since       1.0.7
      * @return      Object      WP_Post object
      */
     public static function object( $args = null ){
 
-        // h::log( $args );
+        // w__log( $args );
 
         // let's try and get a $post from the passed $args ##
         if ( ! is_null ( $args ) && isset( $args ) ) {
@@ -29,7 +39,7 @@ class post extends \willow\get {
             if ( is_array( $args ) && isset( $args["post"] ) ) {
 
 				$post = $args["post"];
-				// h::log( 'Post ID sent: '.$post );
+				// w__log( 'Post ID sent: '.$post );
 
             } else if ( is_object ( $args ) && isset ( $args->post ) ) {
 
@@ -43,19 +53,19 @@ class post extends \willow\get {
 
         }
 
-        // h::log( $post );
+        // w__log( $post );
 
         // first let's see if anything was set ##
         if ( isset ( $post ) ) {
 
-			// h::log( gettype( $post ) );
+			// w__log( gettype( $post ) );
 
 			// if ( ! is_object ( $post ) && is_int( $post ) ) {
             if ( is_string ( $post ) || is_int( $post ) ) {
 
                 if ( $object = \get_post( $post ) ) {
 
-					// h::log( 'got post: '.$object->ID );
+					// w__log( 'got post: '.$object->ID );
 					
 					// pre cache post meta ##
 					$object->meta = \get_post_meta( $object->ID );
@@ -90,9 +100,6 @@ class post extends \willow\get {
 
     }
 
-
-
-	
     /**
      * Get post object terms
      *
@@ -107,7 +114,7 @@ class post extends \willow\get {
 			// || ! isset( $args['taxonomy'] )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -115,15 +122,15 @@ class post extends \willow\get {
 
 		// taxonomy -- defaults to category ##
 		$taxonomy = isset( $args['taxonomy'] ) ? $args['taxonomy'] : 'category' ; 
-		// h::log( 'd:>'.$taxonomy );
+		// w__log( 'd:>'.$taxonomy );
 
 		// post ID ##
 		$post_id = isset( $args['config']['post'] ) ? $args['config']['post']->ID : null ;
-		// h::log( 'd:>post_id: '.$post_id );
+		// w__log( 'd:>post_id: '.$post_id );
 
 		// $args ##
 		$args = isset( $args['args'] ) ? $args['args'] : null ;
-		// h::log( $args );
+		// w__log( $args );
 
 		// get field ##
 		$array = \wp_get_post_terms( $post_id, $taxonomy, $args );
@@ -135,21 +142,18 @@ class post extends \willow\get {
 			|| is_wp_error( $array )
 		){
 
-			h::log( 'e:>Error in returned terms data' );
+			w__log( 'e:>Error in returned terms data' );
 
 			return false;
 
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 		
 		// return
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
-	
-
 	
     /**
      * Generic H1 title tag
@@ -158,7 +162,9 @@ class post extends \willow\get {
      * @since       1.3.0
      * @return      String
      */
-    public static function title( $args = null ) {
+    public function title( $args = null ) {
+
+		// w__log( $args );
 
 		// sanity ##
 		if (
@@ -166,13 +172,13 @@ class post extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
 		}
 
-        // h::log( $args );
+        // w__log( $args );
 
         // set-up new array ##
 		$array = [];
@@ -186,7 +192,7 @@ class post extends \willow\get {
         {
 
             $the_post = \get_option( 'page_for_posts' );
-            // h::log( 'Loading home title: '.$the_post );
+            // w__log( 'Loading home title: '.$the_post );
 
             // type ##
             $type = 'is_home';
@@ -204,7 +210,7 @@ class post extends \willow\get {
             // type ##
             $type = 'is_404';
 
-            // h::log('Loading archive title');
+            // w__log('Loading archive title');
 			$array['title'] = \__('404 ~ Oops! It looks like you\'re lost');
 			// $array['permalink'] = \get_permalink( \get_site_option( 'page_on_front' ) );
 
@@ -214,12 +220,12 @@ class post extends \willow\get {
 
         ){
 
-            // h::log( 'is_search' );
+            // w__log( 'is_search' );
 
             // type ##
             $type = 'is_search';
 
-            // h::log('Loading archive title');
+            // w__log('Loading archive title');
 			$array['title'] = \sprintf( 'Search results for "%s"', $_GET['s'] );
 			// $array['permalink'] = \get_permalink( \get_site_option( 'page_on_front' ) );
 
@@ -235,7 +241,7 @@ class post extends \willow\get {
             // type ##
             $type = 'is_archive';
 
-            // h::log('Loading archive title');
+            // w__log('Loading archive title');
 			$array['title'] = \get_the_archive_title();
 			// $array['permalink'] = \get_permalink( \get_site_option( 'page_on_front' ) );
 
@@ -243,7 +249,7 @@ class post extends \willow\get {
 
 			$type = 'is_single';
 
-            // h::log('Loading post title');
+            // w__log('Loading post title');
 
             // $the_post = $the_post->ID;
 
@@ -254,20 +260,16 @@ class post extends \willow\get {
         }
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
-
-
-
 	
     /**
      * Get Post excerpt and return it in an HTML element with classes
      *
      * @since       1.0.7
      */
-    public static function excerpt( $args = null ){
+    public function excerpt( $args = null ){
 
 		// sanity ##
 		if (
@@ -275,7 +277,7 @@ class post extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -288,7 +290,7 @@ class post extends \willow\get {
         // get the post ##
         if ( \is_home() ) {
 
-            // h::log('Loading home excerpt');
+            // w__log('Loading home excerpt');
 
             $array['content'] = self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
@@ -296,11 +298,11 @@ class post extends \willow\get {
             \is_author()
         ) {
 
-            // h::log('Loading author excerpt');
+            // w__log('Loading author excerpt');
 
             $array['content'] =
                 \get_the_author_meta( 'description' ) ?
-                \willow\strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                willow\strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else if (
@@ -309,24 +311,24 @@ class post extends \willow\get {
             || \is_archive()
         ) {
 
-            // h::log('Loading category excerpt');
-            // h::log( category_description() );
+            // w__log('Loading category excerpt');
+            // w__log( category_description() );
 
             $array['content'] =
                 \category_description() ?
-                \willow\strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                willow\strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else {
 
-            // h::log('Loading other excerpt');
+            // w__log('Loading other excerpt');
 
-            $array['content'] = self::excerpt_from_id( get\post::object(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
+            $array['content'] = self::excerpt_from_id( willow\get\post::object(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
 		}
 		
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
@@ -379,17 +381,15 @@ class post extends \willow\get {
 
 	}
 
-
-
     /**
     * Return the_content with basic filters applied
     *
     * @since       1.0.1
     * @return      string       HTML
     */
-    public static function content( $args = null ){
+    public function content( $args = null ){
 
-		// h::log( 'e:>post->content hit..' );
+		// w__log( 'e:>post->content hit..' );
 
 		// sanity ##
 		if (
@@ -397,7 +397,7 @@ class post extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'Error in passed args' );
+			w__log( 'Error in passed args' );
 
 			return false;
 
@@ -406,26 +406,25 @@ class post extends \willow\get {
         // set-up new array ##
 		$array = [];
 
-		// h::log( \get_post_field( 'post_content', $args['config']['post'] ) );
+		// w__log( \get_post_field( 'post_content', $args['config']['post'] ) );
 
 		// get the post_content with filters applied ##
-		$array['content'] = \apply_filters( 'the_content', \willow\strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
+		$array['content'] = \apply_filters( 'the_content', willow\strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-	 /**
-     * Get current Post object data to render
+	/**
+	 * Get current Post object data to render
      *
      * @since       1.6.2
      * @return      Array       
      */
-    public static function this( $args = null ){
+    public function this( $args = null ){
 
 		// sanity ##
 		if (
@@ -433,7 +432,7 @@ class post extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in pased args' );
+			w__log( 'e:>Error in pased args' );
 
 			return false;
 
@@ -445,7 +444,7 @@ class post extends \willow\get {
 			|| ! ( $args['config']['post'] instanceof \WP_Post )
 		){
 
-			$post = get\post::object();
+			$post = willow\get\post::object();
 
 		} else {
 
@@ -453,7 +452,7 @@ class post extends \willow\get {
 
 		}
 
-		// h::log( $post );
+		// w__log( $post );
 
 		// return post object to Willow ##
 		return $post;
@@ -469,14 +468,14 @@ class post extends \willow\get {
 	 * @return  string          The permalink of the page
 	 * @since   1.0
 	 */
-	public static function permalink_by_slug( $slug = null ){
+	public function permalink_by_slug( $slug = null ){
 
 		// sanity ##
 		if(
 			is_null( $slug )
 		){
 
-			h::log( 'e:>Error in passed $slug' );
+			w__log( 'e:>Error in passed $slug' );
 
 			return false;
 

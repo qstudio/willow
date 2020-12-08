@@ -5,10 +5,23 @@ namespace willow\context;
 use willow\core\helper as h;
 use willow;
 
-class plugin extends willow\context {
+class plugin {
 
+	private
+		$plugin = null // this
+	;
 
-	public static function get( $args = null ){
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -18,7 +31,7 @@ class plugin extends willow\context {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -28,11 +41,11 @@ class plugin extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\plugin', $method )
-			|| ! is_callable([ '\willow\get\plugin', $method ])
+			! method_exists( 'willow\get\plugin', $method )
+			|| ! is_callable([ 'willow\get\plugin', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\plugin\\'.$method );
 
 			return false;
 
@@ -40,16 +53,24 @@ class plugin extends willow\context {
 
 		// return \willow\get\post::$method;
 
-		h::log( 'e:>Class method IS callable: willow\get\plugin\\'.$method );
+		w__log( 'e:>Class method IS callable: willow\get\plugin\\'.$method );
+
+		// new object ##
+		$plugin = new willow\get\plugin( $this->plugin );
+
+		// return post method to 
+		$return = $plugin->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\plugin', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

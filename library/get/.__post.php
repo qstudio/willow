@@ -18,8 +18,7 @@ class post extends \willow\get {
      * @since       1.0.7
      * @return      Object      WP_Post object
      */
-    public static function object( $args = null )
-    {
+    public static function object( $args = null ){
 
         // h::log( $args );
 

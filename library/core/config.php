@@ -2,14 +2,12 @@
 
 namespace willow\core;
 
-use willow\core;
-use willow\core\helper as h;
+// import ## 
+use willow;
 
-\willow\core\config::__run();
+class config {
 
-class config extends \willow {
-
-	private static
+	private
 		// loaded config ##
 		$has_config = false,
 		$delete_config = true,
@@ -26,85 +24,107 @@ class config extends \willow {
 		$global_loaded = false // track and load just once ##
 	;
 
-	public static function __run(){
+	/**
+     * Plugin Instance
+     *
+     * @var     Object      $plugin
+     */
+	protected 
+		$plugin
+	;
 
-		// filter Willow Config ##
-		// Priority -- Parent Theme = 1, Extension = 100, Child Theme = 1000 ##
-		/*
-		\add_filter( 'willow/config/load', 
-			function( $args ){
-				$source = null; // context source ##
-				return self::filter( $args, $source );
-			}
-		, 1, 1 );
-		*/
-		/*
-		\add_filter( 'willow/config/load', 
-			function( $args ){
-				$source = 'plugin'; // context source ##
-				return self::filter( $args, $source );
-			}
-		, 1, 1 );
-		*/
+	/**
+	 * CLass Constructer 
+	*/
+	function __construct( $plugin = null ){
+
+		// Log::write( $plugin );
+
+        // grab passed plugin object ## 
+		$this->plugin = $plugin;
+		
+	}
+
+	/**
+     * callback method for class instantiation
+     *
+     * @since   0.0.2
+     * @return  void
+     */
+	public function hooks() {
+
+		// sanity ##
+        if( 
+            is_null( $this->plugin )
+            || ! ( $this->plugin instanceof \willow\plugin ) 
+        ) {
+
+            error_log( 'Error in object instance passed to '.__CLASS__ );
+
+            return false;
+        
+		}
+		
+		// error_log( 'Helper hooks run..' );
 
 		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'parent'; // context source ##
-				return self::filter( $args, $source );
+				return $this->filter( $args, $source );
 			}
 		, 1, 1 );
 
 		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'extend'; // context source ##
-				return self::filter( $args, $source );
+				return $this->filter( $args, $source );
 			}
 		, 100, 1 );
 		
 		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'child'; // context source ##
-				return self::filter( $args, $source );
+				return $this->filter( $args, $source );
 			}
 		, 1000, 1 );
 
 		// load saved config ##
-		\add_action( 'wp', [ get_class(), 'get_cache' ], 10 );
+		\add_action( 'wp', [ $this, 'get_cache' ], 10 );
 
 		// save stored config to file ##
-		\add_action( 'shutdown', [ get_class(), 'set_cache' ], 100000 );
+		\add_action( 'shutdown', [ $this, 'set_cache' ], 100000 );
 
 		// hook into Fastest Cache clear routine -- @todo, this should be in a plugin filter ##
-		\add_action( 'wpfc_delete_cache', [ get_class(), 'delete_from_fastest_cache' ], 1 );
+		\add_action( 'wpfc_delete_cache', [ $this, 'delete_from_fastest_cache' ], 1 );
 
 	}
 
 
-	public static function properties(){
+	public function properties(){
 
 		// cache ##
-		if ( self::$properties_loaded ) return false;
+		if ( $this->properties_loaded ) return false;
 
 		// check for child theme path method ##
-		self::$child_theme_path = method_exists( 'q_theme', 'get_child_theme_path' );
+		$this->child_theme_path = method_exists( 'q_theme', 'get_child_theme_path' );
 
 		// check for parent theme path method ##
-		self::$parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
+		$this->parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
 
 		// config file extension ##
-		self::$file_extensions = \apply_filters( 'willow/config/load/ext', [ 
+		$this->file_extensions = \apply_filters( 'willow/config/load/ext', [ 
 			'.willow',
 			'.php', 
 		] );
 
 		// config file path ( h::get will do fallback checks form child theme, parent theme, plugin + Q.. )
-		self::$willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
+		$this->willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
 
 		// template ##
-		self::$template = core\method::template() ? core\method::template() : '404';
+		$this->template = willow\core\method::template() ? willow\core\method::template() : '404';
 
-		// hit ##
-		self::$properties_loaded = true;
+		// update tracker ##
+		$this->properties_loaded = true;
 
 		// done ##
 		return;
@@ -118,7 +138,7 @@ class config extends \willow {
 	 * 
 	 * @aince 4.1.0
 	*/
-	public static function set_cache(){
+	public function set_cache(){
 
 		// do not save file from admin, as it will be incomplete ##
 		if( 
@@ -126,43 +146,43 @@ class config extends \willow {
 			|| \wp_doing_ajax()
 		){ 
 		
-			// h::log( 'd:>Attempt to save config from admin or AJAX blocked' );
+			// w__log( 'd:>Attempt to save config from admin or AJAX blocked' );
 
 			return false; 
 		
 		}
 
 		// if theme debugging, then load from single config files ##
-		if ( self::$debug ) { 
+		if ( $this->plugin->_debug ) { 
 
-			// h::log('d:>Deubbing, so we do not need to resave __q.php.' );
-			// h::log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
+			// w__log('d:>Deubbing, so we do not need to resave __q.php.' );
+			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
 
 			return false; 
 
 		}
 
-		if ( self::$has_config ){ 
+		if ( $this->has_config ){ 
 		
-			h::log('d:>We do not need to resave the file, as it already exists' );
-			// h::log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
+			w__log('d:>We do not need to resave the file, as it already exists' );
+			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
 
 			return false; 
 		
 		}
 
 		// cache in DB ##
-		\set_site_transient( 'willow_config', self::$config, 24 * HOUR_IN_SECONDS );
+		\set_site_transient( 'willow_config', $this->config, 24 * HOUR_IN_SECONDS );
 
-		// h::log('d:>saved config to DB...' );
+		// w__log('d:>saved config to DB...' );
 
 		// return true;
 
 		if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
-			// h::log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
+			// w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
-			core\method::file_put_array( \q_theme::get_child_theme_path( '/__q.php' ), self::$config );
+			willow\core\method::file_put_array( \q_theme::get_child_theme_path( '/__q.php' ), $this->config );
 
 		}
 
@@ -176,12 +196,12 @@ class config extends \willow {
 	 * 
 	 * @aince 4.1.0
 	*/
-	public static function get_cache(){
+	public function get_cache(){
 
 		/*
 		if ( ! method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
-			h::log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
+			w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
 			return false;
 
@@ -191,19 +211,19 @@ class config extends \willow {
 		// if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
 		// if theme debugging, then load from indiviual config files ##
-		if ( self::$debug ) { 
+		if ( $this->plugin->get('_debug') ) { 
 
-			// h::log( 'd:>Theme is debugging, so load from individual context files...' );
+			// w__log( 'd:>Theme is debugging, so load from individual context files...' );
 
 			// load ##
-			if ( self::$delete_config ) {
+			if ( $this->delete_config ) {
 
-				self::delete_cache();
+				$this->delete_cache();
 				/*
 
 				\delete_site_transient( 'willow_config' );
 
-				// h::log( 'e:>Deleted config cache from DB...' );
+				// w__log( 'e:>Deleted config cache from DB...' );
 
 				if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
@@ -213,14 +233,14 @@ class config extends \willow {
 
 						unlink( $file );
 
-						h::log( 'd:>...also deleting __q.php, so cache is clear' );
+						w__log( 'd:>...also deleting __q.php, so cache is clear' );
 
 					}
 
 				}
 
 				// update tracker ##
-				self::$delete_config = false;
+				$this->delete_config = false;
 				*/
 
 			}
@@ -229,25 +249,25 @@ class config extends \willow {
 
 		}
 
-		// h::log( 'd:>Child theme method found, so trying to load data from __q.php' );
-		// h::log( \get_site_transient( 'willow_config' ) );
+		// w__log( 'd:>Child theme method found, so trying to load data from __q.php' );
+		// w__log( \get_site_transient( 'willow_config' ) );
 		if ( 
 			$array = \get_site_transient( 'willow_config' )
 		) {
 
 			// log ##
-			// h::log( 'd:>DB Transient Found...' );
+			// w__log( 'd:>DB Transient Found...' );
 
 			if( is_array( $array ) ) {
 
 				// store array in object cache ##
-				self::$config = $array;
+				$this->config = $array;
 
 				// update flag ##
-				self::$has_config = true;
+				$this->has_config = true;
 
 				// log ##
-				// h::log( 'd:>Theme NOT debugging ( production mode ) -- so loaded config data DB' );
+				// w__log( 'd:>Theme NOT debugging ( production mode ) -- so loaded config data DB' );
 
 				// good ##
 				return true;
@@ -269,13 +289,13 @@ class config extends \willow {
 				){
 
 					// store array in object cache ##
-					self::$config = $array;
+					$this->config = $array;
 
 					// update flag ##
-					self::$has_config = true;
+					$this->has_config = true;
 
 					// log ##
-					h::log( 'd:>Theme NOT debugging ( production mode ) -- so loaded config data from __q.php' );
+					w__log( 'd:>Theme NOT debugging ( production mode ) -- so loaded config data from __q.php' );
 
 					// good ##
 					return true;
@@ -287,13 +307,13 @@ class config extends \willow {
 		}
 		*/
 
-		h::log( 'e:>Cache check to DB is empty, so new cache being generated from here..' );
+		w__log( 'e:>Cache check to DB is empty, so new cache being generated from here..' );
 
 		return false;
 
 		// } else {
 
-		// 	h::log( 'e:>Child theme method NOT found, could not load __q.php' );
+		// 	w__log( 'e:>Child theme method NOT found, could not load __q.php' );
 
 		// 	return false;
 
@@ -301,27 +321,26 @@ class config extends \willow {
 
 	}
 
-
 	/**
 	 * Hook into Fastest Cache delete routine - as an example how to clear Willow cache from third party plugin
 	 * 
+	 * @todo	Should be moved to a plugin->filter
 	 * @since 	1.4.7
 	 * @return 	void
 	*/
-	public static function delete_from_fastest_cache(){
+	public function delete_from_fastest_cache(){
 
-		// h::log( 'e:>Delete Willow cache from Fastest Cache hook...' );
+		// w__log( 'e:>Delete Willow cache from Fastest Cache hook...' );
 		
-		self::delete_cache();
+		$this->delete_cache();
 
 	}
 
-
-	public static function delete_cache(){
+	public function delete_cache(){
 
 		\delete_site_transient( 'willow_config' );
 
-		// h::log( 'e:>Deleted config cache from DB...' );
+		// w__log( 'e:>Deleted config cache from DB...' );
 
 		if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
 
@@ -331,40 +350,38 @@ class config extends \willow {
 
 				unlink( $file );
 
-				// h::log( 'd:>...also deleting __q.php, so cache is clear' );
+				// w__log( 'd:>...also deleting __q.php, so cache is clear' );
 
 			}
 
 		}
 
 		// update tracker ##
-		self::$delete_config = false;
+		$this->delete_config = false;
 
 	}
 
-
-	public static function global(){
+	public function global(){
 
 		// cache ##
-		if ( self::$global_loaded ){ return false; }
+		if ( $this->global_loaded ){ return false; }
 
 		// file ##
-		$file = self::get_plugin_path('library/willow/global.php');
+		$file = $this->plugin->get_plugin_path( 'library/willow/global.php' );
 
 		// cache ##
 		$cache_key = 'willow_global_php';
 
 		// send file to config loader ##
-		self::load( $file, $cache_key );
+		$this->load( $file, $cache_key );
 
 		// save file to cache ##
-		self::$cache_files[] = $file;
+		$this->cache_files[] = $file;
 
 		// update tracker ##
-		self::$global_loaded = true;
+		$this->global_loaded = true;
 
 	}
-
 	
 	/**
 	 * Get configuration files
@@ -373,33 +390,33 @@ class config extends \willow {
 	 *
 	 * @return		Array $array -- must return, but can be empty ##
 	 */
-	public static function filter( $args = null, $source = null ) {
+	public function filter( $args = null, $source = null ) {
 
-		// h::log( 'e:>SOURCE: '.$source );
+		// w__log( 'e:>SOURCE: '.$source );
 
-		// h::log( self::$extend );
+		// w__log( $this->extend );
 
 		// fill properties ##
-		self::properties();
+		$this->properties();
 
 		// load global config - once ##
-		self::global();
+		$this->global();
 
 		if ( 
-			self::$has_config 
-			&& isset( self::$config[ $args['context'] ] ) 
-			&& isset( self::$config[ $args['context'] ][ $args['task'] ] ) 
+			$this->has_config 
+			&& isset( $this->config[ $args['context'] ] ) 
+			&& isset( $this->config[ $args['context'] ][ $args['task'] ] ) 
 		){ 
 			
-			// h::log( 'd:>Config loading from cache file: '.$args['context'].'->'.$args['task'] ); 
-			// h::log( self::$config );
+			// w__log( 'd:>Config loading from cache file: '.$args['context'].'->'.$args['task'] ); 
+			// w__log( $this->config );
 			
 			return $args; 
 		
 		}
 
 		// we got this far, so we need to re save the config file ##
-		self::$has_config = false;
+		$this->has_config = false;
 
 		// sanity ##
 		if ( 
@@ -411,7 +428,7 @@ class config extends \willow {
 		){
 
 			// config is loaded by context or process, so we need one of those to continue ##
-			h::log( 'e:>Error in passed args, $context and $task are required.' );
+			w__log( 'e:>Error in passed args, $context and $task are required.' );
 
 			// kick back args for future filters ##
 			return $args;
@@ -422,7 +439,7 @@ class config extends \willow {
 		$array = [
 
 			// template~context~task ##
-			self::$template.'__'.$args['context'].'__'.$args['task'] => self::$template.'~'.$args['context'].'~'.$args['task'],
+			$this->template.'__'.$args['context'].'__'.$args['task'] => $this->template.'~'.$args['context'].'~'.$args['task'],
 
 			// template/context~task in sub directory ##
 			// view\is::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\is::get().'/'.$args['context'].'~'.$args['task'],
@@ -444,22 +461,27 @@ class config extends \willow {
 		// filter options ##
 		$array = \apply_filters( 'willow/config/load/array', $array );
 
-		// h::log( 'd:>looking for source: '.$source );
+		// w__log( 'd:>looking for source: '.$source );
 		if( 'extend' == $source ) {
 
-			// h::log( 'd:>looking for source: '.$source );
+			// w__log( 'd:>looking for source: '.$source );
+			// get _extend var ##
+			$_extend = $this->plugin->get( '_extend' );
 
 			if(
-				! empty( self::$extend )
+				! empty( $_extend )
 			){
 
+				// new empty array ##
 				$extended_lookups = [];
-				foreach( self::$extend as $k => $v ){
 
-					// h::log( $v );
+				foreach( $_extend as $k => $v ){
+
+					// w__log( $v );
 					if( $v['lookup'] ){
 
-						$extended_lookups[] = self::$extend[$k];
+						// add location path ##
+						$extended_lookups[] = $_extend[$k];
 
 					}
 
@@ -468,7 +490,7 @@ class config extends \willow {
 			}
 		}
 
-		// h::log( $extended_lookups );
+		// w__log( $extended_lookups );
 
 		// check for child theme path method ##
 		// $child_theme_path = method_exists( 'q_theme', 'get_child_theme_path' );
@@ -477,8 +499,8 @@ class config extends \willow {
 		// $parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
 
 		// loop over allowed extensions ##
-		// TODO - this could be a whole load more effecient... ##
-		foreach( self::$file_extensions as $ext ) {
+		// @TODO - this could be a whole load more effecient... ##
+		foreach( $this->file_extensions as $ext ) {
 
 			// loop over array values ##
 			foreach( $array as $k => $v ){
@@ -489,15 +511,15 @@ class config extends \willow {
 					case "child" :
 
 						// check for theme method ##
-						if ( ! self::$child_theme_path ){ break; }
+						if ( ! $this->child_theme_path ){ break; }
 
 						// look for file ##
-						$file = \q_theme::get_child_theme_path( '/library/'.self::$willow_path.$v.$ext );
+						$file = \q_theme::get_child_theme_path( '/library/'.$this->willow_path.$v.$ext );
 
 						// build cache key ##
 						$cache_key = 'child_'.$v.'_'.str_replace( '.', '', $ext );
 
-						// h::log( 'd:>child->looking up file: '.$file );
+						// w__log( 'd:>child->looking up file: '.$file );
 
 					break  ;
 
@@ -505,14 +527,14 @@ class config extends \willow {
 					case "parent" :
 
 						// check for theme method ##
-						if ( ! self::$parent_theme_path ){ break; }
+						if ( ! $this->parent_theme_path ){ break; }
 
 						// look for file ##
-						$file = \q_theme::get_parent_theme_path( '/library/'.self::$willow_path.$v.$ext );
+						$file = \q_theme::get_parent_theme_path( '/library/'.$this->willow_path.$v.$ext );
 
 						// build cache key ##
 						$cache_key = 'parent_'.$v.'_'.str_replace( '.', '', $ext );
-						// h::log( 'd:>parent->looking up file: '.$file );
+						// w__log( 'd:>parent->looking up file: '.$file );
 
 					break  ;
 
@@ -522,7 +544,7 @@ class config extends \willow {
 
 							foreach( $extended_lookups as $kl => $vl ){
 
-								// h::log( $v );
+								// w__log( $v );
 
 								if ( $vl['context'] == $args['context'] ){
 
@@ -530,7 +552,7 @@ class config extends \willow {
 
 										$file = $vl['lookup'].$args['context'].'/'.$args['context'].'~'.$args['task'].$ext;
 
-										// h::log( 'e:>Extend File: '.$file );
+										// w__log( 'e:>Extend File: '.$file );
 										$cache_key = $source.'_'.$args['context'].'_'.$args['task'].'_'.str_replace( '.', '', $ext );
 
 									}
@@ -544,15 +566,16 @@ class config extends \willow {
 					break ;
 
 					// global lookup ~~> willow/FILE.ext
+					// REMOVED, as offers little additional config and is merged elsewhere ##
 					/*
 					case "global" :
 					default :
 
-						$file = h::get( self::$willow_path.$v.$ext, 'return', 'path' );
-						$file = self::get_plugin_path('/library');
+						$file = h::get( $this->willow_path.$v.$ext, 'return', 'path' );
+						$file = $this->get_plugin_path('/library');
 
 						$cache_key = 'global_'.$v.'_'.str_replace( '.', '', $ext );
-						// h::log( 'd:>global->looking up file: '.$file );
+						// w__log( 'd:>global->looking up file: '.$file );
 
 					break ;
 					*/
@@ -567,9 +590,9 @@ class config extends \willow {
 
 					// skip file, if loaded already -- 
 					// but NO, as child needs to override parent.. ##
-					if ( in_array( $file, self::$cache_files ) ) {
+					if ( in_array( $file, $this->cache_files ) ) {
 
-						// h::log( 'd:>File: '.$file.' already loaded' );
+						// w__log( 'd:>File: '.$file.' already loaded' );
 
 						continue;
 
@@ -578,22 +601,22 @@ class config extends \willow {
 					// build cache key ##
 					if ( ! $cache_key ) {
 
-						// h::log( 'e:>Cache key missing for file: '.$file );
+						// w__log( 'e:>Cache key missing for file: '.$file );
 					
 						$cache_key = 
 							! is_null( $source ) ? 
-							$k.'_'.$source.'_'.core\method::file_extension( $file ) : 
-							$k.'_'.core\method::file_extension( $file ) ;
+							$k.'_'.$source.'_'.willow\core\method::file_extension( $file ) : 
+							$k.'_'.willow\core\method::file_extension( $file ) ;
 
 					}
 
-					// h::log( 'd:>Loading config file: '.$file.' cache key: '.$cache_key );
+					// w__log( 'd:>Loading config file: '.$file.' cache key: '.$cache_key );
 
 					// send file to config loader ##
-					self::load( $file, $cache_key );
+					$this->load( $file, $cache_key );
 
 					// save file to cache ##
-					self::$cache_files[] = $file;
+					$this->cache_files[] = $file;
 
 				}
 
@@ -606,16 +629,13 @@ class config extends \willow {
 
 	}
 
-
-
-
 	/**
 	 * Get stored config setting, merging in any new of changed settings from extensions ##
 	 */
-	public static function get( $args = null ) {
+	public function get( $args = null ) {
 
 		// without $context or $task, we can't get anything specific, so just run main filter ##
-		// \apply_filters( 'willow/config/get/all', self::$config, isset( $args['field'] ) ?: $args['field'] );
+		// \apply_filters( 'willow/config/get/all', $this->config, isset( $args['field'] ) ?: $args['field'] );
 
 		// shortcut.. allow for string passing, risky.. ##
 		if(
@@ -638,7 +658,7 @@ class config extends \willow {
 		}
 
 		// capture passed args ##
-		self::$config_args = $args; // capture args ##
+		$this->config_args = $args; // capture args ##
 
 		// sanity ##
 		if ( 
@@ -649,10 +669,10 @@ class config extends \willow {
 		){
 
 			// get caller ##
-			$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// config is loaded by context or process, so we need one of those to continue ##
-			h::log( 'e:>Q -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
+			w__log( 'e:>Q -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
 
 			return false;
 
@@ -662,20 +682,20 @@ class config extends \willow {
 		$return = false;
 
 		// run filter passing lookup args to allow themes and plugins to control config ##
-		self::run_filter();
+		$this->run_filter();
 
 		// define property for logging ##
 		$property = $args['context'].'::'.$args['task'] ;
 
-		// h::log('d:>Looking for $config property: '.$property );
-		// h::log( self::$config );
+		// w__log('d:>Looking for $config property: '.$property );
+		// w__log( ->config );
 
 		if ( 
-			! isset( self::$config[ $args['context'] ] ) 
-			|| ! isset( self::$config[ $args['context'] ][ $args['task'] ] ) 
+			! isset( $this->config[ $args['context'] ] ) 
+			|| ! isset( $this->config[ $args['context'] ][ $args['task'] ] ) 
 		){
 	
-			// h::log( 'd:>config not available : "'.$property.'"' );
+			// w__log( 'd:>config not available : "'.$property.'"' );
 
 			// continue;
 
@@ -684,16 +704,16 @@ class config extends \willow {
 			// return single property ##
 			if ( 
 				isset( $args['property'] ) 
-				&& isset( self::$config[ $args['context'] ][ $args['task'] ][ $args['property'] ] )
+				&& isset( $this->config[ $args['context'] ][ $args['task'] ][ $args['property'] ] )
 			){
 
 				// get single property values
-				$return = self::$config[ $args['context'] ][ $args['task'] ][ $args['property'] ];
+				$return = $this->config[ $args['context'] ][ $args['task'] ][ $args['property'] ];
 
 			} else {
 
 				// get task values ##
-				$return = self::$config[ $args['context'] ][ $args['task'] ];
+				$return = $this->config[ $args['context'] ][ $args['task'] ];
 
 			}
 
@@ -704,13 +724,13 @@ class config extends \willow {
 			// $found = true;
 
 			// ok ##
-			// h::log( 'd:>config set to : "'.$property.'"' );
-			// h::log( $return );
+			// w__log( 'd:>config set to : "'.$property.'"' );
+			// w__log( $return );
 
 		}
 
 		// filter return with specific context/task/ ##
-		$return = \apply_filters( 'willow/config/get/'.self::$config_args['context'].'/'.self::$config_args['task'], $return );
+		$return = \apply_filters( 'willow/config/get/'.$this->config_args['context'].'/'.$this->config_args['task'], $return );
 
 		// kick back ##
 		return $return;
@@ -719,41 +739,37 @@ class config extends \willow {
 
 
 
-	public static function run_filter() {
+	public function run_filter() {
 
 		// sanity ##
 		if (
-			is_null( self::$config_args )
-			|| ! is_array( self::$config_args )
-			|| ! isset( self::$config_args['context'] )
-			|| ! isset( self::$config_args['task'] )
+			is_null( $this->config_args )
+			|| ! is_array( $this->config_args )
+			|| ! isset( $this->config_args['context'] )
+			|| ! isset( $this->config_args['task'] )
 		){
 
-			h::log('e:>Error in passed args');
+			w__log('e:>Error in passed args');
 
 			return false;
 
 		}
 
-		// h::log( $args );
+		// w__log( $args );
 
-		\apply_filters( 'willow/config/load', self::$config_args );
+		\apply_filters( 'willow/config/load', $this->config_args );
 
 	}
-
-
-
-
 
 	/**
 	 * Include configuration file, with local cache via handle
 	 * 
 	 * @since 4.1.0
 	*/
-	public static function load( $file = null, $handle = null ){
+	public function load( $file = null, $handle = null ){
 
 		// return args for other filters ### ?? ###
-		$return = self::$config_args;
+		$return = $this->config_args;
 
 		// sanity ##
 		if (
@@ -762,21 +778,21 @@ class config extends \willow {
 			// || is_null( $args )
 		){
 
-			h::log( 'Error in passed params' );
+			w__log( 'Error in passed params' );
 
 			return $return;
 
 		}
 
-		// h::log( 'd:>Looking for handle: "'.$handle.'" in file: "'.$file.'"' );
+		// w__log( 'd:>Looking for handle: "'.$handle.'" in file: "'.$file.'"' );
 
-		$backtrace = core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+		$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
 
 		// use cached version ##
-		if( isset( self::$cache[$handle] ) ){
+		if( isset( $this->cache[$handle] ) ){
 
-			h::log( 'd:>Returning cached version of config for handle: '.$handle.' from: '.$backtrace );
-			// h::log( self::$cache[$handle] );
+			w__log( 'd:>Returning cached version of config for handle: '.$handle.' from: '.$backtrace );
+			// w__log( $this->cache[$handle] );
 			return $return;
 
 		}
@@ -787,16 +803,16 @@ class config extends \willow {
 			|| ! is_file( $file )
 		){
 			
-			h::log( 'e:>Error, file does not exist: '.$file.' from: '.$backtrace );
+			w__log( 'e:>Error, file does not exist: '.$file.' from: '.$backtrace );
 
-			return $return; #self::$config;
+			return $return; #$this->config;
 
 		}
 
-		// h::log( 'dealing with file: '.$file. ' - ext: '.core\method::file_extension( $file ) );
+		// w__log( 'dealing with file: '.$file. ' - ext: '.core\method::file_extension( $file ) );
 
 		// get file extension ##
-		switch( core\method::file_extension( $file ) ){
+		switch( willow\core\method::file_extension( $file ) ){
 
 			case "willow" :
 
@@ -806,9 +822,9 @@ class config extends \willow {
 				// check format ##
 				if( false === strpos( $file_key, '~' ) ){
 
-					h::log( 'e:>Error, file name not correclty formatted: '.$file );
+					w__log( 'e:>Error, file name not correclty formatted: '.$file );
 
-					return $return; #self::$config;
+					return $return; #$this->config;
 
 				}
 
@@ -819,9 +835,9 @@ class config extends \willow {
 
 				$contents = file_get_contents( $file );
 
-				// h::log( '$context: '.$context.' task: '.$task );
-				// h::log( $contents );
-				// h::log( 't:>Todo, allow for logic in willow files, to assign other markup keys...' );
+				// w__log( '$context: '.$context.' task: '.$task );
+				// w__log( $contents );
+				// w__log( 't:>Todo, allow for logic in willow files, to assign other markup keys...' );
 
 				// willow files are always treated as markup - assigned to "CONTEXT->TASK->markup" key ##
 				$array[ $context ][ $task ]['markup'] = $contents;
@@ -834,7 +850,7 @@ class config extends \willow {
 			case "php" :
 
 				$array = require_once( $file );
-				// h::log( $array );
+				// w__log( $array );
 
 			break;
 
@@ -846,7 +862,7 @@ class config extends \willow {
 			// $array = include( $file )
 		){
 
-			// h::log( 'd:>Loading handle: "'.$handle.'" from file: "'.$file.'"' );
+			// w__log( 'd:>Loading handle: "'.$handle.'" from file: "'.$file.'"' );
 
 			// not an array, so take value and add to new array as $markup key ##
 			if (  
@@ -854,7 +870,7 @@ class config extends \willow {
 			){
 
 				$value = $array;
-				// h::log( $value );
+				// w__log( $value );
 				$array = [];
 				$array['markup'] = $value;
 
@@ -865,20 +881,20 @@ class config extends \willow {
 			// check if we have a 'config' key.. and take that ##
 			if ( is_array( $array ) ) {
 
-				// h::log( 'd:>config handle: "'.$handle.'" loading: '.$file.' from: '.$backtrace );
-				// h::log( $array );
+				// w__log( 'd:>config handle: "'.$handle.'" loading: '.$file.' from: '.$backtrace );
+				// w__log( $array );
 
 				// filter single property values -- too slow ??
 				// perhaps this way is too open, and we should just run this at single property usage time... ##
 				/*
-				if ( isset( $array[ self::$config_args['context'].'__'.self::$config_args['task'] ] ) ) {
+				if ( isset( $array[ $this->config_args['context'].'__'.$this->config_args['task'] ] ) ) {
 
-					$key = self::$config_args['context'].'__'.self::$config_args['task'];
+					$key = $this->config_args['context'].'__'.$this->config_args['task'];
 					$property = $array[ $key ];
 
 					$filter = 
 						\apply_filters( 
-							'willow/config/load/'.self::$config_args['context'].'/'.self::$config_args['task'], 
+							'willow/config/load/'.$this->config_args['context'].'/'.$this->config_args['task'], 
 							$property
 					);
 
@@ -894,10 +910,10 @@ class config extends \willow {
 				*/
 
 				// set cache check ##
-				self::$cache[$handle] = $array;
+				$this->cache[$handle] = $array;
 
 				// merge results into array ##
-				self::$config = core\method::parse_args( $array, self::$config );
+				$this->config = willow\core\method::parse_args( $array, $this->config );
 
 				// save file again ??
 
@@ -906,7 +922,7 @@ class config extends \willow {
 
 			} else {
 
-				h::log( 'd:>config not an array -- handle: "'.$handle.' from: '.$backtrace );
+				w__log( 'd:>config not an array -- handle: "'.$handle.' from: '.$backtrace );
 
 			}
 

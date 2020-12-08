@@ -1,20 +1,57 @@
 <?php
 
-namespace willow\render\type;
+namespace willow\type;
 
-use willow\core;
 use willow\core\helper as h;
-// use q\get;
-use willow\render;
+use willow;
 
-class post extends render\type {
+class post {
+
+	private 
+		$plugin = false
+	;
+
+	/**
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * WP Post handler
      *  
      * 
      **/ 
-    public static function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null ): string {
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+
+		// local var ##
+		$_args = $this->plugin->get( '_args' );
+
+		// check if type allowed ##
+		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+
+			// w__log( 'e:>Value Type not allowed: '.$type );
+
+			// log ##
+			w__log( $_args['task'].'~>e:Value Type not allowed: "'.$type.'"');
+
+			// return $args[0]->$args[1]; // WHY ??#
+			return false;
+
+		}
+
+		// $value needs to be a WP_Post object ##
+		if ( ! $wp_post instanceof \WP_Post ) {
+
+			// log ##
+			w__log( $_args['task'].'~>e:Error in pased $args - not a WP_Post object');
+
+			return false;
+
+		}
 
 		// start with empty string ##
 		$string = '';
@@ -50,15 +87,15 @@ class post extends render\type {
 
 				$string = 
 					\get_the_date( 
-						isset( self::$args['date_format'] ) ? 
-						self::$args['date_format'] : // take from value passed by caller ##
-							core\config::get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // global config ##
+						isset( $_args['date_format'] ) ? 
+						$_args['date_format'] : // take from value passed by caller ##
+							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // global config ##
 							\apply_filters( 'q/format/date', 'F j, Y' ), // standard ##
 						// $wp_post->post_date, 
 						$wp_post->ID
 					);
 
-				// h::log( 'post_date: '.$string );
+				// w__log( 'post_date: '.$string );
 				
 			break ;
 
@@ -82,13 +119,13 @@ class post extends render\type {
 				if ( \is_search() ) {
 
 					$string = 
-						render\method::search_the_content([
+						willow\render\method::search_the_content([
 							'string' 	=> \apply_filters( 'q/get/wp/post_content', $wp_post->post_content ),
-							'limit'		=> isset( self::$args['length'] ) ? self::$args['length'] : 100
+							'limit'		=> isset( $_args['length'] ) ? $_args['length'] : 100
 						]) ? 
-						render\method::search_the_content([
+						willow\render\method::search_the_content([
 							'string' 	=> \strip_shortcodes(\apply_filters( 'q/get/wp/post_content', $wp_post->post_content )),
-							'limit'		=> isset( self::$args['length'] ) ? self::$args['length'] : 100
+							'limit'		=> isset( $_args['length'] ) ? $_args['length'] : 100
 						]) : 
 						$wp_post->post_excerpt ;
 
@@ -107,7 +144,7 @@ class post extends render\type {
 			) 
 		) {
 
-			// h::log( 'Field: "'.$field.'" value magically set to: '.render\method::chop( $wp_post->$type_field, 50 ) );
+			// w__log( 'Field: "'.$field.'" value magically set to: '.render\method::chop( $wp_post->$type_field, 50 ) );
 
 			$string = $wp_post->$type_field;
 

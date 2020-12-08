@@ -2,11 +2,23 @@
 
 namespace willow\context;
 
-use willow\core\helper as h;
-use willow\render; 
+use willow; 
 
-class group extends \willow\context {
+class group {
 
+	private
+		$plugin = null // this 
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Get group data via meta handler
@@ -16,30 +28,37 @@ class group extends \willow\context {
 	 * @uses		define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
 		$method = 'fields';
 
 		// Q needed to run get method ##
 		if(
-			! method_exists( '\willow\get\group', $method )
-			|| ! is_callable([ '\willow\get\group', $method ])
+			! method_exists( 'willow\get\group', $method )
+			|| ! is_callable([ 'willow\get\group', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\group\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\group\\'.$method );
 
 			return false;
 
 		}
 
+		// build object ##
+		$group = new willow\get\group( $this->plugin );
+
 		// method returns an array with 'data' and 'fields' ##
 		if ( 
-			$array = \willow\get\group::fields( $args )
+			// $array = \willow\get\group::fields( $args )
+			$array = $group->fields( $args )
 		){
-			// h::log( $array );
+			// w__log( $array['data'] );
 			
 			// "args->fields" are used for type and callback lookups ##
-			self::$args['fields'] = $array['fields']; 
+			// self::$args['fields'] = $array['fields']; 
+			$_args = $this->plugin->get( '_args' );
+			$_args['fields'] = $array['fields']; 
+			$this->plugin->set( '_args', $_args );
 
 			// return ##
 			return $array['data'];

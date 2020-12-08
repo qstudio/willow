@@ -1,14 +1,13 @@
 <?php
 
-namespace willow;
+namespace Q\willow;
 
-use willow\core\helper as h;
-use willow;
+use Q\willow;
 
 // load it up ##
-\willow\render::__run();
+// \willow\render::__run();
 
-class render extends \willow  { 
+class render { 
 
 	/**
 	 * Fire things up

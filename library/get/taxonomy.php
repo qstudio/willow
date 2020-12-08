@@ -2,24 +2,36 @@
 
 namespace willow\get;
 
-// Q ##
-use willow\core;
+use willow;
 use willow\core\helper as h;
-use willow\render;
-use willow\get;
 
-class taxonomy extends \willow\get {
+class taxonomy {
 
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 	
 	/**
 	 * We need a generic get_taxonomy_terms method.. which distributes, based on post type and any passed tax / term ## 
 	 */
-	public static function terms( $args = null ){
+	public function terms( $args = null ){
+
+		$render_args = new willow\render\args( $this->plugin );
 
 		// global arg validator ##
-		if ( ! $args = render\args::prepare( $args ) ){ 
+		if ( ! $args = $render_args->prepare( $args ) ){ 
 	   
-			// h::log( 'Bailing..' ); 
+			// w__log( 'Bailing..' ); 
 		
 			return false; 
 		
@@ -30,7 +42,7 @@ class taxonomy extends \willow\get {
 			! $terms = \get_terms( $args['query_args'] )
 		){
 	
-			h::log( 'd:>No terms found for taxonomy: '.$args['args']->taxonomy );
+			w__log( 'd:>No terms found for taxonomy: '.$args['args']->taxonomy );
 	
 			return false;
 	
@@ -39,7 +51,7 @@ class taxonomy extends \willow\get {
 		// to highlight any active term, we get to know the first term->term_id of the current post ##
 		$active_term_id = '';
 		if ( 
-			$object_terms = get\post::object_terms([ 
+			$object_terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post']
 				],
@@ -51,7 +63,7 @@ class taxonomy extends \willow\get {
 				
 		){
 
-			// h::log( 'e:>Returned terms good' );
+			// w__log( 'e:>Returned terms good' );
 
 			// we expect an array of WP_Term objects - validate ##
 			if (
@@ -61,7 +73,7 @@ class taxonomy extends \willow\get {
 				&& $object_terms[0] instanceof \WP_Term
 			){
 
-				// h::log( 'e:>Term object good, getting ID' );
+				// w__log( 'e:>Term object good, getting ID' );
 
 				$active_term_id = $object_terms[0]->term_id; 
 
@@ -69,7 +81,7 @@ class taxonomy extends \willow\get {
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// prepare return array ##
 		$array = [];
@@ -82,7 +94,7 @@ class taxonomy extends \willow\get {
 				|| ! $term instanceof \WP_Term
 			) {
 
-				h::log( 'e:>Error in returned term' );
+				w__log( 'e:>Error in returned term' );
 
 				continue;
 
@@ -102,20 +114,15 @@ class taxonomy extends \willow\get {
 
 		}	
 
-		// h::log( $array );
+		// w__log( $array );
 		$array = [ 'terms' => $array ];
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-
-
-	
-
-	public static function category( $args = null ){
+	public function category( $args = null ){
 
 		// sanity ##
 		if (
@@ -123,7 +130,7 @@ class taxonomy extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -131,7 +138,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -143,13 +150,13 @@ class taxonomy extends \willow\get {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -158,7 +165,7 @@ class taxonomy extends \willow\get {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -173,17 +180,15 @@ class taxonomy extends \willow\get {
 		$array['title'] = $terms[0]->name;
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 	
-
-
 	
-	public static function categories( $args = null ){
+	public function categories( $args = null ){
 
 		// sanity ##
 		if (
@@ -191,7 +196,7 @@ class taxonomy extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -199,7 +204,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -211,13 +216,13 @@ class taxonomy extends \willow\get {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -226,7 +231,7 @@ class taxonomy extends \willow\get {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -248,18 +253,14 @@ class taxonomy extends \willow\get {
 		}
 
 		// test ##
-		h::log( $array );
+		// w__log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-	
 
-
-	
-
-	public static function tag( $args = null ){
+	public function tag( $args = null ){
 
 		// sanity ##
 		if (
@@ -267,7 +268,7 @@ class taxonomy extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -275,7 +276,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -287,13 +288,13 @@ class taxonomy extends \willow\get {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -302,7 +303,7 @@ class taxonomy extends \willow\get {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -317,16 +318,14 @@ class taxonomy extends \willow\get {
 		$array['title'] = $terms[0]->name;
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
 
-
-	
-	public static function tags( $args = null ){
+	public function tags( $args = null ){
 
 		// sanity ##
 		if (
@@ -334,7 +333,7 @@ class taxonomy extends \willow\get {
 			|| ! is_array( $args )
 		){
 
-			h::log( 'e:>Error in passed args' );
+			w__log( 'e:>Error in passed args' );
 
 			return false;
 
@@ -342,7 +341,7 @@ class taxonomy extends \willow\get {
 
 		// $args->ID = $the_post->post_parent;
 		if ( 
-			! $terms = get\post::object_terms([ 
+			! $terms = willow\get\post::object_terms([ 
 				'config' 		=> [ 
 					'post'		=> $args['config']['post'] ?: null
 				],
@@ -354,13 +353,13 @@ class taxonomy extends \willow\get {
 				
 		){
 
-			h::log( 'e:>Returned terms empty' );
+			w__log( 'e:>Returned terms empty' );
 
 			return false;
 
 		}
 
-		// h::log( $terms );
+		// w__log( $terms );
 
 		// we expect an array with 1 key [0] of WP_Term object - validate ##
 		if (
@@ -369,7 +368,7 @@ class taxonomy extends \willow\get {
 			|| ! $terms[0] instanceof \WP_Term
 		){
 
-			 h::log( 'e:>Error in returned terms data' );
+			 w__log( 'e:>Error in returned terms data' );
 
 			 return false;
 
@@ -391,12 +390,11 @@ class taxonomy extends \willow\get {
 		}
 
 		// test ##
-		// h::log( $array );
+		// w__log( $array );
 
 		// return ##
-		return get\method::prepare_return( $args, $array );
+		return willow\get\method::prepare_return( $args, $array );
 
 	}
-
 
 }

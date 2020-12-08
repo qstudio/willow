@@ -2,12 +2,10 @@
 
 namespace willow\get;
 
-use willow\core;
+use willow;
 use willow\core\helper as h;
-use willow\view;
-use willow\get;
 
-class method extends \willow\get {
+class method {
 
 	/**
 	 * Prepare $array of data to be returned to render
@@ -16,7 +14,7 @@ class method extends \willow\get {
 	public static function prepare_return( $args = null, $array = null ) {
 
 		// get calling method for filters ##
-		$method = core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$method = willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
 
 		// sanity ##
 		if (
@@ -26,22 +24,22 @@ class method extends \willow\get {
 			|| ! is_array( $array )
 		) {
 
-			h::log( 'e~>'.$method.':>Error in passed $args or $array' );
+			w__log( 'e~>'.$method.':>Error in passed $args or $array' );
 
 			return false;
 
 		}
 
-		// h::log( $args );
-		// h::log( $array );
+		// w__log( $args );
+		// w__log( $array );
 
 		// run global filter on $array by $method ##
 		$array = \apply_filters( 'willow/get/'.$method.'/array', $array, $args );
 
 		// run template specific filter on $array by $method ##
-		if ( $template = view\is::get() ) {
+		if ( $template = willow\view\is::get() ) {
 
-			// h::log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
+			// w__log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
 
 			$array = \apply_filters( 'willow/get/'.$method.'/array/'.$template, $array, $args );
 
@@ -53,13 +51,13 @@ class method extends \willow\get {
 			|| ! is_array( $array )
 		) {
 
-			h::log( 'e~>'.$method.':>Error in returned $array' );
+			w__log( 'e~>'.$method.':>Error in returned $array' );
 
 			return false;
 
 		}
 
-		// h::log( $array );
+		// w__log( $array );
 
 		// return all arrays ##
 		return $array ;

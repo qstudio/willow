@@ -2,16 +2,26 @@
 
 namespace willow\context;
 
-use q\core\helper as h;
-// use q\ui;
-use q\get;
+use willow\core\helper as h;
 use willow;
-use willow\context;
-use willow\render; 
 
-class navigation extends willow\context {
+class navigation {
 
-	public static function get( $args = null ){
+	private
+		$plugin = null // this
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
+
+	public function get( $args = null ){
 
 		// sanity ##
 		if(
@@ -21,7 +31,7 @@ class navigation extends willow\context {
 			|| ! isset( $args['task'] )
 		){
 
-			h::log( 'e:>Error in passed parameters' );
+			w__log( 'e:>Error in passed parameters' );
 
 			return false;
 
@@ -31,28 +41,32 @@ class navigation extends willow\context {
 		$method = $args['task'];
 
 		if(
-			! method_exists( '\willow\get\navigation', $method )
-			|| ! is_callable([ '\willow\get\navigation', $method ])
+			! method_exists( 'willow\get\navigation', $method )
+			|| ! is_callable([ 'willow\get\navigation', $method ])
 		){
 
-			h::log( 'e:>Class method is not callable: willow\get\navigation\\'.$method );
+			w__log( 'e:>Class method is not callable: willow\get\navigation\\'.$method );
 
 			return false;
 
 		}
 
-		// return \willow\get\post::$method;
+		// new object ##
+		$navigation = new willow\get\navigation( $this->plugin );
 
-		// h::log( 'e:>Class method IS callable: q\get\post\\'.$method );
+		// return callback ##
+		$return = $navigation->{$method}( $args );
 
 		// call method ##
+		/*
 		$return = call_user_func_array (
 				array( '\\willow\\get\\navigation', $method )
 			,   array( $args )
 		);
+		*/
 
 		// // test ##
-		// h::log( $return );
+		// w__log( $return );
 
 		// kick back ##
 		return $return;

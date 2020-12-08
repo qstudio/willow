@@ -4,11 +4,22 @@ namespace willow\context;
 
 use willow\core\helper as h;
 use willow;
-use willow\context;
 
-class user extends willow\context {
+class user {
 
+	private
+		$plugin = null // this
+	;
 
+	/**
+	 * 
+	 */
+	public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 
 }

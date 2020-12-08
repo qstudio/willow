@@ -5,8 +5,21 @@ namespace willow\context;
 use willow\core\helper as h;
 use willow;
 
-class module extends willow\context {
+class module {
 
+	private
+		$plugin = null
+	;
+
+	/**
+	 * 
+     */
+    public function __construct( \willow\plugin $plugin ){
+
+		// grab passed plugin object ## 
+		$this->plugin = $plugin;
+
+	}
 
 	/**
      * Generic Getter - looks for properties in config matching context->task
@@ -17,13 +30,11 @@ class module extends willow\context {
 	 * @uses		render\fields::define
      * @return      Array
      */
-    public static function get( $args = null ) {
+    public function get( $args = null ) {
 
-		// h::log( $args );
-		return \willow\core\config::get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		// w__log( $args );
+		return $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 
-
-	
 }
