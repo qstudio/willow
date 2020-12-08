@@ -18,12 +18,12 @@ All Willow tags include a matching opening and closing pair, starting and ending
 {~ ui~hello {+ Willow says <strong>{{ hello }}</strong> +} ~}
 ```
 
-This tag calls the class **ui** method **hello** - ui::hello() - and wraps the returned data in any markup passed in the Willow argument: 
+This tag calls the class **ui** method **hello** - ui->hello() - and wraps the returned data in any markup passed in the Willow argument: 
 
 ```php
 class ui {
 
-	public static function hello( $args = null ) {
+	function hello( $args = null ) {
 
 		// define key + value to render ##
 		return [
