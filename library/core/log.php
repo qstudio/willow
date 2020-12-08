@@ -46,7 +46,7 @@ class log {
 		if ( $on_run ) {
 
 			// earliest possible action.. empty log ##
-			if( ! class_exists( 'Q' ) ) self::empty();  
+			if( ! function_exists( 'q' ) ) self::empty();  
 
 			// also, pre-ajax ##
 			if( 
@@ -55,7 +55,7 @@ class log {
 			) {
 
 				// w__log_direct( 'DOING AJAX...' );
-				if( ! class_exists( 'Q' ) ) self::empty();
+				if( ! function_exists( 'q' ) ) self::empty();  
 
 			}
 
