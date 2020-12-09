@@ -287,7 +287,7 @@ class context  {
 				|| ! is_array( $return_array )
 			){
 
-				w__log( 'e:>"'.$args['context'].'~'.$args['task'].'" Calling function found, but returned false - stopping here.' );
+				w__log( 'e:>Willow "'.$args['context'].'->'.$args['task'].'" function found, but returned false - stopping here.' );
 				// w__log( $return_array );
 
 				// BREAKING CHANGE  ## 
