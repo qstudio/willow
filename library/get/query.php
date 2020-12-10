@@ -80,7 +80,7 @@ class query {
 		// set-up new array to hold returned post objects ##
 		$array = [];
 
-		w__log( $wp_query_args );
+		// w__log( $wp_query_args );
 
         // run query ##
 		$q_query = new \WP_Query( $wp_query_args );

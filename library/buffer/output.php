@@ -74,15 +74,15 @@ class output {
 			$filter = new willow\filter\apply( $this->plugin );
 			$filter->hooks();
 			
-			// if ( 'willow' == \q\view\is::format() ){
+			// if ( 'willow' == \q\view\method::format() ){
 
-				// w__log( 'e:>starting OB, as on a willow template: "'.\q\view\is::format().'"' );
+				// w__log( 'e:>starting OB, as on a willow template: "'.\q\view\method::format().'"' );
 				// w__log( 't:>TODO -- find out why large template content breaks this...??' );
 				return ob_start();
 
 			// }
 
-			// w__log( 'e:>not a willow template, so no ob: "'.\q\view\is::format().'"' );
+			// w__log( 'e:>not a willow template, so no ob: "'.\q\view\method::format().'"' );
 
 			// return false; 
 
