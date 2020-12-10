@@ -106,10 +106,10 @@ class config {
 		if ( $this->properties_loaded ) return false;
 
 		// check for child theme path method ##
-		$this->child_theme_path = method_exists( 'q_theme', 'get_child_theme_path' );
+		$this->child_theme_path = method_exists( 'q\theme\plugin', 'get_child_theme_path' );
 
 		// check for parent theme path method ##
-		$this->parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
+		$this->parent_theme_path = method_exists( 'q\theme\plugin', 'get_parent_theme_path' );
 
 		// config file extension ##
 		$this->file_extensions = \apply_filters( 'willow/config/load/ext', [ 
@@ -178,11 +178,11 @@ class config {
 
 		// return true;
 
-		if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
+		if ( method_exists( 'q\theme\plugin', 'get_child_theme_path' ) ){ 
 
 			// w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
-			willow\core\method::file_put_array( \q_theme::get_child_theme_path( '/__q.php' ), $this->config );
+			willow\core\method::file_put_array( \q\theme\plugin::get_child_theme_path( '/__q.php' ), $this->config );
 
 		}
 
@@ -198,18 +198,6 @@ class config {
 	*/
 	public function get_cache(){
 
-		/*
-		if ( ! method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
-
-			w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
-
-			return false;
-
-		}
-		*/
-
-		// if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
-
 		// if theme debugging, then load from indiviual config files ##
 		if ( $this->plugin->get('_debug') ) { 
 
@@ -219,29 +207,6 @@ class config {
 			if ( $this->delete_config ) {
 
 				$this->delete_cache();
-				/*
-
-				\delete_site_transient( 'willow_config' );
-
-				// w__log( 'e:>Deleted config cache from DB...' );
-
-				if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
-
-					$file = \q_theme::get_child_theme_path('/__q.php');
-
-					if ( $file && file_exists( $file ) ) {
-
-						unlink( $file );
-
-						w__log( 'd:>...also deleting __q.php, so cache is clear' );
-
-					}
-
-				}
-
-				// update tracker ##
-				$this->delete_config = false;
-				*/
 
 			}
 
@@ -276,48 +241,9 @@ class config {
 
 		}
 
-		/*
-		if( $file = \q_theme::get_child_theme_path('/__q.php') ) {
-
-			if ( is_file( $file ) ) {
-
-				$array = require_once( $file );	
-
-				if (
-					$array
-					&& is_array( $array )
-				){
-
-					// store array in object cache ##
-					$this->config = $array;
-
-					// update flag ##
-					$this->has_config = true;
-
-					// log ##
-					w__log( 'd:>Theme NOT debugging ( production mode ) -- so loaded config data from __q.php' );
-
-					// good ##
-					return true;
-
-				}
-
-			}
-			
-		}
-		*/
-
 		w__log( 'e:>Cache check to DB is empty, so new cache being generated from here..' );
 
 		return false;
-
-		// } else {
-
-		// 	w__log( 'e:>Child theme method NOT found, could not load __q.php' );
-
-		// 	return false;
-
-		// }
 
 	}
 
@@ -342,9 +268,9 @@ class config {
 
 		// w__log( 'e:>Deleted config cache from DB...' );
 
-		if ( method_exists( 'q_theme', 'get_child_theme_path' ) ){ 
+		if ( method_exists( 'q\theme\plugin', 'get_child_theme_path' ) ){ 
 
-			$file = \q_theme::get_child_theme_path('/__q.php');
+			$file = \q\theme\plugin::get_child_theme_path('/__q.php');
 
 			if ( $file && file_exists( $file ) ) {
 
@@ -514,7 +440,7 @@ class config {
 						if ( ! $this->child_theme_path ){ break; }
 
 						// look for file ##
-						$file = \q_theme::get_child_theme_path( '/library/'.$this->willow_path.$v.$ext );
+						$file = \q\theme\plugin::get_child_theme_path( '/library/'.$this->willow_path.$v.$ext );
 
 						// build cache key ##
 						$cache_key = 'child_'.$v.'_'.str_replace( '.', '', $ext );
@@ -530,7 +456,7 @@ class config {
 						if ( ! $this->parent_theme_path ){ break; }
 
 						// look for file ##
-						$file = \q_theme::get_parent_theme_path( '/library/'.$this->willow_path.$v.$ext );
+						$file = \q\theme\plugin::get_parent_theme_path( '/library/'.$this->willow_path.$v.$ext );
 
 						// build cache key ##
 						$cache_key = 'parent_'.$v.'_'.str_replace( '.', '', $ext );

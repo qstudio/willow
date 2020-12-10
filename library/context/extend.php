@@ -53,7 +53,7 @@ class extend {
 		// filter extensions ##
 		$array = \apply_filters( 'willow/context/extend', $this->_extend );
 
-		w__log( $array );
+		h::log( $array );
 
 		/*
 		// sanity ##
@@ -62,7 +62,7 @@ class extend {
 			|| ! is_array( $array ) 
 		){
 
-			w__log( 'e:>Not an Array' );
+			h::log( 'e:>Not an Array' );
 
 			return false;
 
@@ -72,20 +72,20 @@ class extend {
 		$this->filtered = array_merge( $array, $this->filtered );
 		*/
 
-		// w__log( self::$filtered );
+		// h::log( self::$filtered );
 
 		/*
 		$merge = [];
 
 		foreach( $array as $key => $value ){
 
-			w__log( $key );
+			h::log( $key );
 
 			$merge[ $key['class'] ] = $key;
 
 		}
 
-		w__log( $merge );
+		h::log( $merge );
 
 		// merge into class property ##
 		self::$extend = array_merge(
@@ -99,7 +99,7 @@ class extend {
 	public function register( $args = null ){
 
 		// test ##
-		// w__log( $args );
+		// h::log( $args );
 
 		// sanity ###
 		if (
@@ -111,7 +111,7 @@ class extend {
 			// || ! is_array( $args['methods'] )
 		){
 
-			w__log( 'e:>Error in passed params' );
+			h::log( 'e:>Error in passed params' );
 
 			return false;
 
@@ -134,18 +134,18 @@ class extend {
 			// || ! is_array( $args['methods'] )
 		){
 
-			w__log( 'e:>Error in passed params' );
+			h::log( 'e:>Error in passed params' );
 
 			return false;
 
 		}
 
-		// reject invalid class objects ##
+		// reject invalid classes ##
 		if( 
 			! class_exists( $args['class'] ) 
 		){
 
-			w__log( 'Invalid class: '.$args['class'] );
+			h::log( 'e:>Invalid class: '.$args['class'] );
 
 			return false;
 
@@ -171,7 +171,7 @@ class extend {
 
 					$class = new \ReflectionClass( $args['class'] );
 					$public_methods = $class->getMethods( \ReflectionMethod::IS_PUBLIC );
-					// w__log( $public_methods );
+					// h::log( $public_methods );
 					foreach( $public_methods as $key ){ 
 						
 						// match format returned by get_class_methods() ##
@@ -206,7 +206,7 @@ class extend {
 		// remove quasi-private methods with __NAME ##
 		foreach ( $methods as $key ) {
 
-			// w__log( 'Checking method: '.$key );
+			// h::log( 'Checking method: '.$key );
 
 			if( substr( $key, 0, 2, ) === '__' ) {
 
@@ -215,7 +215,7 @@ class extend {
 
 					unset($methods[$remove_key]);
 
-					// w__log( 'Removing method: '.$args['class'].'::'.$key );
+					// h::log( 'Removing method: '.$args['class'].'::'.$key );
 					
 				}
 
@@ -229,13 +229,13 @@ class extend {
 			|| empty( $methods )
 		){
 
-			w__log( 'e:>Error in gathered methods' );
+			h::log( 'e:>Error in gathered methods' );
 
 			return false;
 
 		}
 
-		// w__log( $methods );
+		// h::log( $methods );
 
 		$_extend = $this->plugin->get( '_extend' );
 
@@ -249,7 +249,7 @@ class extend {
 		// store to object prop ##
 		return $this->plugin->set( '_extend', $_extend );
 
-		// w__log( $this->plugin->get( '_extend' ) );
+		// h::log( $this->plugin->get( '_extend' ) );
 
 		/*
 		return self::$extend[ $args['class'] ] = [
@@ -274,7 +274,7 @@ class extend {
 			|| is_null( $task )
 		){
 
-			w__log( 'e:>Error in passed params' );
+			h::log( 'e:>Error in passed params' );
 
 			return false;
 
@@ -283,15 +283,15 @@ class extend {
 		$_extend = $this->plugin->get( '_extend' );
 
 		// check ##
-		// w__log( 'd:>Looking for extension: '.$context );
-		// w__log( $_extend );
+		// h::log( 'd:>Looking for extension: '.$context );
+		// h::log( $_extend );
 
 		// is_array ##
 		if (
 			! is_array( $_extend )
 		){
 
-			w__log( 'e:>Error in stored $extend' );
+			h::log( 'e:>Error in stored $extend' );
 
 			return false;
 
@@ -299,7 +299,7 @@ class extend {
 
 		foreach( $_extend as $k => $v ){
 
-			// w__log( 'checking class: '.$k.' for task: '.$task );
+			// h::log( 'checking class: '.$k.' for task: '.$task );
 
 			// check if $context match ##
 			if ( $v['context'] == $context ){
@@ -307,7 +307,7 @@ class extend {
 				// now check if we have a matching method ##
 				if ( false !== $key = array_search( $task, $v['methods'] ) ) {
 
-					// w__log( 'found task: '.$task );
+					// h::log( 'found task: '.$task );
 
 					// check if extension is callable ##
 					if (
@@ -316,13 +316,13 @@ class extend {
 						|| ! is_callable([ $v['class'], $v['methods'][$key] ])
 					){
 
-						// w__log( $v['class'].'::'.$v['methods'][$key].' is NOT available' );
+						// h::log( $v['class'].'::'.$v['methods'][$key].' is NOT available' );
 
 						return false;
 
 					}
 
-					// w__log( $v['class'].'::'.$v['methods'][$key].' IS available' );
+					// h::log( $v['class'].'::'.$v['methods'][$key].' IS available' );
 
 					// kick back ##
 					return [ 'class' => $v['class'], 'method' => $v['methods'][$key] ];
@@ -344,7 +344,7 @@ class extend {
 	 */
 	public function get_all() {
 
-		// w__log( self::$extend );
+		// h::log( self::$extend );
 		$_extend = $this->plugin->get( '_extend' );
 
 		// is_array ##
@@ -352,7 +352,7 @@ class extend {
 			! is_array( $_extend )
 		){
 
-			w__log( 'e:>Error in stored $extend' );
+			h::log( 'e:>Error in stored $extend' );
 
 			return false;
 
