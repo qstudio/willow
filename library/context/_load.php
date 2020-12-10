@@ -190,7 +190,7 @@ class context  {
 				$extend = $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] )
 			){
 
-				// w__log( 'run extended method: '.$extend['class'].'->'.$extend['method'] );
+				// w__log( 'd:>Willow->extend: '.$extend['class'].'->'.$extend['method'].'()' );
 
 				// gather field data from extend ##
 				// $return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
@@ -208,7 +208,7 @@ class context  {
 				\method_exists( $namespace, $args['task'] ) 
 			){
 
-				// w__log( 'load defined method: '.$namespace.'->'.$args['task'] );
+				// w__log( 'e:>Willow->task: '.$namespace.'->'.$args['task'].'()' );
 
 				$method = $args['task'];
 
@@ -225,7 +225,7 @@ class context  {
 				\method_exists( $namespace, 'get' ) 
 			){
 
-				// w__log( 'load: '.$namespace.'->get()' );
+				// w__log( 'Willow->get: '.$namespace.'->get()' );
 
 				// gather field data from get() ##
 				// $return_array = $namespace::get( $this->plugin->get( '_args') ) ;

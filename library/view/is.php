@@ -33,15 +33,12 @@ class is {
 
 	}
 
-
-
 	/**
      * Get Q template format - normally .php or .willow
      * 
 	 * @since 4.1.0
      */
-    public static function format() 
-    {
+    public static function format(){
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
@@ -66,8 +63,6 @@ class is {
 		return $extension;
 
 	}
-
-	
 
 	/**
 	 * Check is the current view matches the controller
