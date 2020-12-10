@@ -19,10 +19,10 @@ class prepare {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		$this->plugin = willow\plugin::get_instance();
 
 	}
 
@@ -35,18 +35,18 @@ class prepare {
 		$parse = new \stdClass();
 
 		// generic ##
-		$parse->flags = new willow\parse\flags( $this->plugin );
-		$parse->arguments = new willow\parse\arguments( $this->plugin );
-		$parse->markup = new willow\parse\markup( $this->plugin );
+		$parse->flags = new willow\parse\flags();
+		$parse->arguments = new willow\parse\arguments();
+		$parse->markup = new willow\parse\markup();
 
 		// tag specific ##
-		$parse->partials = new willow\parse\partials( $this->plugin );
-		$parse->i18n = new willow\parse\i18n( $this->plugin );
-		$parse->php_functions = new willow\parse\php_functions( $this->plugin );
-		$parse->willows = new willow\parse\willows( $this->plugin );
-		$parse->loops = new willow\parse\loops( $this->plugin );
-		$parse->comments = new willow\parse\comments( $this->plugin );
-		$parse->variables = new willow\parse\variables( $this->plugin );
+		$parse->partials = new willow\parse\partials();
+		$parse->i18n = new willow\parse\i18n();
+		$parse->php_functions = new willow\parse\php_functions();
+		$parse->willows = new willow\parse\willows();
+		$parse->loops = new willow\parse\loops();
+		$parse->comments = new willow\parse\comments();
+		$parse->variables = new willow\parse\variables();
 
 		// store parsers ##
 		$this->plugin->set( 'parse', $parse );
@@ -54,13 +54,13 @@ class prepare {
 		// create render object, pushing in each individual render object ##
 		$render = new \stdClass();
 
-		$render->callback = new willow\render\callback( $this->plugin );
-		$render->format = new willow\render\format( $this->plugin );
-		$render->args = new willow\render\args( $this->plugin );
-		$render->markup = new willow\render\markup( $this->plugin );
-		$render->log = new willow\render\log( $this->plugin );
-		$render->output = new willow\render\output( $this->plugin );
-		$render->fields = new willow\render\fields( $this->plugin );
+		$render->callback = new willow\render\callback();
+		$render->format = new willow\render\format();
+		$render->args = new willow\render\args();
+		$render->markup = new willow\render\markup();
+		$render->log = new willow\render\log();
+		$render->output = new willow\render\output();
+		$render->fields = new willow\render\fields();
 
 		// store render objects ##
 		$this->plugin->set( 'render', $render );
@@ -69,7 +69,7 @@ class prepare {
 		$type = new \stdClass();
 		
 		// get types ##
-		$type->method = new willow\type\method( $this->plugin );
+		$type->method = new willow\type\method();
 
 		$this->plugin->set( 'type', $type );
 

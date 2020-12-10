@@ -14,10 +14,10 @@ class media {
 	/**
 	 * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// $this->plugin = willow\plugin::get_instance();
 
 	}
 
@@ -54,7 +54,7 @@ class media {
 		// w__log( 'e:>Class method IS callable: willow\get\media\\'.$method );
 
 		// new object ##
-		$media = new willow\get\media( $this->plugin );
+		$media = new willow\get\media();
 
 		// return call ## 
 		$return = $media->{$method}( $args );

@@ -15,8 +15,8 @@ class config {
 		$config = [],
 		$cache = [],
 		$config_args = [], // passed args ##
-		$child_theme_path = false, // check for child theme path method ##
-		$parent_theme_path = false, // check for parent theme path method ##
+		$get_child_path = false, // check for child theme path method ##
+		$get_parent_path = false, // check for parent theme path method ##
 		$file_extensions = [], // .php / .willow allow file types ##
 		$willow_path = '', // default load location ##
 		$template = '', // currently viewed template ##
@@ -99,17 +99,16 @@ class config {
 
 	}
 
-
 	public function properties(){
 
 		// cache ##
 		if ( $this->properties_loaded ) return false;
 
 		// check for child theme path method ##
-		$this->child_theme_path = method_exists( 'q\theme\plugin', 'get_child_theme_path' );
+		$this->get_child_path = method_exists( 'q\theme\plugin', 'get_child_path' );
 
 		// check for parent theme path method ##
-		$this->parent_theme_path = method_exists( 'q\theme\plugin', 'get_parent_theme_path' );
+		$this->get_parent_path = method_exists( 'q\theme\plugin', 'get_parent_path' );
 
 		// config file extension ##
 		$this->file_extensions = \apply_filters( 'willow/config/load/ext', [ 
@@ -130,8 +129,6 @@ class config {
 		return;
 
 	}
-
-
 
 	/**
 	 * Save config file
@@ -178,18 +175,17 @@ class config {
 
 		// return true;
 
-		if ( method_exists( 'q\theme\plugin', 'get_child_theme_path' ) ){ 
+		if ( method_exists( 'q\theme\plugin', 'get_child_path' ) ){ 
 
 			// w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
-			willow\core\method::file_put_array( \q\theme\plugin::get_child_theme_path( '/__q.php' ), $this->config );
+			willow\core\method::file_put_array( \q\theme\plugin::get_child_path( '/__q.php' ), $this->config );
 
 		}
 
 		return true;
 
 	}
-
 
 	/**
 	 * Load config file
@@ -268,9 +264,9 @@ class config {
 
 		// w__log( 'e:>Deleted config cache from DB...' );
 
-		if ( method_exists( 'q\theme\plugin', 'get_child_theme_path' ) ){ 
+		if ( method_exists( 'q\theme\plugin', 'get_child_path' ) ){ 
 
-			$file = \q\theme\plugin::get_child_theme_path('/__q.php');
+			$file = \q\theme\plugin::get_child_path('/__q.php');
 
 			if ( $file && file_exists( $file ) ) {
 
@@ -419,10 +415,10 @@ class config {
 		// w__log( $extended_lookups );
 
 		// check for child theme path method ##
-		// $child_theme_path = method_exists( 'q_theme', 'get_child_theme_path' );
+		// $get_child_path = method_exists( 'q_theme', 'get_child_path' );
 
 		// check for parent theme path method ##
-		// $parent_theme_path = method_exists( 'q_theme', 'get_parent_theme_path' );
+		// $get_parent_path = method_exists( 'q_theme', 'get_parent_path' );
 
 		// loop over allowed extensions ##
 		// @TODO - this could be a whole load more effecient... ##
@@ -437,10 +433,10 @@ class config {
 					case "child" :
 
 						// check for theme method ##
-						if ( ! $this->child_theme_path ){ break; }
+						if ( ! $this->get_child_path ){ break; }
 
 						// look for file ##
-						$file = \q\theme\plugin::get_child_theme_path( '/library/'.$this->willow_path.$v.$ext );
+						$file = \q\theme\plugin::get_child_path( '/library/'.$this->willow_path.$v.$ext );
 
 						// build cache key ##
 						$cache_key = 'child_'.$v.'_'.str_replace( '.', '', $ext );
@@ -453,10 +449,10 @@ class config {
 					case "parent" :
 
 						// check for theme method ##
-						if ( ! $this->parent_theme_path ){ break; }
+						if ( ! $this->get_parent_path ){ break; }
 
 						// look for file ##
-						$file = \q\theme\plugin::get_parent_theme_path( '/library/'.$this->willow_path.$v.$ext );
+						$file = \q\theme\plugin::get_parent_path( '/library/'.$this->willow_path.$v.$ext );
 
 						// build cache key ##
 						$cache_key = 'parent_'.$v.'_'.str_replace( '.', '', $ext );
@@ -556,7 +552,7 @@ class config {
 	}
 
 	/**
-	 * Get stored config setting, merging in any new of changed settings from extensions ##
+	 * Get stored config setting, merging in any new of changed settings from extensions
 	 */
 	public function get( $args = null ) {
 
@@ -663,8 +659,6 @@ class config {
 
 	}
 
-
-
 	public function run_filter() {
 
 		// sanity ##
@@ -717,7 +711,7 @@ class config {
 		// use cached version ##
 		if( isset( $this->cache[$handle] ) ){
 
-			w__log( 'd:>Returning cached version of config for handle: '.$handle.' from: '.$backtrace );
+			// w__log( 'd:>Returning cached version of config for handle: '.$handle.' from: '.$backtrace );
 			// w__log( $this->cache[$handle] );
 			return $return;
 

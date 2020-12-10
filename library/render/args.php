@@ -15,10 +15,10 @@ class args {
      * @todo
      * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		$this->plugin = willow\plugin::get_instance();
 
 	}
 

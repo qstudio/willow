@@ -13,10 +13,10 @@ class post {
 
 	/**
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		$this->plugin = willow\plugin::get_instance();
 
 	}
 
@@ -53,7 +53,7 @@ class post {
 		// w__log( 'e:>Class method IS callable: willow\get\post\\'.$method );
 
 		// new object ##
-		$post = new willow\get\post( $this->plugin );
+		$post = new willow\get\post();
 
 		// return post method to 
 		$return = $post->{$method}( $args );
@@ -84,7 +84,7 @@ class post {
     public function this( $args = null ){
 
 		// new object ##
-		$post = new willow\get\post( $this->plugin );
+		$post = new willow\get\post();
 
 		return [ 'this' => $post->this( $args ) ];
 
@@ -108,8 +108,8 @@ class post {
 		// w__log( self::$args );
 
 		// new object ##
-		$query = new willow\get\query( $this->plugin );
-		$navigation = new willow\get\navigation( $this->plugin );
+		$query = new willow\get\query();
+		$navigation = new willow\get\navigation();
 
 		// build fields array with default values ##
 		$return = ([

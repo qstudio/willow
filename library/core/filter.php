@@ -18,12 +18,10 @@ class filter {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct( \willow\plugin $plugin = null ){
+	public function __construct(){
 
-		// Log::write( $plugin );
-
-        // grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// grab passed plugin object ## 
+		// $this->plugin = willow\plugin::get_instance();
 		
 	}
 

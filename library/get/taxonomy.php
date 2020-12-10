@@ -14,10 +14,10 @@ class taxonomy {
 	/**
 	 * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// $this->plugin = willow\plugin::get_instance();
 
 	}
 	
@@ -26,7 +26,7 @@ class taxonomy {
 	 */
 	public function terms( $args = null ){
 
-		$render_args = new willow\render\args( $this->plugin );
+		$render_args = new willow\render\args();
 
 		// global arg validator ##
 		if ( ! $args = $render_args->prepare( $args ) ){ 

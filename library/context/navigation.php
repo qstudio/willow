@@ -14,10 +14,10 @@ class navigation {
 	/**
 	 * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		$this->plugin = willow\plugin::get_instance();
 
 	}
 
@@ -52,7 +52,7 @@ class navigation {
 		}
 
 		// new object ##
-		$navigation = new willow\get\navigation( $this->plugin );
+		$navigation = new willow\get\navigation();
 
 		// return callback ##
 		$return = $navigation->{$method}( $args );

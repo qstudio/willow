@@ -17,10 +17,10 @@ class ui {
 	 * most complex and most likely to clash go first, then simpler last ##
      * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		$this->plugin = willow\plugin::get_instance();
 
 	}
 

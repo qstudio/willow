@@ -22,13 +22,13 @@ class comments {
 		$this->flags_comment = false;
 	}
 
-	public function __construct( \willow\plugin $plugin ){
+	public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		$this->plugin = willow\plugin::get_instance();
 
 		// flags ##
-		$this->parse_flags = new willow\parse\flags( $this->plugin );
+		$this->parse_flags = new willow\parse\flags();
 
 	}
 

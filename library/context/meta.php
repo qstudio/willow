@@ -15,12 +15,12 @@ class meta {
 	/**
 	 * 
      */
-    public function __construct( \willow\plugin $plugin ){
+    public function __construct(){
 
 		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// $this->plugin = willow\plugin::get_instance();
 
-		$this->get = new willow\get\meta( $this->plugin );
+		$this->get = new willow\get\meta();
 
 	}
 
