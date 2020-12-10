@@ -61,6 +61,9 @@ class php_functions {
 		$_markup = $this->plugin->get( '_markup' );
 		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
 
+		// get parse task ##
+		$_parse_task = $_args['task'] ?? $this->plugin->get( '_parse_task' );
+
 		// sanity -- method requires requires ##
 		if ( 
 			(
@@ -112,7 +115,7 @@ class php_functions {
 			|| is_null( $string )
 		){
 
-			w__log( $_args['task'].'~>e:>Error in $markup' );
+			w__log( $_parse_task.'~>e:>Error in $markup' );
 
 			return false;
 

@@ -39,6 +39,9 @@ class partials {
 		$config = $this->plugin->get('config')->get([ 'context' => 'partial', 'task' => 'config' ]);
 		// w__log( $config );
 
+		// get parse task ##
+		$_parse_task = $_args['task'] ?? $this->plugin->get( '_parse_task' );
+
 		if ( 
 			isset( $config['run'] )
 			&& false === $config['run']
@@ -101,7 +104,7 @@ class partials {
 			|| is_null( $string )
 		){
 
-			w__log( $_args['task'].'~>e:>Error in $string' );
+			w__log( $_parse_task.'~>e:>Error in $string' );
 
 			return false;
 
