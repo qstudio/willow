@@ -46,6 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/library/api/function.php';
 require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/plugin.php';
+require_once __DIR__ . '/factory.php';
 
 // get plugin instance ##
 $plugin = plugin::get_instance();
@@ -69,7 +70,8 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	$plugin->set( 'config', $config );
 
 	// build factory objects ##
-	$plugin->factory( $plugin );
+	$factory = new willow\factory();
+	$factory->hooks();
 
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );

@@ -19,10 +19,10 @@ class method {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct( $plugin = null ){
+	function __construct(){
 
-        // grab passed plugin object ## 
-		$this->plugin = $plugin;
+        // grab plugin instance ## 
+		$this->plugin = \willow\plugin::get_instance();
 		
 	}
 

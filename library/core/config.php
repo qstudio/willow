@@ -36,12 +36,10 @@ class config {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct( $plugin = null ){
+	function __construct(){
 
-		// Log::write( $plugin );
-
-        // grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// grab plugin instance ## 
+		$this->plugin = \willow\plugin::get_instance();
 		
 	}
 

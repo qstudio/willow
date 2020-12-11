@@ -53,7 +53,7 @@ class extend {
 		// filter extensions ##
 		$array = \apply_filters( 'willow/context/extend', $this->_extend );
 
-		h::log( $array );
+		// h::log( $array );
 
 		/*
 		// sanity ##
