@@ -1,6 +1,6 @@
 ### 2.0.1 ###
 
-* Update - removed DI model inside plugin
+* Update - removed DI model inside plugins
 
 ### 2.0.0 ###
 
