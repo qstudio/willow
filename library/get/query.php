@@ -40,7 +40,8 @@ class query {
 
 		}
 
-		// w__log( $args['wp_query_args'] );
+		// array ##
+		$wp_query_args = [];
 
 		// add hardcoded query args ##
 		$wp_query_args['paged'] = \get_query_var( 'paged' ) ? \get_query_var( 'paged' ) : 1 ;
@@ -51,6 +52,8 @@ class query {
 			&& is_array( $args['wp_query_args'] )
 		){
 
+			// w__log( $args['wp_query_args'] );
+
             // merge passed args ##
 			$wp_query_args = array_merge( $args['wp_query_args'], $wp_query_args );
 			
@@ -59,7 +62,7 @@ class query {
         // merge in global $wp_query variables ( required for archive pages ) ##
         if ( 
 			isset( $args['wp_query_args']['query_vars'] ) 
-			// && true === $args['query_vars']	
+			&& true === $args['wp_query_args']['query_vars']
 		) {
 
             // grab all global wp_query args ##
@@ -72,10 +75,10 @@ class query {
 
 		}
 		
+		// w__log( $wp_query_args );
+
 		// filter posts_args ##
 		$wp_query_args = \apply_filters( 'willow/get/query/posts/wp_query_args', $wp_query_args );
-
-		// w__log( $wp_query_args );
 		
 		// set-up new array to hold returned post objects ##
 		$array = [];

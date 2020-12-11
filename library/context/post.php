@@ -74,7 +74,6 @@ class post {
 
 	}
 
-
 	/**
     * Get current post object - returned via post~this
 	* 
@@ -90,8 +89,6 @@ class post {
 
 	}
 
-
-	
     /**
     * Render WP_Query
     *
@@ -99,13 +96,12 @@ class post {
     */
     public function query( $args = [] ){
 
-		// @todo -- add filter to return value and avoid Q check and get routine ##
+		// local vars ##
+		$_markup = $this->plugin->get( '_markup' );
+		$_args = $this->plugin->get( '_args' );
 
-		// Q needed to run get method ##
-		// if ( ! class_exists( 'Q' ) ){ return false; }
-
-		// w__log( self::$markup );
-		// w__log( self::$args );
+		// w__log( $_markup );
+		// w__log( $_args );
 
 		// new object ##
 		$query = new willow\get\query();
@@ -113,17 +109,21 @@ class post {
 
 		// build fields array with default values ##
 		$return = ([
-		// render\fields::define([
 			'total' 		=> '0', // set to zero string value ##
 			'pagination' 	=> null, // empty field.. ##
-			'results' 		=> isset( self::$markup['default'] ) ? self::$markup['default'] : null // replace results with empty markup ##
+			'results' 		=> isset( $_markup['default'] ) ? $_markup['default'] : null // replace results with empty markup ##
 		]);
+
+		// w__log( $args );
+
+		// merge wp_query_args into args, if set ##
+		// $args = isset( $args['wp_query_args'] ) ? $args['wp_query_args'] : $args ;
 
         // pass to get_posts -- and validate that we get an array back ##
 		if ( ! $array = $query->posts( $args ) ) {
 
 			// log ##
-			w__log( self::$args['task'].'~>n:query::posts did not return any data');
+			w__log( $_args['task'].'~>n:query::posts did not return any data');
 
 		}
 
@@ -134,10 +134,10 @@ class post {
 			// || ! isset( $array['query']->posts ) 
 		){
 
-			// w__log( 'Error in data returned from query::posts' );
+			w__log( 'Error in data returned from query::posts' );
 
 			// log ##
-			w__log( self::$args['task'].'~>n:Error in data returned from query::posts');
+			w__log( $_args['task'].'~>n:Error in data returned from query::posts');
 
 		}
 		
@@ -148,7 +148,7 @@ class post {
 		){
 
 			// w__log( 'No results returned from the_posts' );
-			w__log( self::$args['task'].'~>n:No results returned from query::posts');
+			w__log( $_args['task'].'~>n:No results returned from query::posts');
 
 		// we have posts, so let's add some charm ##
 		} else {

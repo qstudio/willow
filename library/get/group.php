@@ -171,7 +171,7 @@ class group {
 
         // assign variable ##
 		$group = $args['task'];
-		
+
         // try to get fields ##
         $array = willow\plugin\acf::get_field_group( $group );
 
