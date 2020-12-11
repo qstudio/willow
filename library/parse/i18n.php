@@ -262,7 +262,7 @@ class i18n {
 		$this->plugin->set( '_markup_template', $_markup_template );
 
 		// update markup for willow parse ##
-		$this->plugin->get( 'parse_markup' )->swap( $this->i18n_match, $this->return, 'i18n', 'string', $process );
+		$this->plugin->parse->markup->swap( $this->i18n_match, $this->return, 'i18n', 'string', $process );
 		
 		// clear slate ##
 		$this->reset();

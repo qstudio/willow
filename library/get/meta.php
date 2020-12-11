@@ -357,7 +357,7 @@ class meta {
     *
     * @since       1.0.2
     */
-    public static function data( $args = null ){
+    function data( $args = null ){
 
 		// sanity ##
 		if (
@@ -370,6 +370,8 @@ class meta {
 			return false;
 
 		}
+
+		$taxonomy = new willow\get\taxonomy();
 
         // get the_post ##
 		$post = $args['config']['post'];
@@ -384,22 +386,22 @@ class meta {
 		$array['date_human'] = \human_time_diff( \get_the_date( 'U', $post->ID ), \current_time('timestamp') );
 
 		// post time ##
-		$array['date'] = self::date( $args );
+		$array['date'] = $this->date( $args );
 
 		// post author ##
-		$array = willow\render\method::extract( willow\get\meta::author( $args ), 'author_', $array );
+		$array = willow\render\method::extract( $this->author( $args ), 'author_', $array );
 
 		// category will be an array, so create category_title, permalink and slug fields ##
-		$array = willow\render\method::extract( willow\get\taxonomy::category( $args ), 'category_', $array );
+		$array = willow\render\method::extract( $taxonomy->category( $args ), 'category_', $array );
 
 		// tag will be an array, so create tag_title, permalink and slug fields ##
-		$array = willow\render\method::extract( willow\get\taxonomy::tag( $args ), 'tag_', $array );
+		$array = willow\render\method::extract( $taxonomy->tag( $args ), 'tag_', $array );
 
 		// tags will be an array, we'll let the rendered deal with this via a section tag.. ##
-		$array['tags'] = willow\get\taxonomy::tags( $args );
+		$array['tags'] = $taxonomy->tags( $args );
 
 		// comment will be an array, so create comment_count, link ##
-		$array = willow\render\method::extract( willow\get\meta::comment( $args ), 'comment_', $array );
+		$array = willow\render\method::extract( $this->comment( $args ), 'comment_', $array );
 
 		// w__log( $array );
 

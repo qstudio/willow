@@ -279,7 +279,7 @@ class loops {
 					);
 
 					// decode to array ##
-					$arguments_array = $this->plugin->parse_arguments->decode( $arguments );
+					$arguments_array = $this->plugin->parse->arguments->decode( $arguments );
 
 					if( 
 						$arguments_array 
@@ -301,7 +301,7 @@ class loops {
 						);
 
 						// store arguments for later use ##
-						$_args = core\method::parse_args( 
+						$_args = willow\core\method::parse_args( 
 							$_args, 
 							$arguments_array
 						);
