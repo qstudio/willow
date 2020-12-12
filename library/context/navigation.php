@@ -51,6 +51,8 @@ class navigation {
 
 		}
 
+		// w__log( 'e:>Class method IS callable: willow\get\navigation\\'.$method );
+
 		// new object ##
 		$navigation = new willow\get\navigation();
 

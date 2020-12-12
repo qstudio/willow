@@ -325,8 +325,7 @@ final class plugin {
 		], 
 
 		// load filters once, with callback filter to allow for changes - this property tracks the load status ##
-		$_filters_filtered = false,
-		// $filter_hash
+		$_filters_filtered = null,
 
 		// allowed flags - currently not referenced or filtered, but might be in future release ##
 		$_flags 	= [

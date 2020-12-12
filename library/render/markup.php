@@ -809,7 +809,7 @@ class markup {
 
 			// log ##
 			w__log( $_args['task'].'~>n:>Tag: "'.$tag.'" is not in the passed markup template' );
-			w__log( 'd:>Tag: "'.$tag.'" is not in the passed markup template' );
+			// w__log( 'd:>Tag: "'.$tag.'" is not in the passed markup template' );
 
             return false;
 

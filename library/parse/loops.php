@@ -204,6 +204,7 @@ class loops {
 		}
 
 		$_markup = $this->plugin->get( '_markup' );
+		$_args = $this->plugin->get( '_args' );
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as variable whitespace is handled by the regex ##
@@ -305,6 +306,8 @@ class loops {
 							$_args, 
 							$arguments_array
 						);
+
+						// w__log( 'e:>Setting args also' );
 
 						// set value ##
 						$this->plugin->set( '_args', $_args );

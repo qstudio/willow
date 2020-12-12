@@ -22,7 +22,7 @@ class context  {
 		$this->plugin = willow\plugin::get_instance();
 
 		// parse prepare ##
-		$this->parse_prepare = new willow\parse\prepare( $this->plugin );
+		$this->parse_prepare = new willow\parse\prepare();
 
 	}
 
@@ -138,8 +138,6 @@ class context  {
 	
 				w__log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
 	
-				// we need to reset the class ##
-
 				// reset all args ##
 				$this->plugin->render->args->reset();
 
@@ -169,13 +167,17 @@ class context  {
 
 			// w__log( $this->plugin->get( '_markup' ) );
 			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( $args );
 
 			// prepare markup, fields and handlers based on passed configuration ##
 			$this->parse_prepare->hooks( $args );
 
+			// w__log( $args );
+
 			// w__log( $this->plugin->get( '_markup' ) );
 			// w__log( $this->plugin->get( '_scope_map' ) );
 			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( $this->plugin->get( '_args' ) );
 
 			// internal->buffering ##
 			if(
@@ -191,6 +193,7 @@ class context  {
 			){
 
 				// w__log( 'd:>Willow->extend: '.$extend['class'].'->'.$extend['method'].'()' );
+				// w__log( $this->plugin->get( '_args' ) );
 
 				// gather field data from extend ##
 				// $return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
@@ -225,7 +228,7 @@ class context  {
 				\method_exists( $namespace, 'get' ) 
 			){
 
-				// w__log( 'Willow->get: '.$namespace.'->get()' );
+				// w__log( 'e:>Willow->get: '.$namespace.'->get()' );
 
 				// gather field data from get() ##
 				// $return_array = $namespace::get( $this->plugin->get( '_args') ) ;

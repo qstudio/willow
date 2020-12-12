@@ -208,7 +208,7 @@ class navigation {
      * @since       1.0.1
      * @return      Mixed|Array|Boolean
      */
-    public function siblings( $args = null ){
+    function siblings( $args = null ){
 
 		// sanity ##
 		if (
@@ -300,7 +300,9 @@ class navigation {
      * @since       1.0.1
      * @return      string       HTML Menu
      */
-    public static function children( $args = null ){
+    function children( $args = null ){
+
+		// h::log( $args );
 
 		// sanity ##
 		if (

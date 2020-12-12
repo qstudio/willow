@@ -340,7 +340,7 @@ class variables {
 				|| ! $this->field_type
 			){
 
-				w__log( $this->plugin->get( '_args' )['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.$this->variable );
+				w__log( $_args['task'].'~>e:>Error extracting $field_name or $field_type from variable: '.$this->variable );
 
 				return false;
 
@@ -362,6 +362,7 @@ class variables {
 
 				// get args ##
 				$_args = $this->plugin->get( '_args' );
+				// w__log( $_args );
 
 				// merge in new args to args->field ##
 				if ( ! isset( $this->plugin->get( '_args' )[$this->field_name] ) ) {
@@ -374,6 +375,8 @@ class variables {
 					$this->arguments, 
 					$_args[$this->field_name] 
 				);
+
+				// w__log( 'e:>Setting args' );
 
 				// set args ##
 				$this->plugin->set( '_args', $_args );

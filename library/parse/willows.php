@@ -572,14 +572,14 @@ class willows {
 		// pass args, if set ##
 		if( $this->arguments ){
 
-			w__log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'->'.$this->method );
+			w__log( $this->willow_task.'~>n:>Passing args array to: '.$this->class.'->'.$this->method.'()' );
 			// w__log( $this->arguments );
 			
 			$this->return = $context->{ $this->willow }( $this->arguments );
 
 		} else { 
 
-			w__log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'->'.$this->method );
+			w__log( $this->willow_task.'~>n:>NOT passing args array to: '.$this->class.'->'.$this->method.'()' );
 			// $this->return = call_user_func_array( $this->willow_array ); 
 			$this->return = $context->{ $this->willow };
 

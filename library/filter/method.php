@@ -17,7 +17,7 @@ class method {
 	;
 
 	/**
-	 * CLass Constructer 
+	 * Class Constructer 
 	*/
 	function __construct(){
 
@@ -84,7 +84,7 @@ class method {
 	* Validates that assigned function in $filters, based on defined $filter value, exists and is callable
 	*
 	* @since 	1.3.0
-	* @return	Boolean
+	* @return	Mixed
 	*/
 	public function process( $args = null ) {
 
@@ -159,16 +159,17 @@ class method {
 		*/
 
 		// w__log( $args['filters'] );
+
+		// get filters ##
+		$_filters = $this->plugin->get( '_filters' );
 			
 		// load all stored filters, if filters_loaded is empty ##
-		if( null === $this->plugin->get( '_filters_filtered' ) ){
+		if( true !== $this->plugin->get( '_filters_filtered' ) ){
 
-			// self::$filters = \apply_filters( 'willow/filters', self::$filters );
-			$filters = $this->plugin->get( '_filters' );
-			$this->plugin->set( '_filters', \apply_filters( 'willow/filters', $filters ) );
+			$_filters = \apply_filters( 'willow/filters', $_filters );
+			// $this->plugin->set( '_filters', $_filters );
 
-			// update tracker ##
-			// self::$filters_filtered = true;
+			// update tracker, so we don't load again this life-cycle ##
 			$this->plugin->set( '_filters_filtered', true );
 
 		}
@@ -195,31 +196,35 @@ class method {
 		)
 		*/
 
-		// w__log( self::$filters );
+		// w__log( $_filters );
+		// w__log( $args['filters'] );
 
 		// now, loop over each filter, allow it to be altered ( via apply_filters ) validate it exists and run it
 		foreach( $args['filters'] as $function ) {
 
-			// w__log( 'e:>Filter Function: '.$function );
+			// w__log( 'e:>Filter Function: '.$function.' -- use: '.$args['use'] );
 
 			// check that requested function is in the allowed list - which has now passed by the load filter ##
+			// @@@TODO -- this logic is messy, what are we skipping and why ?? ####
 			if (
-				! in_array( $function, $this->plugin->get( '_filters' ) )
+				! in_array( $function, $_filters )
 			){
 
 				// No need to warn about missing $flags ##
 				if( 
-					! in_array( $function, $this->plugin->get( '_flags' ) )
+					'tag' !== $args['use']
+					&& 'variable' !== $args['use']
+					&& ! in_array( $function, $this->plugin->get( '_flags' ) )
 				) {
 
 					// w__log( self::$flags );
 
-					w__log( 'e:>Defined filter is not available "'.$function.'". Skipping' );
+					w__log( 'e:>Filter: "'.$function.'" is not available for use case: "'.$args['use'].'"' );
+
+					// carry on.. ##
+					continue;
 
 				}
-
-				// carry on.. ##
-				continue;
 
 			}
 

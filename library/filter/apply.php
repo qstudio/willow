@@ -45,8 +45,6 @@ class apply {
 	*/
 	public function tag( $value, $key ) {
 
-		// w__log( self::$filter );
-
 		$_filter = $this->plugin->get( '_filter' );
 		$_args = $this->plugin->get( '_args' );
 
