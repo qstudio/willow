@@ -208,9 +208,7 @@ class php_functions {
 		// w__log( '$function_match: '.$function_match );
 
 		// look for flags ##
-		// $this->function = flags::get( $this->function, 'php_function' );
-		$parse_flags = new willow\parse\flags( $this->plugin );
-		$this->function = $parse_flags->get( $this->function, 'php_function' );
+		$this->function = $this->plugin->parse->flags->get( $this->function, 'php_function' );
 		// w__log( $this->plugin->get( '_flags_php_function' ) );
 		// w__log( $this->function );
 
@@ -437,8 +435,8 @@ class php_functions {
 
 			// w__log( $this->return );
 
-			$this->return = implode ( " ", array_values( $this->return ) );
-			$this->return = trim( $this->return );
+			// attempt to convert the array to a string ##
+			$this->return = \willow\core\method::array_to_string( $this->return );
 
 			if ( is_string( $this->return ) ) {
 				
@@ -453,21 +451,7 @@ class php_functions {
 
 		}
 
-		// return is still not a string ##
-		if(
-			! is_string( $this->return )
-			&& ! is_integer( $this->return )
-		){
-
-			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
-			// w__log( $this->return );
-
-			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
-
-			return false;
-
-		}
-
+		// FLAGS MOVED ABOVE checks below... BREAKING CHANGE TO FIX ###
 		// filter ##
 		// w__log( $this->flags_php_function );
 		$_flags_php_function = $this->plugin->get( '_flags_php_function' );
@@ -494,12 +478,27 @@ class php_functions {
 				&& $filter_return != $this->return // value chaged ##
 			){
 
-				w__log( 'd:>php_function fitlers changed value: '.$filter_return );
+				w__log( 'd:>php_function filters changed value: '.$filter_return );
 
 				// update class property ##
 				$this->return = $filter_return;
 
 			}
+
+		}
+
+		// return is still not a string ##
+		if(
+			! is_string( $this->return )
+			&& ! is_integer( $this->return )
+		){
+
+			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
+			// w__log( $this->return );
+
+			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
+
+			return false;
 
 		}
 
@@ -546,7 +545,7 @@ class php_functions {
 			$_buffer_map = $this->plugin->get( '_buffer_map' );
 			$_buffer_map[] = [
 				'tag'		=> $this->function_match,
-				'output'	=> self::$return,
+				'output'	=> $this->return,
 				'parent'	=> false,
 			];
 			$this->plugin->set( '_buffer_map', $_buffer_map );

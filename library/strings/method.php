@@ -107,10 +107,6 @@ class method {
 
     }
 
-
-
-
-
     /**
      * Add http:// if it's not in the URL?
      *
@@ -132,8 +128,6 @@ class method {
 
 	}
 
-
-
     /**
      * Strip <style> tags from post_content
      *
@@ -141,8 +135,7 @@ class method {
      * @since       0.7
      * @return      string HTML formatted text
      */
-    public static function remove_style( $input = null )
-    {
+    public static function remove_style( $input = null ){
 
         if ( is_null ( $input ) ) { return false; }
 
@@ -151,9 +144,7 @@ class method {
     }
 
 
-
-
-    public static function rip_tags($string) {
+    public static function rip_tags($string){
 
         // ----- remove HTML TAGs -----
         $string = preg_replace ('/<[^>]*>/', ' ', $string);
@@ -170,11 +161,7 @@ class method {
 
     }
 
-
-
-
-    public static function chop( $content, $length = 0, $preprend = '...' )
-    {
+    public static function chop( $content, $length = 0, $preprend = '...' ){
 
         if ( $length > 0 ) { // trim required, perhaps ##
 
@@ -192,16 +179,13 @@ class method {
 
     }
 
-
-
     /**
     * Strip unwated tags and shortcodes from the_content
     *
     * @since       1.4.4
     * @return      String
     */
-    public static function clean( $string = null )
-    {
+    public static function clean( $string = null ){
 
         // bypass ##
         return $string;
@@ -216,9 +200,6 @@ class method {
         return $string;
 
 	}
-	
-
-
 
 	/**
      * Markup object based on {{ placeholders }} and template
@@ -227,8 +208,7 @@ class method {
      * @since    2.0.0
      * @return   Mixed
      */
-    public static function markup( $markup = null, $data = null, $args = null )
-    {
+    public static function markup( $markup = null, $data = null, $args = null ){
 
         // sanity ##
         if (
@@ -356,5 +336,22 @@ class method {
 
 	}
 
+	public static function substr_last( string $string = null ){
+
+		// sanity ##
+		if ( is_null( $string ) ){ return false; }
+
+		return mb_substr( trim( $string ), -1, 'utf-8' ); 
+
+	}
+
+	public static function substr_first( string $string = null ){
+
+		// sanity ##
+		if ( is_null( $string ) ){ return false; }
+
+		return mb_substr( trim( $string ), 0, 1, 'utf-8' ); 
+
+	}
 
 }

@@ -994,8 +994,7 @@ class method {
      * @since       1.5.0
      * @return      Void
      */
-    public static function add_update_option( $option_name, $new_value, $deprecated = '', $autoload = 'no' ) 
-    {
+    public static function add_update_option( $option_name, $new_value, $deprecated = '', $autoload = 'no' ){
     
         if ( \get_option( $option_name ) != $new_value ) {
 
@@ -1008,8 +1007,6 @@ class method {
         }
     
     }
-	
-
 
 	/**
 	 * Convert an array to an object
@@ -1048,6 +1045,36 @@ class method {
             return false;
         
         }
+
+	}
+
+	/**
+	 * Attempt to convert an array to an string
+	 * 
+	 * @since 	2.0.1
+	 * @return 	Mixed
+	*/
+    public static function array_to_string( $array = null ) {
+        
+        // sanity ##
+		if(
+			is_null( $array ) // nothing sent ##
+			|| ! is_array( $array ) // not an array ##
+			|| is_string( $array )// already a string ##
+		){
+
+			return $array; // Willow can try again ##
+
+		}
+
+		// split at space ##
+		$string = implode ( " ", array_values( $array ) );
+
+		// trim ##
+		$string = trim( $string );
+
+		// kick back ##
+		return $string;
 
 	}
 

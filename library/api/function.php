@@ -165,10 +165,7 @@ if ( ! function_exists( 'w__log_direct' ) ) {
 if( ! function_exists( 'w__substr_first' ) ) {
 	function w__substr_first( string $string = null ){
 
-		// sanity ##
-		if ( is_null( $string ) ){ return false; }
-
-		return mb_substr( trim( $string ), 0, 1, 'utf-8' ); 
+		return \willow\strings\method::substr_first( $string );
 
 	}
 }
@@ -182,11 +179,25 @@ if( ! function_exists( 'w__substr_first' ) ) {
 if( ! function_exists( 'w__substr_last' ) ) {
 	function w__substr_last( string $string = null ){
 
-		// sanity ##
-		if ( is_null( $string ) ){ return false; }
-
-		return mb_substr( trim( $string ), -1, 'utf-8' ); 
+		return \willow\strings\method::substr_last( $string );
 
 	}
 }
+
+/**
+ * Try to convert an array to a string, for rendering
+ * 
+ * @param	Array
+ * @since 	2.0.1
+ * @return	Mixed
+*/
+if( ! function_exists( 'w__array_to_string' ) ) {
+	function w__array_to_string( $array = null ){
+
+		return \willow\core\method::array_to_string( $array );
+
+	}
+
+}
+
 

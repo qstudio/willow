@@ -311,6 +311,7 @@ final class plugin {
 			'absint',
 			'w__substr_first',
 			'w__substr_last',
+			'w__array_to_string', // try to convert an array to a string ##
 
 			// sanitize ##
 			'sanitize_title_with_dashes',

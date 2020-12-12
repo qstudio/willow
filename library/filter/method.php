@@ -123,7 +123,7 @@ class method {
 		// we need a string, so validate format ##
 		if( 
 			! is_string( $args['string'] ) // not a string 
-			&& filter_var( $args['string'], FILTER_VALIDATE_INT) === false // && not an integer
+			&& filter_var( $args['string'], FILTER_VALIDATE_INT ) === false // && not an integer
 		){
 
 			w__log( 'e:>Passed $string is not in a valid string or integer format' );
@@ -198,11 +198,13 @@ class method {
 
 		// w__log( $_filters );
 		// w__log( $args['filters'] );
+		// get _flags ##
+		$_flags = $this->plugin->get( '_flags' ) ?? [] ;
 
 		// now, loop over each filter, allow it to be altered ( via apply_filters ) validate it exists and run it
 		foreach( $args['filters'] as $function ) {
 
-			// w__log( 'e:>Filter Function: '.$function.' -- use: '.$args['use'] );
+			// w__log( 'e:>Filter Function: '.$function.' --> use: '.$args['use'] );
 
 			// check that requested function is in the allowed list - which has now passed by the load filter ##
 			// @@@TODO -- this logic is messy, what are we skipping and why ?? ####
@@ -213,7 +215,7 @@ class method {
 				// No need to warn about missing $flags ##
 				if( 
 					'php_function' == $args['use']
-					&& in_array( $function, $this->plugin->get( '_flags' ) )
+					&& in_array( $function, $_flags )
 				) {
 
 					// w__log( self::$flags );
