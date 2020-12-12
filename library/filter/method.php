@@ -212,14 +212,13 @@ class method {
 
 				// No need to warn about missing $flags ##
 				if( 
-					'tag' !== $args['use']
-					&& 'variable' !== $args['use']
-					&& ! in_array( $function, $this->plugin->get( '_flags' ) )
+					'php_function' == $args['use']
+					&& in_array( $function, $this->plugin->get( '_flags' ) )
 				) {
 
 					// w__log( self::$flags );
 
-					w__log( 'e:>Filter: "'.$function.'" is not available for use case: "'.$args['use'].'"' );
+					// w__log( 'e:>Filter: "'.$function.'" is not available for use case: "'.$args['use'].'"' );
 
 					// carry on.. ##
 					continue;
