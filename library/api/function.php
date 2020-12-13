@@ -200,4 +200,18 @@ if( ! function_exists( 'w__array_to_string' ) ) {
 
 }
 
+/**
+ * Get a post id from its relative path
+ * 
+ * @param	Array
+ * @since 	2.0.1
+ * @return	Mixed
+*/
+if( ! function_exists( 'w__post_id_by_path' ) ) {
+	function w__post_id_by_path( $string = null ){
 
+		return \willow\get\query::post_id_by_path( $string );
+
+	}
+
+}
