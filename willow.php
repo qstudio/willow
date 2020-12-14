@@ -6,17 +6,18 @@
  * @package         willow
  * @author          Q Studio <social@qstudio.us>
  * @license         GPL-2.0+
- * @link            http://qstudio.us/
  * @copyright       2020 Q Studio
+ * @link			https://github.com/qstudio/willow/
+ * @link            https://qstudio.us/
  *
  * @wordpress-plugin
  * Plugin Name:     Willow
  * Plugin URI:      https://www.qstudio.us
  * Description:     Willow is a Logic-less Template Engine built for WordPress
- * Version:         2.0.2
+ * Version:         2.0.3
  * Author:          Q Studio
  * Author URI:      https://www.qstudio.us
- * License:         GPL
+ * License:         GPL-2.0+
  * Requires PHP:    7.0 
  * Copyright:       Q Studio
  * Class:           willow
