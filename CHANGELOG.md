@@ -1,3 +1,8 @@
+### 2.0.4 ###
+
+* Update: Removed extra DI from top level plugin file passing $plugin to sub classes
+* Update: php_function default usage is now to return data to templates - this can be cancelled using [null] flag 
+
 ### 2.0.3 ###
 
 * Update: License terms GPL2+ to match WordPress 

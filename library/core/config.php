@@ -8,6 +8,7 @@ use willow;
 class config {
 
 	private
+
 		// loaded config ##
 		$has_config = false,
 		$delete_config = true,
