@@ -12,11 +12,11 @@
  *
  * @wordpress-plugin
  * Plugin Name:     Willow
- * Plugin URI:      https://www.qstudio.us
+ * Plugin URI:      https://qstudio.us/docs/willow/
  * Description:     Willow is a Logic-less Template Engine built for WordPress
  * Version:         2.0.3
  * Author:          Q Studio
- * Author URI:      https://www.qstudio.us
+ * Author URI:      https://qstudio.us
  * License:         GPL-2.0+
  * Requires PHP:    7.0 
  * Copyright:       Q Studio
