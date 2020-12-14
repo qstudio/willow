@@ -11,4 +11,6 @@ Willow ~ A logic-less template engine built for WordPress.
 
 Willow has been designed to meet the needs of both front-end and back-end developers by providing a small, yet powerful set of tags and tools to speed up template development and prototype iteration.
 
-Visit the Wiki for further details -> https://qstudio.us/docs/willow 
+=== Frequently Asked Questions ===
+
+Visit the Wiki for further details: https://qstudio.us/docs/willow 
