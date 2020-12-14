@@ -381,8 +381,8 @@ class markup {
 				} else {
 
 					// log ##
-					// w__log( $_args['task'].'~>n:>The value of: "'.$key.'" is not a string or integer - so it will be skipped and removed from markup...');
-					w__log( 'd:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" cannot be printed, it will be skipped and removed from markup.');
+					w__log( $_args['task'].'~>n:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" cannot be printed, it will be skipped and removed from markup.');
+					// w__log( 'd:>"'.$_args['context'].'->'.$_args['task'].'->'.$key.'" cannot be printed, it will be skipped and removed from markup.');
 
 					unset( $_fields[$key] );
 

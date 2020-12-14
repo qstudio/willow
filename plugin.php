@@ -27,7 +27,7 @@ final class plugin {
 	public static 
 	
 		// current tag ##
-		$_version = '2.0.1'
+		$_version = '2.0.3'
 	
 	;
 

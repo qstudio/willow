@@ -1,10 +1,10 @@
-# Willow #
+# Willow ~ WordPress Template Engine #
 **Contributors:** qlstudio  
-**Tags:** Simple, logic-less, procedural, semantic, markup, language  
+**Tags:** Simple, logic-less, semantic, markup, language  
 **Requires at least:** 5.0  
-**Tested up to:** 5.5.3  
-**Stable tag:** 2.0.1    
-**License:** GPL2  
+**Tested up to:** 5.6  
+**Stable tag:** 2.0.3    
+**License:** GPL-2.0+  
 
 Willow ~ A logic-less template engine built for WordPress.
 

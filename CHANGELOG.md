@@ -1,3 +1,11 @@
+### 2.0.3 ###
+
+* Update: License terms GPL2+ to match WordPress 
+
+### 2.0.2 ###
+
+* New: api function - w__post_id_by_path, w__array_to_string
+
 ### 2.0.1 ###
 
 * Update - removed DI model inside plugins
