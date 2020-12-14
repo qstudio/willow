@@ -516,14 +516,15 @@ class method {
 
 	}
 	
-
-
-	
 	/**
 	 * 
 	 * @link https://www.php.net/manual/en/function.parse-str.php
 	*/
 	public static function parse_str( $string = null ){
+
+		// get args ##
+		$_args = \willow()->get( '_args' );
+		// w__log( $_args );
 
 		// sanity ##
 		if(
@@ -533,7 +534,7 @@ class method {
 			
 			w__log( 'e:>Passed string empty or bad format' );
 
-			return false;
+			return $string;
 
 		}
 
@@ -549,9 +550,9 @@ class method {
 		// check for "=" delimiter ##
 		if( false === strpos( $string, $operator_assign ) ){
 
-			w__log( 'e:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
+			w__log( $_args['task'].'~>n:>Passed string format does not include asssignment operator "'.$operator_assign.'" --> '.$string );
 
-			return false;
+			return $string;
 
 		}
 
@@ -572,7 +573,7 @@ class method {
 				// || true !== strpos( $i, $operator_assign ) 
 			){
 			
-				w__log( '$i is empty ~~ "'.$i.'"' );
+				w__log( 'e:>$i is empty ~~ "'.$i.'"' );
 
 				continue;
 			
@@ -584,7 +585,7 @@ class method {
 				false === strpos( $i, $operator_assign ) 
 			){
 			
-				w__log( '$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
+				w__log( 'e:>$i does not contain "'.$operator_assign.'" ~~ "'.$i.'"' );
 
 				continue;
 			
@@ -690,7 +691,6 @@ class method {
 		return $array;
 
 	}
-	  
 
 	/**
 	 * Regex Escape values 

@@ -333,7 +333,8 @@ final class plugin {
 			
 			'debug', // short cut to debug a single Willow
 			'buffer', // php_function, willow ##
-			'return', // php_function ##
+			'return', // php_function ## --> DEFAULT --> tells Willow to update template with return value from function, if any ##
+			'null', // php_function ## -- this forces the function return value to not update the template markup ##
 			'array', // arguments ##
 			'html', // comments ##
 			'php', // comments ##

@@ -86,6 +86,9 @@ class flags {
 
 			w__log( 'e:>Error in passed arguments.' );
 
+			// odd, but ok ##
+			return $string;
+
 		}
 
 		// w__log( $string );
@@ -187,6 +190,8 @@ class flags {
 			return $string;
 
 		}
+
+		// w__log( 'd:>No flags found, returning passed string.' );
 
 		// kick it back whole, as no flags found ##
 		return $string;

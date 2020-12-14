@@ -496,13 +496,15 @@ class php_functions {
 			w__log( 'Return from "'.$this->function.'" is not a string or integer, so Willow rejected it' );
 			// w__log( $this->return );
 
+			// remove php_function tag from markup ##
 			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
+			// done on this parse ##
 			return false;
 
 		}
 
-		// add fields - perhaps we do not always need this -- perhaps based on [return] flag ##
+		// add fields - perhaps we do not always need this -- perhaps based on [null] flag status ##
 		$render_fields = new willow\render\fields( $this->plugin );
 		$render_fields->define([
 			$this->function_hash => $this->return
@@ -513,8 +515,22 @@ class php_functions {
 		if( 
 			$_flags_php_function
 			&& is_array( $_flags_php_function )
-			&& in_array( 'return', $_flags_php_function )
+			&& ( 
+				in_array( 'null', $_flags_php_function ) // defined to 'null' return ##
+				|| ! in_array( 'return', $_flags_php_function ) // OR 'return' defined - note that return superseeds null in all cases ##
+			)
 		){
+
+			// add data returned from function to buffer map ##
+			$_buffer_map = $this->plugin->get( '_buffer_map' );
+			$_buffer_map[] = [
+				'tag'		=> $this->function_match,
+				'output'	=> $this->return,
+				'parent'	=> false,
+			];
+			$this->plugin->set( '_buffer_map', $_buffer_map );
+
+		} else {
 
 			// w__log( $_flags_php_function );
 
@@ -529,7 +545,7 @@ class php_functions {
 			$this->plugin->set( '_markup_template', $_markup_template );
 
 			// update markup for willow parse ##
-			$this->plugin->parse->markup->swap( $this->function_match, $string, 'php_function', 'string', $process ); // '{{ '.$field.' }}'
+			$this->plugin->parse->markup->swap( $this->function_match, $string, 'php_function', 'string', $process );
 
 			// remove used flags ##
 			/*
@@ -538,17 +554,6 @@ class php_functions {
 			}
 			w__log( $_flags_php_function );
 			*/
-
-		} else {
-
-			// add data to buffer map ##
-			$_buffer_map = $this->plugin->get( '_buffer_map' );
-			$_buffer_map[] = [
-				'tag'		=> $this->function_match,
-				'output'	=> $this->return,
-				'parent'	=> false,
-			];
-			$this->plugin->set( '_buffer_map', $_buffer_map );
 
 		}
 		
