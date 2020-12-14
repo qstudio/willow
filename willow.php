@@ -80,12 +80,13 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	// check debug settings ##
 	\add_action( 'plugins_loaded', [ $plugin, 'debug' ], 11 );
 
+	// Willow only needs to parse templates on the front-end ##
+	if( ! \is_admin() ){ 
+
+		// build output buffer ##
+		$option = new willow\buffer\output();
+		$option->hooks();
+
+	}
+
 }, 0 );
-
-// Willow only needs to parse templates on the front-end ##
-if( ! \is_admin() ){ 
-
-	// build output buffer ##
-	\add_action( 'plugins_loaded', [ new willow\buffer\output(), 'hooks' ], 1 );
-
-}
