@@ -363,7 +363,7 @@ class config {
 			$this->template.'__'.$args['context'].'__'.$args['task'] => $this->template.'~'.$args['context'].'~'.$args['task'],
 
 			// template/context~task in sub directory ##
-			// view\is::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\is::get().'/'.$args['context'].'~'.$args['task'],
+			// view\method::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\method::get().'/'.$args['context'].'~'.$args['task'],
 
 			// context~task ##
 			$args['context'].'__'.$args['task'] => $args['context'].'~'.$args['task'],

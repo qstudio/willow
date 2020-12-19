@@ -4,7 +4,8 @@
 namespace willow\core;
 
 // core ##
-use willow;
+use willow\plugin as willow;
+// use willow;
 
 /**
  * helper Class
@@ -102,7 +103,7 @@ class helper {
         if ( true === \WP_DEBUG ) {
 
 			// get caller ##
-			$backtrace = willow\core\method::backtrace();
+			$backtrace = \willow\core\method::backtrace();
 
             if ( is_array( $log ) || is_object( $log ) ) {
 
@@ -133,7 +134,7 @@ class helper {
     *
     * @since 0.1
     */
-    public function get( $include = null, $return = 'echo', $type = 'url', $path = "library/", $class = null )    {
+    public static function get( $include = null, $return = 'echo', $type = 'url', $path = "library/", $class = null )    {
 
         // nothing passed ##
         if ( is_null( $include ) ) { 
@@ -145,18 +146,10 @@ class helper {
         // nada ##
         $template = false; 
         
-        #if ( ! defined( 'TEMPLATEPATH' ) ) {
-
-        #    w__log( 'MISSING for: '.$include.' - AJAX = '.( \wp_doing_ajax() ? 'true' : 'false' ) );
-
-		#}
-		
 		// w__log( 'd:>h::get class/include: '.$class.'/'.$include );
 
         // perhaps this is a child theme ##
         if ( 
-            // defined( 'Q_CHILD_THEME' )
-            // && Q_CHILD_THEME
 			\get_template_directory() !== \get_stylesheet_directory()
             && file_exists( \get_stylesheet_directory().'/'.$path.$include )
         ) {
@@ -184,7 +177,7 @@ class helper {
 
             }
 
-            #if ( self::$debug ) self::log( 'parent theme: '.$template );
+            // w__log( 'parent theme: '.$template );
 
         // load from extended Plugin ##
         } elseif ( 
@@ -212,42 +205,42 @@ class helper {
 
         // load from Plugin ##
         elseif ( 
-            file_exists( self::get_plugin_path( $path.$include ) )
+            file_exists( willow::get_plugin_path( $path.$include ) )
         ) {
 
-            $template = self::get_plugin_url( $path.$include ); // plugin URL ##
+            $template = willow::get_plugin_url( $path.$include ); // plugin URL ##
 
             if ( 'path' === $type ) {
                 
-                $template = self::get_plugin_path( $path.$include ); // plugin path ##
+                $template = willow::get_plugin_path( $path.$include ); // plugin path ##
                 
             } 
 
-            #if ( self::$debug ) self::log( 'plugin: '.$template );
+            // w__log( 'plugin: '.$template );
 
         }
 
         if ( $template ) { // continue ##
 
             // apply filters ##
-            $template = \apply_filters( __NAMESPACE__.'_helper_get', $template );
+            $template = \apply_filters( __NAMESPACE__.'/helper/get', $template );
 
             // echo or return string ##
             if ( 'return' === $return ) {
 
-                #if ( self::$debug ) w__log( 'returned' );
+                // w__log( 'returned' );
 
                 return $template;
 
             } elseif ( 'require' === $return ) {
 
-                #if ( self::$debug ) w__log( 'required' );
+                // w__log( 'required' );
 
                 return require_once( $template );
 
             } else {
 
-                #if ( self::$debug ) w__log( 'echoed..' );
+                // w__log( 'echoed..' );
 
                 echo $template;
 

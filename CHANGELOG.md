@@ -1,3 +1,7 @@
+### 2.0.5 ###
+
+* New: Two view filters added to allow simple extension of custom and native WP templates - willow/view/native + willow/view/custom
+
 ### 2.0.4 ###
 
 * Update: Removed extra DI from top level plugin file passing $plugin to sub classes

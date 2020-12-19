@@ -217,7 +217,7 @@ class args {
 		
 		// apply template level filter to $args - specific calls should be controlled by parameters included directly ##
         $_args = $this->plugin->filter->apply([
-			'filter'        => 'willow/render/args/'.\willow\view\is::get(),
+			'filter'        => 'willow/render/args/'.\willow\view\method::get(),
 			'parameters'    => $_args,
 			'return'        => $_args
         ]);

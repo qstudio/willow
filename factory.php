@@ -48,6 +48,10 @@ final class factory {
 		// prepare filters ##
 		$this->plugin->set( 'filter_method', new willow\filter\method() );
 
+		// build views - required in admin and front-end ##
+		$view = new willow\view\filter();
+		$view->hooks();
+
 	}
 
 }

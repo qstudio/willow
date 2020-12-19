@@ -37,7 +37,7 @@ class method {
 		$array = \apply_filters( 'willow/get/'.$method.'/array', $array, $args );
 
 		// run template specific filter on $array by $method ##
-		if ( $template = willow\view\is::get() ) {
+		if ( $template = willow\view\method::get() ) {
 
 			// w__log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
 

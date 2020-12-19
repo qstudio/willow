@@ -71,7 +71,7 @@ class is {
 	*/
 	public static function showing( $file = null ): bool {
 
-		// w__log( 'd:>temp: '.view\is::get() );
+		// w__log( 'd:>temp: '.view\method::get() );
 		// w__log( 'd:>file: '.$file  );
 
 		return self::get() == trim( $file ) ;

@@ -27,7 +27,7 @@ final class plugin {
 	public static 
 	
 		// current tag ##
-		$_version = '2.0.4'
+		$_version = '2.0.5'
 	
 	;
 
@@ -415,25 +415,6 @@ final class plugin {
 		
 	}
 	
-	public function factory( $plugin ){
-
-		// kick off extend and store object ##
-		$plugin->set( 'extend', new willow\context\extend( $plugin ) );
-
-		// kick off filter and store object ##
-		$plugin->set( 'filter', new willow\core\filter( $plugin ) );
-
-		// build helper object ##
-		$plugin->set( 'helper', new willow\core\helper( $plugin ) );
-
-		// kick off tags and store object ##
-		$plugin->set( 'tags', new willow\core\tags( $plugin ) );
-
-		// prepare filters ##
-		$plugin->set( 'filter_method', new willow\filter\method( $plugin ) );
-
-	}
-
     /**
      * Get stored object property
 	 * 
@@ -619,7 +600,7 @@ final class plugin {
      * @param       string      $path   Path to plugin directory
      * @return      string      Absoulte URL to plugin directory
      */
-    public function get_plugin_url( $path = '' ){
+    public static function get_plugin_url( $path = '' ){
 
         return \plugins_url( $path, __FILE__ );
 
@@ -632,7 +613,7 @@ final class plugin {
      * @param       string      $path   Path to plugin directory
      * @return      string      Absoulte URL to plugin directory
      */
-    public function get_plugin_path( $path = '' ){
+    public static function get_plugin_path( $path = '' ){
 
         return \plugin_dir_path( __FILE__ ).$path;
 

@@ -145,7 +145,7 @@ class media {
 			|| ! is_array( \get_field( 'media_gallery', $args['post']->ID ) )
 		) { 
 			
-			w__log( 'd:>Post does not have gallery images' );
+			// w__log( 'd:>Post does not have gallery images' );
 
 			return false; 
 		

@@ -93,7 +93,7 @@ class navigation {
 		// args to query WP ##
 		$paginate_args = [
 			// 'base'         			=> str_replace( 999999999, '%#%', \esc_url( \get_pagenum_link( 999999999 ) ) ),
-			'base'                  => @\add_query_arg('paged','%#%'),
+			'base'                  => @\add_query_arg( 'paged','%#%' ),
 			'format'       			=> '?paged=%#%',
 			'total'        			=> $total,
 			'current'      			=> max( 1, \get_query_var( 'paged' ) ),
@@ -252,6 +252,9 @@ class navigation {
 				// run query ##
 				$posts = \get_posts( $wp_args );
 
+				// return false, if nothing to show ##
+				if ( ! $posts ){ return false; }
+
 			break ;
 
 			case "page" :
@@ -272,6 +275,9 @@ class navigation {
 		
 				// get posts ##
 				$posts = \get_posts( $wp_args );
+
+				// return false, if nothing to show ##
+				if ( ! $posts ){ return false; }
 		
 				// w__log( $posts );
 		
