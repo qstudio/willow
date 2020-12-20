@@ -12,7 +12,11 @@ class filter {
 		// Array of custom templates to add ##
 		$view_custom = [
 			/*
-			'test.willow'      => 'Theme : TEST',
+			'dashboard'       		=> [ 
+				'template'			=> 'dashboard.willow',
+				'title'  			=> 'User : Dashboard',
+				'class'  			=> '\q_user' // if empty, checks child theme then parent theme in 'view/' path, else indicates plugin class ##
+			],
 			*/
 		],
 
@@ -25,7 +29,7 @@ class filter {
 				'function'  => 'is_singular',
 				'argument'  => 'post',
 				'template'  => 'single-post.php',
-				//'class'     => '', // if empty, checks in Q 'theme/template' path, else indicates plugin class ##
+				'class'     => '', // if empty, checks child theme then parent theme in 'view/' path, else indicates plugin class ##
 			],
 			*/
 		],
@@ -87,7 +91,10 @@ class filter {
 	function get_view_custom() {
 
 		// this filter only runs once - check if run first ##
-		if( $this->view_custom_filtered ){
+		if( 
+			$this->view_custom
+			&& $this->view_custom_filtered 
+		){
 
 			return $this->view_custom;
 
@@ -113,7 +120,10 @@ class filter {
 	function get_view_native() {
 
 		// this filter only runs once - check if run first ##
-		if( $this->view_native_filtered ){
+		if( 
+			$this->view_native
+			&& $this->view_native_filtered 
+		){
 
 			return $this->view_native;
 
@@ -250,15 +260,25 @@ class filter {
 
     }
 
-    function format_view_custom( Array $array = null ){
+	/**
+	 * Helper function to validate format of array holding custom templates
+	 * 
+	 * @since 	2.0.5
+	 * @return	Mixed		
+	*/
+    function format_view_custom(){
+
+		// make sure custom template filter runs ##
+		$this->get_view_custom();
 
         // sanity ##
         if ( 
-            is_null( $array ) 
-            // might require additional checks ##
+            is_null( $this->view_custom ) 
+			|| ! is_array( $this->view_custom )
+			|| count( array_filter( $this->view_custom ) ) == 0
         ) {
 
-            h::log( 'Error in passed array' );
+            h::log( 'There are no custom templates to add' );
 
             return false;
 
@@ -266,18 +286,22 @@ class filter {
 
         // loop over each item and return in required format ##
         // [ 'file.php' => 'Name', ];
-        $return_array = [];
-        foreach( $array as $key => $value ) {
+        $array = [];
+        foreach( $this->view_custom as $key => $value ) {
 
-            $return_array[ $key ] = $value['name'];
+			// h::log( $key );
+
+			// $array[ $key ] = $value['name'];
+			$array[ $value['template'] ] = $value['name'];
 
         }
 
         // test ##
-        // h::log( $return_array );
+        // h::log( $array );
 
         // kick it back ##
-        return $return_array;
+		return $array;
+		// $this->view_custom = $array;
 
     }
 
@@ -291,14 +315,30 @@ class filter {
 
         // filter in external custom templates ##
         // We also need to format the templates to what WP expects [ 'file.php' => 'Name', ]; ##
-        #$this->view_custom = 
-        #    $this->format_view_custom( \apply_filters( 'q/view/custom', $this->view_custom )
-		#);
+        // $this->view_custom = 
+            // $this->format_view_custom( $this->get_view_custom() );
+		// );
 		
-		// h::log( $this->view_custom );
+		// h::log( $this->get_view_custom() );
+
+		// make sure custom template filter runs ##
+		$this->get_view_custom();
+
+		// template are stored in key => name format 
+		/*
+		[
+			'frontpage.php' => 'Frontpage',
+			'page.php'		=> 'Page'
+		]
+		*/
+
+		// Format the templates to what WP expects ##
+		$custom_templates = $this->format_view_custom(); 
+
+		// h::log( $custom_templates );
         
         // merge into known list ##
-    	$templates = array_merge( $templates, $this->get_view_custom() ); // $this->view_custom
+    	$templates = array_merge( $templates, $custom_templates ); // $this->view_custom
         
         // return ##
         return $templates;
@@ -331,12 +371,15 @@ class filter {
         // $this->view_custom = 
             // $this->format_view_custom( \apply_filters( 'q/view/custom', $this->view_custom )
 		// );
+
+		// Format the templates to what WP expects [ 'file.php' => 'Name', ]; ##
+		$custom_templates = $this->format_view_custom();
 		
-		// h::log( $this->view_custom );
+		h::log( $custom_templates );
 
         // Now add our template to the list of templates by merging our templates
         // with the existing templates array from the cache.
-        $templates = array_merge( $templates, $this->get_view_custom() ); // $this->view_custom
+        $templates = array_merge( $templates, $custom_templates ); // $this->view_custom
 
         // Add the modified cache to allow WordPress to pick it up for listing
         // available templates
@@ -405,7 +448,7 @@ class filter {
         // Return default template if we don't have a custom one defined
         if ( ! isset( $this->get_view_custom()[ $_wp_page_template ] ) ) {
 
-            // h::log( 'e:>kicking back template: '.$template );
+            // h::log( 'e:>No matching custom template found, so kicking back default: '.$template );
 
             return $template;
 

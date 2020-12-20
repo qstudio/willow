@@ -1,6 +1,6 @@
 ### 2.0.5 ###
 
-* New: Two view filters added to allow simple extension of custom and native WP templates - willow/view/native + willow/view/custom
+* New: Two view filters added to allow for extension of custom and native WP templates - willow/view/native + willow/view/custom using .willow filetype
 
 ### 2.0.4 ###
 
