@@ -375,7 +375,7 @@ class filter {
 		// Format the templates to what WP expects [ 'file.php' => 'Name', ]; ##
 		$custom_templates = $this->format_view_custom();
 		
-		h::log( $custom_templates );
+		// h::log( $custom_templates );
 
         // Now add our template to the list of templates by merging our templates
         // with the existing templates array from the cache.
