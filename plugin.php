@@ -27,7 +27,7 @@ final class plugin {
 	public static 
 	
 		// current tag ##
-		$_version = '2.0.5'
+		$_version = '2.0.6'
 	
 	;
 
@@ -41,9 +41,6 @@ final class plugin {
 		// debugging control ##
 		$_debug = \WP_DEBUG, // boolean --> control debugging / minification etc ##
 
-		// log object ##
-		// $log = null,
-
 		// helper object ##
 		$helper = null,
 
@@ -52,9 +49,6 @@ final class plugin {
 
 		// extend object ##
 		$extend = null,
-
-		// log var ##
-		// $_log = null,
 
 		// config object ##
 		$config = null,
@@ -94,11 +88,7 @@ final class plugin {
 		$_markup 	= null, // array to store passed markup and extra keys added by formatting ##
 		$_hash 		= null, // willow hash log, with data about calling method ##
 
-		// share willow match across parsers ##
-		// $_willow_match = false,
-
 		// used to map original {: scope :} value to unqiue {: scope_hash :} ##
-		// $scope_count = 0,
 		$_scope_map = [], 
 
 		// default args to merge with passed array ##

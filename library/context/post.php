@@ -154,7 +154,7 @@ class post {
 		} else {
 
 			// merge array into args ##
-			$args = \q\core\method::parse_args( $array, $args );
+			$args = \willow\core\method::parse_args( $array, $args );
 
 			// w__log( $array['query']->found_posts );
 
