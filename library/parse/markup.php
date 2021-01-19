@@ -734,9 +734,9 @@ class markup {
 		// w__log( 'd:>'.$markup );
 
 		// log ##
-		// w__log( $this->plugin->get( '_args')['task'].'~>variable_removed:>"'.$variable.'" by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( $this->plugin->get( '_args')['task'].'~>variable_removed:>"'.$variable.'" by "'.\willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
-		// w__log( 'd~>variable_removed:>"'.$variable.'" by "'.\q\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( 'd~>variable_removed:>"'.$variable.'" by "'.\willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return $markup;
