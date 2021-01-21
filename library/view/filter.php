@@ -278,9 +278,9 @@ class filter {
 			|| count( array_filter( $this->view_custom ) ) == 0
         ) {
 
-            h::log( 'There are no custom templates to add' );
+            h::log( 'd:>There are no custom templates to add' );
 
-            return false;
+            return [];
 
         }
 
@@ -509,7 +509,7 @@ class filter {
     */
     function add_view_native( $template ) {
 
-        // h::log( 'Native: '.$template );
+        // h::log( 'd:>Native: '.$template );
 
         // check tracker ##
         if ( self::track() ) {
@@ -599,7 +599,7 @@ class filter {
 
         }
 
-        // h::log( 'return default template: '.$template );
+        // h::log( 'd:>return default template: '.$template );
 
         // nothing cooking -- kick back orginal ##
         return $template;
