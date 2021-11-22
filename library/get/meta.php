@@ -304,8 +304,11 @@ class meta {
 			\get_the_date( 
 				isset( $args['config']['date_format'] ) ? 
 				$args['date_format']['config'] : // take from value passed by caller ##
-					$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // take from global config ##
-					\apply_filters( 'q/format/date', 'F j, Y' ), // standard ##
+				(
+					$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?
+					$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]): // take from global config ##
+					\apply_filters( 'q/format/date', 'F j, Y' )
+				), // standard ##
 				$args['config']['post']->ID
 			);
 

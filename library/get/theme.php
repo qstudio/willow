@@ -71,7 +71,7 @@ class theme {
         // check if we've got an array - if so filter and implode it ##
         $string =
             is_array( $array ) ?
-            implode( array_filter( $array ), ' ' ) :
+            implode( ' ', array_filter( $array ) ) :
             $array ;
 
         // kick it back ##

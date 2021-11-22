@@ -87,11 +87,13 @@ class post {
 
 				$string = 
 					\get_the_date( 
-						isset( $_args['date_format'] ) ? 
+						isset( $_args['date_format'] ) ? // date format passed ##
 						$_args['date_format'] : // take from value passed by caller ##
-							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?: // global config ##
-							\apply_filters( 'q/format/date', 'F j, Y' ), // standard ##
-						// $wp_post->post_date, 
+						(
+							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?
+							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) : // global config ##
+							\apply_filters( 'q/format/date', 'F j, Y' )
+						), 
 						$wp_post->ID
 					);
 
