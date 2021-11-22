@@ -74,6 +74,11 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	$factory = new willow\factory();
 	$factory->hooks();
 
+	// build views - required in admin and front-end ##
+	// @todo -- add filter to make views optional ##
+	$view = new willow\view\filter();
+	$view->hooks();
+
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );
 	

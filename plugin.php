@@ -20,9 +20,9 @@ final class plugin {
     /**
      * Instance
      *
-     * @var     Object      $instance
+     * @var     Object      $_instance
      */
-	private static $instance;
+	private static $_instance;
 
 	public static 
 	
@@ -364,26 +364,26 @@ final class plugin {
 
         // object defined once --> singleton ##
         if ( 
-            isset( self::$instance ) 
-            && NULL !== self::$instance
+            isset( self::$_instance ) 
+            && NULL !== self::$_instance
         ){
 
-            return self::$instance;
+            return self::$_instance;
 
         }
 
         // create an object, if null ##
-        self::$instance = new self;
+        self::$_instance = new self;
 
         // store instance in filter, for potential external access ##
         \add_filter( __NAMESPACE__.'/instance', function() {
 
-            return self::$instance;
+            return self::$_instance;
             
         });
 
         // return the object ##
-        return self::$instance; 
+        return self::$_instance; 
 
     }
 
