@@ -420,7 +420,7 @@ class php_functions {
 
 		if ( ! isset( $this->return ) ) {
 
-			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
+			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action?' );
 
 			\willow()->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
