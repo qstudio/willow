@@ -126,7 +126,7 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 		// store parsers ##
 		$plugin->set( 'parse', $parse );
 
-		// create render object, pushing in each individual render object ##
+		// create render object, pushing in each individual render object instance ##
 		$render = new \stdClass();
 
 		$render->callback = new willow\render\callback( $plugin );
@@ -144,7 +144,7 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 		// group instances ##
 		$plugin->set( 'group', new willow\get\group( $plugin ) );
 
-		// context intance ##
+		// context instance ##
 		$plugin->set( 'context', new willow\context( $plugin ) );
 
 		// get instances ##
