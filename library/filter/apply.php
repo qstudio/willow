@@ -14,10 +14,10 @@ class apply {
 	/**
 	 * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -45,8 +45,8 @@ class apply {
 	*/
 	public function tag( $value, $key ) {
 
-		$_filter = $this->plugin->get( '_filter' );
-		$_args = $this->plugin->get( '_args' );
+		$_filter = \willow()->get( '_filter' );
+		$_args = \willow()->get( '_args' );
 
 		// check for tag filter ##
 		if( 
@@ -67,7 +67,7 @@ class apply {
 			$pre_value = $value; 
 
 			// bounce to filter::apply()
-			$filter_value = $this->plugin->filter_method->process([ 
+			$filter_value = \willow()->filter->process([ 
 				'filters' 	=> $_filter[ $_args['config']['hash'] ], 
 				'string' 	=> $value, 
 				'use' 		=> 'tag', // for filters ##

@@ -5,7 +5,7 @@ namespace willow\type;
 use willow\core\helper as h;
 use willow;
 
-class method {
+class get {
 
 	private 
 		$plugin = false,
@@ -14,19 +14,18 @@ class method {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
-
 	
     /**
      * Get allowed fomats with filter ##
      * 
      */
-    public function get_allowed(){
+    public function allowed(){
 
 		// cache ##
 		if ( $this->_type ) { 
@@ -39,7 +38,7 @@ class method {
 		} 
 
 		// via filter ##
-        return $this->_type = \apply_filters( 'willow/render/type/get', $this->plugin->get( '_type' ) );
+        return $this->_type = \apply_filters( 'willow/render/type/get', \willow()->get( '_type' ) );
 
     }
 

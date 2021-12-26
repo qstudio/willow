@@ -1,20 +1,20 @@
 <?php
 
-namespace willow\get;
+namespace willow\core;
 
 use willow;
 use willow\core\helper as h;
 
-class method {
+class prepare {
 
 	/**
 	 * Prepare $array of data to be returned to render
 	 *
 	 */
-	public static function prepare_return( $args = null, $array = null ) {
+	public static function return( $args = null, $array = null ) {
 
 		// get calling method for filters ##
-		$method = willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$method = willow\core\backtrace::get([ 'level' => 2, 'return' => 'function' ]);
 
 		// sanity ##
 		if (
@@ -37,7 +37,7 @@ class method {
 		$array = \apply_filters( 'willow/get/'.$method.'/array', $array, $args );
 
 		// run template specific filter on $array by $method ##
-		if ( $template = willow\view\method::get() ) {
+		if ( $template = willow\core\template::get() ) {
 
 			// w__log( 'Filter: "q/ui/get/array/'.$method.'/'.$template.'"' );
 

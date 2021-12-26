@@ -137,7 +137,7 @@ class method {
 
 		/*
 		// now, we need to prepare the flags, if any, from the passed string ##
-		$filters = core\method::string_between( $args['string'], trim( $this->plugin->tags->g( 'fla_o' )), trim( $this->plugin->tags->g( 'fla_c' )) );
+		$filters = core\strings::between( $args['string'], trim( \willow()->tags->g( 'fla_o' )), trim( \willow()->tags->g( 'fla_c' )) );
 
 		w__log( $filters );
 
@@ -161,16 +161,16 @@ class method {
 		// w__log( $args['filters'] );
 
 		// get filters ##
-		$_filters = $this->plugin->get( '_filters' );
+		$_filters = \willow()->get( '_filters' );
 			
 		// load all stored filters, if filters_loaded is empty ##
-		if( true !== $this->plugin->get( '_filters_filtered' ) ){
+		if( true !== \willow()->get( '_filters_filtered' ) ){
 
 			$_filters = \apply_filters( 'willow/filters', $_filters );
-			// $this->plugin->set( '_filters', $_filters );
+			// \willow()->set( '_filters', $_filters );
 
 			// update tracker, so we don't load again this life-cycle ##
-			$this->plugin->set( '_filters_filtered', true );
+			\willow()->set( '_filters_filtered', true );
 
 		}
 
@@ -199,7 +199,7 @@ class method {
 		// w__log( $_filters );
 		// w__log( $args['filters'] );
 		// get _flags ##
-		$_flags = $this->plugin->get( '_flags' ) ?? [] ;
+		$_flags = \willow()->get( '_flags' ) ?? [] ;
 
 		// now, loop over each filter, allow it to be altered ( via apply_filters ) validate it exists and run it
 		foreach( $args['filters'] as $function ) {
@@ -236,7 +236,7 @@ class method {
 			$function = \apply_filters( 'willow/filter/apply/'.$function.'/'.$args['use'], $function );
 
 			// sanitize function name -- in case something funky was returned by filters or altered in the default list ##
-			$function = willow\core\method::sanitize( $function, 'php_function' );
+			$function = willow\core\sanitize::value( $function, 'php_function' );
 
 			// check clean function name ##
 			// w__log( '$function: '.$function );

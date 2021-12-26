@@ -18,10 +18,10 @@ class partials {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -31,16 +31,16 @@ class partials {
 	function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 		// global ##
-		$config = $this->plugin->get('config')->get([ 'context' => 'partial', 'task' => 'config' ]);
+		$config = \willow()->config->get([ 'context' => 'partial', 'task' => 'config' ]);
 		// w__log( $config );
 
 		// get parse task ##
-		$_parse_task = $_args['task'] ?? $this->plugin->get( '_parse_task' );
+		$_parse_task = $_args['task'] ?? \willow()->get( '_parse_task' );
 
 		if ( 
 			isset( $config['run'] )
@@ -114,8 +114,8 @@ class partials {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->tags->g( 'par_o' ) );
-		$close = trim( $this->plugin->tags->g( 'par_c' ) );
+		$open = trim( \willow()->tags->g( 'par_o' ) );
+		$close = trim( \willow()->tags->g( 'par_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -167,11 +167,11 @@ class partials {
 				// w__log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 
 				// get partial data ##
-				$partial = willow\core\method::string_between( $matches[0][$match][0], $open, $close );
-				// $markup = method::string_between( $matches[0][$match][0], $close, $end );
+				$partial = willow\core\strings::between( $matches[0][$match][0], $open, $close );
+				// $markup = strings::between( $matches[0][$match][0], $close, $end );
 
 				// return entire partial string, including tags for tag swap ##
-				$partial_match = willow\core\method::string_between( $matches[0][$match][0], $open, $close, true );
+				$partial_match = willow\core\strings::between( $matches[0][$match][0], $open, $close, true );
 				// w__log( '$partial_match: '.$partial_match );
 
 				// sanity ##
@@ -191,15 +191,13 @@ class partials {
 				$partial = trim($partial);
 				$context = 'partial';
 				$task = $partial;
-				// list( $context, $task ) = explode( '__', $partial );
 
 				// test what we have ##
 				// w__log( 'd:>partial: "'.$partial.'"' );
 				// w__log( $_args );
 
 				// perhaps better to hand this to a method, which can grab args ??
-				// $partial_data = core\config::get([ 'context' => $context, 'task' => $task ]);
-				$partial_data = $this->plugin->get('config')->get([ 'context' => $context, 'task' => $task ]);
+				$partial_data = \willow()->config->get([ 'context' => $context, 'task' => $task ]);
 
 				// no data, no go ##
 				if(
@@ -228,7 +226,7 @@ class partials {
 				}
 
 				// merge local partial data, with partial->config ##
-				$partial_data = willow\core\method::parse_args( $partial_data, $config );
+				$partial_data = willow\core\arrays::parse_args( $partial_data, $config );
 
 				// w__log( 'd:>context: "'.$context.'"' );
 				// w__log( 'd:>task: "'.$task.'"' );
@@ -247,33 +245,14 @@ class partials {
 
 				}
 
-				// hash way ##
-				/*
-				$hash = 'partial__'.$task.'__'.rand();
-				// w__log( 'd:>partial hash: '.$hash );
-
-				// add data to buffer map ##
-				self::$buffer_map[] = [
-					'hash'		=> $hash,
-					'tag'		=> $partial_match,
-					'output'	=> $partial_data['markup'],
-					'parent'	=> false,
-				];
-				*/
-
 				// function returns which update the template also need to update the markup_template, for later find/replace ##
-				$this->plugin->set(
+				\willow()->set(
 					'_markup_template', 
-					str_replace( $partial_match, $partial_data['markup'], $this->plugin->get('_markup_template') )
+					str_replace( $partial_match, $partial_data['markup'], \willow()->get('_markup_template') )
 				);
 
 				// update markup for willow parse ##
-				$markup = new willow\parse\markup( $this->plugin );
-				$markup->swap( $partial_match, $partial_data['markup'], 'partial', 'string', $process );
-
-				// finally -- add a variable "{{ $field }}" before this partial block in markup->template ##
-				// $variable = willow\tags::wrap([ 'open' => 'var_o', 'value' => $hash, 'close' => 'var_c' ]);
-				// parse\markup::swap( $partial_match, $variable, 'partial', 'variable', $process ); // '{{ '.$field.' }}'
+				\willow()->parse->markup->swap( $partial_match, $partial_data['markup'], 'partial', 'string', $process );
 
 			}
 
@@ -281,17 +260,16 @@ class partials {
 
 	}
 
-
 	/***/
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->tags->g( 'par_o' ) );
-		$close = trim( $this->plugin->tags->g( 'par_c' ) );
+		$open = trim( \willow()->tags->g( 'par_o' ) );
+		$close = trim( \willow()->tags->g( 'par_c' ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -384,7 +362,7 @@ class partials {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -392,7 +370,7 @@ class partials {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

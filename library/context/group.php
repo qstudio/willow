@@ -13,10 +13,10 @@ class group {
 	/**
 	 * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -25,14 +25,15 @@ class group {
      *
      * @param       Array       $args
      * @since       1.3.0
-	 * @uses		define
+	 * @param		array
      * @return      Array
      */
-    public function get( $args = null ) {
+    public function get( array $args = null )
+	{
 
 		$method = 'fields';
 
-		// Q needed to run get method ##
+		// Willow needed to run get method ##
 		if(
 			! method_exists( 'willow\get\group', $method )
 			|| ! is_callable([ 'willow\get\group', $method ])
@@ -44,26 +45,24 @@ class group {
 
 		}
 
-		// build object ##
-		$group = new willow\get\group( $this->plugin );
-
 		// method returns an array with 'data' and 'fields' ##
 		if ( 
 			// $array = \willow\get\group::fields( $args )
-			$array = $group->fields( $args )
+			$array = \willow()->group->fields( $args )
 		){
 			// w__log( $array['data'] );
 			
 			// "args->fields" are used for type and callback lookups ##
-			// self::$args['fields'] = $array['fields']; 
-			$_args = $this->plugin->get( '_args' );
+			$_args = \willow()->get( '_args' );
 			$_args['fields'] = $array['fields']; 
-			$this->plugin->set( '_args', $_args );
+			\willow()->set( '_args', $_args );
 
 			// return ##
 			return $array['data'];
 
 		}
+
+		return false;
 
 	}
 

@@ -44,13 +44,12 @@ class variables {
 	 * 
 	 * @since 2.0.0
 	*/
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
-	
 	
 	/**
 	 * Scan for arguments in variables and convert to $config->data
@@ -60,9 +59,9 @@ class variables {
 	public function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 		// sanity -- method requires requires ##
 		if ( 
@@ -128,9 +127,8 @@ class variables {
 		// w__log('d:>'.$string);
 
 		// get all {{ variables }} from markup string ##
-		$parse_markup = new willow\parse\markup( $this->plugin );
         if ( 
-            ! $variables = $parse_markup->get( $string, 'variable' ) 
+            ! $variables = \willow()->parse->markup->get( $string, 'variable' ) 
         ) {
 
 			// w__log( self::$args['task'].'~>d:>No variables found in $markup');
@@ -180,8 +178,8 @@ class variables {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( $this->plugin->tags->g( 'var_o' )) ) !== false
-			&& strrpos( $string, trim( $this->plugin->tags->g( 'var_c' )) ) !== false
+			strpos( $string, trim( \willow()->tags->g( 'var_o' )) ) !== false
+			&& strrpos( $string, trim( \willow()->tags->g( 'var_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
@@ -212,8 +210,8 @@ class variables {
 		// clean up field name - remove variable tags ##
 		$variable = str_replace( 
 			[ 
-				$this->plugin->tags->g( 'var_o' ), 
-				$this->plugin->tags->g( 'var_c' ) 
+				\willow()->tags->g( 'var_o' ), 
+				\willow()->tags->g( 'var_c' ) 
 			], 
 			'', // with nada ##
 			$args['variable'] 
@@ -222,7 +220,7 @@ class variables {
 		$variable_original = $variable;
 		// w__log( '$variable: '.$variable );
 
-		$this->plugin->set( '_flags_variable', false );
+		\willow()->set( '_flags_variable', false );
 
 		// look for flags ##
 		// $variable = flags::get( $variable, 'variable' );
@@ -231,13 +229,13 @@ class variables {
 		// w__log( self::$flags_variable );
 
 		// $variable = flags::get( $variable, 'variable' );
-		$variable = $this->plugin->parse->flags->get( $variable, 'variable' );
+		$variable = \willow()->parse->flags->get( $variable, 'variable' );
 		// w__log( 'variable: '.trim( $variable ) );
 		// w__log( 'whole variable: '.$args['variable'] );
 
 		if(
 			// $this->flags_variable
-			$this->plugin->get( '_flags_variable' )
+			\willow()->get( '_flags_variable' )
 		){
 
 			// kick back ##
@@ -296,11 +294,11 @@ class variables {
 		// $this->variable = $match;
 
 		if ( 
-			// $config_string = method::string_between( $value, '{+', '+}' )
-			$this->variable_config = willow\core\method::string_between( 
+			// $config_string = strings::between( $value, '{+', '+}' )
+			$this->variable_config = willow\core\strings::between( 
 				$this->variable, 
-				trim( $this->plugin->tags->g( 'arg_o' )), 
-				trim( $this->plugin->tags->g( 'arg_c' )) 
+				trim( \willow()->tags->g( 'arg_o' )), 
+				trim( \willow()->tags->g( 'arg_c' )) 
 			)
 		){
 
@@ -314,7 +312,7 @@ class variables {
 			
 			$this->field = str_replace( $this->variable_config, '', $this->variable );
 
-			// clean up field data ## -- @TODO, move to core\method::sanitize();
+			// clean up field data ## -- @TODO, move to core\sanitize::value();
 			$this->field = preg_replace( "/[^A-Za-z0-9._]/", '', $this->field );
 
 			// w__log( 'd:>field: '.$this->field );
@@ -347,7 +345,7 @@ class variables {
 			}
 
 			// create new variable for markup, based on $field value ##
-			$this->new_variable = $this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => $this->field, 'close' => 'var_c' ]);
+			$this->new_variable = \willow()->tags->wrap([ 'open' => 'var_o', 'value' => $this->field, 'close' => 'var_c' ]);
 
 			// test what we have ##
 			// w__log( 'd:>variable: "'.$this->variable.'"' );
@@ -357,21 +355,21 @@ class variables {
 
 			// pass to argument handler -- returned value ##
 			if ( 
-				$this->arguments = $this->plugin->parse->arguments->decode( $this->variable_config ) // string containing arguments ##
+				$this->arguments = \willow()->parse->arguments->decode( $this->variable_config ) // string containing arguments ##
 			){
 
 				// get args ##
-				$_args = $this->plugin->get( '_args' );
+				$_args = \willow()->get( '_args' );
 				// w__log( $_args );
 
 				// merge in new args to args->field ##
-				if ( ! isset( $this->plugin->get( '_args' )[$this->field_name] ) ) {
+				if ( ! isset( \willow()->get( '_args' )[$this->field_name] ) ) {
 					
 					$_args[$this->field_name] = [];
 
 				}
 
-				$_args[$this->field_name] = willow\core\method::parse_args( 
+				$_args[$this->field_name] = willow\core\arrays::parse_args( 
 					$this->arguments, 
 					$_args[$this->field_name] 
 				);
@@ -379,15 +377,14 @@ class variables {
 				// w__log( 'e:>Setting args' );
 
 				// set args ##
-				$this->plugin->set( '_args', $_args );
+				\willow()->set( '_args', $_args );
 
 			}
 
 			// w__log( self::$args[$field_name] );
 
 			// now, edit the variable, to remove the config ##
-			$parse_markup = new willow\parse\markup( $this->plugin );
-			$parse_markup->swap( $this->variable, $this->new_variable, 'variable', 'variable', $process );
+			\willow()->parse->markup->swap( $this->variable, $this->new_variable, 'variable', 'variable', $process );
 
 		}
 
@@ -409,10 +406,10 @@ class variables {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// vars ##
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
-		$open = trim( $this->plugin->tags->g( 'var_o' ) );
-		$close = trim( $this->plugin->tags->g( 'var_c' ) );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
+		$open = trim( \willow()->tags->g( 'var_o' ) );
+		$close = trim( \willow()->tags->g( 'var_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -509,7 +506,7 @@ class variables {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -517,7 +514,7 @@ class variables {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

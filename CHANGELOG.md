@@ -1,3 +1,7 @@
+### 2.1.0 ###
+
+* Update: moved all object instatiation to plugin hook, no more god classes - all objects are stored in a global getters and setters
+
 ### 2.0.6 ###
 
 * Update: Removed last Q dependency

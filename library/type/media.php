@@ -13,10 +13,10 @@ class media {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -28,10 +28,10 @@ class media {
     public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ):? string {
 
 		// local var ##
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, \willow()->type->get->allowed() ) ) {
 
 			// w__log( 'e:>Value Type not allowed: '.$type );
 
@@ -91,8 +91,7 @@ class media {
 
 				// w__log( $args );
 
-				$get_media = new willow\get\media( $this->plugin );
-				$array = $get_media->src( $args );
+				$array = \willow()->media->src( $args );
 				// $array = willow\get\media::src( $args );
 
 				// w__log( $array );
@@ -108,7 +107,7 @@ class media {
 		) {
 
 			// log ##
-			w__log( $_args['task'].'~>n:>get\media::thumbnail returned bad data');
+			\w__log( $_args['task'].'~>n:>get\media::thumbnail returned bad data');
 
 			return $string;
 
@@ -119,34 +118,10 @@ class media {
 
 			case "src";
 
-				// esc src array ##
-				// $array = array_map( 'esc_attr', $array );
-
-				// w__log( $array );
-
-				// let's do this nicely -- remember we're starting inside src="{{}}" ##
-				// $markup = \apply_filters( 'q/render/type/media/src', '" data-src="{{ src }}" srcset="{{ srcset }}" sizes="{{ sizes }}" alt="{{ alt }}' );
-				// $markup = \apply_filters( 'q/render/type/media/src', '{{ src }}' );
-				// $string = render\method::markup( $markup, $array );
-
-				// $string = $array['src'];
-				// w__log( self::$args );
-
 				// conditional -- add img meta values ( sizes ) and srcset ##
 				if ( 
-					// set locally..
-					(
-						isset( $_args['config']['srcset'] )
-						&& true == $_args['config']['srcset'] 
-					)
-					/*
-					||
-					// OR, set globally ##
-					(
-						isset( core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset'] )
-						&& true == core\config::get([ 'context' => 'media', 'task' => 'config' ])['srcset']
-					)
-					*/
+					isset( $_args['config']['srcset'] )
+					&& true == $_args['config']['srcset'] 
 				) {
 
 					$src = \esc_attr($array['src']).'"'; 
@@ -176,7 +151,7 @@ class media {
 			is_null( $string ) 
 		) {
 
-			w__log( $_args['task'].'~>n:>String is empty.. so return null' );
+			\w__log( $_args['task'].'~>n:>String is empty.. so return null' );
 
 		}
 

@@ -76,7 +76,7 @@ class log {
 		// $level_function = apply_filters( 'willow/core/log/backtrace/function', 3 );
 		// $level_file = apply_filters( 'willow/core/log/backtrace/file', 2 );
 
-		$backtrace_1 = willow\core\method::backtrace([ 
+		$backtrace_1 = willow\core\backtrace::get([ 
 			'level' 	=> \apply_filters( 'willow/core/log/backtrace/function', 3 ), 
 			'return' 	=> 'class_function' 
 		]);
@@ -84,7 +84,7 @@ class log {
 		// format for key usage ##
 		$backtrace_1 = strtolower( str_replace( [ '()' ], [ '' ], $backtrace_1 ) );
 			
-		$backtrace_2 = willow\core\method::backtrace([ 
+		$backtrace_2 = willow\core\backtrace::get([ 
 			'level' 	=> \apply_filters( 'willow/core/log/backtrace/file', 2 ), 
 			'return' 	=> 'file_line' 
 		]);
@@ -227,7 +227,7 @@ class log {
 			// string might be a normal string, or contain markdown to represent an array of data ##
 
 			// no fixed pattern ##
-			if ( ! willow\core\method::strposa( $args, self::$delimiters ) ) {
+			if ( ! willow\core\strings::strposa( $args, self::$delimiters ) ) {
 
 				// w__log_direct( 'string has no known delimiters, so treat as log:>value' );
 				$return = self::push( 'debug', $args.self::$backtrace, self::$backtrace_key );
@@ -338,7 +338,7 @@ class log {
 
 			// new key is based on the class_method called when the log was set ##
 			// this key might already exist, if so, add as a new array key + value ##
-			$new_key = isset( $new_key ) ? $new_key : willow\core\method::get_acronym( $value ) ;
+			$new_key = isset( $new_key ) ? $new_key : willow\core\strings::get_acronym( $value ) ;
 
 			// make new key safe ??
 			// $new_key = str_replace( [ '\\','::' ], '_', $new_key );

@@ -12,12 +12,12 @@ class plugin {
 	;
 
 	/**
-	 * 
+	 * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -55,19 +55,8 @@ class plugin {
 
 		w__log( 'e:>Class method IS callable: willow\get\plugin\\'.$method );
 
-		// new object ##
-		$plugin = new willow\get\plugin();
-
 		// return post method to 
-		$return = $plugin->{$method}( $args );
-
-		// call method ##
-		/*
-		$return = call_user_func_array (
-				array( '\\willow\\get\\plugin', $method )
-			,   array( $args )
-		);
-		*/
+		$return = \willow()->plugin->{$method}( $args );
 
 		// // test ##
 		// w__log( $return );

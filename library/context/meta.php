@@ -8,19 +8,16 @@ use willow;
 class meta {
 
 	private
-		$plugin = null, // this
-		$get = null 
+		$plugin = null // this
 	;
 
 	/**
 	 * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		// $this->plugin = willow\plugin::get_instance();
-
-		$this->get = new willow\get\meta();
+		$this->plugin = $plugin;
 
 	}
 
@@ -54,22 +51,12 @@ class meta {
 
 		}
 
-		// return \willow\get\post::$method;
-
 		// w__log( 'e:>Class method IS callable: willow\get\meta\\'.$method );
 
 		// return callback ##
-		$return = $this->get->{$method}( $args );
+		$return = \willow()->meta->{$method}( $args );
 
-		// call method ##
-		/*
-		$return = call_user_func_array (
-				array( '\\willow\\get\\meta', $method )
-			,   array( $args )
-		);
-		*/
-
-		// // test ##
+		// test ##
 		// w__log( $return );
 
 		// kick back ##

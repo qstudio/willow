@@ -12,10 +12,10 @@ class callback {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -29,8 +29,8 @@ class callback {
 		// w__log( 'Field: '.$field );
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_fields = $this->plugin->get( '_fields' );
+		$_args = \willow()->get( '_args' );
+		$_fields = \willow()->get( '_fields' );
 
         // sanity ##
         if ( is_null( $field ) ) {
@@ -76,7 +76,7 @@ class callback {
 
 		// w__log( 'Looking for callback for field: "'.$field.'" in self::$fields' );
 		
-        if ( ! $field_callback = $this->plugin->render->fields->get_callback( $field ) ) {
+        if ( ! $field_callback = \willow()->render->fields->get_callback( $field ) ) {
 
 			// w__log['error'][] = 'No callbacks found for Field: "'.$field.'"';
 			// w__log( 'd:>No callbacks found for Field: "'.$field.'"' );
@@ -163,7 +163,7 @@ class callback {
         // w__log( 'Filter: '.$filter );
 
         // filter field callback value ( $args ) before callback ##
-        $args = $this->plugin->filter->apply([ 
+        $args = \willow()->filter->apply([ 
             'parameters'    => [ 'args' => $args, 'field' => $field, 'value' => $value, 'fields' => $_fields ], // params ##
             'filter'        => 'willow/render/callback/field/before/'.$method.'/'.$field, // filter handle ##
             'return'        => $args
@@ -192,7 +192,7 @@ class callback {
 
         // now add new data to class property $fields ##
 		$_fields[$field] = $data;
-		$this->plugin->set( '_fields', $_fields );
+		\willow()->set( '_fields', $_fields );
 
         // done ##
         return $data;
@@ -206,7 +206,7 @@ class callback {
      */
     public function get_callbacks(){
 
-        return \apply_filters( 'willow/render/callbacks/get', $this->plugin->get( '_callbacks') );
+        return \apply_filters( 'willow/render/callbacks/get', \willow()->get( '_callbacks') );
 
     }
 

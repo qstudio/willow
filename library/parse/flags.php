@@ -10,10 +10,10 @@ class flags {
 		$plugin = false
 	;
 
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -35,23 +35,23 @@ class flags {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( $this->plugin->tags->g( 'fla_o' )) ) !== false
-			&& strpos( $string, trim( $this->plugin->tags->g( 'fla_c' )) ) !== false
+			strpos( $string, trim( \willow()->tags->g( 'fla_o' )) ) !== false
+			&& strpos( $string, trim( \willow()->tags->g( 'fla_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			// $fla_o = strpos( $string, trim( $this->plugin->tags->g( 'fla_o' )) );
-			// $fla_c = strrpos( $string, trim( $this->plugin->tags->g( 'fla_c' )) );
+			// $fla_o = strpos( $string, trim( \willow()->tags->g( 'fla_o' )) );
+			// $fla_c = strrpos( $string, trim( \willow()->tags->g( 'fla_c' )) );
 			/*
 			w__log( 'e:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// get string between opening and closing args ##
 			$return_string = substr( 
 				$string, 
-				( $loo_o + strlen( trim( $this->plugin->tags->g( 'loo_o' ) ) ) ), 
-				( $loo_c - $loo_o - strlen( trim( $this->plugin->tags->g( 'loo_c' ) ) ) ) ); 
+				( $loo_o + strlen( trim( \willow()->tags->g( 'loo_o' ) ) ) ), 
+				( $loo_c - $loo_o - strlen( trim( \willow()->tags->g( 'loo_c' ) ) ) ) ); 
 
-			$return_string = $this->plugin->tags->g( 'loo_o' ).$return_string.$this->plugin->tags->g( 'loo_c' );
+			$return_string = \willow()->tags->g( 'loo_o' ).$return_string.\willow()->tags->g( 'loo_c' );
 
 			// w__log( 'e:>$string: "'.$return_string.'"' );
 
@@ -95,14 +95,14 @@ class flags {
 
 		// sanity ##
 		if(
-			willow\core\method::starts_with( 
+			willow\core\strings::starts_with( 
 				$string, 
-				trim( $this->plugin->tags->g( 'fla_o' ) ) 
+				trim( \willow()->tags->g( 'fla_o' ) ) 
 			)
-			&& $flags = willow\core\method::string_between( 
+			&& $flags = willow\core\strings::between( 
 				$string, 
-				trim( $this->plugin->tags->g( 'fla_o' ) ), 
-				trim( $this->plugin->tags->g( 'fla_c' ) ) 
+				trim( \willow()->tags->g( 'fla_o' ) ), 
+				trim( \willow()->tags->g( 'fla_c' ) ) 
 			)
 		){
 
@@ -110,7 +110,7 @@ class flags {
 			$flags = trim( $flags );
 
 			// prepare flags / filters ##
-			$flags_array = $this->plugin->filter_method->prepare([ 'filters' => $flags, 'use' => $use ] );
+			$flags_array = \willow()->filter->prepare([ 'filters' => $flags, 'use' => $use ] );
 			
 			// w__log( $flags_array );
 			// w__log( 'use: '.$use );
@@ -124,7 +124,7 @@ class flags {
 					// @todo - validate that flags are allowed against self::$flags_willows ##
 
 					// $this->flags_willow = $flags_array;
-					$this->plugin->set( '_flags_willow', $flags_array );
+					\willow()->set( '_flags_willow', $flags_array );
 
 				break ;
 
@@ -133,7 +133,7 @@ class flags {
 					// @todo - validate that flags are allowed against $this->flags_php ##
 
 					// $this->flags_php_function = $flags_array;
-					$this->plugin->set( '_flags_php_function', $flags_array );
+					\willow()->set( '_flags_php_function', $flags_array );
 
 				break ;
 
@@ -142,7 +142,7 @@ class flags {
 					// @todo - validate that flags are allowed against $this->flags_php ##
 
 					// $this->flags_php_variable = $flags_array;
-					$this->plugin->set( '_flags_php_variable', $flags_array );
+					\willow()->set( '_flags_php_variable', $flags_array );
 
 				break ;
 
@@ -151,7 +151,7 @@ class flags {
 					// @todo - validate that flags are allowed against $this->flags_comment ##
 
 					// $this->flags_comment = $flags_array;
-					$this->plugin->set( '_flags_comment', $flags_array );
+					\willow()->set( '_flags_comment', $flags_array );
 
 				break ;
 
@@ -160,7 +160,7 @@ class flags {
 					// varialbe flags are validated just before they are applied ##
 
 					// $this->flags_variable = $flags_array;
-					$this->plugin->set( '_flags_variable', $flags_array );
+					\willow()->set( '_flags_variable', $flags_array );
 
 				break ;
 
@@ -169,17 +169,17 @@ class flags {
 					// @todo - validate that flags are allowed again $this->flags_argument ##
 
 					// $this->flags_argument = $flags_array;
-					$this->plugin->set( '_flags_argument', $flags_array );
+					\willow()->set( '_flags_argument', $flags_array );
 
 				break ;
 
 			}
 
 			// get entire string, with tags ##
-			$flags_all = willow\core\method::string_between( 
+			$flags_all = willow\core\strings::between( 
 				$string, 
-				trim( $this->plugin->tags->g( 'fla_o' ) ), 
-				trim( $this->plugin->tags->g( 'fla_c' ) ), 
+				trim( \willow()->tags->g( 'fla_o' ) ), 
+				trim( \willow()->tags->g( 'fla_c' ) ), 
 				true 
 			);
 
@@ -200,8 +200,8 @@ class flags {
 
 	public function cleanup( $args = null, $process = 'secondary' ){
 
-		$open = trim( $this->plugin->tags->g( 'fla_o' ) );
-		$close = trim( $this->plugin->tags->g( 'fla_c' ) );
+		$open = trim( \willow()->tags->g( 'fla_o' ) );
+		$close = trim( \willow()->tags->g( 'fla_c' ) );
 
 		// w__log( self::$markup['template'] );
 

@@ -13,10 +13,10 @@ class post {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -52,21 +52,10 @@ class post {
 
 		// w__log( 'e:>Class method IS callable: willow\get\post\\'.$method );
 
-		// new object ##
-		$post = new willow\get\post();
-
 		// return post method to 
-		$return = $post->{$method}( $args );
+		$return = \willow()->post->{$method}( $args );
 
-		// call method ##
-		/*
-		$return = call_user_func_array (
-				array( '\\willow\\get\\post', $method )
-			,   array( $args )
-		);
-		*/
-
-		// // test ##
+		// test ##
 		// w__log( $return );
 
 		// kick back ##
@@ -82,10 +71,7 @@ class post {
     */
     public function this( $args = null ){
 
-		// new object ##
-		$post = new willow\get\post();
-
-		return [ 'this' => $post->this( $args ) ];
+		return [ 'this' => \willow()->post->this( $args ) ];
 
 	}
 
@@ -97,15 +83,11 @@ class post {
     public function query( $args = [] ){
 
 		// local vars ##
-		$_markup = $this->plugin->get( '_markup' );
-		$_args = $this->plugin->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_args = \willow()->get( '_args' );
 
 		// w__log( $_markup );
 		// w__log( $_args );
-
-		// new object ##
-		$query = new willow\get\query();
-		$navigation = new willow\get\navigation();
 
 		// build fields array with default values ##
 		$return = ([
@@ -120,7 +102,7 @@ class post {
 		// $args = isset( $args['wp_query_args'] ) ? $args['wp_query_args'] : $args ;
 
         // pass to get_posts -- and validate that we get an array back ##
-		if ( ! $array = $query->posts( $args ) ) {
+		if ( ! $array = \willow()->query->posts( $args ) ) {
 
 			// log ##
 			w__log( $_args['task'].'~>n:query::posts did not return any data');
@@ -154,7 +136,7 @@ class post {
 		} else {
 
 			// merge array into args ##
-			$args = \willow\core\method::parse_args( $array, $args );
+			$args = \willow\core\arrays::parse_args( $array, $args );
 
 			// w__log( $array['query']->found_posts );
 
@@ -162,7 +144,7 @@ class post {
 			// self::$fields = [
 			$return = [
 				'total' 		=> $array['query']->found_posts, // total posts ##
-				'pagination'	=> $navigation->pagination( $args ), // get pagination, returns string ##
+				'pagination'	=> \willow()->navigation->pagination( $args ), // get pagination, returns string ##
 				'results'		=> $array['query']->posts // array of WP_Posts ##
 			];
 

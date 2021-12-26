@@ -13,10 +13,10 @@ class meta {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -28,10 +28,10 @@ class meta {
     public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
 
 		// local var ##
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, \willow()->type->get->allowed() ) ) {
 
 			// w__log( 'e:>Value Type not allowed: '.$type );
 
@@ -52,9 +52,6 @@ class meta {
 			return false;
 
 		}
-
-		// build render_fields object ##
-		// $render_fields = new willow\render\fields( $this->plugin );
 
 		// w__log( \get_post_meta( $wp_post->ID ) );
 
@@ -80,7 +77,7 @@ class meta {
 			){
 
 				// assign field and value ##
-				$this->plugin->render->fields->set( $field.'.meta.'.$key, $value );
+				\willow()->render->fields->set( $field.'.meta.'.$key, $value );
 
 			} else {
 
@@ -98,7 +95,7 @@ class meta {
 					}
 
 					// assign field and value ##
-					$this->plugin->render->fields->set( $field.'.meta.'.$key, $sub_value );
+					\willow()->render->fields->set( $field.'.meta.'.$key, $sub_value );
 
 				}
 

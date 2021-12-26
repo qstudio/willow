@@ -13,25 +13,24 @@ class post {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
 	/**
      * WP Post handler
-     *  
-     * 
-     **/ 
-    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
+     */ 
+    public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ):string 
+	{
 
 		// local var ##
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, \willow()->type->get->allowed() ) ) {
 
 			// w__log( 'e:>Value Type not allowed: '.$type );
 
@@ -90,8 +89,8 @@ class post {
 						isset( $_args['date_format'] ) ? // date format passed ##
 						$_args['date_format'] : // take from value passed by caller ##
 						(
-							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?
-							$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) : // global config ##
+							\willow()->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?
+							\willow()->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) : // global config ##
 							\apply_filters( 'q/format/date', 'F j, Y' )
 						), 
 						$wp_post->ID
@@ -121,11 +120,11 @@ class post {
 				if ( \is_search() ) {
 
 					$string = 
-						willow\render\method::search_the_content([
+						willow\core\strings::search_the_content([
 							'string' 	=> \apply_filters( 'q/get/wp/post_content', $wp_post->post_content ),
 							'limit'		=> isset( $_args['length'] ) ? $_args['length'] : 100
 						]) ? 
-						willow\render\method::search_the_content([
+						willow\core\strings::search_the_content([
 							'string' 	=> \strip_shortcodes(\apply_filters( 'q/get/wp/post_content', $wp_post->post_content )),
 							'limit'		=> isset( $_args['length'] ) ? $_args['length'] : 100
 						]) : 
@@ -146,7 +145,7 @@ class post {
 			) 
 		) {
 
-			// w__log( 'Field: "'.$field.'" value magically set to: '.render\method::chop( $wp_post->$type_field, 50 ) );
+			// w__log( 'Field: "'.$field.'" value magically set to: '.core\strings::chop( $wp_post->$type_field, 50 ) );
 
 			$string = $wp_post->$type_field;
 
@@ -156,7 +155,5 @@ class post {
         return $string;
 
     }
-
-
 
 }

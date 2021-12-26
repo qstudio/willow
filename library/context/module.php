@@ -14,10 +14,10 @@ class module {
 	/**
 	 * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -33,7 +33,7 @@ class module {
     public function get( $args = null ) {
 
 		// w__log( $args );
-		return $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return \willow()->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

@@ -12,12 +12,12 @@ class plugin {
 	;
 
 	/**
-	 * 
+	 * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 	
@@ -56,13 +56,13 @@ class plugin {
 
             if ( $array ) {
 
-                willow\core\method::add_update_option( $option, $array, '', 'yes' );
+                willow\core\wordpress::add_update_option( $option, $array, '', 'yes' );
 
             }
 
         }
 
-        return willow\core\method::array_to_object( $array );
+        return willow\core\arrays::to_object( $array );
 
 	}
 	

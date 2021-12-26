@@ -12,12 +12,12 @@ class navigation {
 	;
 
 	/**
-	 * 
+	 * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -53,19 +53,8 @@ class navigation {
 
 		// w__log( 'e:>Class method IS callable: willow\get\navigation\\'.$method );
 
-		// new object ##
-		$navigation = new willow\get\navigation();
-
 		// return callback ##
-		$return = $navigation->{$method}( $args );
-
-		// call method ##
-		/*
-		$return = call_user_func_array (
-				array( '\\willow\\get\\navigation', $method )
-			,   array( $args )
-		);
-		*/
+		$return = \willow()->navigation->{$method}( $args );
 
 		// // test ##
 		// w__log( $return );

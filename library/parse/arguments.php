@@ -15,15 +15,15 @@ class arguments {
 	private function reset(){
 
 		$this->string = false; 
-		$this->plugin->set( '_flags_argument', false );
+		\willow()->set( '_flags_argument', false );
 		$this->array = false;
 
 	}
 	
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -59,11 +59,11 @@ class arguments {
 		// trim string ##
 		$this->string = trim( $this->string );
 
-		// flags check for [array]
-		$this->string = $this->plugin->parse->flags->get( $this->string, 'argument' );
+		// flags check for [argument]
+		$this->string = \willow()->parse->flags->get( $this->string, 'argument' );
 
 		// get flags locally ##
-		$_flags_argument = $this->plugin->get( '_flags_argument' );
+		$_flags_argument = \willow()->get( '_flags_argument' );
 
 		// w__log( $_flags_argument );
 
@@ -92,7 +92,7 @@ class arguments {
 		// w__log( $_flags_argument );
 
 		// extract data array from string ##
-		$this->array = willow\core\method::parse_str( $this->string );
+		$this->array = willow\core\strings::parse( $this->string );
 
 		// w__log( $this->array );
 
@@ -134,12 +134,12 @@ class arguments {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->tags->g( 'arg_o' ) );
-		$close = trim( $this->plugin->tags->g( 'arg_c' ) );
+		$open = trim( \willow()->tags->g( 'arg_o' ) );
+		$close = trim( \willow()->tags->g( 'arg_c' ) );
 
 		// w__log( self::$markup['template'] );
 
@@ -237,7 +237,7 @@ class arguments {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -245,7 +245,7 @@ class arguments {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

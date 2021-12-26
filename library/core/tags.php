@@ -18,10 +18,10 @@ class tags {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -117,7 +117,7 @@ class tags {
 		}
 		
 		// filter tags once per load ##
-		return $this->filtered_tags = \apply_filters( 'willow/render/tags', $this->plugin->get( '_tags' ) );
+		return $this->filtered_tags = \apply_filters( 'willow/render/tags', \willow()->get( '_tags' ) );
 
 	}
 
@@ -271,8 +271,8 @@ class tags {
 
 		// sanity ## ?? what is tags ??
 		if (
-			null === $this->plugin->get( '_tags' )
-			|| ! is_array( $this->plugin->get( '_tags' ) )
+			null === \willow()->get( '_tags' )
+			|| ! is_array( \willow()->get( '_tags' ) )
 		){
 
 			w__log( 'e:>Error in stored $tags' );

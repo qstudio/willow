@@ -25,7 +25,7 @@ class extend {
 		$this->plugin = \willow\plugin::get_instance();
 
 		// extend array ##
-		$this->_extend = $this->plugin->get( '_extend' );
+		$this->_extend = \willow()->get( '_extend' );
 
 	}
 
@@ -237,7 +237,7 @@ class extend {
 
 		// h::log( $methods );
 
-		$_extend = $this->plugin->get( '_extend' );
+		$_extend = \willow()->get( '_extend' );
 
 		$_extend[ $args['class'] ] = [
 			'context' 	=> $args['context'],
@@ -247,9 +247,9 @@ class extend {
 		];
 
 		// store to object prop ##
-		return $this->plugin->set( '_extend', $_extend );
+		return \willow()->set( '_extend', $_extend );
 
-		// h::log( $this->plugin->get( '_extend' ) );
+		// h::log( \willow()->get( '_extend' ) );
 
 		/*
 		return self::$extend[ $args['class'] ] = [
@@ -280,7 +280,7 @@ class extend {
 
 		}
 
-		$_extend = $this->plugin->get( '_extend' );
+		$_extend = \willow()->get( '_extend' );
 
 		// check ##
 		// h::log( 'd:>Looking for extension: '.$context );
@@ -345,7 +345,7 @@ class extend {
 	public function get_all() {
 
 		// h::log( self::$extend );
-		$_extend = $this->plugin->get( '_extend' );
+		$_extend = \willow()->get( '_extend' );
 
 		// is_array ##
 		if (

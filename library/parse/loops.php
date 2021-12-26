@@ -33,10 +33,10 @@ class loops {
 		$this->loop_variables = false;
 	}
 
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -48,9 +48,9 @@ class loops {
 	public function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 		// we do NOT need to parse Loops on the primary check
 		if( 'primary' == $process ){
@@ -121,8 +121,8 @@ class loops {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$loop_open = trim( $this->plugin->tags->g( 'loo_o' ) );
-		$loop_close = str_replace( '/', '\/', ( trim( $this->plugin->tags->g( 'loo_c' ) ) ) );
+		$loop_open = trim( \willow()->tags->g( 'loo_o' ) );
+		$loop_close = str_replace( '/', '\/', ( trim( \willow()->tags->g( 'loo_c' ) ) ) );
 
 		$regex_find = \apply_filters( 
 			'willow/render/markup/loop/regex/find', 
@@ -203,27 +203,27 @@ class loops {
 
 		}
 
-		$_markup = $this->plugin->get( '_markup' );
-		$_args = $this->plugin->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_args = \willow()->get( '_args' );
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as variable whitespace is handled by the regex ##
-		$loop_open = trim( $this->plugin->tags->g( 'loo_o' ) );
-		$loop_close = str_replace( '/', '\/', ( trim( $this->plugin->tags->g( 'loo_c' ) ) ) );
+		$loop_open = trim( \willow()->tags->g( 'loo_o' ) );
+		$loop_close = str_replace( '/', '\/', ( trim( \willow()->tags->g( 'loo_c' ) ) ) );
 
 		// scope ## - $_fields data key ##
-		$scope_open = trim( $this->plugin->tags->g( 'sco_o' ) );
-		$scope_close = trim( $this->plugin->tags->g( 'sco_c' ) );
+		$scope_open = trim( \willow()->tags->g( 'sco_o' ) );
+		$scope_close = trim( \willow()->tags->g( 'sco_c' ) );
 
 		// clear slate ##
 		$this->reset();
 
 		// return entire loop string, including tags for tag swap ##
-		$this->loop_match = willow\core\method::string_between( $match, $loop_open, $loop_close, true );
-		$this->loop = willow\core\method::string_between( $match, $loop_open, $loop_close );
+		$this->loop_match = willow\core\strings::between( $match, $loop_open, $loop_close, true );
+		$this->loop = willow\core\strings::between( $match, $loop_open, $loop_close );
 
 		// get markup ##
-		$this->loop_markup = willow\core\method::string_between( $match, $scope_close, $loop_close );
+		$this->loop_markup = willow\core\strings::between( $match, $scope_close, $loop_close );
 		// w__log( $this->loop_markup );
 
 		// get scope ##
@@ -255,7 +255,7 @@ class loops {
 
 		// look for {{ variables }} inside loop markup string ##
 		if ( 
-			$this->loop_variables = $this->plugin->parse->markup->get( $this->loop_markup, 'variable' ) 
+			$this->loop_variables = \willow()->parse->markup->get( $this->loop_markup, 'variable' ) 
 		) {
 	
 			// log ##
@@ -268,19 +268,19 @@ class loops {
 			foreach( $this->loop_variables as $key => $value ) {
 	
 				if(
-				 	strpos( $value, trim( $this->plugin->tags->g( 'arg_o' )) ) !== false // open ##
-				 	&& strrpos( $value, trim( $this->plugin->tags->g( 'arg_c' )) ) !== false // close ##
+				 	strpos( $value, trim( \willow()->tags->g( 'arg_o' )) ) !== false // open ##
+				 	&& strrpos( $value, trim( \willow()->tags->g( 'arg_c' )) ) !== false // close ##
 				){
 
 					// get arguments ##
-					$arguments = willow\core\method::string_between( 
+					$arguments = willow\core\strings::between( 
 						$value, 
-						trim( $this->plugin->tags->g( 'arg_o' )), 
-						trim( $this->plugin->tags->g( 'arg_c' )) 
+						trim( \willow()->tags->g( 'arg_o' )), 
+						trim( \willow()->tags->g( 'arg_c' )) 
 					);
 
 					// decode to array ##
-					$arguments_array = $this->plugin->parse->arguments->decode( $arguments );
+					$arguments_array = \willow()->parse->arguments->decode( $arguments );
 
 					if( 
 						$arguments_array 
@@ -294,15 +294,15 @@ class loops {
 						// w__log( 'variable "'.$value.'" has arguments: '.$arguments );
 
 						// get fill arguments string - with tags ##
-						$arguments_tag = willow\core\method::string_between( 
+						$arguments_tag = willow\core\strings::between( 
 							$value, 
-							trim( $this->plugin->tags->g( 'arg_o' )), 
-							trim( $this->plugin->tags->g( 'arg_c' )), 
+							trim( \willow()->tags->g( 'arg_o' )), 
+							trim( \willow()->tags->g( 'arg_c' )), 
 							true 
 						);
 
 						// store arguments for later use ##
-						$_args = willow\core\method::parse_args( 
+						$_args = willow\core\arrays::parse_args( 
 							$_args, 
 							$arguments_array
 						);
@@ -310,7 +310,7 @@ class loops {
 						// w__log( 'e:>Setting args also' );
 
 						// set value ##
-						$this->plugin->set( '_args', $_args );
+						\willow()->set( '_args', $_args );
 
 						// w__log( $_args );
 
@@ -329,10 +329,10 @@ class loops {
 		$this->loop_hash = $this->loop_scope; // hash based only on scope value ## <<--- OLD SCOPE VALUE ##
 		
 		// make a hash and store it for this loop ##
-		$this->loop_hash = willow\core\method::hash();
+		$this->loop_hash = willow\core\strings::hash();
 
 		// store map of scopes + hashes ##
-		$_scope_map = $this->plugin->get( '_scope_map' );
+		$_scope_map = \willow()->get( '_scope_map' );
 
 		if ( isset( $_scope_map[ $this->loop_scope ] ) ) {
 
@@ -346,7 +346,7 @@ class loops {
 
 		}
 
-		$this->plugin->set( '_scope_map', $_scope_map );
+		\willow()->set( '_scope_map', $_scope_map );
 
 		// update "{: scope :}" to  "{: scope__$hash :}" ##
 		$this->loop_scope = $this->loop_scope.'__'.$this->loop_hash;
@@ -355,7 +355,7 @@ class loops {
 
 		// now, we need to edit the markup in two places -- or just one ??
 		// create updated loop scope tag ##
-		$loop_scope_tag = $this->plugin->tags->g( 'sco_o' ).$this->loop_scope.$this->plugin->tags->g( 'sco_c' );
+		$loop_scope_tag = \willow()->tags->g( 'sco_o' ).$this->loop_scope.\willow()->tags->g( 'sco_c' );
 		// w__log( 'New loop scope tag: '.$loop_scope_tag );
 		// w__log( $this->loop_scope_full );
 
@@ -363,9 +363,9 @@ class loops {
 
 		// replace markup in principle markup template ##
 		// self::$markup_template = str_replace( self::$loop_scope_full, $loop_scope_tag, self::$markup_template );
-		$_markup_template = $this->plugin->get( '_markup_template' );
-		$_markup_template = willow\render\method::str_replace_first( $this->loop_scope_full, $loop_scope_tag, $_markup_template );
-		$this->plugin->set( '_markup_template', $_markup_template );
+		$_markup_template = \willow()->get( '_markup_template' );
+		$_markup_template = willow\core\strings::str_replace_first( $this->loop_scope_full, $loop_scope_tag, $_markup_template );
+		\willow()->set( '_markup_template', $_markup_template );
 
 		// w__log( $_markup_template );
 
@@ -373,11 +373,10 @@ class loops {
 
 		// replace stored tag in parent Willow $hash ##
 		// \willow::$hash['tag'] = str_replace( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
-		$_hash = $this->plugin->get( '_hash' );
+		$_hash = \willow()->get( '_hash' );
 		// w__log( $_hash );
-		// \willow::$hash['tag'] = willow\render\method::str_replace_first( self::$loop_scope_full, $loop_scope_tag, \willow::$hash['tag'] );
-		$_hash['tag'] = willow\render\method::str_replace_first( $this->loop_scope_full, $loop_scope_tag, $_hash['tag'] );
-		$this->plugin->set( '_hash', $_hash );
+		$_hash['tag'] = willow\core\strings::str_replace_first( $this->loop_scope_full, $loop_scope_tag, $_hash['tag'] );
+		\willow()->set( '_hash', $_hash );
 
 		// w__log( \willow::$hash );
 
@@ -400,19 +399,19 @@ class loops {
 
 		// so, we can add a new field value to $args array based on the loop scope ( including unique hash ) - with the loop_markup as value ##
 		// self::$markup[self::$loop_scope] = self::$loop_markup;
-		$_markup = $this->plugin->get( '_markup' );
+		$_markup = \willow()->get( '_markup' );
 		$_markup[ $this->loop_scope ] = $this->loop_markup;
-		$this->plugin->set( '_markup', $_markup );
+		\willow()->set( '_markup', $_markup );
 
 		// w__log( $_markup );
 
 		// generate a variable {{ $loop_scope }} ##
-		$variable = $this->plugin->tags->wrap([ 'open' => 'var_o', 'value' => $this->loop_scope, 'close' => 'var_c' ]);
+		$variable = \willow()->tags->wrap([ 'open' => 'var_o', 'value' => $this->loop_scope, 'close' => 'var_c' ]);
 		// w__log( $variable );
 		// parse\markup::set( $variable, self::$position, 'variable', $process ); // '{{ '.$field.' }}'
 
 		// swap the entire {@ loop_match @} string for a single {{ variable }} matching the passed {: scope__$hash :} ##
-		$this->plugin->parse->markup->swap( $this->loop_match, $variable, 'loop', 'variable', $process ); 
+		\willow()->parse->markup->swap( $this->loop_match, $variable, 'loop', 'variable', $process ); 
 
 		// w__log( 'd:>variable: "'.$variable.'"' );
 
@@ -442,8 +441,8 @@ class loops {
 		}
 
 		// get loop tags ##
-		$loo_o = $this->plugin->tags->g( 'loo_o' );
-		$loo_c = $this->plugin->tags->g( 'loo_c' );
+		$loo_o = \willow()->tags->g( 'loo_o' );
+		$loo_c = \willow()->tags->g( 'loo_c' );
 
 		// test string ##
 		// w__log( $string );
@@ -473,7 +472,7 @@ class loops {
 		if(
 			// strpos( $string, trim( $loo_o ) ) !== false
 			// && strpos( $string, trim( $loo_c ) ) !== false
-			$loop_string = willow\core\method::string_between( $string, trim( $loo_o ), trim( $loo_c ), true )
+			$loop_string = willow\core\strings::between( $string, trim( $loo_o ), trim( $loo_c ), true )
 		){
 
 			// w__log( $loop_string );
@@ -546,20 +545,20 @@ class loops {
 
 		// alternative method - get position of arg_o and position of LAST arg_c ( in case the string includes additional args )
 		if(
-			strpos( $string, trim( $this->plugin->tags->g( 'sco_o' )) ) !== false
-			&& strpos( $string, trim( $this->plugin->tags->g( 'sco_c' )) ) !== false
+			strpos( $string, trim( \willow()->tags->g( 'sco_o' )) ) !== false
+			&& strpos( $string, trim( \willow()->tags->g( 'sco_c' )) ) !== false
 			// @TODO --- this could be more stringent, testing ONLY the first + last 3 characters of the string ??
 		){
 
-			// $sco_o = strpos( $string, trim( $this->plugin->tags->g( 'sco_o' )) );
-			// $sco_c = strrpos( $string, trim( $this->plugin->tags->g( 'sco_c' )) );
+			// $sco_o = strpos( $string, trim( \willow()->tags->g( 'sco_o' )) );
+			// $sco_c = strrpos( $string, trim( \willow()->tags->g( 'sco_c' )) );
 
 			// w__log( 'd:>Found opening sco_o & closing sco_c'  ); 
 
-			$scope = willow\core\method::string_between( 
+			$scope = willow\core\strings::between( 
 				$string, 
-				trim( $this->plugin->tags->g( 'sco_o' )), 
-				trim( $this->plugin->tags->g( 'sco_c' )), 
+				trim( \willow()->tags->g( 'sco_o' )), 
+				trim( \willow()->tags->g( 'sco_c' )), 
 				$inclusive // option to return tag ##
 			);
 			$scope = trim( $scope );
@@ -568,10 +567,10 @@ class loops {
 			// get string between opening and closing args ##
 			$scope = substr( 
 				$string, 
-				( $sco_o + strlen( trim( $this->plugin->tags->g( 'sco_o' ) ) ) ), 
-				( $sco_c - $sco_c - strlen( trim( $this->plugin->tags->g( 'sco_c' ) ) ) ) ); 
+				( $sco_o + strlen( trim( \willow()->tags->g( 'sco_o' ) ) ) ), 
+				( $sco_c - $sco_c - strlen( trim( \willow()->tags->g( 'sco_c' ) ) ) ) ); 
 
-			// $return_string = $this->plugin->tags->g( 'loo_o' ).$return_string.$loo_c;
+			// $return_string = \willow()->tags->g( 'loo_o' ).$return_string.$loo_c;
 			*/
 
 			// w__log( 'd:>$scope: "'.$scope.'"' );
@@ -592,12 +591,12 @@ class loops {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->tags->g( 'loo_o' ) );
-		$close = str_replace( '/', '\/', ( trim( $this->plugin->tags->g( 'loo_c' ) ) ) );
+		$open = trim( \willow()->tags->g( 'loo_o' ) );
+		$close = str_replace( '/', '\/', ( trim( \willow()->tags->g( 'loo_c' ) ) ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -692,7 +691,7 @@ class loops {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -700,7 +699,7 @@ class loops {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

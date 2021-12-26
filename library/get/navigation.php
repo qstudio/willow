@@ -13,12 +13,12 @@ class navigation {
 	;
 
 	/**
-	 * 
+     * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -70,7 +70,7 @@ class navigation {
 		}
 		
 		// get config ##
-		$config = $this->plugin->config->get([ 'context' => 'navigation', 'task' => 'pagination' ]);
+		$config = \willow()->config->get([ 'context' => 'navigation', 'task' => 'pagination' ]);
 
 		// w__log( $config );
 
@@ -177,12 +177,12 @@ class navigation {
 		}
 
 		// filters and checks ##
-		$items = willow\get\method::prepare_return( $args, $items );
+		$items = willow\core\prepare::return( $args, $items );
 
 		// w__log( $items );
 
 		// markup array ##
-		$string = willow\strings\method::markup( $config['markup']['template'], $items, $config['markup'] );
+		$string = willow\core\strings::markup( $config['markup']['template'], $items, $config['markup'] );
 
 		// w__log( $string );
 
@@ -383,9 +383,9 @@ class navigation {
 		$task = isset( $args['task'] ) ? $args['task'] : 'menu' ;
 
 		// Parse incoming $args into an array and merge it with $defaults ##
-		$args = willow\core\method::parse_args( 
+		$args = willow\core\arrays::parse_args( 
 			$args['args'], 
-			$this->plugin->config->get([ 'context' => $context, 'task' => $task ])['args'] 
+			\willow()->config->get([ 'context' => $context, 'task' => $task ])['args'] 
 		);
 		// w__log( 'e:>MENU: '.$args['theme_location'] );
 		

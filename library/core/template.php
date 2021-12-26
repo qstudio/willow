@@ -1,11 +1,12 @@
 <?php
 
-namespace willow\view;
+namespace willow\core;
+
 
 use willow;
 use willow\core\helper as h;
 
-class is {
+class template {
 
     /**
      * Get Q template name, if set - else return WP global
@@ -16,18 +17,18 @@ class is {
 
         if( ! isset( $GLOBALS['q_template'] ) ) {
 
-            // w__log( 'e:>Page template empty' );
+            // h::log( 'e:>Page template empty' );
             
 			// return false;
 			
 			// changes to return WP template -- check for introduced issues ##
-			return str_replace( [ '.php', '.willow' ], '', \get_page_template_slug() );
+			return str_replace( [ '.php', '.willow', '.willow.php' ], '', \get_page_template_slug() );
 
         } else {
 
-            // w__log( 'Page template: '.$GLOBALS['q_template'] );
+            // h::log( 'Page template: '.$GLOBALS['q_template'] );
 
-            return str_replace( [ '.php', '.willow' ], '', $GLOBALS['q_template'] );        
+            return str_replace( [ '.php', '.willow', '.willow.php' ], '', $GLOBALS['q_template'] );        
 
         }
 
@@ -47,17 +48,17 @@ class is {
 
         } else {
 
-            // w__log( 'Page template: '.$GLOBALS['q_template'] );
+            // h::log( 'Page template: '.$GLOBALS['q_template'] );
 
             $template = $GLOBALS['q_template'];        
 
 		}
 		
-		// w__log( 'e:>Template: "'.$template.'"' );
+		// h::log( 'e:>Template: "'.$template.'"' );
 
-		$extension = willow\core\method::file_extension( $template );
+		$extension = \willow\core\strings::file_extension( $template );
 
-		// w__log( 'e:>Extension: "'.$extension.'"' );
+		// h::log( 'e:>Extension: "'.$extension.'"' );
 
 		// kick back ##
 		return $extension;
@@ -71,13 +72,11 @@ class is {
 	*/
 	public static function showing( $file = null ): bool {
 
-		// w__log( 'd:>temp: '.view\method::get() );
-		// w__log( 'd:>file: '.$file  );
+		// h::log( 'd:>temp: '.core\template::get() );
+		// h::log( 'd:>file: '.$file  );
 
 		return self::get() == trim( $file ) ;
 
 	}
-
-
 
 }

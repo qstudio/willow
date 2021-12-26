@@ -14,10 +14,10 @@ class partial {
 	/**
 	 * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -31,7 +31,7 @@ class partial {
      */
     public function get( $args = null ) {
 
-		return $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return \willow()->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

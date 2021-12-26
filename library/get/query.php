@@ -12,12 +12,12 @@ class query {
 	;
 
 	/**
-	 * 
+	 * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -119,7 +119,7 @@ class query {
 		// w__log( $array );
 
 		// filter and return array ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
     }
 
@@ -132,7 +132,7 @@ class query {
     public function posts_by_meta( $args = array() ){
 
         // Parse incoming $args into an array and merge it with $defaults - caste to object ##
-        $args = ( object ) \wp_parse_args( $args, $this->plugin->config->get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
+        $args = ( object ) \wp_parse_args( $args, \willow()->config->get(['context' => 'query', 'task' => 'get_post_by_meta' ]) );
 
         // grab page - polylang will take care of language selection ##
         $post_args = array(

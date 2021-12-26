@@ -13,10 +13,10 @@ class taxonomy {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -27,10 +27,10 @@ class taxonomy {
      **/ 
     public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
 
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 
 		// check if type allowed ##
-		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, \willow()->type->get->allowed() ) ) {
 
 			// w__log( 'e:>Value Type not allowed: '.$type );
 

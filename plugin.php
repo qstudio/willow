@@ -63,7 +63,7 @@ final class plugin {
 		$render = false,
 
 		// filter methods ##
-		$filter_method = false,
+		// $filter_method = false,
 
 		// type handler objects ##
 		$type = false

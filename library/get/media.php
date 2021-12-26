@@ -14,10 +14,10 @@ class media {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 	
@@ -103,7 +103,7 @@ class media {
 		// return $array;
 		
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -206,7 +206,7 @@ class media {
 		// w__log( $return );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, [ 'gallery' => $return ] );
+		return willow\core\prepare::return( $args, [ 'gallery' => $return ] );
 
     }
 
@@ -244,13 +244,13 @@ class media {
 		} else if ( 
 			function_exists( 'willow' )
 			// && isset( \willow::$args )
-			&& $this->plugin->get( '_args' )
+			&& \willow()->get( '_args' )
 			&& isset( $args['field'] )
 			// && isset( \willow::$args[ $args['field'] ]['config']['handle'] ) 
-			&& isset( $this->plugin->get( '_args' )[ $args['field'] ]['config']['handle'] )
+			&& isset( \willow()->get( '_args' )[ $args['field'] ]['config']['handle'] )
 		){
 
-			$args['handle'] = $this->plugin->get( '_args' )[ $args['field'] ]['config']['handle'];
+			$args['handle'] = \willow()->get( '_args' )[ $args['field'] ]['config']['handle'];
 
 			// w__log( 'e:> Handle grabbed from field specific... config->handle: '.$args['handle'] );
 
@@ -258,13 +258,13 @@ class media {
 		} else if ( 
 			function_exists( 'willow' )
 			// && isset( \willow::$args )
-			&& $this->plugin->get( '_args' )
+			&& \willow()->get( '_args' )
 			// && isset( $args['field'] )
 			// && isset( \willow::$args['config']['handle'] ) 
-			&& isset( $this->plugin->get( '_args' )['config']['handle'] )
+			&& isset( \willow()->get( '_args' )['config']['handle'] )
 		){
 
-			$args['handle'] = $this->plugin->get( '_args' )['config']['handle'];
+			$args['handle'] = \willow()->get( '_args' )['config']['handle'];
 
 			// w__log( 'e:> Handle grabbed from global args... config->handle: '.$args['handle'] );
 
@@ -302,7 +302,7 @@ class media {
         // self::log( 'Handle: '.$args['handle'] );
 		if ( ! $src = \wp_get_attachment_image_src( $args['attachment_id'], $args['handle'] ) ){
 
-			w__log( $this->plugin->get( '_args' )['task'].'~>n wp_get_attachment_image_src did not return data' );
+			w__log( \willow()->get( '_args' )['task'].'~>n wp_get_attachment_image_src did not return data' );
 
 			return false;
 
@@ -335,9 +335,9 @@ class media {
 			(
 				function_exists( 'willow' )
 				// && isset( \willow::$args['config']['meta'] )
-				&& isset( $this->plugin->get( '_args' )['config']['meta'] )
+				&& isset( \willow()->get( '_args' )['config']['meta'] )
 				// && true === \willow::$args['config']['meta'] 
-				&& true === $this->plugin->get( '_args' )['config']['meta']
+				&& true === \willow()->get( '_args' )['config']['meta']
 			)
 			/*
 			||
@@ -367,9 +367,9 @@ class media {
 			(	
 				function_exists( 'willow' )
 				// && isset( \willow::$args['config']['srcset'] )
-				&& isset( $this->plugin->get( '_args' )['config']['srcset'] )
+				&& isset( \willow()->get( '_args' )['config']['srcset'] )
 				// && true === \willow::$args['config']['srcset'] 
-				&& true === $this->plugin->get( '_args' )['config']['srcset']
+				&& true === \willow()->get( '_args' )['config']['srcset']
 			)
 			/*
 			||

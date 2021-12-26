@@ -13,10 +13,10 @@ class author {
 
 	/**
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -28,12 +28,12 @@ class author {
     public function format( \WP_Post $wp_post = null, String $type_field = null, String $field = null, $context = null, $type = null ): string {
 
 		// check if type allowed ##
-		if ( ! array_key_exists( $type, $this->plugin->type->method->get_allowed() ) ) {
+		if ( ! array_key_exists( $type, \willow()->type->get->allowed() ) ) {
 
 			// w__log( 'e:>Value Type not allowed: '.$type );
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Value Type not allowed: "'.$type.'"');
+			w__log( \willow()->get( '_args' )['task'].'~>e:Value Type not allowed: "'.$type.'"');
 
 			// return $args[0]->$args[1]; // WHY ??#
 			return false;
@@ -44,7 +44,7 @@ class author {
 		if ( ! $wp_post instanceof \WP_Post ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
+			w__log( \willow()->get( '_args' )['task'].'~>e:Error in pased $args - not a WP_Post object');
 
 			return false;
 

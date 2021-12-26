@@ -12,12 +12,12 @@ class taxonomy {
 	;
 
 	/**
-	 * 
+	 * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -38,7 +38,7 @@ class taxonomy {
 		}
 
 		// take task as method ##
-		$method = $args['task'];
+		$method = \sanitize_text_field( $args['task'] );
 
 		if(
 			! method_exists( 'willow\get\taxonomy', $method )
@@ -51,23 +51,10 @@ class taxonomy {
 
 		}
 
-		// return \willow\get\post::$method;
-
 		// w__log( 'e:>Class method IS callable: willow\get\taxonomy\\'.$method );
 
-		// new object ##
-		$taxonomy = new willow\get\taxonomy( $this->plugin );
-
 		// return post method to 
-		$return = $taxonomy->{$method}( $args );
-
-		// call method ##
-		/*
-		$return = call_user_func_array (
-				array( '\\willow\\get\\taxonomy', $method )
-			,   array( $args )
-		);
-		*/
+		$return = \willow()->taxonomy->{$method}( $args );
 
 		// // test ##
 		// w__log( $return );

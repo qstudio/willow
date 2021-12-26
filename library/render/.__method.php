@@ -8,170 +8,6 @@ use willow;
 class method {
 
 	/**
-	 * Prepare $array to be rendered
-	 *
-	 */
-	public static function prepare( $args = null, $array = null ) {
-
-		// get calling method for filters ##
-		$method = willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
-
-		// sanity ##
-		if (
-			is_null( $args )
-			|| ! is_array( $args )
-			|| is_null( $array )
-			|| ! is_array( $array )
-			// || empty( $array )
-		) {
-
-			// log ##
-			w__log( 'e~>'.$method.':>Error in passed $args or $array' );
-
-			return false;
-
-		}
-
-		// empty results ##
-		if (
-			empty( $array )
-		) {
-
-			// log ##
-			w__log( 'e~>'.$method.':>Returned $array is empty' );
-
-			return false;
-
-		}
-
-		// w__log( 'd:>$method: '.$method );
-		// w__log( $args );
-		// w__log( $array );
-
-		// if no markup sent.. ##
-		if ( 
-			! isset( $args['markup'] )
-			&& is_array( $args ) 
-		) {
-
-			// default -- almost useless - but works for single values.. ##
-			$args['markup'] = '%value%';
-
-			foreach( $args as $k => $v ) {
-
-				if ( is_string( $v ) ) {
-
-					// take first string value in $args markup ##
-					$args['markup'] = $v;
-
-					break;
-
-				}
-
-			}
-
-		}
-
-		// no markup passed ##
-		if ( ! isset( $args['markup'] ) ) {
-
-			w__log( 'e~>'.$method.':Missing "markup", returning false.' );
-
-			return false;
-
-		}
-
-		// last filter on array, before applying markup ##
-		$array = \apply_filters( 'willow/render/prepare/'.$method.'/array', $array, $args );
-
-		// do markup ##
-		$string = self::markup( $args['markup'], $array, $args );
-
-		// filter $string by $method ##
-		$string = \apply_filters( 'willow/render/prepare/'.$method.'/string', $string, $args );
-
-		// filter $array by method/template ##
-		if ( $template = core\method::template() ) {
-
-			// w__log( 'Filter: "q/theme/get/string/'.$method.'/'.$template.'"' );
-			$string = \apply_filters( 'willow/render/prepare/'.$method.'/string/'.$template, $string, $args );
-
-		}
-
-		// test ##
-		// w__log( $string );
-
-		// all render methods echo ##
-		echo $string ;
-
-		// optional logging to show removals and stats ##
-        // render\log::render( $args );
-
-		return true;
-
-	}
-
-
-
-
-	/**
-	 * Search string for string passed to wp search query
-	*/
-	public static function search_the_content( Array $args = null ) {
-
-		// sanity @todo ##
-		if (
-			is_null( $args )
-			|| ! isset( $args['string'] )
-		) {
-
-			w__log( 'Error in passed params' );
-
-			return false;
-
-		}
-
-		// get string ##
-		$string = $args['string'];
-
-		// get search term ##
-		$search = \get_search_query();
-		// w__log( $search );
-
-        // $string = $args['string']; #\get_the_content();
-        $keys = implode( '|', explode( ' ', $search ) );
-		$string = preg_replace( '/(' . $keys .')/iu', '<mark>\0</mark>', $string );
-
-		// get text length limit ##
-		$length = isset( $args[ 'length' ] ) ? $args['length'] : 200 ;
-
-		// get first occurance of search string ##
-		$position = strpos($string, $search );
-
-		// w__log( 'string pos: '.$position );
-
-		if ( ( $length / 2 ) > $position ) {
-
-			// w__log( 'first search term is less than 100 chars in, so return first 200 chars..' );
-
-			$string = ( strlen( $string ) > 200 ) ? substr( $string,0,200 ).'...' : $string;
-
-		} else {
-
-			// move start point ##
-			$string = '...'.substr( $string, $position - ( $length / 2 ), -1 );
-			$string = ( strlen( $string ) > 200 ) ? substr( $string,0,200 ).'...' : $string;
-
-		}
-
-		// return ##
-		return $string;
-
-    }
-
-
-
-	/**
 	 * Extract keys and values from passed array
 	 * 
 	 * @since 4.1.0
@@ -250,19 +86,14 @@ class method {
 	  
 	}
 
-
-
 	public static function get_context(){
-
-		// get current willow instance ##
-		$plugin = willow();
 
 		// sanity ##
 		if (
-			null === $plugin
-			|| null === $plugin->get( '_args' )
-			|| ! isset( $plugin->get( '_args' )['context'] )
-			|| ! isset( $plugin->get( '_args' )['task'] )
+			null === \willow()
+			|| null === \willow()->get( '_args' )
+			|| ! isset( \willow()->get( '_args' )['context'] )
+			|| ! isset( \willow()->get( '_args' )['task'] )
 		){
 
 			w__log( 'd:>No context / task available' );
@@ -271,13 +102,13 @@ class method {
 
 		}
 
-		return sprintf( 'Context: "%s" Task: "%s"', $plugin->get( '_args' )['context'], $plugin->get( '_args' )['task'] );
+		return sprintf( 
+			'Context: "%s" Task: "%s"', 
+			\willow()->get( '_args' )['context'], 
+			\willow()->get( '_args' )['task'] 
+		);
 
 	}
-
-
-
-	
 
 	/**
      * Markup object based on {{ placeholders }} and template
@@ -292,8 +123,7 @@ class method {
         if (
             is_null( $markup )
             || is_null( $data )
-            ||
-            (
+            || (
                 ! is_array( $data )
                 && ! is_object( $data )
             )
@@ -306,18 +136,16 @@ class method {
 		}
 
 		if (
-			// class_exists( 'willow' )
-			// || 
 			function_exists( 'willow' )
 		){
 
 			// variable replacement -- regex way ##
-			$open = willow()->tags->g( 'var_o' );
-			$close = willow()->tags->g( 'var_c' );
+			$open = \willow()->tags->g( 'var_o' );
+			$close = \willow()->tags->g( 'var_c' );
 
 		} else {
 
-			w__log( 'e:>Q Willow Library Missing, using presumed variable tags {{ xxx }}' );
+			\w__log( 'e:>Willow Library Missing, using presumed variable tags {{ xxx }}' );
 
 			$open = '{{ ';
 			$close = ' }}';

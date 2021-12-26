@@ -13,11 +13,12 @@ class post {
 	;
 
 	/**
+	 * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -151,7 +152,7 @@ class post {
 		// w__log( $array );
 		
 		// return
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 	
@@ -260,7 +261,7 @@ class post {
         }
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 	
@@ -302,7 +303,7 @@ class post {
 
             $array['content'] =
                 \get_the_author_meta( 'description' ) ?
-                willow\strings\method::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                willow\core\strings::chop( nl2br( \get_the_author_meta( 'description' ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else if (
@@ -316,7 +317,7 @@ class post {
 
             $array['content'] =
                 \category_description() ?
-                willow\strings\method::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
+                willow\core\strings::chop( nl2br( \category_description(), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) ) ) :
                 self::excerpt_from_id( intval( \get_option( 'page_for_posts' ) ), intval( isset( $args['limit'] ) ? $args['limit'] : 200 ) );
 
         } else {
@@ -328,7 +329,7 @@ class post {
 		}
 		
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -409,12 +410,12 @@ class post {
 		// w__log( \get_post_field( 'post_content', $args['config']['post'] ) );
 
 		// get the post_content with filters applied ##
-		$array['content'] = \apply_filters( 'the_content', willow\strings\method::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
+		$array['content'] = \apply_filters( 'the_content', willow\core\strings::clean( \get_post_field( 'post_content', $args['config']['post'] ) ) );
 
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 

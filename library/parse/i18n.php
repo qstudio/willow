@@ -30,10 +30,10 @@ class i18n {
 
 	}
 
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -54,12 +54,12 @@ class i18n {
     public function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 		// get parse task ##
-		$_parse_task = $_args['task'] ?? $this->plugin->get( '_parse_task' );
+		$_parse_task = $_args['task'] ?? \willow()->get( '_parse_task' );
 
 		// sanity -- method requires requires ##
 		if ( 
@@ -122,8 +122,8 @@ class i18n {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->tags->g( 'i18n_o' ) );
-		$close = trim( $this->plugin->tags->g( 'i18n_c' ) );
+		$open = trim( \willow()->tags->g( 'i18n_o' ) );
+		$close = trim( \willow()->tags->g( 'i18n_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -199,18 +199,18 @@ class i18n {
 		}
 
 		// vars ##
-		$_markup_template = $this->plugin->get( '_markup_template' );
+		$_markup_template = \willow()->get( '_markup_template' );
 
 		// tags ##
-		$open = trim( $this->plugin->tags->g( 'i18n_o' ) );
-		$close = trim( $this->plugin->tags->g( 'i18n_c' ) );
+		$open = trim( \willow()->tags->g( 'i18n_o' ) );
+		$close = trim( \willow()->tags->g( 'i18n_c' ) );
 
 		// clear slate ##
 		self::reset();
 
 		// return entire function string, including tags for tag swap ##
-		$this->i18n_match = willow\core\method::string_between( $match, $open, $close, true );
-		$this->i18n = willow\core\method::string_between( $match, $open, $close );
+		$this->i18n_match = willow\core\strings::between( $match, $open, $close, true );
+		$this->i18n = willow\core\strings::between( $match, $open, $close );
 
 		// w__log( '$i18n_match: '.$i18n_match );
 
@@ -238,8 +238,8 @@ class i18n {
 		}
 
 		// php_function tags ##
-		// $return_open = $this->plugin->tags->g( 'php_fun_o' );
-		// $return_close = $this->plugin->tags->g( 'php_fun_c' );
+		// $return_open = \willow()->tags->g( 'php_fun_o' );
+		// $return_close = \willow()->tags->g( 'php_fun_c' );
 
 		// w__log( 'e:>$i18n: '.$i18n );
 
@@ -259,10 +259,10 @@ class i18n {
 		$_markup_template = str_replace( $this->i18n_match, $this->return, $_markup_template );
 
 		// store _markup_template ##
-		$this->plugin->set( '_markup_template', $_markup_template );
+		\willow()->set( '_markup_template', $_markup_template );
 
 		// update markup for willow parse ##
-		$this->plugin->parse->markup->swap( $this->i18n_match, $this->return, 'i18n', 'string', $process );
+		\willow()->parse->markup->swap( $this->i18n_match, $this->return, 'i18n', 'string', $process );
 		
 		// clear slate ##
 		$this->reset();
@@ -287,22 +287,22 @@ class i18n {
 
 		// check for opening and closing tags
 		if(
-			strpos( $string, trim( $this->plugin->tags->g( 'i18n_o' )) ) !== false
-			&& strpos( $string, trim( $this->plugin->tags->g( 'i18n_c' )) ) !== false
+			strpos( $string, trim( \willow()->tags->g( 'i18n_o' )) ) !== false
+			&& strpos( $string, trim( \willow()->tags->g( 'i18n_c' )) ) !== false
 		){
 
-			// $loo_o = strpos( $string, trim( $this->plugin->tags->g( 'i18n_o' )) );
-			// $loo_c = strrpos( $string, trim( $this->plugin->tags->g( 'i18n_c' )) );
+			// $loo_o = strpos( $string, trim( \willow()->tags->g( 'i18n_o' )) );
+			// $loo_c = strrpos( $string, trim( \willow()->tags->g( 'i18n_c' )) );
 
 			// // w__log( 'd:>Found opening loo_o @ "'.$loo_o.'" and closing loo_c @ "'.$loo_c.'"'  ); 
 
 			// // get string between opening and closing args ##
 			// $return_string = substr( 
 			// 	$string, 
-			// 	( $loo_o + strlen( trim( $this->plugin->tags->g( 'loo_o' ) ) ) ), 
-			// 	( $loo_c - $loo_o - strlen( trim( $this->plugin->tags->g( 'loo_c' ) ) ) ) ); 
+			// 	( $loo_o + strlen( trim( \willow()->tags->g( 'loo_o' ) ) ) ), 
+			// 	( $loo_c - $loo_o - strlen( trim( \willow()->tags->g( 'loo_c' ) ) ) ) ); 
 
-			// $return_string = $this->plugin->tags->g( 'loo_o' ).$return_string.$this->plugin->tags->g( 'loo_c' );
+			// $return_string = \willow()->tags->g( 'loo_o' ).$return_string.\willow()->tags->g( 'loo_c' );
 
 			// w__log( 'e:>$string: "'.$return_string.'"' );
 
@@ -319,12 +319,12 @@ class i18n {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->tags->g( 'i18n_o' ) );
-		$close = trim( $this->plugin->tags->g( 'i18n_c' ) );
+		$open = trim( \willow()->tags->g( 'i18n_o' ) );
+		$close = trim( \willow()->tags->g( 'i18n_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
@@ -420,7 +420,7 @@ class i18n {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -428,7 +428,7 @@ class i18n {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

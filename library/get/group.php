@@ -16,10 +16,10 @@ class group {
 	/**
 	 * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -29,9 +29,10 @@ class group {
      * @param       Array       $args
      * @since       1.3.0
 	 * @uses		define
-     * @return      Array
+     * @return      mixed
      */
-    public function fields( $args = null ) {
+    public function fields( array $args = null ):?array
+	{
 
 		// w__log( $args );
 
@@ -39,28 +40,27 @@ class group {
         if ( 
             is_null( $args ) 
             || ! is_array( $args )
-            // || ! isset( $args['fields'] )
         ) {
 
 			// log ##
 			w__log( $args['task'].'~>e:Error in passed parameter $args');
 			// w__log( 'e:>Error in passed parameter $args');
 
-            return false;
+            return null;
 
         }
 
         // Get all ACF field data for this post ##
         if ( ! $this->acf_fields( $args ) ) {
 
-            return false;
+            return null;
 
         }
 
         // get all fields defined in this group -- pass to $args['fields'] ##
         if ( ! $this->group_fields( $args ) ) {
 
-            return false;
+            return null;
 
         }
 
@@ -81,7 +81,7 @@ class group {
 			w__log( $args['task'].'~>e:Error extracting field list from passed data');
 			// w__log( 'e:>Error extracting field list from passed data');
 
-            return false;
+            return null;
 
         }
 
@@ -108,7 +108,7 @@ class group {
 			w__log( $args['task'].'~>n:Fields array is empty, so nothing to process...');
 			// w__log( 'e:>:Fields array is empty, so nothing to process...');
 
-            return false;
+            return null;
 
 		}
 		
@@ -117,7 +117,7 @@ class group {
 
         // positive ##
         return [
-			'fields'	=> $this->plugin->get( '_fields' ), // self::$fields
+			'fields'	=> \willow()->get( '_fields' ), // self::$fields
 			'data' 		=> $this->data
 		];
 
@@ -125,8 +125,13 @@ class group {
 
     /**
      * Get ACF Fields data
+	 * 
+	 * @since 	2.1.0
+	 * @param	array
+	 * @return	mixed
      */
-    public function acf_fields( $args = null ){
+    public function acf_fields( array $args = null ):?array
+	{
 
 		if ( ! function_exists( 'get_fields' ) ) {
 
@@ -154,7 +159,7 @@ class group {
 			w__log( $args['task'].'~>n:Post has no ACF field data or corrupt data returned');
 			// w__log( 'd:>Post has no ACF field data or corrupt data returned');
 
-            return false;
+            return null;
 
         }
 
@@ -166,8 +171,13 @@ class group {
 
 	/**
 	 * Get ACF Field Group from passed $group reference
+	 * 
+	 * @since 	2.1.0
+	 * @param	array
+	 * @return	bool
 	 */
-    public function group_fields( $args = null ){
+    public function group_fields( array $args = null ):bool
+	{
 
         // assign variable ##
 		$group = $args['task'];
@@ -191,7 +201,7 @@ class group {
         }
 
         // filter ##
-        $array = $this->plugin->filter->apply([ 
+        $array = \willow()->filter->apply([ 
             'parameters'    => [ 'fields' => $array ], // pass ( $fields ) as single array ##
             'filter'        => 'willow/get/group/'.$group, // filter handle ##
             'return'        => $array
@@ -199,9 +209,9 @@ class group {
 
         // assign to class properties ##
 		// self::$fields = $array; // capture all fields for type and callback lookups ##
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 		$_args['fields'] = array_merge( $_args['fields'] ?? [], $array );
-		$this->plugin->set( '_args', $_args ); 
+		\willow()->set( '_args', $_args ); 
 		$this->data = $array; // data to return to fields\define ##
 
         // w__log( $array );
@@ -213,8 +223,13 @@ class group {
 
 	/**
 	 * Skip fields marked to avoid
+	 * 
+	 * @since 	2.1.0
+	 * @param	array
+	 * @return	__bool
 	 */
-    public function skip( $args = null ){
+    public function skip( array $args = null ):bool
+	{
 
         // sanity ##
         if ( 
@@ -240,12 +255,19 @@ class group {
 
         }
 
+		return true;
+
     }
 
 	/**
-	* Get the fields from the listed ACF group, removing fields returned form acf_fields()
-	*/
-    public function group( $args = null ){
+ 	 * Get the fields from the listed ACF group, removing fields returned form acf_fields()
+	 * 
+	 * @since 	2.1.0
+	 * @param	array
+	 * @return	__bool
+	 */
+    public function group( array $args = null ):bool
+	{
 
         // sanity ##
         if ( 

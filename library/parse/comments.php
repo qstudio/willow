@@ -22,13 +22,10 @@ class comments {
 		$this->flags_comment = false;
 	}
 
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
-
-		// flags ##
-		$this->parse_flags = new willow\parse\flags();
+		$this->plugin = $plugin;
 
 	}
 
@@ -40,13 +37,13 @@ class comments {
 	public function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_map = $this->plugin->get( '_buffer_map' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_map = \willow()->get( '_buffer_map' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 		// get parse task ##
-		$_parse_task = $_args['task'] ?? $this->plugin->get( '_parse_task' );
+		$_parse_task = $_args['task'] ?? \willow()->get( '_parse_task' );
 
 		// sanity -- this requires ##
 		// sanity -- method requires requires ##
@@ -110,8 +107,8 @@ class comments {
 
 		// get all comments, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->tags->g( 'com_o' ) );
-		$close = trim( $this->plugin->tags->g( 'com_c' ) );
+		$open = trim( \willow()->tags->g( 'com_o' ) );
+		$close = trim( \willow()->tags->g( 'com_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -165,16 +162,16 @@ class comments {
 				// w__log( 'd:>position from 1: '.$matches[0][$match][1] ); 
 				
 				// get a single comment ##
-				$this->comment = core\method::string_between( $matches[0][$match][0], $open, $close );
+				$this->comment = core\strings::between( $matches[0][$match][0], $open, $close );
 
 				// return entire function string, including tags for tag swap ##
-				$this->comment_match = core\method::string_between( $matches[0][$match][0], $open, $close, true );
+				$this->comment_match = core\strings::between( $matches[0][$match][0], $open, $close, true );
 
 				// look for flags ##
 				// self::flags();
-				$this->comment = $this->parse_flags->get( $this->comment, 'comment' );
-				$_flags_comment = $this->plugin->get( '_flags_comment' );
-				// w__log( $this->plugin->get( '_flags_comment') );
+				$this->comment = \willow()->parse->flags->get( $this->comment, 'comment' );
+				$_flags_comment = \willow()->get( '_flags_comment' );
+				// w__log( \willow()->get( '_flags_comment') );
 
 				// sanity ##
 				if ( 
@@ -218,7 +215,7 @@ class comments {
 					];
 
 					// re-save _buffer_map ##
-					$this->plugin->set( '_buffer_map', $_buffer_map ); 
+					\willow()->set( '_buffer_map', $_buffer_map ); 
 
 				}
 				
@@ -256,12 +253,12 @@ class comments {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->tags->g( 'com_o' ) );
-		$close = trim( $this->plugin->tags->g( 'com_c' ) );
+		$open = trim( \willow()->tags->g( 'com_o' ) );
+		$close = trim( \willow()->tags->g( 'com_c' ) );
 
 		// strip all section blocks, we don't need them now ##
 		$regex = \apply_filters( 
@@ -356,7 +353,7 @@ class comments {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -364,7 +361,7 @@ class comments {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

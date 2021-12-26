@@ -12,24 +12,22 @@ class taxonomy {
 	;
 
 	/**
-	 * 
+     * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		// $this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 	
 	/**
 	 * We need a generic get_taxonomy_terms method.. which distributes, based on post type and any passed tax / term ## 
 	 */
-	public function terms( $args = null ){
-
-		$render_args = new willow\render\args();
+	public function terms( array $args = null ){
 
 		// global arg validator ##
-		if ( ! $args = $render_args->prepare( $args ) ){ 
+		if ( ! $args = \willow()->render->args->prepare( $args ) ){ 
 	   
 			// w__log( 'Bailing..' ); 
 		
@@ -118,7 +116,7 @@ class taxonomy {
 		$array = [ 'terms' => $array ];
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -183,7 +181,7 @@ class taxonomy {
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 	
@@ -256,7 +254,7 @@ class taxonomy {
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -321,7 +319,7 @@ class taxonomy {
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -393,7 +391,7 @@ class taxonomy {
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 

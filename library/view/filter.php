@@ -44,7 +44,7 @@ class filter {
 	// tracker ##
 	private static $view_tracker = null;
 	
-	function __construct(){
+	public function __construct(){
 
 		// empty ##
 
@@ -53,7 +53,7 @@ class filter {
     /**
     * Kick things off
     */
-    function hooks(){
+    public function hooks(){
 
 		// we need to filter $view_custom to allow plugins to inject extra templates ##
 

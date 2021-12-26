@@ -15,10 +15,10 @@ class map {
      * @todo
      * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -30,17 +30,17 @@ class map {
     public function prepare() {
 
 		// get orignal markup string ##
-		$_markup_template = $this->plugin->get( '_markup_template' );
+		$_markup_template = \willow()->get( '_markup_template' );
 
 		// get buffer map ##
-		$_buffer_map = $this->plugin->get( '_buffer_map' );
+		$_buffer_map = \willow()->get( '_buffer_map' );
 		// w__log( $_buffer_map );
 
 		// sanity ##
 		if ( 
 			is_null( $_buffer_map )
 			|| ! is_array( $_buffer_map )
-			// || is_null( $this->plugin->get( '_buffer_map' )['0'] )
+			// || is_null( \willow()->get( '_buffer_map' )['0'] )
 		){
 
 			// log ##
@@ -75,21 +75,21 @@ class map {
 
 			}
 
-			// w__log( 'Row: '.$value['hash'].' is a child to: '.$this->plugin->get( '_buffer_map' )[ $row ]['hash'] );
+			// w__log( 'Row: '.$value['hash'].' is a child to: '.\willow()->get( '_buffer_map' )[ $row ]['hash'] );
 
 			// str_replace the value of "tag" in this key, in the "output" of the found key with "output" from this key... ##
 			// self::$buffer_map[ $row ]['output'] = str_replace( $value['tag'], $value['output'], self::$buffer_map[ $row ]['output'] );
-			// $_buffer_map = $this->plugin->get( '_buffer_map' );
+			// $_buffer_map = \willow()->get( '_buffer_map' );
 			$_buffer_map[ $row ]['output'] = str_replace( 
 				$value['tag'], 
 				$value['output'], 
-				$_buffer_map[ $row ]['output'] // $this->plugin->get( '_buffer_map' )[ $row ]['output'] 
+				$_buffer_map[ $row ]['output'] // \willow()->get( '_buffer_map' )[ $row ]['output'] 
 			);
 
 		}
 
-		// w__log( $this->plugin->get( '_buffer_map' ) );
-		// w__log( $this->plugin->get( '_buffer_log' ) );
+		// w__log( \willow()->get( '_buffer_map' ) );
+		// w__log( \willow()->get( '_buffer_log' ) );
 		// w__log( $_markup_template );
 		// $return = '';
 
@@ -131,7 +131,7 @@ class map {
 		// // w__log( $string );
 
 		// save buffer map ##
-		$this->plugin->set( '_buffer_map', $_buffer_map );
+		\willow()->set( '_buffer_map', $_buffer_map );
 
 		// kick back ##
 		return $_markup_template;

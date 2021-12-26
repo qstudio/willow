@@ -27,7 +27,7 @@ class php_functions {
 
 		$this->return = false; 
 		$this->function_hash = false; 
-		$this->plugin->set( '_flags_php_function', false );
+		\willow()->set( '_flags_php_function', false );
 		$this->function = false;
 		$this->arguments = false;
 		$this->class = false;
@@ -42,10 +42,10 @@ class php_functions {
 	 * 
 	 * @since 2.0.0
 	*/
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
-		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		// grab passed plugin instance ## 
+		$this->plugin = $plugin;
 
 	}
 	
@@ -57,12 +57,12 @@ class php_functions {
     public function match( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 		// get parse task ##
-		$_parse_task = $_args['task'] ?? $this->plugin->get( '_parse_task' );
+		$_parse_task = $_args['task'] ?? \willow()->get( '_parse_task' );
 
 		// sanity -- method requires requires ##
 		if ( 
@@ -125,8 +125,8 @@ class php_functions {
 
 		// get all sections, add markup to $markup->$field ##
 		// note, we trim() white space off tags, as this is handled by the regex ##
-		$open = trim( $this->plugin->tags->g( 'php_fun_o' ) );
-		$close = trim( $this->plugin->tags->g( 'php_fun_c' ) );
+		$open = trim( \willow()->tags->g( 'php_fun_o' ) );
+		$close = trim( \willow()->tags->g( 'php_fun_c' ) );
 
 		// w__log( 'open: '.$open. ' - close: '.$close );
 
@@ -195,21 +195,21 @@ class php_functions {
 
 		}
 
-		$open = trim( $this->plugin->tags->g( 'php_fun_o' ) );
-		$close = trim( $this->plugin->tags->g( 'php_fun_c' ) );
+		$open = trim( \willow()->tags->g( 'php_fun_o' ) );
+		$close = trim( \willow()->tags->g( 'php_fun_c' ) );
 
 		// clear slate ##
 		self::reset();
 
 		// return entire function string, including tags for tag swap ##
-		$this->function_match = willow\core\method::string_between( $match, $open, $close, true );
-		$this->function = willow\core\method::string_between( $match, $open, $close );
+		$this->function_match = willow\core\strings::between( $match, $open, $close, true );
+		$this->function = willow\core\strings::between( $match, $open, $close );
 
 		// w__log( '$function_match: '.$function_match );
 
 		// look for flags ##
-		$this->function = $this->plugin->parse->flags->get( $this->function, 'php_function' );
-		// w__log( $this->plugin->get( '_flags_php_function' ) );
+		$this->function = \willow()->parse->flags->get( $this->function, 'php_function' );
+		// w__log( \willow()->get( '_flags_php_function' ) );
 		// w__log( $this->function );
 
 		// clean up ##
@@ -233,11 +233,11 @@ class php_functions {
 		$this->function_hash = $this->function; // set hash to entire function, in case this has no config and is not class_method format ##
 		// w__log( 'hash set to: '.$function_hash );
 
-		// $config_string = core\method::string_between( $value, '[[', ']]' )
-		$this->config_string = willow\core\method::string_between( 
+		// $config_string = core\strings::between( $value, '[[', ']]' )
+		$this->config_string = willow\core\strings::between( 
 			$this->function, 
-			trim( $this->plugin->tags->g( 'arg_o' )), 
-			trim( $this->plugin->tags->g( 'arg_c' )) 
+			trim( \willow()->tags->g( 'arg_o' )), 
+			trim( \willow()->tags->g( 'arg_c' )) 
 		);
 
 		// go with it ##
@@ -246,9 +246,9 @@ class php_functions {
 		){
 
 			// pass to argument handler ##
-			$this->arguments = $this->plugin->parse->arguments->decode( $this->config_string );
+			$this->arguments = \willow()->parse->arguments->decode( $this->config_string );
 
-			$function_explode = explode( trim( $this->plugin->tags->g( 'arg_o' )), $this->function );
+			$function_explode = explode( trim( \willow()->tags->g( 'arg_o' )), $this->function );
 			$this->function = trim( $function_explode[0] );
 
 			$this->function_hash = $this->function; // update hash to take simpler function name.. ##
@@ -296,8 +296,8 @@ class php_functions {
 
 		// function name might still contain opening and closing args brakets, which were empty - so remove them ##
 		$this->function = str_replace( [
-				trim( $this->plugin->tags->g( 'arg_o' )), 
-				trim( $this->plugin->tags->g( 'arg_c' )) 
+				trim( \willow()->tags->g( 'arg_o' )), 
+				trim( \willow()->tags->g( 'arg_c' )) 
 			], '',
 			$this->function 
 		);
@@ -327,10 +327,10 @@ class php_functions {
 			}
 
 			// clean up class name @todo -- 
-			$this->class = willow\core\method::sanitize( $this->class, 'php_class' );
+			$this->class = willow\core\sanitize::value( $this->class, 'php_class' );
 
 			// clean up method name --
-			$this->method = willow\core\method::sanitize( $this->method, 'php_function' );
+			$this->method = willow\core\sanitize::value( $this->method, 'php_function' );
 
 			// w__log( 'class::method -- '.$this->class.'::'.$this->method );
 
@@ -353,7 +353,7 @@ class php_functions {
 		} else {
 
 			// clean up function name ##
-			$this->function = willow\core\method::sanitize( $this->function, 'php_function' );
+			$this->function = willow\core\sanitize::value( $this->function, 'php_function' );
 
 			// try to locate function directly in global scope ##
 			if ( ! function_exists( $this->function ) ) {
@@ -422,7 +422,7 @@ class php_functions {
 
 			w__log( 'd:>Function "'.$this->function_match.'" did not return a value, perhaps it is a hook or an action.' );
 
-			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
+			\willow()->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			return false;
 
@@ -436,7 +436,7 @@ class php_functions {
 			// w__log( $this->return );
 
 			// attempt to convert the array to a string ##
-			$this->return = \willow\core\method::array_to_string( $this->return );
+			$this->return = \willow\core\arrays::to_string( $this->return );
 
 			if ( is_string( $this->return ) ) {
 				
@@ -454,7 +454,7 @@ class php_functions {
 		// FLAGS MOVED ABOVE checks below... BREAKING CHANGE TO FIX ###
 		// filter ##
 		// w__log( $this->flags_php_function );
-		$_flags_php_function = $this->plugin->get( '_flags_php_function' );
+		$_flags_php_function = \willow()->get( '_flags_php_function' );
 		if( 
 			$_flags_php_function
 			&& is_array( $_flags_php_function )
@@ -463,7 +463,7 @@ class php_functions {
 			// w__log( $_flags_php_function );
 			// w__log( $this->return );
 			// bounce to filter::apply() ##
-			$filter_return = $this->plugin->filter_method->process([ 
+			$filter_return = \willow()->filter->process([ 
 				'filters' 	=> $_flags_php_function, 
 				'string' 	=> $this->return, 
 				'use' 		=> 'php_function', // for filters ##
@@ -497,7 +497,7 @@ class php_functions {
 			// w__log( $this->return );
 
 			// remove php_function tag from markup ##
-			$this->plugin->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
+			\willow()->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
 			// done on this parse ##
 			return false;
@@ -505,8 +505,7 @@ class php_functions {
 		}
 
 		// add fields - perhaps we do not always need this -- perhaps based on [null] flag status ##
-		$render_fields = new willow\render\fields( $this->plugin );
-		$render_fields->define([
+		\willow()->render_fields->define([
 			$this->function_hash => $this->return
 		]);
 
@@ -522,13 +521,13 @@ class php_functions {
 		){
 
 			// add data returned from function to buffer map ##
-			$_buffer_map = $this->plugin->get( '_buffer_map' );
+			$_buffer_map = \willow()->get( '_buffer_map' );
 			$_buffer_map[] = [
 				'tag'		=> $this->function_match,
 				'output'	=> $this->return,
 				'parent'	=> false,
 			];
-			$this->plugin->set( '_buffer_map', $_buffer_map );
+			\willow()->set( '_buffer_map', $_buffer_map );
 
 		} else {
 
@@ -540,12 +539,12 @@ class php_functions {
 
 			// function returns which update the template also need to update the buffer_map, for later find/replace ##
 			// Seems like a potential pain-point ##
-			$_markup_template = $this->plugin->get( '_markup_template' );
+			$_markup_template = \willow()->get( '_markup_template' );
 			$_markup_template = str_replace( $this->function_match, $string, $_markup_template );
-			$this->plugin->set( '_markup_template', $_markup_template );
+			\willow()->set( '_markup_template', $_markup_template );
 
 			// update markup for willow parse ##
-			$this->plugin->parse->markup->swap( $this->function_match, $string, 'php_function', 'string', $process );
+			\willow()->parse->markup->swap( $this->function_match, $string, 'php_function', 'string', $process );
 
 			// remove used flags ##
 			/*
@@ -565,12 +564,12 @@ class php_functions {
 	public function cleanup( $args = null, $process = 'secondary' ){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_markup = $this->plugin->get( '_markup' );
-		$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+		$_args = \willow()->get( '_args' );
+		$_markup = \willow()->get( '_markup' );
+		$_buffer_markup = \willow()->get( '_buffer_markup' );
 
-		$open = trim( $this->plugin->tags->g( 'php_fun_o' ) );
-		$close = trim( $this->plugin->tags->g( 'php_fun_c' ) );
+		$open = trim( \willow()->tags->g( 'php_fun_o' ) );
+		$close = trim( \willow()->tags->g( 'php_fun_c' ) );
 
 		// strip all function blocks, we don't need them now ##
 		// // $regex_remove = \apply_filters( 'q/render/markup/section/regex/remove', "/{{#.*?\/#}}/ms" );
@@ -666,7 +665,7 @@ class php_functions {
 
 				// set markup ##
 				$_markup['template'] = $string;
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -674,7 +673,7 @@ class php_functions {
 
 				// set markup ##
 				$_buffer_markup = $string;
-				$this->plugin->set( '_buffer_markup', $_buffer_markup );
+				\willow()->set( '_buffer_markup', $_buffer_markup );
 
 			break ;
 

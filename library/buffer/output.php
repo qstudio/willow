@@ -19,10 +19,10 @@ class output {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct(){
+	function __construct( \willow\plugin $plugin ){
 
         // grab plugin instance ## 
-		$this->plugin = \willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -56,7 +56,7 @@ class output {
 		} );
 
 		// set _filter var to empty array ##
-		$this->plugin->set( '_filter', [] );
+		\willow()->set( '_filter', [] );
 
 		// not on admin ##
 		if ( \is_admin() ) {
@@ -71,18 +71,17 @@ class output {
 		\add_action( 'wp',  function(){ 
 
 			// hook up filters ##
-			$filter = new willow\filter\apply( $this->plugin );
-			$filter->hooks();
+			\willow()->filter->hooks();
 			
-			// if ( 'willow' == \q\view\method::format() ){
+			// if ( 'willow' == willow\core\template::format() ){
 
-				// w__log( 'e:>starting OB, as on a willow template: "'.\q\view\method::format().'"' );
+				// w__log( 'e:>starting OB, as on a willow template: "'.\willow\core\template::format().'"' );
 				// w__log( 't:>TODO -- find out why large template content breaks this...??' );
 				return ob_start();
 
 			// }
 
-			// w__log( 'e:>not a willow template, so no ob: "'.\q\view\method::format().'"' );
+			// w__log( 'e:>not a willow template, so no ob: "'.\willow\core\template::format().'"' );
 
 			// return false; 
 
@@ -91,12 +90,14 @@ class output {
 
 		\add_action( 'shutdown', function() {
 
-			if ( 'willow' != willow\core\method::template_format() ){
+			if ( 'willow' != willow\core\template::format() ){
 
 				// w__log( 'e:>No buffer.. so no go' );
 
 				// ob_flush();
-				if( ob_get_level() > 0 ) ob_flush();
+				if( ob_get_level() > 0 ) {
+					ob_flush();
+				}
 				
 				return false; 
 			
@@ -118,13 +119,15 @@ class output {
 			// w__log( 'e:>String: '.$string );
 
 			// ob_flush();
-			if( ob_get_level() > 0 ) ob_flush();
+			if( ob_get_level() > 0 ) {
+				ob_flush();
+			}
 
 			// Output is directly echoed, once it has been parsed ##
 			echo $this->prepare( $string );
 
 			// reset all args ##
-			$this->plugin->render->args->reset();
+			\willow()->render->args->reset();
 
 		}, 0 );
 
@@ -151,13 +154,13 @@ class output {
 		}
 
 		// build factory objects ##
-		// $this->plugin->factory( $this->plugin );
+		// \willow()->factory( $this->plugin );
 
 		// we are passed an html string, captured from output buffering, which we need to parse for tags and process ##
 		// w__log( $string );
 
 		// build required args ##
-		$this->plugin->set( '_buffer_args', [
+		\willow()->set( '_buffer_args', [
 			'config'			=> [
 				'return' 		=> 'return',
 				'debug'			=> false,
@@ -167,36 +170,32 @@ class output {
 		] );
 
 		// take buffer output string as markup->template ##
-		$this->plugin->set( '_buffer_markup', $string ); // used for parsers to reference buffer markup template ##
-		$this->plugin->set( '_markup_template', $string ); // original markup reference
+		\willow()->set( '_buffer_markup', $string ); // used for parsers to reference buffer markup template ##
+		\willow()->set( '_markup_template', $string ); // original markup reference
 
 		// force methods to return for collection by output buffer ##
-		$_args_default = $this->plugin->get( '_args_default' );
+		$_args_default = \willow()->get( '_args_default' );
 		$_args_default['config']['return'] = 'return';
-		$this->plugin->set( '_args_default', $_args_default );
+		\willow()->set( '_args_default', $_args_default );
 
 		// prepare .willow template markup -- affects _buffer_map ##
-		$prepare = new willow\parse\prepare( $this->plugin );
-		$prepare->factory();
-		$prepare->hooks( $this->plugin->get( '_buffer_args' ), 'primary' );
+		\willow()->parser->hooks( \willow()->get( '_buffer_args' ), 'primary' );
 
-		// w__log( $this->plugin->get( '_buffer_map' ) );
-		$buffer_map = new willow\buffer\map( $this->plugin );
-		$_buffer_map = $buffer_map->prepare();
-		$this->plugin->set( '_buffer_markup', $_buffer_map );
-		// w__log( $this->plugin->get( '_buffer_markup' ) );
+		// w__log( \willow()->get( '_buffer_map' ) );
+		$_buffer_map = \willow()->buffer_map->prepare();
+		\willow()->set( '_buffer_markup', $_buffer_map );
+		// w__log( \willow()->get( '_buffer_markup' ) );
 
 		// clean up left over tags ##
-		$cleanup = new willow\parse\cleanup( $this->plugin );
-		$cleanup->hooks( $this->plugin->get( '_buffer_args' ), 'primary' ); // @TODO - removed for testing ##
+		\willow()->parse->cleanup->hooks( \willow()->get( '_buffer_args' ), 'primary' ); // @TODO - removed for testing ##
 		
 		// reset properties ##
-		$this->plugin->set( '_buffer_map', [] );
-		$this->plugin->set( '_buffer_args', null );
-		$this->plugin->set( '_filter', null );
+		\willow()->set( '_buffer_map', [] );
+		\willow()->set( '_buffer_args', null );
+		\willow()->set( '_filter', null );
 
 		// return to OB to render in template ##
-		return $this->plugin->get( '_buffer_markup' );
+		return \willow()->get( '_buffer_markup' );
 
     }
 

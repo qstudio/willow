@@ -12,13 +12,12 @@ class args {
 	;
 
 	/**
-     * @todo
-     * 
+     * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -32,11 +31,11 @@ class args {
 		// w__log( 'd:>reset args for: '.self::$args['task'] );
 
 		// passed args ##
-        $this->plugin->set( '_args', [ 'fields'	=> [] ] ); // default args array ##
-		$this->plugin->set( '_output', null ); // return string ##
-        $this->plugin->set( '_fields', [] ); // array of field names and values ##
-		$this->plugin->set( '_markup', null ); // array to store passed markup and extra keys added by formatting ##
-		$this->plugin->set( '_hash', null ); // hasher ##
+        \willow()->set( '_args', [ 'fields'	=> [] ] ); // default args array ##
+		\willow()->set( '_output', null ); // return string ##
+        \willow()->set( '_fields', [] ); // array of field names and values ##
+		\willow()->set( '_markup', null ); // array to store passed markup and extra keys added by formatting ##
+		\willow()->set( '_hash', null ); // hasher ##
 
 	}
 
@@ -49,11 +48,11 @@ class args {
 
 		// w__log( 'd:>collect all args'); ##
 
-		$this->collect['_args'] = $this->plugin->get( '_args' );
-		$this->collect['_output'] = $this->plugin->get( '_output' );
-		$this->collect['_fields'] = $this->plugin->get( '_fields' );
-		$this->collect['_markup'] = $this->plugin->get( '_markup' );
-		$this->collect['_hash'] = $this->plugin->get( '_hash' );
+		$this->collect['_args'] = \willow()->get( '_args' );
+		$this->collect['_output'] = \willow()->get( '_output' );
+		$this->collect['_fields'] = \willow()->get( '_fields' );
+		$this->collect['_markup'] = \willow()->get( '_markup' );
+		$this->collect['_hash'] = \willow()->get( '_hash' );
 
 	}
 
@@ -66,11 +65,11 @@ class args {
 
 		// w__log( 'd:>set all args'); ##
 
-		$this->plugin->set( '_args', $this->collect['_args'] );
-		$this->plugin->set( '_output', $this->collect['_output'] );
-		$this->plugin->set( '_fields', $this->collect['_fields'] );
-		$this->plugin->set( '_markup', $this->collect['_markup'] );
-		$this->plugin->set( '_hash', $this->collect['_hash'] );
+		\willow()->set( '_args', $this->collect['_args'] );
+		\willow()->set( '_output', $this->collect['_output'] );
+		\willow()->set( '_fields', $this->collect['_fields'] );
+		\willow()->set( '_markup', $this->collect['_markup'] );
+		\willow()->set( '_hash', $this->collect['_hash'] );
 
 	}
 
@@ -79,7 +78,7 @@ class args {
 		// w__log( $args );
 
 		// get stored config ##
-		$config = $this->plugin->config->get( $args );
+		$config = \willow()->config->get( $args );
 
 		// test ##
 		// w__log( $config );
@@ -88,7 +87,7 @@ class args {
 		// allows specific calling methods to alter passed $args ##
 		if ( $config ) {
 		
-			$args = willow\core\method::parse_args( $args, $config );
+			$args = willow\core\arrays::parse_args( $args, $config );
 		
 		}
 
@@ -102,7 +101,7 @@ class args {
         ){
 
 			// log ##
-			w__log( $this->plugin->get('_args')['task'].'~>e:>Missing required args, so stopping here' );
+			w__log( \willow()->get('_args')['task'].'~>e:>Missing required args, so stopping here' );
 			
 			// w__log( 'd:>Kicked here...' );
 
@@ -150,13 +149,13 @@ class args {
 		// w__log( $args['config']['post']->ID );
 
 		// store current _args stage ##
-		$this->plugin->set( '_args', $args );
+		\willow()->set( '_args', $args );
 
         // assign properties with initial filters ##
 		$this->assign();
 
 		// get _args again, in case they changed ##
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 		
 		// w__log( $args );
 
@@ -206,18 +205,18 @@ class args {
     public function assign() {
 
 		// get local copy ##
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 
         // apply global filter to $args - specific calls should be controlled by parameters included directly ##
-        $_args = $this->plugin->filter->apply([
+        $_args = \willow()->filter->apply([
 			'filter'        => 'willow/render/args',
 			'parameters'    => $_args,
 			'return'        => $_args
 		]);
 		
 		// apply template level filter to $args - specific calls should be controlled by parameters included directly ##
-        $_args = $this->plugin->filter->apply([
-			'filter'        => 'willow/render/args/'.\willow\view\method::get(),
+        $_args = \willow()->filter->apply([
+			'filter'        => 'willow/render/args/'.\willow\core\template::get(),
 			'parameters'    => $_args,
 			'return'        => $_args
         ]);
@@ -225,7 +224,7 @@ class args {
 		// w__log( core\config::$config );
 			
 		// merge CONTEXT->global settings - this allows to pass config per context ##
-		if ( $config = $this->plugin->config->get([ 'context' => $_args['context'], 'task' => 'config' ]) ){
+		if ( $config = \willow()->config->get([ 'context' => $_args['context'], 'task' => 'config' ]) ){
 
 			// w__log( 'd:>Merging settings from: '.$_args['context'].'->config' );
 			$context_config = [ 'config' => $config ];
@@ -235,23 +234,23 @@ class args {
 
 			// merge in global__CONTEXT settings ##
 			// w__log( 't:>NOTE, swapped order of merge here to try to give preference to task args over global args... keep an eye' );
-			$_args = willow\core\method::parse_args( $_args, $context_config );
-			// $args = core\method::parse_args( $context_config, $args );
+			$_args = willow\core\arrays::parse_args( $_args, $context_config );
+			// $args = core\arrays::parse_args( $context_config, $args );
 
 			// w__log( $_args );
 
 		}
 
 		// grab all passed args and merge with defaults -- this ensures we have config->run, config->debug etc.. ##
-		$_args = willow\core\method::parse_args( $_args, $this->plugin->get( '_args_default' ) );
+		$_args = willow\core\arrays::parse_args( $_args, \willow()->get( '_args_default' ) );
 
 		// w__log( $_args['markup'] );
 
 		// store object property ##
-		$this->plugin->set( '_args', $_args );
+		\willow()->set( '_args', $_args );
 
 		// post-format markup to extract markup keys collected by config ##
-		$this->plugin->render->markup->merge();
+		\willow()->render->markup->merge();
 		
         // return ##
         return;
@@ -263,7 +262,7 @@ class args {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function default( $array = null ){
+	public function default( array $array = null ){
 
 		// sanity ##
 		if(
@@ -277,9 +276,9 @@ class args {
 
 		}
 
-		$_args = $this->plugin->get( '_args' );
+		$_args = \willow()->get( '_args' );
 		$_args['config']['default'] = $array;
-		$this->plugin->set( '_args' , $_args );
+		\willow()->set( '_args' , $_args );
 
 		// self::$args['config']['default'] = $array;
 
@@ -293,7 +292,7 @@ class args {
 	 * Prepare passed args ##
 	 *
 	 */
-	public function prepare( $args = null ) {
+	public function prepare( array $args = null ) {
 
 		// w__log( 't:>merge with args::validate, just need to get config right..' );
 
@@ -310,7 +309,7 @@ class args {
 		}
 
 		// get calling method for filters ##
-		$task = willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]);
+		$task = willow\core\backtrace::get([ 'level' => 2, 'return' => 'function' ]);
 
 		// define context for all in class -- i.e "group" ##
 		if ( ! isset( $args['context'] ) ) {
@@ -326,7 +325,7 @@ class args {
 
 		// get stored config via lookup, fallback 
 		// pulls from Q, but available to filter via willow/config/load ##
-		$config = $this->plugin->config->get( $args );
+		$config = \willow()->config->get( $args );
 
 		// test ##
 		// w__log( $config );
@@ -335,7 +334,7 @@ class args {
 		// allows specific calling methods to alter passed $args ##
 		if ( $config ) {
 
-			$args = willow\core\method::parse_args( $args, $config );
+			$args = willow\core\arrays::parse_args( $args, $config );
 
 		}
 
@@ -425,8 +424,8 @@ class args {
     public function is_enabled(){
 
 		// local vars ##
-		$_args = $this->plugin->get( '_args' );
-		$_fields = $this->plugin->get( '_fields' );
+		$_args = \willow()->get( '_args' );
+		$_fields = \willow()->get( '_fields' );
 
         // sanity ##
         if ( 

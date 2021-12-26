@@ -5,22 +5,21 @@ namespace willow\context;
 use willow;
 use willow\core\helper as h;
 
+/**
+ * Apply Markup changes to passed template
+ * find all placeholders in self::$markup and replace with matching values in self::$fields
+ * most complex and most likely to clash go first, then simpler last ##
+ */
 class ui {
 
 	private 
 		$plugin = false
 	;
 
-	/**
-     * Apply Markup changes to passed template
-     * find all placeholders in self::$markup and replace with matching values in self::$fields
-	 * most complex and most likely to clash go first, then simpler last ##
-     * 
-     */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -37,7 +36,7 @@ class ui {
 
 		// w__log( $args );
 
-		return $this->plugin->get('config')->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		return \willow()->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 	}
 

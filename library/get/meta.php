@@ -12,12 +12,12 @@ class meta {
 	;
 
 	/**
-	 * 
+     * Construct
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -27,7 +27,8 @@ class meta {
      * @since       1.0.1
      * @return      string   HTML
      */
-    public function parent( $args = null ) {
+    public function parent( array $args = null ):?array
+	{
 
 		// w__log( 'here..' );
 		// w__log( $args );
@@ -40,7 +41,7 @@ class meta {
 
 			w__log( 'e:>Error in passed args' );
 
-			return false;
+			return null;
 
 		}
 
@@ -81,7 +82,7 @@ class meta {
 
 				w__log( 'e:>Returned terms empty' );
 
-				return false;
+				return null;
 
 			}
 
@@ -96,7 +97,7 @@ class meta {
 
 			 	w__log( 'e:>Error in returned terms data' );
 
-			 	return false;
+			 	return null;
 
 			}
 
@@ -109,19 +110,19 @@ class meta {
 		// w__log( $array );
 
         // return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
-
-
-
 	
 	/**
      * Get Post meta field from acf, format if required and markup
      *
-     * @since       4.1.0
+	 * @since 	2.1.0
+	 * @param	array
+	 * @return	bool
      */
-    public function field( $args = null ){
+    public function field( array $args = null ):bool
+	{
 
 		// sanity ##
 		if (
@@ -160,7 +161,8 @@ class meta {
 	 * 
 	 * @since 4.1.0
 	*/
-	public function author( $args = null ) {
+	public function author( array $args = null )
+	{
 
 		// sanity ##
 		if (
@@ -209,7 +211,7 @@ class meta {
 		// return $array;
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -232,7 +234,7 @@ class meta {
 
 		// comments ##
 		if ( 
-			$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'allow_comments' ])
+			\willow()->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'allow_comments' ])
 			&& 'open' == $post->comment_status // comments are open
 		) {
 			
@@ -267,7 +269,7 @@ class meta {
 			// w__log( $array );
 
 			// return ##
-			return willow\get\method::prepare_return( $args, $array );
+			return willow\core\prepare::return( $args, $array );
 
 		}
 
@@ -305,8 +307,8 @@ class meta {
 				isset( $args['config']['date_format'] ) ? 
 				$args['date_format']['config'] : // take from value passed by caller ##
 				(
-					$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?
-					$this->plugin->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]): // take from global config ##
+					\willow()->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]) ?
+					\willow()->config->get([ 'context' => 'global', 'task' => 'config', 'property' => 'date_format' ]): // take from global config ##
 					\apply_filters( 'q/format/date', 'F j, Y' )
 				), // standard ##
 				$args['config']['post']->ID
@@ -315,7 +317,7 @@ class meta {
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -351,7 +353,7 @@ class meta {
 		// w__log( $array );
 
 		// return ##
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 
@@ -374,8 +376,6 @@ class meta {
 
 		}
 
-		$taxonomy = new willow\get\taxonomy();
-
         // get the_post ##
 		$post = $args['config']['post'];
 
@@ -392,24 +392,24 @@ class meta {
 		$array['date'] = $this->date( $args );
 
 		// post author ##
-		$array = willow\render\method::extract( $this->author( $args ), 'author_', $array );
+		$array = willow\core\arrays::extract( $this->author( $args ), 'author_', $array );
 
 		// category will be an array, so create category_title, permalink and slug fields ##
-		$array = willow\render\method::extract( $taxonomy->category( $args ), 'category_', $array );
+		$array = willow\core\arrays::extract( \willow()->taxonomy->category( $args ), 'category_', $array );
 
 		// tag will be an array, so create tag_title, permalink and slug fields ##
-		$array = willow\render\method::extract( $taxonomy->tag( $args ), 'tag_', $array );
+		$array = willow\core\arrays::extract( \willow()->taxonomy->tag( $args ), 'tag_', $array );
 
 		// tags will be an array, we'll let the rendered deal with this via a section tag.. ##
-		$array['tags'] = $taxonomy->tags( $args );
+		$array['tags'] = \willow()->taxonomy->tags( $args );
 
 		// comment will be an array, so create comment_count, link ##
-		$array = willow\render\method::extract( $this->comment( $args ), 'comment_', $array );
+		$array = willow\core\arrays::extract( $this->comment( $args ), 'comment_', $array );
 
 		// w__log( $array );
 
 		// return
-		return willow\get\method::prepare_return( $args, $array );
+		return willow\core\prepare::return( $args, $array );
 
 	}
 

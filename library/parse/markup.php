@@ -10,15 +10,10 @@ class markup {
 		$plugin = false
 	;
 
-	/**
-	 * Scan for partials in markup and convert to variables and $fields
-	 * 
-	 * @since 4.1.0
-	*/
-	public function __construct(){
+	public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
+		$this->plugin = $plugin;
 
 	}
 
@@ -35,9 +30,9 @@ class markup {
 			|| is_null( $type )
         ) {
 
-			// w__log( willow\core\method::backtrace(['level' => 2]) );
-			// w__log( $this->plugin->get( '_args' ) );
-			$task = $this->plugin->get( '_args' )['task'] ?? 'unknown' ;
+			// w__log( willow\core\backtrace::get(['level' => 2]) );
+			// w__log( \willow()->get( '_args' ) );
+			$task = \willow()->get( '_args' )['task'] ?? 'unknown' ;
 
 			// log ##
 			w__log( $task.'~>e:>No string or type value passed to method' );
@@ -52,8 +47,8 @@ class markup {
 			case "variable" :
 
 				// note, we trim() white space off tags, as this is handled by the regex ##
-				$open = trim( $this->plugin->tags->g( 'var_o' ) );
-				$close = trim( $this->plugin->tags->g( 'var_c' ) );
+				$open = trim( \willow()->tags->g( 'var_o' ) );
+				$close = trim( \willow()->tags->g( 'var_c' ) );
 
 				// w__log( 'open: '.$open );
 
@@ -72,7 +67,7 @@ class markup {
 
 			// log ##
 			// w__log( 't:>TODO - if no self::$args - set to buffer' );
-			// w__log( $this->plugin->get( '_args')['task'].'~>n:>No variables found in string.' );
+			// w__log( \willow()->get( '_args')['task'].'~>n:>No variables found in string.' );
 			// w__log( 'd:>No variables found in string.' );
 			// w__log( '$string: "'.$string.'"' );
 
@@ -97,11 +92,11 @@ class markup {
      */
     public function contains( string $variable = null, $markup = null, $field = null ) {
 		
-		// if no markup passed, use $this->plugin->get( '_markup') ##
-		$markup = is_null( $markup ) ? $this->plugin->get( '_markup') : $markup ;
+		// if no markup passed, use \willow()->get( '_markup') ##
+		$markup = is_null( $markup ) ? \willow()->get( '_markup') : $markup ;
 
-		// if $markup template passed, check there, else check $this->plugin->get( '_markup') ##
-		$string = is_null( $field ) ? $this->plugin->get( '_markup')['template'] : $this->plugin->get( '_markup')[$field] ;
+		// if $markup template passed, check there, else check \willow()->get( '_markup') ##
+		$string = is_null( $field ) ? \willow()->get( '_markup')['template'] : \willow()->get( '_markup')[$field] ;
 
         if ( ! substr_count( $string, $variable ) ) {
 
@@ -132,7 +127,7 @@ class markup {
 		) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
+			w__log( \willow()->get( '_args')['task'].'~>e:Error in data passed to method' );
 
             return false;
 
@@ -145,20 +140,20 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = \willow()->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
 		}
 
         if (
-            ! willow\core\method::starts_with( $tag, $needle_start ) 
-			|| ! willow\core\method::ends_with( $tag, $needle_end ) 
+            ! willow\core\strings::starts_with( $tag, $needle_start ) 
+			|| ! willow\core\strings::ends_with( $tag, $needle_end ) 
         ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
+			w__log( \willow()->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
 
             return false;
 
@@ -173,16 +168,16 @@ class markup {
 			default : 
 			case "secondary" :
 
-				// w__log( 'd:>Swapping markup in $this->plugin->get( '_markup')' );
+				// w__log( 'd:>Swapping markup in \willow()->get( '_markup')' );
 
 				// add new variable to $template as defined position - don't replace {{ variable }} yet... ##
-				$new_template = substr_replace( $this->plugin->get( '_markup')['template'], $tag, $position, 0 );
+				$new_template = substr_replace( \willow()->get( '_markup')['template'], $tag, $position, 0 );
 
 				// test ##
 				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
-				$this->plugin->get( '_markup')['template'] = $new_template; // ."\r\n"
+				\willow()->get( '_markup')['template'] = $new_template; // ."\r\n"
 
 			break ;
 
@@ -191,13 +186,13 @@ class markup {
 				// w__log( 'd:>Swapping markup in self::$buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
-				$new_template = substr_replace( $this->plugin->get('_buffer_markup'), $tag, $position, 0 );
+				$new_template = substr_replace( \willow()->get('_buffer_markup'), $tag, $position, 0 );
 
 				// test ##
 				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
-				$this->plugin->set('_buffer_markup', $new_template ); // ."\r\n"
+				\willow()->set('_buffer_markup', $new_template ); // ."\r\n"
 
 			break ;
 
@@ -206,7 +201,7 @@ class markup {
 		// w__log( 'd:>'.$new_template );
 
 		// log ##
-		// w__log( $this->plugin->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( \willow()->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\backtrace::get([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true; 
@@ -229,7 +224,7 @@ class markup {
 		) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
+			w__log( \willow()->get( '_args')['task'].'~>e:Error in data passed to method' );
 
             return false;
 
@@ -243,7 +238,7 @@ class markup {
 		){
 
 			// log ##
-			// w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
+			// w__log( \willow()->get( '_args')['task'].'~>e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
 
 			// log ##
 			w__log( 'e:>tag: "'.$tag.'" is not a correctly formatted '.$type.'' );
@@ -260,8 +255,8 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = \willow()->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -276,12 +271,12 @@ class markup {
 		}
 
         if (
-            ! willow\core\method::starts_with( $tag, $needle_start ) 
-			|| ! willow\core\method::ends_with( $tag, $needle_end ) 
+            ! willow\core\strings::starts_with( $tag, $needle_start ) 
+			|| ! willow\core\strings::ends_with( $tag, $needle_end ) 
         ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
+			w__log( \willow()->get( '_args')['task'].'~>e:>passed tag: "'.$tag.'" is not correctly formatted - missing {{ at start or }} at end.' );
 
             return false;
 
@@ -294,7 +289,7 @@ class markup {
 			case "secondary" :
 
 				// get the markup array ##
-				$markup = $this->plugin->get( '_markup');
+				$markup = \willow()->get( '_markup');
 
 				// $before is a string, which we need to find in markup 
 				if( 
@@ -312,7 +307,7 @@ class markup {
 
 				// @TODO - check this works well and arrange better mether do store keys to arrays ###
 				// push back into main stored markup ##
-				$this->plugin->set( '_markup', $markup );
+				\willow()->set( '_markup', $markup );
 
 				// log ##
 				// w__log( 'd:>Adding tag: "'.$tag.'" @ Position: '.$position.' in internal markup' );
@@ -324,7 +319,7 @@ class markup {
 
 			case "primary" :
 
-				$buffer_markup = $this->plugin->get( '_buffer_markup' );
+				$buffer_markup = \willow()->get( '_buffer_markup' );
 
 				// $before is a string, which we need to find in markup 
 				if( 
@@ -344,7 +339,7 @@ class markup {
 				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
-				$this->plugin->set( '_buffer_markup', $new_template."\r\n" );
+				\willow()->set( '_buffer_markup', $new_template."\r\n" );
 
 				// log ##
 				// w__log( 'd:>Adding tag: "'.$tag.'" @ Position: '.$position.' in buffer markup' );
@@ -360,7 +355,7 @@ class markup {
 		// w__log( 'd:>'.$new_template );
 
 		// log ##
-		// w__log( $this->plugin->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( \willow()->get( '_args')['task'].'~>variable_added:>"'.$tag.'" @position: "'.$position.'" by "'.core\backtrace::get([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return true; #$markup['template'];
@@ -382,7 +377,7 @@ class markup {
 		) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:Error in data passed to method' );
+			w__log( \willow()->get( '_args')['task'].'~>e:Error in data passed to method' );
 
             return false;
 
@@ -398,8 +393,8 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = \willow()->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
@@ -415,48 +410,48 @@ class markup {
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'par_o' ); #'{{> ';
-				$needle_end = $this->plugin->tags->g( 'par_c' ); #' <}}';
+				$needle_start = \willow()->tags->g( 'par_o' ); #'{{> ';
+				$needle_end = \willow()->tags->g( 'par_c' ); #' <}}';
 
 			break ;
 
 			case "loop" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'loo_o' ); #'{{@ ';
-				$needle_end = $this->plugin->tags->g( 'loo_c' ); #' /@}}';
+				$needle_start = \willow()->tags->g( 'loo_o' ); #'{{@ ';
+				$needle_end = \willow()->tags->g( 'loo_c' ); #' /@}}';
 
 			break ;
 
 			case "willow" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'wil_o' ); #'{{~ ';
-				$needle_end = $this->plugin->tags->g( 'wil_c' ); #' ~}}';
+				$needle_start = \willow()->tags->g( 'wil_o' ); #'{{~ ';
+				$needle_end = \willow()->tags->g( 'wil_c' ); #' ~}}';
 
 			break ;
 
 			case "php_function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'php_fun_o' ); #'<% ';
-				$needle_end = $this->plugin->tags->g( 'php_fun_c' ); #' %>';
+				$needle_start = \willow()->tags->g( 'php_fun_o' ); #'<% ';
+				$needle_end = \willow()->tags->g( 'php_fun_c' ); #' %>';
 
 			break ;
 
 			case "php_variable" :
 
 				// check if php variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'php_var_o' ); // {#
-				$needle_end = $this->plugin->tags->g( 'php_var_c' ); // #}
+				$needle_start = \willow()->tags->g( 'php_var_o' ); // {#
+				$needle_end = \willow()->tags->g( 'php_var_c' ); // #}
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'com_o' ); #'{{! ';
-				$needle_end = $this->plugin->tags->g( 'com_c' ); #' !}}';
+				$needle_start = \willow()->tags->g( 'com_o' ); #'{{! ';
+				$needle_end = \willow()->tags->g( 'com_c' ); #' !}}';
 
 			break ;
 
@@ -469,7 +464,7 @@ class markup {
 		){
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
+			w__log( \willow()->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
 
 			// log ##
 			w__log( 'e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.'' );
@@ -494,7 +489,7 @@ class markup {
         ) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+			w__log( \willow()->get( '_args')['task'].'~>e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
 			// log ##
 			w__log( 'e:>tag: "'.$to.'" is not a correctly formatted '.$to_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
@@ -510,8 +505,8 @@ class markup {
 			case "willow" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'wil_o' ); #'{{~ ';
-				$needle_end = $this->plugin->tags->g( 'wil_c' ); #' ~}}';
+				$needle_start = \willow()->tags->g( 'wil_o' ); #'{{~ ';
+				$needle_end = \willow()->tags->g( 'wil_c' ); #' ~}}';
 
 			break ;
 
@@ -528,56 +523,56 @@ class markup {
 			case "i18n" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'i18n_o' ); #'{_ ';
-				$needle_end = $this->plugin->tags->g( 'i18n_c' ); #' _}';
+				$needle_start = \willow()->tags->g( 'i18n_o' ); #'{_ ';
+				$needle_end = \willow()->tags->g( 'i18n_c' ); #' _}';
 
 			break;
 
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = \willow()->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
 			case "partial" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'par_o' ); #'{{> ';
-				$needle_end = $this->plugin->tags->g( 'par_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'par_o' ); #'{{> ';
+				$needle_end = \willow()->tags->g( 'par_c' ); #' }}';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'com_o' ); #'{{! ';
-				$needle_end = $this->plugin->tags->g( 'com_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'com_o' ); #'{{! ';
+				$needle_end = \willow()->tags->g( 'com_c' ); #' }}';
 
 			break ;
 
 			case "loop" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'loo_o' ); // '{{@ ';
-				$needle_end = $this->plugin->tags->g( 'loo_c' ); // ' }}';
+				$needle_start = \willow()->tags->g( 'loo_o' ); // '{{@ ';
+				$needle_end = \willow()->tags->g( 'loo_c' ); // ' }}';
 
 			break ;
 
 			case "php_function" :
 
 				// check if variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'php_fun_o' ); #'<< ';
-				$needle_end = $this->plugin->tags->g( 'php_fun_c' ); #' >>';
+				$needle_start = \willow()->tags->g( 'php_fun_o' ); #'<< ';
+				$needle_end = \willow()->tags->g( 'php_fun_c' ); #' >>';
 
 			break ;
 
 			case "php_variable" :
 
 				// check if php variable is correctly formatted --> {{> STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'php_var_o' ); // {#
-				$needle_end = $this->plugin->tags->g( 'php_var_c' ); // #}
+				$needle_start = \willow()->tags->g( 'php_var_o' ); // {#
+				$needle_end = \willow()->tags->g( 'php_var_c' ); // #}
 
 			break ;
 
@@ -595,13 +590,13 @@ class markup {
 		);
 
         if (
-            // ! core\method::starts_with( $from, $needle_start ) 
-			// || ! core\method::ends_with( $from, $needle_end ) 
+            // ! core\strings::starts_with( $from, $needle_start ) 
+			// || ! core\strings::ends_with( $from, $needle_end ) 
 			! preg_match( $regex_find, $from )
         ) {
 
 			// log ##
-			// w__log( $this->plugin->get( '_args')['task'].'~>e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
+			// w__log( \willow()->get( '_args')['task'].'~>e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' - missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
 
 			// log ##
 			w__log( 'e:>tag: "'.$from.'" is not a correctly formatted '.$from_type.' -> missing "'.$needle_start.'" at start or "'.$needle_end.'" at end.' );
@@ -620,10 +615,10 @@ class markup {
 
 				// w__log( 'd:>Swapping markup in $_markup' );
 
-				$_markup = $this->plugin->get( '_markup' );
+				$_markup = \willow()->get( '_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
-				$new_template = willow\render\method::str_replace_first( $from, $to, $_markup['template'] ); // only replaces first occurance ##
+				$new_template = willow\core\strings::str_replace_first( $from, $to, $_markup['template'] ); // only replaces first occurance ##
 
 				// test ##
 				// w__log( 'd:>'.$new_template );
@@ -632,7 +627,7 @@ class markup {
 				$_markup['template'] = $new_template;
 
 				// push back into _markup ##
-				$this->plugin->set( '_markup', $_markup );
+				\willow()->set( '_markup', $_markup );
 
 			break ;
 
@@ -641,7 +636,7 @@ class markup {
 				// w__log( 'd:>Swapping markup in $_buffer_markup' );
 
 				// w__log( 'd:>Swapping markup in self::$buffer_markup' );
-				$_buffer_markup = $this->plugin->get( '_buffer_markup' );
+				$_buffer_markup = \willow()->get( '_buffer_markup' );
 
 				// add new variable to $template as defined position - don't replace $from yet... ##
 				$new_template = str_replace( $from, $to, $_buffer_markup );
@@ -650,7 +645,7 @@ class markup {
 				// w__log( 'd:>'.$new_template );
 
 				// push back into main stored markup ##
-				$this->plugin->set( '_buffer_markup', $new_template );
+				\willow()->set( '_buffer_markup', $new_template );
 
 			break ;
 
@@ -675,7 +670,7 @@ class markup {
 		) {
 
 			// log ##
-			w__log( $this->plugin->get( '_args')['task'].'~>e:>No variable or markkup value passed to method' );
+			w__log( \willow()->get( '_args')['task'].'~>e:>No variable or markkup value passed to method' );
 
             return false;
 
@@ -692,28 +687,28 @@ class markup {
 			case "variable" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'var_o' ); #'{{ ';
-				$needle_end = $this->plugin->tags->g( 'var_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'var_o' ); #'{{ ';
+				$needle_end = \willow()->tags->g( 'var_c' ); #' }}';
 
 			break ;
 
 			case "comment" :
 
 				// check if variable is correctly formatted --> {{ STRING }} ##
-				$needle_start = $this->plugin->tags->g( 'com_o' ); #'{{ ';
-				$needle_end = $this->plugin->tags->g( 'com_c' ); #' }}';
+				$needle_start = \willow()->tags->g( 'com_o' ); #'{{ ';
+				$needle_end = \willow()->tags->g( 'com_c' ); #' }}';
 
 			break ;
 
 		}
 
         if (
-            ! willow\core\method::starts_with( $variable, $needle_start ) 
-            || ! willow\core\method::ends_with( $variable, $needle_end ) 
+            ! willow\core\strings::starts_with( $variable, $needle_start ) 
+            || ! willow\core\strings::ends_with( $variable, $needle_end ) 
         ) {
 
 			// log ##
-			// w__log( $this->plugin->get( '_args')['task'].'~>e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
+			// w__log( \willow()->get( '_args')['task'].'~>e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
 			w__log( 'e:>Placeholder: "'.$variable.'" is not correctly formatted - missing "{{ " at start or " }}" at end.' );
 
             return false;
@@ -734,9 +729,9 @@ class markup {
 		// w__log( 'd:>'.$markup );
 
 		// log ##
-		// w__log( $this->plugin->get( '_args')['task'].'~>variable_removed:>"'.$variable.'" by "'.\willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( \willow()->get( '_args')['task'].'~>variable_removed:>"'.$variable.'" by "'.\willow\core\backtrace::get([ 'level' => 2, 'return' => 'function' ]).'"' );
 
-		// w__log( 'd~>variable_removed:>"'.$variable.'" by "'.\willow\core\method::backtrace([ 'level' => 2, 'return' => 'function' ]).'"' );
+		// w__log( 'd~>variable_removed:>"'.$variable.'" by "'.\willow\core\backtrace::get([ 'level' => 2, 'return' => 'function' ]).'"' );
 
         // positive ##
         return $markup;

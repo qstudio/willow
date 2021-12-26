@@ -37,10 +37,10 @@ class config {
 	/**
 	 * CLass Constructer 
 	*/
-	function __construct(){
+	function __construct( \willow\plugin $plugin ){
 
 		// grab plugin instance ## 
-		$this->plugin = \willow\plugin::get_instance();
+		$this->plugin = $plugin;
 		
 	}
 
@@ -119,7 +119,7 @@ class config {
 		$this->willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
 
 		// template ##
-		$this->template = willow\core\method::template() ? willow\core\method::template() : '404';
+		$this->template = willow\core\template::get() ? willow\core\template::get() : '404';
 
 		// update tracker ##
 		$this->properties_loaded = true;
@@ -149,7 +149,7 @@ class config {
 		}
 
 		// if theme debugging, then load from single config files ##
-		if ( $this->plugin->_debug ) { 
+		if ( \willow()->_debug ) { 
 
 			// w__log('d:>Deubbing, so we do not need to resave __q.php.' );
 			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
@@ -178,7 +178,7 @@ class config {
 
 			// w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
-			willow\core\method::file_put_array( \q\theme\plugin::get_child_path( '/__q.php' ), $this->config );
+			willow\core\file::put_array( \q\theme\plugin::get_child_path( '/__q.php' ), $this->config );
 
 		}
 
@@ -194,7 +194,7 @@ class config {
 	public function get_cache(){
 
 		// if theme debugging, then load from indiviual config files ##
-		if ( $this->plugin->get('_debug') ) { 
+		if ( \willow()->get('_debug') ) { 
 
 			// w__log( 'd:>Theme is debugging, so load from individual context files...' );
 
@@ -288,7 +288,7 @@ class config {
 		if ( $this->global_loaded ){ return false; }
 
 		// file ##
-		$file = $this->plugin->get_plugin_path( 'library/willow/global.php' );
+		$file = \willow()->get_plugin_path( 'library/willow/global.php' );
 
 		// cache ##
 		$cache_key = 'willow_global_php';
@@ -363,7 +363,7 @@ class config {
 			$this->template.'__'.$args['context'].'__'.$args['task'] => $this->template.'~'.$args['context'].'~'.$args['task'],
 
 			// template/context~task in sub directory ##
-			// view\method::get().'__'.$args['context'].'__'.$args['task'].'_dir' => view\method::get().'/'.$args['context'].'~'.$args['task'],
+			// core\template::get().'__'.$args['context'].'__'.$args['task'].'_dir' => core\template::get().'/'.$args['context'].'~'.$args['task'],
 
 			// context~task ##
 			$args['context'].'__'.$args['task'] => $args['context'].'~'.$args['task'],
@@ -387,7 +387,7 @@ class config {
 
 			// w__log( 'd:>looking for source: '.$source );
 			// get _extend var ##
-			$_extend = $this->plugin->get( '_extend' );
+			$_extend = \willow()->get( '_extend' );
 
 			if(
 				! empty( $_extend )
@@ -526,8 +526,8 @@ class config {
 					
 						$cache_key = 
 							! is_null( $source ) ? 
-							$k.'_'.$source.'_'.willow\core\method::file_extension( $file ) : 
-							$k.'_'.willow\core\method::file_extension( $file ) ;
+							$k.'_'.$source.'_'.willow\core\strings::file_extension( $file ) : 
+							$k.'_'.willow\core\strings::file_extension( $file ) ;
 
 					}
 
@@ -590,7 +590,7 @@ class config {
 		){
 
 			// get caller ##
-			$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+			$backtrace = willow\core\backtrace::get([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// config is loaded by context or process, so we need one of those to continue ##
 			w__log( 'e:>Q -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
@@ -705,7 +705,7 @@ class config {
 
 		// w__log( 'd:>Looking for handle: "'.$handle.'" in file: "'.$file.'"' );
 
-		$backtrace = willow\core\method::backtrace([ 'level' => 2, 'return' => 'class_function' ]);
+		$backtrace = willow\core\backtrace::get([ 'level' => 2, 'return' => 'class_function' ]);
 
 		// use cached version ##
 		if( isset( $this->cache[$handle] ) ){
@@ -728,10 +728,10 @@ class config {
 
 		}
 
-		// w__log( 'dealing with file: '.$file. ' - ext: '.core\method::file_extension( $file ) );
+		// w__log( 'dealing with file: '.$file. ' - ext: '.core\strings::file_extension( $file ) );
 
 		// get file extension ##
-		switch( willow\core\method::file_extension( $file ) ){
+		switch( willow\core\strings::file_extension( $file ) ){
 
 			case "willow" :
 
@@ -832,7 +832,7 @@ class config {
 				$this->cache[$handle] = $array;
 
 				// merge results into array ##
-				$this->config = willow\core\method::parse_args( $array, $this->config );
+				$this->config = willow\core\arrays::parse_args( $array, $this->config );
 
 				// save file again ??
 

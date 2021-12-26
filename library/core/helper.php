@@ -103,7 +103,7 @@ class helper {
         if ( true === \WP_DEBUG ) {
 
 			// get caller ##
-			$backtrace = \willow\core\method::backtrace();
+			$backtrace = \willow\core\backtrace::get();
 
             if ( is_array( $log ) || is_object( $log ) ) {
 

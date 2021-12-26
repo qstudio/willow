@@ -135,7 +135,7 @@ if ( ! function_exists( 'w__log_direct' ) ) {
         if ( true === WP_DEBUG ) {
 
 			// get caller ##
-			$backtrace = willow\core\method::backtrace();
+			$backtrace = willow\core\backtrace::get();
 
             if ( is_array( $log ) || is_object( $log ) ) {
 
@@ -165,7 +165,7 @@ if ( ! function_exists( 'w__log_direct' ) ) {
 if( ! function_exists( 'w__substr_first' ) ) {
 	function w__substr_first( string $string = null ){
 
-		return \willow\strings\method::substr_first( $string );
+		return \willow\core\strings::substr_first( $string );
 
 	}
 }
@@ -179,7 +179,7 @@ if( ! function_exists( 'w__substr_first' ) ) {
 if( ! function_exists( 'w__substr_last' ) ) {
 	function w__substr_last( string $string = null ){
 
-		return \willow\strings\method::substr_last( $string );
+		return \willow\core\strings::substr_last( $string );
 
 	}
 }
@@ -194,7 +194,7 @@ if( ! function_exists( 'w__substr_last' ) ) {
 if( ! function_exists( 'w__array_to_string' ) ) {
 	function w__array_to_string( $array = null ){
 
-		return \willow\core\method::array_to_string( $array );
+		return \willow\core\arrays::to_string( $array );
 
 	}
 

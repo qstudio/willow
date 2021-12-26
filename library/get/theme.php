@@ -115,14 +115,14 @@ class theme {
 
            if ( $array ) {
 
-               willow\core\method::add_update_option( 'q_theme_data', $array, '', 'yes' );
+               willow\core\wordpress::add_update_option( 'q_theme_data', $array, '', 'yes' );
                #echo 'stored fresh theme data<br />';
 
            }
 
        }
 
-       return willow\core\method::array_to_object( $array );
+       return willow\core\arrays::to_object( $array );
 
     }
 

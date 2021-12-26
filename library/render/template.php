@@ -7,17 +7,10 @@ use willow\core\helper as h;
 
 class template {
 
-	private
-		$plugin = null // this
-	;
-
 	/**
 	 * 
      */
     public function __construct(){
-
-		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
 
 	}
 
@@ -62,12 +55,12 @@ class template {
 		// w__log( $args );
 
 		// get template ##
-		$config = $this->plugin->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
+		$config = \willow()->config->get([ 'context' => $args['context'], 'task' => $args['task'] ]);
 
 		// w__log( $config );
 
 		// filter ##
-		$config = $this->plugin->filter->apply([ 
+		$config = \willow()->filter->apply([ 
 			'parameters'    => [ 'config' => $config ], // pass ( $template ) as single array ##
 			'filter'        => 'willow/render/template/config/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $config
@@ -79,7 +72,7 @@ class template {
 		// w__log( 'markup: '.$markup );
 
 		// filter ##
-		$markup = $this->plugin->filter->apply([ 
+		$markup = \willow()->filter->apply([ 
 			'parameters'    => [ 'markup' => $markup ], // pass ( $template ) as single array ##
 			'filter'        => 'willow/render/template/template/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $markup
@@ -103,10 +96,10 @@ class template {
 		// w__log( $config['markup'][ $markup ] );
 
 		// markup string ##
-		$string = willow\render\method::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
+		$string = willow\core\strings::markup( $config['markup'][ $markup ], [ 0 => $args['data'] ] );
 
 		// filter ##
-		$string = $this->plugin->filter->apply([ 
+		$string = \willow()->filter->apply([ 
 			'parameters'    => [ 'string' => $string ], // pass ( $string ) as single array ##
 			'filter'        => 'willow/render/template/string/'.$args['context'].'/'.$args['task'], // filter handle ##
 			'return'        => $string

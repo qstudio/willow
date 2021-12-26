@@ -8,7 +8,6 @@ class context  {
 
 	private 
 		$plugin = false,
-		$parse_prepare = false,
 		$lookup_error = false
 	;
 
@@ -16,13 +15,10 @@ class context  {
      * @todo
      * 
      */
-    public function __construct(){
+    public function __construct( willow\plugin $plugin ){
 
 		// grab passed plugin object ## 
-		$this->plugin = willow\plugin::get_instance();
-
-		// parse prepare ##
-		$this->parse_prepare = new willow\parse\prepare();
+		$this->plugin = $plugin;
 
 	}
 
@@ -31,7 +27,8 @@ class context  {
 	 * 
 	 * @since 0.0.1
 	 */
-	public function __call( $function, $args ){	
+	public function __call( string $function = null, array $args = null ):void
+	{	
 
 		// w__log( '$function: '.$function );
 		// w__log( $args );
@@ -46,7 +43,7 @@ class context  {
 
 			w__log( 'e:>Error in passed render method: "'.$function.'" - should have format CLASS__METHOD' );
 
-			return false;
+			return;
 
 		}	
 
@@ -61,7 +58,7 @@ class context  {
 		
 			w__log( 'e:>Error in passed render method: "'.$function.'" - should have format CLASS__METHOD' );
 
-			return false;
+			return;
 
 		}
 
@@ -75,7 +72,7 @@ class context  {
 		if ( class_exists( $namespace ) ) {
 
 			// reset args ##
-			$this->plugin->render->args->reset();
+			\willow()->render->args->reset();
 
 			// w__log( 'd:>class: '.$namespace.' available' );
 
@@ -92,7 +89,7 @@ class context  {
 			// w__log( $args );
 
 			// extract markup from passed args ##
-			$this->plugin->render->markup->pre_validate( $args );
+			\willow()->render->markup->pre_validate( $args );
 
 			// make args an array, if it's not ##
 			if ( ! is_array( $args ) ){
@@ -119,7 +116,7 @@ class context  {
 
 			// log hash ##
 			// \willow::$hash 	= [
-			$this->plugin->set( '_hash', [
+			\willow()->set( '_hash', [
 				'hash'			=> $hash,
 				'context'		=> $args['context'],
 				'task'			=> $args['task'],
@@ -130,54 +127,54 @@ class context  {
 			if (
 				! \method_exists( $namespace, 'get' ) // base context method is get() -- and missing ##
 				&& ! \method_exists( $namespace, $args['task'] ) // ... also, context + specific task missing ##
-				&& ! $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] ) // ... and no extended context method match ##
+				&& ! \willow()->get( 'extend' )->get( $args['context'], $args['task'] ) // ... and no extended context method match ##
 			) {
 
 				// log stop point ##
-				$this->plugin->render->log->set( $args );
+				\willow()->render->log->set( $args );
 	
 				w__log( 'e:>Cannot locate method: '.$namespace.'::'.$args['task'] );
 	
 				// reset all args ##
-				$this->plugin->render->args->reset();
+				\willow()->render->args->reset();
 
 				// kick out ##
-				return false;
+				return;
 	
 			}
 
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_args' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_args' ) );
 	
 			// validate passed args ##
-			if ( ! $this->plugin->render->args->validate( $args ) ) {
+			if ( ! \willow()->render->args->validate( $args ) ) {
 	
-				$this->plugin->render->log->set( $args );
+				\willow()->render->log->set( $args );
 				
 				w__log( 'e:>Args validation failed' );
 
 				// reset all args ##
-				$this->plugin->render->args->reset();
+				\willow()->render->args->reset();
 	
-				return false;
+				return;
 	
 			}
 
-			// w__log( $this->plugin->get( '_args' ) );
+			// w__log( \willow()->get( '_args' ) );
 
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_fields' ) );
 			// w__log( $args );
 
 			// prepare markup, fields and handlers based on passed configuration ##
-			$this->parse_prepare->hooks( $args );
+			\willow()->parser->hooks( $args );
 
 			// w__log( $args );
 
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_scope_map' ) );
-			// w__log( $this->plugin->get( '_fields' ) );
-			// w__log( $this->plugin->get( '_args' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_scope_map' ) );
+			// w__log( \willow()->get( '_fields' ) );
+			// w__log( \willow()->get( '_args' ) );
 
 			// internal->buffering ##
 			if(
@@ -189,14 +186,14 @@ class context  {
 			}
 
 			if (
-				$extend = $this->plugin->get( 'extend' )->get( $args['context'], $args['task'] )
+				$extend = \willow()->get( 'extend' )->get( $args['context'], $args['task'] )
 			){
 
 				// w__log( 'd:>Willow->extend: '.$extend['class'].'->'.$extend['method'].'()' );
-				// w__log( $this->plugin->get( '_args' ) );
+				// w__log( \willow()->get( '_args' ) );
 
 				// gather field data from extend ##
-				// $return_array = $extend['class']::{ $extend['method'] }( $this->plugin->get( '_args') ) ;
+				// $return_array = $extend['class']::{ $extend['method'] }( \willow()->get( '_args') ) ;
 
 				$class = $extend['class'];
 				$method = $extend['method'];
@@ -205,7 +202,7 @@ class context  {
 				$object = new $class( $this->plugin );
 
 				// return post method to 
-				$return_array = $object->{ $method }( $this->plugin->get( '_args' ) );
+				$return_array = $object->{ $method }( \willow()->get( '_args' ) );
 
 			} else if ( 
 				\method_exists( $namespace, $args['task'] ) 
@@ -219,10 +216,10 @@ class context  {
 				$object = new $namespace( $this->plugin );
 
 				// return post method to 
-				$return_array = $object->{ $method }( $this->plugin->get( '_args' ) );
+				$return_array = $object->{ $method }( \willow()->get( '_args' ) );
 
 				// gather field data from $method ##
-				// $return_array = $namespace::{ $args['task'] }( $this->plugin->get( '_args') ) ;
+				// $return_array = $namespace::{ $args['task'] }( \willow()->get( '_args') ) ;
 
 			} else if ( 
 				\method_exists( $namespace, 'get' ) 
@@ -231,15 +228,15 @@ class context  {
 				// w__log( 'e:>Willow->get: '.$namespace.'->get()' );
 
 				// gather field data from get() ##
-				// $return_array = $namespace::get( $this->plugin->get( '_args') ) ;
+				// $return_array = $namespace::get( \willow()->get( '_args') ) ;
 
-				// w__log( $this->plugin->get( '_args' ) ); exit;
+				// w__log( \willow()->get( '_args' ) ); exit;
 
 				// new object ##
 				$object = new $namespace( $this->plugin );
 
 				// return post method to 
-				$return_array = $object->get( $this->plugin->get( '_args' ) );
+				$return_array = $object->get( \willow()->get( '_args' ) );
 
 				// w__log( $return_array );
 
@@ -274,14 +271,14 @@ class context  {
 				true === $this->lookup_error
 			){
 
-				$this->plugin->render->log->set( $args );
+				\willow()->render->log->set( $args );
 				
 				w__log( 'e:>No matching method found for "'.$args['context'].'~'.$args['task'].'"' );
 
 				// reset all args ##
-				$this->plugin->render->args->reset();
+				\willow()->render->args->reset();
 	
-				return false;
+				return;
 
 			}
 
@@ -290,65 +287,65 @@ class context  {
 				|| ! is_array( $return_array )
 			){
 
-				w__log( 'e:>Willow "'.$args['context'].'->'.$args['task'].'" function found, but returned false - stopping here.' );
+				w__log( 'e:>Willow "'.$args['context'].'->'.$args['task'].'" function found, but returned nothing - stopping here.' );
 				// w__log( $return_array );
 
 				// BREAKING CHANGE  ## 
 				// this did not return before - but what use is there to continue with no data to markup ?
 				// any filters and hooks could already have run from the called function - which was found, but returned false ##
-				return false;
+				return;
 
 			}
 
 			// w__log( $return_array );
 
 			// assign fields from returned data array ##
-			$this->plugin->render->fields->define( $return_array );
-			// w__log( $this->plugin->get( '_fields' ) );
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_args' ) );
+			\willow()->render->fields->define( $return_array );
+			// w__log( \willow()->get( '_fields' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_args' ) );
 
 			// w__log( $return_array );
 
 			// prepare field data ##
-			$this->plugin->render->fields->prepare();
-			// w__log( $this->plugin->get( '_fields' ) );
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_scope_map' ) );
+			\willow()->render->fields->prepare();
+			// w__log( \willow()->get( '_fields' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_scope_map' ) );
 
 			// check if feature is enabled ##
-			if ( ! $this->plugin->render->args->is_enabled() ) {
+			if ( ! \willow()->render->args->is_enabled() ) {
 
 				// build log ##
-				$this->plugin->render->log->set( $args );
+				\willow()->render->log->set( $args );
 
 				// reset all args ##
-				$this->plugin->render->args->reset();
+				\willow()->render->args->reset();
 				
 				w__log( 'd:>Not enabled...' );
 
 				// done ##
-				return false;
+				return;
 	
 		   	}    
 		
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_fields' ) );
 
 			// Prepare template markup ##
-			$this->plugin->render->markup->prepare();
+			\willow()->render->markup->prepare();
 
-			// w__log( $this->plugin->get( '_markup' ) );
-			// w__log( $this->plugin->get( '_fields' ) );
+			// w__log( \willow()->get( '_markup' ) );
+			// w__log( \willow()->get( '_fields' ) );
 
 			// clean up left over tags ## --- @TODO --> REMOVED as handled by cleanup ??? ##
 			// willow\parse::cleanup();
 
 			// optional logging to show removals and stats ##
-			$this->plugin->render->log->set( $args );
+			\willow()->render->log->set( $args );
 
 			// return or echo ##
-			$output = $this->plugin->render->output->prepare();
+			$output = \willow()->render->output->prepare();
 
 			// w__log( $output );
 
@@ -361,7 +358,7 @@ class context  {
 			// @todo -- add shutdown cleanup, so remove all lost pieces ##
 
 			// kick back nada - as this renders on the UI ##
-			return false;
+			return;
 
 		}
 
