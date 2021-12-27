@@ -1,6 +1,6 @@
 ### 2.1.0 ###
 
-* Update: moved all object instatiation to plugin hook, no more god classes - all objects are stored in a global getters and setters
+* Update: moved all object instatiation to plugin hook - all objects are stored in a global getters and setters and accessed via willow() function
 
 ### 2.0.6 ###
 
