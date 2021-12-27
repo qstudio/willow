@@ -7,22 +7,11 @@ use willow;
 class output {
 
 	/**
-     * Plugin Instance
-     *
-     * @var     Object      $plugin
+	 * Construct
      */
-	protected 
-		$plugin = false
-		// $is_willow // @TODO
-	;
+    public function __construct(){
 
-	/**
-	 * CLass Constructer 
-	*/
-	function __construct( \willow\plugin $plugin ){
-
-        // grab plugin instance ## 
-		$this->plugin = $plugin;
+		return $this;
 
 	}
 
@@ -37,11 +26,10 @@ class output {
 
 		// sanity ##
         if( 
-            is_null( $this->plugin )
-            || ! ( $this->plugin instanceof \willow\plugin ) 
+            ! function_exists( 'willow' )
         ) {
 
-            error_log( 'Error in object instance passed to '.__CLASS__ );
+            error_log( 'Willow not available to '.__CLASS__ );
 
             return false;
         
@@ -182,7 +170,7 @@ class output {
 		\willow()->parser->hooks( \willow()->get( '_buffer_args' ), 'primary' );
 
 		// w__log( \willow()->get( '_buffer_map' ) );
-		$_buffer_map = \willow()->buffer_map->prepare();
+		$_buffer_map = \willow()->buffer->map->prepare();
 		\willow()->set( '_buffer_markup', $_buffer_map );
 		// w__log( \willow()->get( '_buffer_markup' ) );
 

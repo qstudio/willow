@@ -8,8 +8,6 @@ use willow\core\helper as h;
 class php_functions {
 
 	private
-		$plugin,
-
 		$return,
 		$function_hash, 
 		$function,
@@ -19,7 +17,6 @@ class php_functions {
 		$method,
 		$function_array,
 		$config_string
-	
 	;
 
 
@@ -38,14 +35,11 @@ class php_functions {
 	}
 
 	/**
-	 * Construct object from passed args
-	 * 
-	 * @since 2.0.0
-	*/
-	public function __construct( willow\plugin $plugin ){
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin instance ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 	
@@ -132,8 +126,7 @@ class php_functions {
 
 		$regex_find = \apply_filters( 
 			'willow/parse/php_functions/regex/find', 
-			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces.. not sure it's good yet...
-			// "/{{#(.*?)\/#}}/s" 
+			"/$open\s+(.*?)\s+$close/s"  // note:: added "+" for multiple whitespaces ##
 		);
 
 		// w__log( 't:> allow for badly spaced tags around sections... whitespace flexible..' );
@@ -451,7 +444,6 @@ class php_functions {
 
 		}
 
-		// FLAGS MOVED ABOVE checks below... BREAKING CHANGE TO FIX ###
 		// filter ##
 		// w__log( $this->flags_php_function );
 		$_flags_php_function = \willow()->get( '_flags_php_function' );
@@ -462,7 +454,7 @@ class php_functions {
 
 			// w__log( $_flags_php_function );
 			// w__log( $this->return );
-			// bounce to filter::apply() ##
+			// bounce to filter->process() ##
 			$filter_return = \willow()->filter->process([ 
 				'filters' 	=> $_flags_php_function, 
 				'string' 	=> $this->return, 
@@ -478,7 +470,7 @@ class php_functions {
 				&& $filter_return != $this->return // value chaged ##
 			){
 
-				w__log( 'd:>php_function filters changed value: '.$filter_return );
+				// w__log( 'd:>php_function filters changed value: '.$filter_return );
 
 				// update class property ##
 				$this->return = $filter_return;
@@ -499,13 +491,13 @@ class php_functions {
 			// remove php_function tag from markup ##
 			\willow()->parse->markup->swap( $this->function_match, '', 'php_function', 'string', $process );
 
-			// done on this parse ##
+			// done on this pass ##
 			return false;
 
 		}
 
 		// add fields - perhaps we do not always need this -- perhaps based on [null] flag status ##
-		\willow()->render_fields->define([
+		\willow()->render->fields->define([
 			$this->function_hash => $this->return
 		]);
 

@@ -9,10 +9,6 @@ class variables {
 
 	private 
 
-		$plugin = false,
-		// $args = false,
-		// $process = false,
-
 		$arguments = false,
 		$variable = false,
 		$new_variable = false,
@@ -40,14 +36,11 @@ class variables {
 	}
 
 	/**
-	 * Construct object from passed args
-	 * 
-	 * @since 2.0.0
-	*/
-	public function __construct( willow\plugin $plugin ){
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 	

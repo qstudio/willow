@@ -7,7 +7,6 @@ use willow;
 class i18n {
 
 	private 
-		$plugin, // $this
 		$return,
 		$i18n,
 		$i18n_match, // full string matched ##
@@ -30,10 +29,12 @@ class i18n {
 
 	}
 
-	public function __construct( willow\plugin $plugin ){
+	/**
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

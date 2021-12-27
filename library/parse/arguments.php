@@ -7,7 +7,6 @@ use willow;
 class arguments {
 
 	private 
-		$plugin,
 		$string, 
 		$array
 	;
@@ -20,10 +19,12 @@ class arguments {
 
 	}
 	
-	public function __construct( willow\plugin $plugin ){
+	/**
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

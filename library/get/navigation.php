@@ -8,17 +8,12 @@ use willow;
 
 class navigation {
 
-	private
-		$plugin = null // this
-	;
-
 	/**
-     * Construct
+	 * Construct
      */
-    public function __construct( willow\plugin $plugin ){
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

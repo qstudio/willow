@@ -7,18 +7,16 @@ use willow;
 class context  {
 
 	private 
-		$plugin = false,
+		// $plugin = false,
 		$lookup_error = false
 	;
 
 	/**
-     * @todo
-     * 
+	 * Construct
      */
-    public function __construct( willow\plugin $plugin ){
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 
@@ -199,7 +197,7 @@ class context  {
 				$method = $extend['method'];
 				
 				// new object ##
-				$object = new $class( $this->plugin );
+				$object = new $class( \willow() );
 
 				// return post method to 
 				$return_array = $object->{ $method }( \willow()->get( '_args' ) );
@@ -213,7 +211,7 @@ class context  {
 				$method = $args['task'];
 
 				// new object ##
-				$object = new $namespace( $this->plugin );
+				$object = new $namespace( \willow() );
 
 				// return post method to 
 				$return_array = $object->{ $method }( \willow()->get( '_args' ) );
@@ -233,7 +231,7 @@ class context  {
 				// w__log( \willow()->get( '_args' ) ); exit;
 
 				// new object ##
-				$object = new $namespace( $this->plugin );
+				$object = new $namespace( \willow() );
 
 				// return post method to 
 				$return_array = $object->get( \willow()->get( '_args' ) );

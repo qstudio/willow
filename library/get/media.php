@@ -8,16 +8,15 @@ use willow\core\helper as h;
 class media {
 
 	private 
-		$plugin = false,
 		$type_method = false
 	;
 
 	/**
+	 * Construct
      */
-    public function __construct( willow\plugin $plugin ){
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 	

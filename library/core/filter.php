@@ -12,17 +12,16 @@ class filter {
      * @var     Object      $plugin
      */
 	protected 
-		$plugin, $hooked = false
+		$hooked = false
 	;
 
 	/**
-	 * CLass Constructer 
-	*/
-	public function __construct(){
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		// $this->plugin = willow\plugin::get_instance();
-		
+		// silence ##
+
 	}
 
 	public function hooks(){
@@ -300,6 +299,7 @@ class filter {
 
 		// get filters ##
 		$_filters = \willow()->get( '_filters' );
+		// w__log( $_filters );
 			
 		// load all stored filters, if filters_loaded is empty ##
 		if( true !== \willow()->get( '_filters_filtered' ) ){
@@ -369,6 +369,16 @@ class filter {
 
 			// get function value from $filters matching request ##
 			// w__log( '$function: '.$function );
+
+			// check if function name starts with "!" - if so, not that it is commented and continue to next function ##
+			if ( \willow\core\strings::starts_with( $function, '!' ) ){
+
+				// w__log( 'e:>Filter: "'.$function.'" is commented for use case: "'.$args['use'].'"' );
+
+				// carry on.. ##
+				continue;
+
+			}
 
 			// filter function - allows for replacement by use-case ( tag OR variable ) ##
 			$function = \apply_filters( 'willow/filter/apply/'.$function.'/'.$args['use'], $function );

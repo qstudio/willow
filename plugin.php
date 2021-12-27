@@ -418,8 +418,7 @@ final class plugin {
         // check if key set ##
         if( is_null( $key ) ){
 
-            // return false;
-			// return false;
+			// return instance ##
 			return self::get_instance();
 
         }

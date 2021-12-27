@@ -7,8 +7,6 @@ use willow;
 class loops {
 
 	private 
-		$plugin = false,
-
 		$loop_hash, 
 		$loop,
 		$loop_match, // full string matched ##
@@ -33,10 +31,12 @@ class loops {
 		$this->loop_variables = false;
 	}
 
-	public function __construct( willow\plugin $plugin ){
+	/**
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

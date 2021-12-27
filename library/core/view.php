@@ -1,11 +1,11 @@
 <?php
 
-namespace willow\view;
+namespace willow\core;
 
 use willow;
 use willow\core\helper as h;
 
-class filter {
+class view {
     
 	private 
 
@@ -46,7 +46,7 @@ class filter {
 	
 	public function __construct(){
 
-		// empty ##
+		return $this;
 
 	}
 

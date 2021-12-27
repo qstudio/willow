@@ -66,26 +66,27 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 \add_action( 'plugins_loaded', function() use( $plugin ){
 
 	// kick off config and store object ##
-	$config = new willow\core\config( $plugin );
-	$config->hooks();
+	\w__id( $config = new willow\core\config )->hooks();
 	$plugin->set( 'config', $config );
 
 	// extender ##
-	$plugin->set( 'extend', new willow\context\extend( $plugin ) );
+	$plugin->set( 'extend', new willow\context\extend() );
 
 	// kick off filter and store object ##
-	$plugin->set( 'filter', new willow\core\filter( $plugin ) );
+	$plugin->set( 'filter', new willow\core\filter() );
 
 	// build helper object ##
-	$plugin->set( 'helper', new willow\core\helper( $plugin ) );
+	$plugin->set( 'helper', new willow\core\helper() );
 
 	// kick off tags and store object ##
-	$plugin->set( 'tags', new willow\core\tags( $plugin ) );
+	$plugin->set( 'tags', new willow\core\tags() );
 
 	// build views - required in admin and front-end ##
 	// @todo -- add filter to make views optional ##
-	$view = new willow\view\filter( $plugin );
-	$view->hooks();
+	\w__id( new willow\core\view )->hooks();
+
+	// updates ##
+	\w__id( new willow\core\update )->hooks();
 
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );
@@ -97,83 +98,68 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 	if( ! \is_admin() ){ 
 
 		// include __MAGIC__ context loader ##
-		require_once $plugin->get_plugin_path( '/library/context/_load.php' ); 
-
-		// build the parser ##
-		$parser = new willow\parse\prepare( $plugin );
+		require_once $plugin->get_plugin_path( '/library/context/load.php' ); 
 
 		// store an instance of the parser ##
-		$plugin->set( 'parser', $parser );
+		$plugin->set( 'parser', new willow\parse\prepare() );
 
 		// create parse object, pushing in each individual parser object ##
 		$parse = new \stdClass();
-
 		// generic ##
-		$parse->flags = new willow\parse\flags( $plugin );
-		$parse->arguments = new willow\parse\arguments( $plugin );
-		$parse->markup = new willow\parse\markup( $plugin );
-		$parse->cleanup = new willow\parse\cleanup( $plugin );
-
+		$parse->flags = new willow\parse\flags();
+		$parse->arguments = new willow\parse\arguments();
+		$parse->markup = new willow\parse\markup();
+		$parse->cleanup = new willow\parse\cleanup();
 		// tag specific ##
-		$parse->partials = new willow\parse\partials( $plugin );
-		$parse->i18n = new willow\parse\i18n( $plugin );
-		$parse->php_functions = new willow\parse\php_functions( $plugin );
-		$parse->willows = new willow\parse\willows( $plugin );
-		$parse->loops = new willow\parse\loops( $plugin );
-		$parse->comments = new willow\parse\comments( $plugin );
-		$parse->variables = new willow\parse\variables( $plugin );
-
+		$parse->partials = new willow\parse\partials();
+		$parse->i18n = new willow\parse\i18n();
+		$parse->php_functions = new willow\parse\php_functions();
+		$parse->willows = new willow\parse\willows();
+		$parse->loops = new willow\parse\loops();
+		$parse->comments = new willow\parse\comments();
+		$parse->variables = new willow\parse\variables();
 		// store parsers ##
 		$plugin->set( 'parse', $parse );
 
 		// create render object, pushing in each individual render object instance ##
 		$render = new \stdClass();
-
-		$render->callback = new willow\render\callback( $plugin );
-		$render->format = new willow\render\format( $plugin );
-		$render->args = new willow\render\args( $plugin );
-		$render->markup = new willow\render\markup( $plugin );
-		$render->log = new willow\render\log( $plugin );
-		$render->output = new willow\render\output( $plugin );
-		$render->fields = new willow\render\fields( $plugin );
-
-		// store render objects ##
+		$render->callback = new willow\render\callback();
+		$render->format = new willow\render\format();
+		$render->args = new willow\render\args();
+		$render->markup = new willow\render\markup();
+		$render->log = new willow\render\log();
+		$render->output = new willow\render\output();
+		$render->fields = new willow\render\fields();
 		$plugin->set( 'render', $render );
-		$plugin->set( 'render_fields', new willow\render\fields( $plugin ) );
-
-		// group instances ##
-		$plugin->set( 'group', new willow\get\group( $plugin ) );
 
 		// context instance ##
-		$plugin->set( 'context', new willow\context( $plugin ) );
+		$plugin->set( 'context', new willow\context() );
 
 		// get instances ##
-		$plugin->set( 'media', new willow\get\media( $plugin ) );
-		$plugin->set( 'meta', new willow\get\meta( $plugin ) );
-		$plugin->set( 'navigation', new willow\get\navigation( $plugin ) );
-		$plugin->set( 'plugin', new willow\get\plugin( $plugin ) );
-		$plugin->set( 'query', new willow\get\query( $plugin ) );
-		$plugin->set( 'post', new willow\get\post( $plugin ) );
-		$plugin->set( 'taxonomy', new willow\get\taxonomy( $plugin ) );
+		$plugin->set( 'media', new willow\get\media() );
+		$plugin->set( 'group', new willow\get\group() );
+		$plugin->set( 'meta', new willow\get\meta() );
+		$plugin->set( 'navigation', new willow\get\navigation() );
+		$plugin->set( 'plugin', new willow\get\plugin() );
+		$plugin->set( 'query', new willow\get\query() );
+		$plugin->set( 'post', new willow\get\post() );
+		$plugin->set( 'taxonomy', new willow\get\taxonomy() );
 
 		// create type object, pushing in each individual render object ##
 		$type = new \stdClass();
-		
-		// set types ##
-		$type->get = new willow\type\get( $plugin );
-		$type->post = new willow\type\post( $plugin );
-		$type->author = new willow\type\author( $plugin );
-		$type->taxonomy = new willow\type\taxonomy( $plugin );
-		$type->media = new willow\type\media( $plugin );
-		$type->meta = new willow\type\meta( $plugin );
+		$type->get = new willow\type\get();
+		$type->post = new willow\type\post();
+		$type->author = new willow\type\author();
+		$type->taxonomy = new willow\type\taxonomy();
+		$type->media = new willow\type\media();
+		$type->meta = new willow\type\meta();
 		$plugin->set( 'type', $type );
 
-		// set output ##
-		$plugin->set( 'buffer_map', new willow\buffer\map( $plugin ) );
-
-		// build output buffer ##
-		$option = new willow\buffer\output( $plugin );
-		$option->hooks();
+		// set buffer ##
+		$buffer = new \stdClass();
+		$buffer->map = new willow\buffer\map();
+		\w__id( $buffer->output = new willow\buffer\output )->hooks();
+		$plugin->set( 'buffer', $buffer );
 
 	}
 

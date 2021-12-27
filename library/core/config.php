@@ -35,13 +35,12 @@ class config {
 	;
 
 	/**
-	 * CLass Constructer 
-	*/
-	function __construct( \willow\plugin $plugin ){
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab plugin instance ## 
-		$this->plugin = $plugin;
-		
+		return $this;
+
 	}
 
 	/**
@@ -54,11 +53,10 @@ class config {
 
 		// sanity ##
         if( 
-            is_null( $this->plugin )
-            || ! ( $this->plugin instanceof \willow\plugin ) 
+            ! function_exists( 'willow' )
         ) {
 
-            error_log( 'Error in object instance passed to '.__CLASS__ );
+            error_log( 'Willow not available to '.__CLASS__ );
 
             return false;
         

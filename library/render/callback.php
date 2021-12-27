@@ -6,16 +6,12 @@ use willow;
 
 class callback {
 
-	private 
-		$plugin = false
-	;
-
 	/**
+	 * Construct
      */
-    public function __construct( willow\plugin $plugin ){
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

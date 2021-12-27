@@ -7,19 +7,17 @@ use willow;
 class group {
 	
 	private
-		$plugin = null, // this 
 		$acf_fields = null, // fields grabbed by acf function ##
 		$data = null, // returned field data array ##
 		$fields = null // to return to self::$args['fields]
 	;
 
 	/**
-	 * 
+	 * Construct
      */
-    public function __construct( willow\plugin $plugin ){
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

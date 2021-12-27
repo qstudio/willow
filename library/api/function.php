@@ -162,6 +162,16 @@ if ( ! function_exists( 'w__log_direct' ) ) {
  * @since	1.6.2
  * @return	Mixed
 */
+if( ! function_exists( 'w__id' ) ) {
+	function w__id($object){ return $object; }
+}
+
+/**
+ * Return first character of string 
+ * 
+ * @since	1.6.2
+ * @return	Mixed
+*/
 if( ! function_exists( 'w__substr_first' ) ) {
 	function w__substr_first( string $string = null ){
 

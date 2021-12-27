@@ -6,14 +6,12 @@ use willow;
 
 class markup {
 
-	private 
-		$plugin = false
-	;
+	/**
+	 * Construct
+     */
+    public function __construct(){
 
-	public function __construct( willow\plugin $plugin ){
-
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 

@@ -7,18 +7,12 @@ use willow\core\helper as h;
 
 class map {
 
-	private 
-		$plugin = false
-	;
-
 	/**
-     * @todo
-     * 
+	 * Construct
      */
-    public function __construct( willow\plugin $plugin ){
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 
@@ -44,7 +38,7 @@ class map {
 		){
 
 			// log ##
-			w__log( 'e:>$_buffer_map is empty, so nothing to prepare.. stopping here.');
+			\w__log( 'e:>$_buffer_map is empty, so nothing to prepare.. stopping here.');
 
 			// kick out ##
 			return false;
@@ -137,7 +131,6 @@ class map {
 		return $_markup_template;
 
 	}
-
 
 	protected function get_key_from_value( $_buffer_map = null, $key = null, $value = null ){
 

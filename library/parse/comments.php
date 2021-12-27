@@ -7,7 +7,6 @@ use willow;
 class comments {
 
 	private 
-		$plugin = false,
 		$parse_flags = false,
 
 		$comment_hash, 
@@ -22,10 +21,12 @@ class comments {
 		$this->flags_comment = false;
 	}
 
-	public function __construct( willow\plugin $plugin ){
+	/**
+	 * Construct
+     */
+    public function __construct(){
 
-		// grab passed plugin object ## 
-		$this->plugin = $plugin;
+		// silence ##
 
 	}
 
