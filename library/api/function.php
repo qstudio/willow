@@ -157,13 +157,15 @@ if ( ! function_exists( 'w__log_direct' ) ) {
 }
 
 /**
- * Return first character of string 
+ * Return object for chaining
  * 
  * @since	1.6.2
  * @return	Mixed
 */
 if( ! function_exists( 'w__id' ) ) {
-	function w__id($object){ return $object; }
+	
+	function w__id( $object ){ return $object; }
+
 }
 
 /**
