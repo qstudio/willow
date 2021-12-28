@@ -62,8 +62,6 @@ class config {
         
 		}
 		
-		// error_log( 'Helper hooks run..' );
-
 		\add_filter( 'willow/config/load', 
 			function( $args ){
 				$source = 'parent'; // context source ##
@@ -99,7 +97,7 @@ class config {
 	public function properties(){
 
 		// cache ##
-		if ( $this->properties_loaded ) return false;
+		if ( $this->properties_loaded ) return;
 
 		// check for child theme path method ##
 		$this->get_child_path = method_exists( 'q\theme\plugin', 'get_child_path' );
@@ -108,7 +106,7 @@ class config {
 		$this->get_parent_path = method_exists( 'q\theme\plugin', 'get_parent_path' );
 
 		// config file extension ##
-		$this->file_extensions = \apply_filters( 'willow/config/load/ext', [ 
+		$this->file_extensions = \apply_filters( 'willow/config/load/extensions', [ 
 			'.willow',
 			'.php', 
 		] );
@@ -116,7 +114,7 @@ class config {
 		// config file path ( h::get will do fallback checks form child theme, parent theme, plugin + Q.. )
 		$this->willow_path = \apply_filters( 'willow/config/load/path', 'willow/' );
 
-		// template ##
+		// get current template ##
 		$this->template = willow\core\template::get() ? willow\core\template::get() : '404';
 
 		// update tracker ##
@@ -147,7 +145,7 @@ class config {
 		}
 
 		// if theme debugging, then load from single config files ##
-		if ( \willow()->_debug ) { 
+		if ( true === \willow()->get( '_debug') ) { 
 
 			// w__log('d:>Deubbing, so we do not need to resave __willow.php.' );
 			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __willow.php??' );
@@ -165,6 +163,13 @@ class config {
 		
 		}
 
+		// check if array is still in JSON format -- if so decode ##
+		if( ! willow\core\is::json( $this->config ) ){
+
+			$this->config = json_encode( $this->config );
+
+		}
+
 		// cache in DB ##
 		\set_site_transient( 'willow_config', $this->config, 24 * HOUR_IN_SECONDS );
 
@@ -172,6 +177,7 @@ class config {
 
 		// return true;
 
+		/*
 		if ( method_exists( 'q\theme\plugin', 'get_child_path' ) ){ 
 
 			// w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
@@ -179,6 +185,7 @@ class config {
 			willow\core\file::put_array( \q\theme\plugin::get_child_path( '/__willow.php' ), $this->config );
 
 		}
+		*/
 
 		return true;
 
@@ -192,7 +199,7 @@ class config {
 	public function get_cache(){
 
 		// if theme debugging, then load from indiviual config files ##
-		if ( \willow()->get('_debug') ) { 
+		if ( true === \willow()->get('_debug') ) { 
 
 			// w__log( 'd:>Theme is debugging, so load from individual context files...' );
 
@@ -212,6 +219,13 @@ class config {
 		if ( 
 			$array = \get_site_transient( 'willow_config' )
 		) {
+
+			// check if array is still in JSON format -- if so decode ##
+			if( willow\core\is::json( $array ) ){
+
+				$array = json_decode( $array );
+
+			}
 
 			// log ##
 			// w__log( 'd:>DB Transient Found...' );
@@ -261,6 +275,7 @@ class config {
 
 		// w__log( 'e:>Deleted config cache from DB...' );
 
+		/*
 		if ( method_exists( 'q\theme\plugin', 'get_child_path' ) ){ 
 
 			$file = \q\theme\plugin::get_child_path('/__willow.php');
@@ -274,6 +289,7 @@ class config {
 			}
 
 		}
+		*/
 
 		// update tracker ##
 		$this->delete_config = false;
@@ -591,7 +607,7 @@ class config {
 			$backtrace = willow\core\backtrace::get([ 'level' => 2, 'return' => 'class_function' ]);
 
 			// config is loaded by context or process, so we need one of those to continue ##
-			w__log( 'e:>Q -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
+			w__log( 'e:>Willow -> '.$backtrace.': config is loaded by context and process, so we need both of those to continue' );
 
 			return false;
 
@@ -664,47 +680,6 @@ class config {
 
 	}
 
-	public function html_entity_decode( $value ){
-
-		// if is a string ##
-		if( is_string( $value ) ){
-
-			$value = html_entity_decode( $value, ENT_NOQUOTES, 'UTF-8');
-
-		} else if( is_array( $value ) ){
-
-			if ( count($value) == count($value, COUNT_RECURSIVE)) {
-				
-				\w__log( 'array is not multidimensional' );
-
-				$value = array_map(fn($e) => html_entity_decode( $e, ENT_QUOTES, 'UTF-8' ), $value);
-			
-			} else {
-
-				// \w__log( 'array is multidimensional' );
-				\w__log( $value );
-				// array_walk_recursive( $value, function ($e) { 
-				// 	$e = html_entity_decode($e, ENT_QUOTES, 'UTF-8'); 
-				// });
-
-			}
-
-			// $value = html_entity_decode( $value, ENT_NOQUOTES, 'UTF-8');
-
-		}
-
-		// $return = array_walk_recursive( $return, function ( $value ) {
-		//  	$value = html_entity_decode( $value );
-		// });
-
-		// $return = array_walk_recursive(function ($e) {
-		// 	return html_entity_decode($e, ENT_NOQUOTES, 'UTF-8');
-		// }, $return);
-
-		return $value;
-
-	}
-
 	public function run_filter() {
 
 		// sanity ##
@@ -741,7 +716,6 @@ class config {
 		if (
 			is_null( $file )
 			|| is_null( $handle )
-			// || is_null( $args )
 		){
 
 			w__log( 'Error in passed params' );
