@@ -1,4 +1,4 @@
-### 2.1.0 ###
+### 2.1.1 ###
 
 * Update: moved all object instatiation to plugin hook - all objects are stored in a global getters and setters and accessed via willow() function
 
