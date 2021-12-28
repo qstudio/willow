@@ -179,23 +179,6 @@ class strings {
 
     }
 
-	public static function file_extension( $string = null ){
-
-		// sanity ##
-		if( is_null( $string ) ){
-
-			w__log( 'e:>No string passed to method' );
-
-			return false;
-
-		}
-
-		$n = strrpos( $string, "." );
-
-		return ( $n === false ) ? "" : substr( $string, $n+1 );
-		
-	}
-
     /**
     * Strip unwated tags and shortcodes from the_content
     *

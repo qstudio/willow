@@ -66,7 +66,7 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 \add_action( 'plugins_loaded', function() use( $plugin ){
 
 	// kick off config and store object ##
-	\w__id( $config = new willow\core\config )->hooks();
+	\w__object( $config = new willow\core\config )->hooks();
 	$plugin->set( 'config', $config );
 
 	// extender ##
@@ -83,10 +83,10 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 
 	// build views - required in admin and front-end ##
 	// @todo -- add filter to make views optional ##
-	\w__id( new willow\core\view )->hooks();
+	\w__object( new willow\core\view )->hooks();
 
 	// updates ##
-	\w__id( new willow\core\update )->hooks();
+	\w__object( new willow\core\update )->hooks();
 
 	// set text domain on init hook ##
 	\add_action( 'init', [ $plugin, 'load_plugin_textdomain' ], 1 );
@@ -158,7 +158,7 @@ if( ! ( $plugin instanceof willow\plugin ) ) {
 		// set buffer ##
 		$buffer = new \stdClass();
 		$buffer->map = new willow\buffer\map();
-		\w__id( $buffer->output = new willow\buffer\output )->hooks();
+		\w__object( $buffer->output = new willow\buffer\output )->hooks();
 		$plugin->set( 'buffer', $buffer );
 
 	}

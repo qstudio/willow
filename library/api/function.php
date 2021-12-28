@@ -162,9 +162,9 @@ if ( ! function_exists( 'w__log_direct' ) ) {
  * @since	1.6.2
  * @return	Mixed
 */
-if( ! function_exists( 'w__id' ) ) {
+if( ! function_exists( 'w__object' ) ) {
 	
-	function w__id( $object ){ return $object; }
+	function w__object( $object ){ return $object; }
 
 }
 

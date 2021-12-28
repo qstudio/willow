@@ -34,17 +34,6 @@ class output {
             return false;
         
 		}
-		
-		// w__log( 'd:>Buffer hooks run..' );
-
-		// https://stackoverflow.com/questions/38693992/notice-ob-end-flush-failed-to-send-buffer-of-zlib-output-compression-1-in
-		\remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
-		\add_action( 'shutdown', function() {
-			while ( @ob_end_flush() );
-		} );
-
-		// set _filter var to empty array ##
-		\willow()->set( '_filter', [] );
 
 		// not on admin ##
 		if ( \is_admin() ) {
@@ -54,6 +43,17 @@ class output {
 			return false;
 
 		}
+		
+		// w__log( 'd:>Buffer hooks run..' );
+
+		// https://stackoverflow.com/questions/38693992/notice-ob-end-flush-failed-to-send-buffer-of-zlib-output-compression-1-in
+		\remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
+		\add_action( 'shutdown', function() {
+			while ( @ob_end_flush() );
+		} );
+
+		// set _filter prop to empty array ##
+		\willow()->set( '_filter', [] );
 
 		// \add_action( 'get_header',  [ get_class(), 'ob_start' ], 0 ); // try -- template_redirect.. was init
 		\add_action( 'wp',  function(){ 
@@ -82,10 +82,8 @@ class output {
 
 				// w__log( 'e:>No buffer.. so no go' );
 
-				// ob_flush();
-				if( ob_get_level() > 0 ) {
-					ob_flush();
-				}
+				// flush OB ##
+				$this->ob_flush();
 				
 				return false; 
 			
@@ -93,23 +91,11 @@ class output {
 
 			// w__log( 'e:>Doing shutdown buffer' );
 
-			$string = '';
-		
-			// We'll need to get the number of ob levels we're in, so that we can iterate over each, collecting
-			// that buffer's output into the final output.
-			$levels = ob_get_level();
-			// w__log( $levels );
-		
-			for ($i = 0; $i < $levels; $i++) {
-				$string .= ob_get_clean();
-			}
-
-			// w__log( 'e:>String: '.$string );
-
-			// ob_flush();
-			if( ob_get_level() > 0 ) {
-				ob_flush();
-			}
+			// get data from OB ##
+			$string = $this->ob_get();
+			
+			// flush OB ##
+			$this->ob_flush();
 
 			// Output is directly echoed, once it has been parsed ##
 			echo $this->prepare( $string );
@@ -118,6 +104,34 @@ class output {
 			\willow()->render->args->reset();
 
 		}, 0 );
+
+	}
+
+	public function ob_get()
+	{
+
+		$string = '';
+
+		// We'll need to get the number of ob levels we're in, so that we can iterate over each, collecting
+		// that buffer's output into the final output.
+		$levels = ob_get_level();
+		// w__log( $levels );
+	
+		for ($i = 0; $i < $levels; $i++) {
+			$string .= ob_get_clean();
+		}
+
+		return $string;
+
+	}
+
+	public function ob_flush()
+	{
+
+		// ob_flush();
+		if( ob_get_level() > 0 ) {
+			ob_flush();
+		}
 
 	}
 
@@ -140,9 +154,6 @@ class output {
 			return false;
 
 		}
-
-		// build factory objects ##
-		// \willow()->factory( $this->plugin );
 
 		// we are passed an html string, captured from output buffering, which we need to parse for tags and process ##
 		// w__log( $string );
@@ -175,7 +186,7 @@ class output {
 		// w__log( \willow()->get( '_buffer_markup' ) );
 
 		// clean up left over tags ##
-		\willow()->parse->cleanup->hooks( \willow()->get( '_buffer_args' ), 'primary' ); // @TODO - removed for testing ##
+		\willow()->parse->cleanup->hooks( \willow()->get( '_buffer_args' ), 'primary' ); 
 		
 		// reset properties ##
 		\willow()->set( '_buffer_map', [] );

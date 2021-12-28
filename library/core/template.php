@@ -56,7 +56,7 @@ class template {
 		
 		// h::log( 'e:>Template: "'.$template.'"' );
 
-		$extension = \willow\core\strings::file_extension( $template );
+		$extension = \willow\core\file::extension( $template );
 
 		// h::log( 'e:>Extension: "'.$extension.'"' );
 

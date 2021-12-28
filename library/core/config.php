@@ -149,8 +149,8 @@ class config {
 		// if theme debugging, then load from single config files ##
 		if ( \willow()->_debug ) { 
 
-			// w__log('d:>Deubbing, so we do not need to resave __q.php.' );
-			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
+			// w__log('d:>Deubbing, so we do not need to resave __willow.php.' );
+			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __willow.php??' );
 
 			return false; 
 
@@ -159,7 +159,7 @@ class config {
 		if ( $this->has_config ){ 
 		
 			w__log('d:>We do not need to resave the file, as it already exists' );
-			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __q.php??' );
+			// w__log( 't:>How to dump file / cache and reload from config files, other than to delete __willow.php??' );
 
 			return false; 
 		
@@ -176,7 +176,7 @@ class config {
 
 			// w__log( 'e:>Q Theme class not available, perhaps this function was hooked too early?' );
 
-			willow\core\file::put_array( \q\theme\plugin::get_child_path( '/__q.php' ), $this->config );
+			willow\core\file::put_array( \q\theme\plugin::get_child_path( '/__willow.php' ), $this->config );
 
 		}
 
@@ -207,7 +207,7 @@ class config {
 
 		}
 
-		// w__log( 'd:>Child theme method found, so trying to load data from __q.php' );
+		// w__log( 'd:>Child theme method found, so trying to load data from __willow.php' );
 		// w__log( \get_site_transient( 'willow_config' ) );
 		if ( 
 			$array = \get_site_transient( 'willow_config' )
@@ -263,13 +263,13 @@ class config {
 
 		if ( method_exists( 'q\theme\plugin', 'get_child_path' ) ){ 
 
-			$file = \q\theme\plugin::get_child_path('/__q.php');
+			$file = \q\theme\plugin::get_child_path('/__willow.php');
 
 			if ( $file && file_exists( $file ) ) {
 
 				unlink( $file );
 
-				// w__log( 'd:>...also deleting __q.php, so cache is clear' );
+				// w__log( 'd:>...also deleting __willow.php, so cache is clear' );
 
 			}
 
@@ -524,8 +524,8 @@ class config {
 					
 						$cache_key = 
 							! is_null( $source ) ? 
-							$k.'_'.$source.'_'.willow\core\strings::file_extension( $file ) : 
-							$k.'_'.willow\core\strings::file_extension( $file ) ;
+							$k.'_'.$source.'_'.willow\core\file::extension( $file ) : 
+							$k.'_'.willow\core\file::extension( $file ) ;
 
 					}
 
@@ -651,8 +651,57 @@ class config {
 		// filter return with specific context/task/ ##
 		$return = \apply_filters( 'willow/config/get/'.$this->config_args['context'].'/'.$this->config_args['task'], $return );
 
+		// \w__log( $return );
+
+		// decode htmlentries ##
+		// $return = $this->html_entity_decode( $return );
+		// $return = json_decode( $return );
+
+		\w__log( $return );
+
 		// kick back ##
 		return $return;
+
+	}
+
+	public function html_entity_decode( $value ){
+
+		// if is a string ##
+		if( is_string( $value ) ){
+
+			$value = html_entity_decode( $value, ENT_NOQUOTES, 'UTF-8');
+
+		} else if( is_array( $value ) ){
+
+			if ( count($value) == count($value, COUNT_RECURSIVE)) {
+				
+				\w__log( 'array is not multidimensional' );
+
+				$value = array_map(fn($e) => html_entity_decode( $e, ENT_QUOTES, 'UTF-8' ), $value);
+			
+			} else {
+
+				// \w__log( 'array is multidimensional' );
+				\w__log( $value );
+				// array_walk_recursive( $value, function ($e) { 
+				// 	$e = html_entity_decode($e, ENT_QUOTES, 'UTF-8'); 
+				// });
+
+			}
+
+			// $value = html_entity_decode( $value, ENT_NOQUOTES, 'UTF-8');
+
+		}
+
+		// $return = array_walk_recursive( $return, function ( $value ) {
+		//  	$value = html_entity_decode( $value );
+		// });
+
+		// $return = array_walk_recursive(function ($e) {
+		// 	return html_entity_decode($e, ENT_NOQUOTES, 'UTF-8');
+		// }, $return);
+
+		return $value;
 
 	}
 
@@ -674,7 +723,7 @@ class config {
 
 		// w__log( $args );
 
-		\apply_filters( 'willow/config/load', $this->config_args );
+		$this->config_args = \apply_filters( 'willow/config/load', $this->config_args );
 
 	}
 
@@ -729,7 +778,7 @@ class config {
 		// w__log( 'dealing with file: '.$file. ' - ext: '.core\strings::file_extension( $file ) );
 
 		// get file extension ##
-		switch( willow\core\strings::file_extension( $file ) ){
+		switch( willow\core\file::extension( $file ) ){
 
 			case "willow" :
 

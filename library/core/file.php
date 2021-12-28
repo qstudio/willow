@@ -33,4 +33,21 @@ class file {
 
 	}
 
+	public static function extension( string $string = null ){
+
+		// sanity ##
+		if( is_null( $string ) ){
+
+			w__log( 'e:>No string passed to method' );
+
+			return false;
+
+		}
+
+		$n = strrpos( $string, "." );
+
+		return ( $n === false ) ? "" : substr( $string, $n+1 );
+		
+	}
+
 }
