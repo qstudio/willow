@@ -673,7 +673,7 @@ class config {
 		// $return = $this->html_entity_decode( $return );
 		// $return = json_decode( $return );
 
-		\w__log( $return );
+		// \w__log( $return );
 
 		// kick back ##
 		return $return;
